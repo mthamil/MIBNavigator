@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	
+	<!-- ***Custom Datatypes*** -->
+	<!-- If one of the basic string elements or attributes exists in a document, it must contain at 
+		 least 1 character because empty elements are pointless. -->
+		 
+	<xs:simpleType name="nonEmptyString">
+		<xs:restriction base="xs:string">
+    		<xs:minLength value="1"/>
+  		</xs:restriction>
+	</xs:simpleType>
+
+
+	<!-- ***Simple Elements*** -->
+	
+	<!-- this defines which MIB items are being imported from -->
+  	<xs:element name="sourceMib" type="nonEmptyString"/>
+	
+	<!-- this defines a single item that is to be imported -->
+	<xs:element name="import" type="nonEmptyString"/>
+	
+	<!-- this defines the name of a custom datatype -->
+	<xs:element name="dataName" type="nonEmptyString"/>
+	
+	<!-- this defines the datatype that a custom SNMP datatype is based on;  it is like a supertype -->
+	<xs:element name="baseType" type="nonEmptyString"/>
+	
+	<!-- this defines the name of a MIB object -->
+	<xs:element name="objectName" type="nonEmptyString"/>
+	
+	<!-- this defines the numerical ID of a MIB object -->
+	<xs:element name="objectId" type="xs:nonNegativeInteger"/>
+	
+	<!-- this defines the name of a MIB object's parent object -->
+	<xs:element name="parent" type="nonEmptyString"/>
+	
+	<!-- this defines which datatype a MIB object uses -->
+	<xs:element name="type" type="nonEmptyString"/>
+	
+	<!-- this indicates that a MIB object contains a sequence of other MIB objects instead of a
+	     normal datatype -->
+	<xs:element name="sequence" type="nonEmptyString"/>
+	
+	<!-- this defines the default value for this MIB object -->
+	<xs:element name="defaultValue" type="nonEmptyString"/>
+	
+	<!-- this defines a reference for this MIB object -->
+	<xs:element name="reference" type="nonEmptyString"/>
+	
+	<!-- this defines the alias or name given to a value in an enumeration of possible values for a
+	     MIB object -->
+	<xs:element name="label" type="nonEmptyString"/>
+	
+	<!-- this defines a value, usually an integer, in an enumeration of possible values
+	     for a MIB object -->
+	<xs:element name="val" type="xs:integer"/>
+	
+	<!-- this defines the maximum permission level for a MIB object;  there is
+	     no real difference between maxAccess and access so they have been combined -->
+	<xs:element name="access">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="not-accessible"/>
+				<xs:enumeration value="accessible-for-notify"/>
+				<xs:enumeration value="read-only"/>
+				<xs:enumeration value="read-write"/>
+				<xs:enumeration value="read-create"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	
+	<!-- this defines the assigned status of a MIB object -->
+	<xs:element name="status">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="current"/>
+				<xs:enumeration value="optional"/>
+				<xs:enumeration value="deprecated"/>
+				<xs:enumeration value="mandatory"/>
+				<xs:enumeration value="obsolete"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	
+	<!-- this is self-explanatory; it contains a description of a MIB object and
+	     any information or explainations an organization chooses to include -->
+	<xs:element name="description" type="nonEmptyString"/>
+	
+	<!-- this defines a string code that indicates when a module was last updated -->
+	<xs:element name="lastUpdated" type="nonEmptyString"/>
+	
+	<!-- this defines the organization that maintains or created a module -->
+	<xs:element name="organization" type="nonEmptyString"/>
+	
+	<!-- this defines the contact information of the organization that is responsible
+	     for a module -->
+	<xs:element name="contactInfo" type="nonEmptyString"/>
+	
+	<!-- this defines a member of an object group; it always contains another MIB object
+	     (both notification type and object-group type MIB objects use this) -->
+	<xs:element name="member" type="nonEmptyString"/>
+	
+	<!-- a single index for an object type -->
+	<xs:element name="index" type="nonEmptyString"/>
+	
+	
+	
+	<!-- ***Attributes*** -->
+	<xs:attribute name="definition" type="nonEmptyString"/>
+	<xs:attribute name="revId" type="nonEmptyString"/>
+	
+	<xs:attribute name="minSize" type="xs:nonNegativeInteger"/>
+	<xs:attribute name="maxSize" type="xs:nonNegativeInteger"/>
+	
+	
+	<!-- ***Complex Elements*** -->
+	
+	<!-- MIB Import -->
+	<xs:element name="mibImport">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="sourceMib"/>
+				<xs:element ref="import" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	
+	<!-- Datatype -->
+	<xs:element name="dataType">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="dataName"/>
+				<xs:element ref="baseType" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute ref="minSize" use="optional"/>
+			<xs:attribute ref="maxSize" use="optional"/>
+		</xs:complexType>
+	</xs:element>
+	
+	<!-- Value Item -->
+	<xs:element name="valueItem">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="label"/>
+				<xs:element ref="val"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	
+	<!-- Value List -->
+	<xs:element name="valueList">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="valueItem" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	
+	<!-- Group of MIB objects -->
+	<xs:element name="groupMembers">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="member" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	
+	<!-- Syntax -->
+	<xs:element name="syntax">
+		<xs:complexType>
+			<xs:sequence>
+				<!-- Either a Type or a Sequence -->
+				<xs:choice>
+					<xs:element ref="type"/>
+					<xs:element ref="sequence"/>
+				</xs:choice>
+				<xs:sequence>
+					<xs:element ref="valueList" minOccurs="0"/>
+					<xs:element ref="defaultValue" minOccurs="0"/>
+				</xs:sequence>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	
+	<!-- Module Revision -consists of a revision number and a description of the revision -->
+	<xs:element name="revision">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="description"/>
+			</xs:sequence>
+			<xs:attribute ref="revId" use="optional"/>
+		</xs:complexType>
+	</xs:element>
+	
+	<!-- Section containing a list of indices for an object type -->
+	<xs:element name="indices">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="index" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	
+	
+	<!-- ***Element Groups*** -->
+	
+	<!-- Collection of elements shared by all mib objects -->
+	<xs:group name="objectBase">
+		<xs:sequence>
+			<xs:element ref="objectName"/>
+			<xs:element ref="objectId"/>
+			<xs:element ref="parent"/>
+		</xs:sequence>
+	</xs:group>
+	
+	
+	
+	<!-- MIB OBJECT TYPES -->
+	
+	<!-- Object Identifier -->
+	<xs:element name="objectIdentifier">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:group ref="objectBase"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	
+	<!-- Object Type -->
+	<xs:element name="objectType">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:group ref="objectBase"/>
+				<xs:element ref="syntax"/>
+				<xs:element ref="access"/>
+				<xs:element ref="status"/>
+				<xs:element ref="description" minOccurs="0"/>
+				<xs:element ref="reference" minOccurs="0"/>
+				<xs:element ref="indices" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	
+	<!-- Object-Group -->
+	<xs:element name="objectGroup">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:group ref="objectBase"/>
+				<xs:element ref="groupMembers"/>
+				<xs:element ref="status"/>
+				<xs:element ref="description" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	
+	<!-- Notification-Type (updated trap type) -->
+	<xs:element name="notification">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:group ref="objectBase"/>
+				<xs:element ref="groupMembers" minOccurs="0"/>
+				<xs:element ref="status"/>
+				<xs:element ref="description" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	
+	<!-- Notification-Group -->
+	<xs:element name="notificationGroup">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:group ref="objectBase"/>
+				<xs:element ref="groupMembers"/>
+				<xs:element ref="status"/>
+				<xs:element ref="description" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	
+	<!-- Module-Identity -->
+	<xs:element name="moduleIdentity">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:group ref="objectBase"/>
+				<xs:element ref="lastUpdated"/>
+				<xs:element ref="organization"/>
+				<xs:element ref="contactInfo"/>
+				<xs:element ref="description" minOccurs="0"/>
+				<xs:element ref="revision" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	
+	<!-- Module Compliance -->
+	<xs:element name="moduleCompliance">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:group ref="objectBase"/>
+				<xs:element ref="status"/>
+				<xs:element ref="description" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	
+	
+	
+	<!-- MIB SECTIONS -->
+	
+	<!-- Imports Section -->
+	<xs:element name="imports">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="mibImport" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	
+	<!-- Datatypes Section -->
+	<xs:element name="datatypes">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="dataType" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	
+	<!-- a supertype to make parsing simpler -->
+	<xs:element name="mibObject">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:choice>
+					<xs:element ref="objectIdentifier"/>
+					<xs:element ref="objectType"/>
+					<xs:element ref="objectGroup"/>
+					<xs:element ref="moduleIdentity"/>
+					<xs:element ref="moduleCompliance"/>
+					<xs:element ref="notification"/>
+					<xs:element ref="notificationGroup"/>
+				</xs:choice>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	
+	<!-- Objects Section -->
+	<xs:element name="objects">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="mibObject" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	
+	
+	<!-- the root of the MIB -->
+	<xs:element name="mib">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="imports" minOccurs="0" maxOccurs="1"/>
+				<xs:element ref="datatypes" minOccurs="0" maxOccurs="1"/>
+				<xs:element ref="objects" minOccurs="0" maxOccurs="1"/>
+			</xs:sequence>
+			<xs:attribute ref="definition" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	
+</xs:schema>

@@ -1,0 +1,452 @@
+<?xml version="1.0" encoding="utf-8"?>
+<grammar ns="" xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+	<start>
+		<ref name="mib"/>
+	</start>
+
+	<!-- ***CUSTOM DATATYPES*** -->
+	<!-- If one of the basic string elements or attributes exists in a document, it must contain at 
+		 least 1 character. -->
+	
+	<define name="nonEmptyString">
+		<data type="string">
+			<param name="minLength">1</param>
+		</data>	
+	</define>
+	
+	
+	<!-- BASIC ELEMENTS -->
+	
+	<!-- this defines which MIB items are being imported from -->
+	<define name="sourceMib">
+		<element name="sourceMib">
+			<ref name="nonEmptyString"/>
+		</element>
+	</define>
+	
+	<!-- this defines a single item that is to be imported -->
+	<define name="import">
+		<element name="import">
+			<ref name="nonEmptyString"/>
+		</element>
+	</define>
+	
+	<!-- this defines the name of a custom datatype -->
+	<define name="dataName">
+		<element name="dataName">
+			<ref name="nonEmptyString"/>
+		</element>
+	</define>
+	
+	<!-- this defines the datatype that a custom datatype is based on;  it is like a supertype -->
+	<define name="baseType">
+		<element name="baseType">
+			<ref name="nonEmptyString"/>
+		</element>
+	</define>
+	
+	<!-- this defines the name of a MIB object -->
+	<define name="objectName">
+		<element name="objectName">
+			<ref name="nonEmptyString"/>
+		</element>
+	</define>
+	
+	<!-- this defines the numerical ID of a MIB object -->
+	<define name="objectId">
+		<element name="objectId">
+			<data type="nonNegativeInteger"/>
+		</element>
+	</define>
+	
+	<!-- this defines the name of a MIB object's parent object -->
+	<define name="parent">
+		<element name="parent">
+			<ref name="nonEmptyString"/>
+		</element>
+	</define>
+	
+	<!-- this defines which datatype a MIB object uses -->
+	<define name="type">
+		<element name="type">
+			<ref name="nonEmptyString"/>
+		</element>
+	</define>
+		
+	<!-- this indicates that a MIB object contains a sequence of other MIB objects instead of a
+	     normal datatype -->
+	<define name="sequence">
+		<element name="sequence">
+			<ref name="nonEmptyString"/>
+		</element>
+	</define>
+	
+	<!-- this defines the default value for this MIB object -->
+	<define name="defaultValue">
+		<element name="defaultValue">
+			<ref name="nonEmptyString"/>
+		</element>
+	</define>
+	
+	<!-- this defines a reference for this MIB object -->
+	<define name="reference">
+		<element name="reference">
+			<ref name="nonEmptyString"/>
+		</element>
+	</define>
+	
+	
+	<!-- this defines the alias or name given to a value in an enumeration of possible values for a
+	     MIB object -->
+	<define name="label">
+		<element name="label">
+			<ref name="nonEmptyString"/>
+		</element>
+	</define>
+	
+	<!-- this defines a value, usually an integer, in an enumeration of possible values
+	     for a MIB object -->
+	<define name="val">
+		<element name="val">
+			<data type="integer"/>
+		</element>
+	</define>
+	
+	<!-- this defines the maximum permission level for a MIB object;  there is no
+	     real difference between maxAccess and access, so they have been combined -->
+	<define name="access">
+		<element name="access">
+			<choice>
+				<value type="string">not-accessible</value>
+				<value type="string">accessible-for-notify</value>
+				<value type="string">read-only</value>
+				<value type="string">read-write</value>
+				<value type="string">read-create</value>
+			</choice>
+		</element>
+	</define>
+	
+	<!-- this defines the assigned status of a MIB object -->
+	<define name="status">
+		<element name="status">
+			<choice>
+				<value type="string">current</value>
+				<value type="string">optional</value>
+				<value type="string">deprecated</value>
+				<value type="string">mandatory</value>
+				<value type="string">obsolete</value>
+			</choice>
+		</element>
+	</define>
+	
+	<!-- this is self-explanatory; it contains a description of a MIB object and
+	     any information or explainations an organization chooses to include -->
+	<define name="description">
+		<element name="description">
+			<ref name="nonEmptyString"/>
+		</element>
+	</define>
+	
+	<!-- this defines a string code that indicates when a module was last updated -->
+	<define name="lastUpdated">
+		<element name="lastUpdated">
+			<ref name="nonEmptyString"/>
+		</element>
+	</define>
+	
+	<!-- this defines the organization that maintains or created a module -->
+	<define name="organization">
+		<element name="organization">
+			<ref name="nonEmptyString"/>
+		</element>
+	</define>
+	
+	<!-- this defines the contact information of the organization that is responsible
+	     for a module -->
+	<define name="contactInfo">
+		<element name="contactInfo">
+			<ref name="nonEmptyString"/>
+		</element>
+	</define>
+	
+	<!-- this defines a member of an object group; it always contains another MIB object
+	     (both notification type and object-group type MIB objects use this) -->
+	<define name="member">
+		<element name="member">
+			<ref name="nonEmptyString"/>
+		</element>
+	</define>
+	
+	<!-- a single index for an object type -->
+	<define name="index">
+		<element name="index">
+			<ref name="nonEmptyString"/>
+		</element>
+	</define>
+	
+	
+	<!-- MORE COMPLEX ELEMENTS -->
+	
+	<!-- MIB Import -->
+	<define name="mibImport">
+		<element name="mibImport">
+			<ref name="sourceMib"/>
+			<oneOrMore>
+				<ref name="import"/>
+			</oneOrMore>
+		</element>
+	</define>
+	
+	<!-- Datatype -->
+	<define name="dataType">
+		<element name="dataType">
+			<ref name="dataName"/>
+			<optional>
+				<ref name="baseType"/>
+			</optional>
+			<optional>
+				<attribute name="minSize">
+					<data type="nonNegativeInteger"/>
+				</attribute>
+			</optional>
+			<optional>
+				<attribute name="maxSize">
+					<data type="nonNegativeInteger"/>
+				</attribute>
+			</optional>
+		</element>
+	</define>
+	
+	<!-- Value Item -->
+	<define name="valueItem">
+		<element name="valueItem">
+			<ref name="label"/>
+			<ref name="val"/>
+		</element>
+	</define>
+	
+	 <!-- Value List -->
+	<define name="valueList">
+		<element name="valueList">
+			<oneOrMore>
+				<ref name="valueItem"/>
+			</oneOrMore>
+		</element>
+	</define>
+	
+	<!-- Group of MIB objects -->
+	<define name="groupMembers">
+		<element name="groupMembers">
+			<oneOrMore>
+				<ref name="member"/>
+			</oneOrMore>
+		</element>
+	</define>
+	
+	<!-- Syntax -->
+	<define name="syntax">
+		<element name="syntax">
+			<!-- Either a Type or a Sequence -->
+			<choice>
+				<ref name="type"/>
+				<ref name="sequence"/>
+			</choice>
+			<optional>
+				<ref name="valueList"/>
+			</optional>
+			<optional>
+				<ref name="defaultValue"/>
+			</optional>
+		</element>
+	</define>
+	
+	<!-- Module Revision -consists of a revision number and a description of the revision -->
+	<define name="revision">
+		<element name="revision">
+			<optional>
+				<attribute name="revId">
+					<ref name="nonEmptyString"/>
+				</attribute>
+			</optional>
+			<ref name="description"/>
+		</element>
+	</define>
+	
+	<!-- Section containing a list of indices for an object type -->
+	<define name="indices">
+		<element name="indices">
+			<oneOrMore>
+				<ref name="index"/>
+			</oneOrMore>
+		</element>
+	</define>
+	
+	
+	
+	<!-- ELEMENT GROUPS -->
+	
+	<!-- this defines the basic elements that all MIB objects have -->
+	<define name="objectBase">
+	  <ref name="objectName"/>
+	  <ref name="objectId"/>
+	  <ref name="parent"/>
+	</define>
+	
+	
+	<!-- MIB OBJECT TYPES -->
+	
+	<!-- Object Identifier -->
+	<define name="objectIdentifier">
+		<element name="objectIdentifier">
+			<ref name="objectBase"/>
+		</element>
+	</define>
+	
+	<!-- Object Type -->
+	<define name="objectType">
+		<element name="objectType">
+			<ref name="objectBase"/>
+			<ref name="syntax"/>
+			<ref name="access"/>
+			<ref name="status"/>
+			<optional>
+				<ref name="description"/>
+			</optional>
+			<optional>
+				<ref name="reference"/>
+			</optional>
+			<optional>
+				<ref name="indices"/>
+			</optional>
+		</element>
+	</define>
+	
+	<!-- Object-Group -->
+	<define name="objectGroup">
+		<element name="objectGroup">
+			<ref name="objectBase"/>
+			<ref name="groupMembers"/>
+			<ref name="status"/>
+			<optional>
+				<ref name="description"/>
+			</optional>
+		</element>
+	</define>
+	
+	<!-- Notification-Type (updated trap type) -->
+	<define name="notification">
+		<element name="notification">
+			<ref name="objectBase"/>
+			<optional>
+				<ref name="groupMembers"/>
+			</optional>
+			<ref name="status"/>
+			<optional>
+				<ref name="description"/>
+			</optional>
+		</element>
+	</define>
+	
+	<!-- Notification-Group -->
+	<define name="notificationGroup">
+		<element name="objectGroup">
+			<ref name="objectBase"/>
+			<ref name="groupMembers"/>
+			<ref name="status"/>
+			<optional>
+				<ref name="description"/>
+			</optional>
+		</element>
+	</define>
+	
+	<!-- Module Identity -->
+	<define name="moduleIdentity">
+		<element name="moduleIdentity">
+			<ref name="objectBase"/>
+			<ref name="lastUpdated"/>
+			<ref name="organization"/>
+			<ref name="contactInfo"/>
+			<optional>
+				<ref name="description"/>
+			</optional>
+			<zeroOrMore>
+				<ref name="revision"/>
+			</zeroOrMore>
+		</element>
+	</define>
+	
+	<!-- Module Compliance -->
+	<define name="moduleCompliance">
+		<element name="moduleCompliance">
+			<ref name="objectBase"/>
+			<ref name="status"/>
+			<optional>
+				<ref name="description"/>
+			</optional>
+		</element>
+	</define>
+	
+	
+	<!-- MIB SECTIONS -->
+	
+	<!-- Imports Section -->
+	<define name="imports">
+		<element name="imports">
+			<oneOrMore>
+				<ref name="mibImport"/>
+			</oneOrMore>
+		</element>
+	</define>
+	
+	<!-- Datatypes Section -->
+	<define name="datatypes">
+		<element name="datatypes">
+			<oneOrMore>
+				<ref name="dataType"/>
+			</oneOrMore>
+		</element>
+	</define>
+	
+	<!-- a supertype to make parsing simpler -->
+	<define name="mibObject">
+		<element name="mibObject">
+			<choice>
+				<ref name="objectIdentifier"/>
+				<ref name="objectType"/>
+				<ref name="objectGroup"/>
+				<ref name="moduleIdentity"/>
+				<ref name="moduleCompliance"/>
+				<ref name="notification"/>
+				<ref name="notificationGroup"/>
+			</choice>
+		</element>
+	</define>
+	
+	<!-- Objects Section -->
+	<define name="objects">
+		<element name="objects">
+			<oneOrMore>
+				<ref name="mibObject"/>
+			</oneOrMore>
+		</element>
+	</define>
+	
+	<!-- the root of the MIB -->
+	<define name="mib">
+		<element name="mib">
+			<attribute name="definition">
+				<ref name="nonEmptyString"/>
+			</attribute>
+			<optional>
+				<ref name="imports"/>
+			</optional>
+			<optional>
+				<ref name="datatypes"/>
+			</optional>
+			<optional>
+				<ref name="objects"/>
+			</optional>
+		</element>
+	</define>
+
+</grammar>
