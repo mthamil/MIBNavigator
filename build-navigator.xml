@@ -1,0 +1,58 @@
+
+<project name="MIB Navigator" default="MIBNavigator" basedir=".">
+    <description>
+        Ant build file for the MIB Navigator application.
+    </description>
+  
+  <target name="MIBNavigator" description="Build the MIB Navigator application distribution.  Only required .class files are included.">
+    <!-- Set the main class. -->
+    <property name="mainClass" value="MIBNavigator"/>
+    <property name="buildDir" value="build-navigator"/>
+	<property name="appName" value="MIBNavigator"/>
+    <!-- Create the build directory -->
+    <mkdir dir="${buildDir}"/>
+    <!-- Compile the java code from src into build -->
+    <javac srcdir="src" destdir="${buildDir}" includes="${mainClass}.java"/>
+    <!-- Put everything in build into the ${appName}.jar file -->
+    <jar jarfile="${appName}.jar" basedir="${buildDir}" manifest="${appName}.mf"/>
+    <!-- Delete the build directory tree -->
+    <delete dir="${buildDir}"/>
+  </target>
+
+  <target name="SNMPPackage" description="Build the independent SNMP package distribution.">
+    <!-- Set the build directory -->
+    <property name="buildDir" value="build_snmp"/>
+    <!-- Create the build directory -->
+    <mkdir dir="${buildDir}"/>
+    <!-- Compile the java code from source into build -->
+    <javac srcdir="src" destdir="${buildDir}" includes="snmp\*.java"/>
+    <!-- Put everything in build into the snmp.jar file -->
+    <jar jarfile="snmp.jar" basedir="${buildDir}"/>
+    <!-- Delete the build directory tree -->
+    <delete dir="${buildDir}"/> 
+  </target>
+	
+  <target name="MIBNavigatorSource" description="Build the complete source distribution.">
+	<!-- Zip up the source, manifest, and build file -->
+    <zip destfile="mibnav-source.zip">
+	  <fileset dir="." includes="src/**"/>
+	  <fileset dir="." includes="build-navigator.xml MIBNavigator.mf AUTHORS LICENSE README mib.rng mib.xsd"/>
+    </zip>
+  </target>
+	
+  <target name="MIBNavigatorRelease" description="Build the complete release package.">
+	<property name="packageDir" value="mib-navigator"/>
+	<mkdir dir="${packageDir}"/>
+	<copy todir="${packageDir}">
+      <fileset dir="." includes="MIBNavigator.jar license readme authors mib.xsd extraXmlMibs/** mibs/*xml"/>
+    </copy>
+	<move file="mibnav-source.zip" todir="${packageDir}"/>
+	<!-- Zip up everything -->
+    <zip destfile="mib-navigator.zip">
+	  <fileset dir="." includes="${packageDir}/**"/>
+    </zip>
+	<delete dir="${packageDir}"/>
+  </target>
+	
+</project>
+   
