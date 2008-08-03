@@ -1,0 +1,84 @@
+MIB Navigator is a Java-based GUI desktop application for browsing SNMP MIBs and querying hosts that are running SNMP agents.  
+Each "object" OID in an SNMP MIB is represented as a node in a tree, and when a node is selected, certain information about 
+that particular OID is displayed.  Functionality is provided for adding new MIB definition files to the tree.  
+
+This release of MIB Navigator reads XML MIB files that are defined by the schema file "mib.xsd".  MIB Navigator loads the MIB 
+files in the default 'mibs' directory when executed.  Extra XML MIBs can be found in the 'extraXmlMibs' directory. These were converted 
+from the MIBs available for download here: http://www.wtcs.org/snmp4tpc/FILES/Tools/SNMP/getif/GETIF-MIBS.ZIP.
+
+A converter between standard SMI MIB files and XML format is now available for download.
+
+USING THE PROPERTIES FILE
+When an IP address is successfully contacted by the application, it is added to a drop down list that is later saved to a 
+'properties.xml' file.  This file will be loaded on subsequent program executions.  To clear the list, delete the file or clear the IP 
+address list within the file.  The number of IP addresses MIB Navigator remembers is stored in this file as well.  The default number of
+addresses to store is 15, but this can be changed by modifying the properties file directly.  
+NOTE: If the number of addresses to save is changed to be less than the number of addresses saved in the list, a loss of addresses may occur 
+due to address list truncation.  Remember to back up the properties file after modifying the number of addresses.
+
+
+CHANGES IN THIS VERSION:
+
+v. 1.0.1
+-Fixed a bug in MibTreeBuilderSmi where the parser failed to properly ignore "MACRO" definitions. (Credit goes to JJMolini at SourceForge)
+-Moved the code shared by MibTreeBuilderXml and MibTreeBuilderSmi into AbstractMibTreeBuilder.
+-Refactored some of the SMI parsing code to increase sharing between MIBToXMLConverter and MibTreeBuilderSmi.
+-Significantly refactored the code in the SNMP package in order to increase code reuse and enforce type safety.
+
+
+v. 1.0
+-Added user input fields for the port used by SNMP and timeout used during requests in milliseconds.  The port option was included because
+ some SNMP agents can be configured to listen on other ports.
+-Added a property in the 'properties.xml' file to allow the user to set the number of IP addresses MIB Navigator should save.
+-Changed the way settings worked regarding the maximum number of addresses.  Now the maximum number of addresses no longer affects
+ how many addresses can be displayed while the program is running, but only the last 'N' addresses that will be saved and loaded.
+
+
+v. 0.9.1
+-Further modularization of the application code, specifically the interface components.
+-Various algorithm optimizations.
+-Changed the schema for XML MIB files to consolidate access and max-access.  As far as I know, a single object cannot
+ have both max-access and access.
+-Began using Java 5.0 enumerations for access and status oid attributes.
+-Miscellaneous code refactoring.
+
+
+INSTALLATION:
+-To install, simply unzip "mib-navigator.zip" to a location and the "mib-navigator" directory containing all needed files will be
+ created.
+
+
+INSTRUCTIONS:
+-To start MIB Navigator, run the self-executing JAR file, "MIBNavigator.jar" by either double clicking it (if supported) or
+ using the console command "java -jar MIBNavigator.jar".
+ 
+-In order to ensure program execution, the "mib.xsd" file and "mibs" directory must be located in the same location
+ as "MIBNavigator.jar".
+
+-In order to query an SNMP-enabled host, enter an IP address, community string, and an OID.  Then, press the "Get Data" button.
+ This will walk the tree below this OID and display the results in the "Results" area.  The timeout amount and port used by the 
+ request can be entered as well, but most users should leave the default values.
+
+-OIDs can be selected from the MIB tree or entered manually.
+
+-A numerical OID can be searched for in the MIB tree by entering the OID in the "OID" input box and pressing enter.  If it is found, 
+ the appropriate node will be selected in the tree.
+
+-To add a MIB to the tree temporarily (meaning the MIB will not be re-added on next program start-up), select the "Add MIB"
+ option from the "Options" menu on the menu bar.
+ 
+-To add a MIB to the tree permanently (meaning the MIB will be copied to the "mibs" directory for loading on subsequent start-ups), 
+ select the "Import MIB" option from the "Options" menu on the menu bar.  MIB files can also be added to the default directory 
+ manually.
+ 
+ -If a given MIB is added to the tree but does not appear, check the dependencies of the MIBs, since another module may need to be 
+ loaded first.
+ 
+ 
+This version of MIB Navigator only supports versions of Java that are 5.0(1.5) or higher due to new language features.  
+It has been tested on Windows and Linux.
+
+Acknowledgements: Jon Sevy, for creating and releasing Java SNMP: http://gicl.cs.drexel.edu/people/sevy/snmp/snmp.html
+
+Copyright (C) 2005, 2006 Matt Hamilton <matthew.hamilton@washburn.edu>
+This project is NOT associated with Washburn University of Topeka in any way.
