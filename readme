@@ -3,7 +3,7 @@ Each "object" OID in an SNMP MIB is represented as a node in a tree, and when a 
 that particular OID is displayed.  Functionality is provided for adding new MIB definition files to the tree.  
 
 This release of MIB Navigator reads XML MIB files that are defined by the schema file "mib.xsd".  MIB Navigator loads the MIB 
-files in the default 'mibs' directory when executed.  Extra XML MIBs can be found in the 'extraXmlMibs' directory. These were converted 
+files in the default 'mibs' directory when executed.  Extra XML MIBs can be found in the 'extra-xml-mibs' directory. These were converted 
 from the MIBs available for download here: http://www.wtcs.org/snmp4tpc/FILES/Tools/SNMP/getif/GETIF-MIBS.ZIP.
 
 A converter between standard SMI MIB files and XML format is now available for download.
@@ -80,5 +80,4 @@ It has been tested on Windows and Linux.
 
 Acknowledgements: Jon Sevy, for creating and releasing Java SNMP: http://gicl.cs.drexel.edu/people/sevy/snmp/snmp.html
 
-Copyright (C) 2005, 2006 Matt Hamilton <matthew.hamilton@washburn.edu>
-This project is NOT associated with Washburn University of Topeka in any way.
+Copyright (C) 2008 Matt Hamilton <mhamilton2383@comcast.net>

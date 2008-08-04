@@ -44,7 +44,7 @@
 	<property name="packageDir" value="mib-navigator"/>
 	<mkdir dir="${packageDir}"/>
 	<copy todir="${packageDir}">
-      <fileset dir="." includes="MIBNavigator.jar license readme authors mib.xsd extraXmlMibs/** mibs/*xml"/>
+      <fileset dir="." includes="MIBNavigator.jar license readme authors mib.xsd extra-xml-mibs/** mibs/*xml"/>
     </copy>
 	<move file="mibnav-source.zip" todir="${packageDir}"/>
 	<!-- Zip up everything -->
