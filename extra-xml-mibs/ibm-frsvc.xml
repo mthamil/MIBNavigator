@@ -1,0 +1,810 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mib definition="FRAME-RELAY-DTE-SVC-MIB">
+    <imports>
+        <mibImport>
+            <sourceMib>SNMPv2-SMI-v1</sourceMib>
+            <import>Counter32</import>
+            <import>Integer32</import>
+            <import>TimeTicks</import>
+        </mibImport>
+        <mibImport>
+            <sourceMib>RFC-1212</sourceMib>
+            <import>OBJECT-TYPE</import>
+        </mibImport>
+        <mibImport>
+            <sourceMib>RFC-1215</sourceMib>
+            <import>TRAP-TYPE</import>
+        </mibImport>
+        <mibImport>
+            <sourceMib>SNMPv2-TC-v1</sourceMib>
+            <import>RowStatus</import>
+            <import>TimeStamp</import>
+            <import>DisplayString</import>
+        </mibImport>
+        <mibImport>
+            <sourceMib>RFC1315-MIB</sourceMib>
+            <import>frame-relay</import>
+            <import>DLCI</import>
+        </mibImport>
+        <mibImport>
+            <sourceMib>IF-MIB</sourceMib>
+            <import>InterfaceIndex</import>
+        </mibImport>
+    </imports>
+    <objects>
+        <mibObject>
+            <objectIdentifier>
+                <objectName>frameRelayDteSvc</objectName>
+                <objectId>7</objectId>
+                <parent>frame-relay</parent>
+            </objectIdentifier>
+        </mibObject>
+        <mibObject>
+            <objectIdentifier>
+                <objectName>frDteSvc</objectName>
+                <objectId>1</objectId>
+                <parent>frameRelayDteSvc</parent>
+            </objectIdentifier>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>frSvcDlcmiTable</objectName>
+                <objectId>1</objectId>
+                <parent>frDteSvc</parent>
+                <syntax>
+                    <sequence>FrSvcDlcmiEntry</sequence>
+                </syntax>
+                <access>not-accessible</access>
+                <status>mandatory</status>
+                <description>The Parameters for the Switched Virtual Circuit&lt;br&gt;Link Connection Management Interface&lt;br&gt;for the frame relay service on this&lt;br&gt;interface.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>frSvcDlcmiEntry</objectName>
+                <objectId>1</objectId>
+                <parent>frSvcDlcmiTable</parent>
+                <syntax>
+                    <type>FrSvcDlcmiEntry</type>
+                </syntax>
+                <access>not-accessible</access>
+                <status>mandatory</status>
+                <description>The information regarding a single switched Data&lt;br&gt;Link Connection Management Interface.</description>
+                <indices>
+                    <index>frSvcDlcmiIfIndex</index>
+                </indices>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>frSvcDlcmiIfIndex</objectName>
+                <objectId>1</objectId>
+                <parent>frSvcDlcmiEntry</parent>
+                <syntax>
+                    <type>InterfaceIndex</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The ifIndex value of the corresponding ifEntry.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>frSvcDlcmiState</objectName>
+                <objectId>2</objectId>
+                <parent>frSvcDlcmiEntry</parent>
+                <syntax>
+                    <type>INTEGER</type>
+                    <valueList>
+                        <valueItem>
+                            <label>q933SVC</label>
+                            <val>1</val>
+                        </valueItem>
+                        <valueItem>
+                            <label>x36</label>
+                            <val>2</val>
+                        </valueItem>
+                        <valueItem>
+                            <label>none</label>
+                            <val>3</val>
+                        </valueItem>
+                    </valueList>
+                </syntax>
+                <access>read-write</access>
+                <status>mandatory</status>
+                <description>This variable states which Data Link Connection&lt;br&gt;Management scheme is on the Frame Relay&lt;br&gt;switched interface.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>frSvcDlcmiMaxNumCalls</objectName>
+                <objectId>3</objectId>
+                <parent>frSvcDlcmiEntry</parent>
+                <syntax>
+                    <type>Integer32</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>Indicates the maximum number of calls&lt;br&gt;allowed on the interface.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>frSvcDlcmiCallSetupTimer</objectName>
+                <objectId>4</objectId>
+                <parent>frSvcDlcmiEntry</parent>
+                <syntax>
+                    <type>Integer32</type>
+                    <defaultValue>4</defaultValue>
+                </syntax>
+                <access>read-write</access>
+                <status>mandatory</status>
+                <description>This timer is started when the CALL SETUP&lt;br&gt;message is sent. The timer is stopped when&lt;br&gt;the sender receives a CALL PROCEEDING&lt;br&gt;message. If the timer, expressed in&lt;br&gt;seconds, expires, it is retried&lt;br&gt;once before the call is cleared.&lt;br&gt;The default value is 4 seconds.</description>
+                <reference>ITU-T Standard Q.931,&lt;br&gt;Section 9.2: Timer T303.</reference>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>frSvcDlcmiCallProceedingTimer</objectName>
+                <objectId>5</objectId>
+                <parent>frSvcDlcmiEntry</parent>
+                <syntax>
+                    <type>Integer32</type>
+                    <defaultValue>10</defaultValue>
+                </syntax>
+                <access>read-write</access>
+                <status>mandatory</status>
+                <description>This timer is started when the CALL&lt;br&gt;PROCEEDING message is sent. The timer&lt;br&gt;is stopped when the sender&lt;br&gt;receives a CALL CONNECT message. If&lt;br&gt;the timer, expressed in seconds,&lt;br&gt;expires, the call is cleared.&lt;br&gt;The default value is 10 seconds.</description>
+                <reference>ITU-T Standard Q.931,&lt;br&gt;Section 9.2: Timer T310.</reference>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>frSvcDlcmiCallDisconnectTimer</objectName>
+                <objectId>6</objectId>
+                <parent>frSvcDlcmiEntry</parent>
+                <syntax>
+                    <type>Integer32</type>
+                    <defaultValue>30</defaultValue>
+                </syntax>
+                <access>read-write</access>
+                <status>mandatory</status>
+                <description>This timer is started when the&lt;br&gt;DISCONNECT message is sent. The timer&lt;br&gt;is stopped when the sender&lt;br&gt;receives a RELEASE message. The sender&lt;br&gt;then responds with a RELEASE COMPLETE&lt;br&gt;message. If the timer, expressed in&lt;br&gt;seconds, expires, the sender starts&lt;br&gt;up Timer T308, and sends a RELEASE&lt;br&gt;message. The default value for this timer is 30&lt;br&gt;seconds.</description>
+                <reference>ITU-T Standard Q.931,&lt;br&gt;Section 9.2: Timer T305.</reference>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>frSvcDlcmiCallReleaseTimer</objectName>
+                <objectId>7</objectId>
+                <parent>frSvcDlcmiEntry</parent>
+                <syntax>
+                    <type>Integer32</type>
+                    <defaultValue>4</defaultValue>
+                </syntax>
+                <access>read-write</access>
+                <status>mandatory</status>
+                <description>This timer is started if timer&lt;br&gt;T305 expires. This timer&lt;br&gt;is stopped when the sender&lt;br&gt;receives a RELEASE message. If&lt;br&gt;the timer, expressed in seconds,&lt;br&gt;expires, the timer sequence is&lt;br&gt;reinitiated. If the timer&lt;br&gt;expires a second time the call is&lt;br&gt;cleared. The default value fo rthis timer&lt;br&gt;is 4 seconds.</description>
+                <reference>ITU-T Standard Q.931,&lt;br&gt;Section 9.2: Timer T308.</reference>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>frSvcDlcmiStatusEnquiryTimer</objectName>
+                <objectId>8</objectId>
+                <parent>frSvcDlcmiEntry</parent>
+                <syntax>
+                    <type>Integer32</type>
+                    <defaultValue>4</defaultValue>
+                </syntax>
+                <access>read-write</access>
+                <status>mandatory</status>
+                <description>This timer is started when a STATUS&lt;br&gt;ENQUIRY message is sent. If a STATUS&lt;br&gt;message is received, the timer will be&lt;br&gt;stopped. If the Timer expires it may be&lt;br&gt;retried an implementation specific number&lt;br&gt;(n) of times. Upon expiry of (n), the&lt;br&gt;call is cleared. The default value is 4 retries.</description>
+                <reference>ITU-T Standard Q.931,&lt;br&gt;Section 9.2: Timer T322.</reference>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>frSvcDlcmiErrorThreshold</objectName>
+                <objectId>9</objectId>
+                <parent>frSvcDlcmiEntry</parent>
+                <syntax>
+                    <type>Integer32</type>
+                </syntax>
+                <access>read-write</access>
+                <status>mandatory</status>
+                <description>This is the implementation specific&lt;br&gt;number of times that the STATUS&lt;br&gt;ENQUIRY Timer, T322, will be retried.</description>
+                <reference>ITU-T Standard Q.931, Section 9.2.</reference>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>frSvcDlcmiResetSentTimer</objectName>
+                <objectId>10</objectId>
+                <parent>frSvcDlcmiEntry</parent>
+                <syntax>
+                    <type>Integer32</type>
+                    <defaultValue>120</defaultValue>
+                </syntax>
+                <access>read-write</access>
+                <status>mandatory</status>
+                <description>This timer is started when a RESTART&lt;br&gt;message is sent. If a RESTART&lt;br&gt;ACKNOWLEDGEmessage is received,&lt;br&gt;the timer will be stopped. If the Timer expires&lt;br&gt;expires it may be retried one or more times&lt;br&gt;until a RESTART ACKNOWLEDGE message&lt;br&gt;is returned. Meanwhile No calls shall be&lt;br&gt;placed or accepted over the interface by&lt;br&gt;the originator of the RESTART message.&lt;br&gt;The network shall limit the number of&lt;br&gt;consecutive unsuccessful attempts to a&lt;br&gt;default of 2. The default value for the&lt;br&gt;Timer is 120 seconds</description>
+                <reference>ITU-T Standard Q.931,&lt;br&gt;Section 9.2: Timer T316.</reference>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>frSvcDlcmiResetAckTimer</objectName>
+                <objectId>11</objectId>
+                <parent>frSvcDlcmiEntry</parent>
+                <syntax>
+                    <type>Integer32</type>
+                </syntax>
+                <access>read-write</access>
+                <status>mandatory</status>
+                <description>This timer is started when a RESTART&lt;br&gt;message is received. At this time the&lt;br&gt;receiving entity shall initiate the&lt;br&gt;appropriate internal actions to return&lt;br&gt;the specified interface to the idle&lt;br&gt;condition and call references to the&lt;br&gt;Null state. Upon expiry of the timer,&lt;br&gt;a notification shall be made to the&lt;br&gt;maintenance entity. NOTE: This Timer&lt;br&gt;MUST be less than Timer T316.</description>
+                <reference>ITU-T Standard Q.931,&lt;br&gt;Section 9.2: Timer T317.</reference>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>frSvcDlcmiIdleTimer</objectName>
+                <objectId>12</objectId>
+                <parent>frSvcDlcmiEntry</parent>
+                <syntax>
+                    <type>Integer32</type>
+                    <defaultValue>30</defaultValue>
+                </syntax>
+                <access>read-write</access>
+                <status>mandatory</status>
+                <description>This is the maximum time allowed&lt;br&gt;without any frames being exchanged.&lt;br&gt;The default for this timer is 30 seconds.</description>
+                <reference>ITU-T Standard Q.921,&lt;br&gt;Section 5.9 / Q.922 Section&lt;br&gt;5.9: Timer T203.</reference>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>frSvcDlcmiRetransmissionTimer</objectName>
+                <objectId>13</objectId>
+                <parent>frSvcDlcmiEntry</parent>
+                <syntax>
+                    <type>TimeTicks</type>
+                    <defaultValue>1500</defaultValue>
+                </syntax>
+                <access>read-write</access>
+                <status>mandatory</status>
+                <description>This is the re-transmission timer.&lt;br&gt;It is started upon transmission of&lt;br&gt;frames. When a response is received,&lt;br&gt;the timer will be shut down. If the&lt;br&gt;timer expires , it may be retried N200&lt;br&gt;times. When N200 times have been&lt;br&gt;reached, a DL-RELEASE message will&lt;br&gt;be sent to the Layer 3 entity. The default&lt;br&gt;for this timer is 1.5 seconds.</description>
+                <reference>ITU-T Standard Q.921,&lt;br&gt;Section 5.9 / Q.922 Section&lt;br&gt;5.9: Timer T200.</reference>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>frSvcDlcmiNumRetransmissions</objectName>
+                <objectId>14</objectId>
+                <parent>frSvcDlcmiEntry</parent>
+                <syntax>
+                    <type>Integer32</type>
+                    <defaultValue>3</defaultValue>
+                </syntax>
+                <access>read-write</access>
+                <status>mandatory</status>
+                <description>This value indicates the number of&lt;br&gt;times T200 timer will be retried.&lt;br&gt;When N200 times have been reached,&lt;br&gt;a DL-RELEASE message will be sent&lt;br&gt;to the Layer 3 entity. The default for this&lt;br&gt;value is 3 retries.</description>
+                <reference>ITU-T Standard Q.921,&lt;br&gt;Section 5.9 / Q.922 Section&lt;br&gt;5.9: N200.</reference>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>frSvcDlcmiMaxInfoFieldSize</objectName>
+                <objectId>15</objectId>
+                <parent>frSvcDlcmiEntry</parent>
+                <syntax>
+                    <type>Integer32</type>
+                    <defaultValue>260</defaultValue>
+                </syntax>
+                <access>read-write</access>
+                <status>mandatory</status>
+                <description>This value indicates the maximum&lt;br&gt;number of octets in an Information field.&lt;br&gt;The default value is 260 octets.</description>
+                <reference>ITU-T Standard Q.921,&lt;br&gt;Section 5.9 / Q.922 Section&lt;br&gt;5.9: N201.</reference>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>frSvcDlcmiMaxInfoFrames</objectName>
+                <objectId>16</objectId>
+                <parent>frSvcDlcmiEntry</parent>
+                <syntax>
+                    <type>Integer32(1..127)</type>
+                    <defaultValue>7</defaultValue>
+                </syntax>
+                <access>read-write</access>
+                <status>mandatory</status>
+                <description>This value indicates the maximum&lt;br&gt;number of sequentially numbered I&lt;br&gt;frames that may be outstanding&lt;br&gt;(that is, unacknowledged) at any&lt;br&gt;given time. This number shall not&lt;br&gt;exceed 127. For a 16Kbps link: k =&lt;br&gt;3, 64Kbps: k = 7 (this is the default value),&lt;br&gt;384Kbps: k = 32, 1.5Mbps/1.92Mbps: k = 40.</description>
+                <reference>ITU-T Standard Q.921,&lt;br&gt;Section 5.9 / Q.922 Section&lt;br&gt;5.9: k.</reference>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>frSvcDlcmiQ922State</objectName>
+                <objectId>17</objectId>
+                <parent>frSvcDlcmiEntry</parent>
+                <syntax>
+                    <type>INTEGER</type>
+                    <valueList>
+                        <valueItem>
+                            <label>teiUnassigned</label>
+                            <val>1</val>
+                        </valueItem>
+                        <valueItem>
+                            <label>assignAwaitingTei</label>
+                            <val>2</val>
+                        </valueItem>
+                        <valueItem>
+                            <label>establishingAwaitingTei</label>
+                            <val>3</val>
+                        </valueItem>
+                        <valueItem>
+                            <label>teiAssigned</label>
+                            <val>4</val>
+                        </valueItem>
+                        <valueItem>
+                            <label>awaitingEstablishment</label>
+                            <val>5</val>
+                        </valueItem>
+                        <valueItem>
+                            <label>awaitingRelease</label>
+                            <val>6</val>
+                        </valueItem>
+                        <valueItem>
+                            <label>multipleFrameEstablished</label>
+                            <val>7</val>
+                        </valueItem>
+                        <valueItem>
+                            <label>timerRecovery</label>
+                            <val>8</val>
+                        </valueItem>
+                    </valueList>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>This value indicates the state of the&lt;br&gt;Q.922 Point to Point Data Link Layer&lt;br&gt;Negotiation.</description>
+                <reference>ITU-T Standard Q.922,&lt;br&gt;Appendix B.2</reference>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>frSvcTable</objectName>
+                <objectId>2</objectId>
+                <parent>frDteSvc</parent>
+                <syntax>
+                    <sequence>FrSvcEntry</sequence>
+                </syntax>
+                <access>not-accessible</access>
+                <status>mandatory</status>
+                <description>A table containing information about specific Data&lt;br&gt;Link Connection Identifiers and corresponding switched&lt;br&gt;virtual circuits.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>frSvcEntry</objectName>
+                <objectId>1</objectId>
+                <parent>frSvcTable</parent>
+                <syntax>
+                    <type>FrSvcEntry</type>
+                </syntax>
+                <access>not-accessible</access>
+                <status>mandatory</status>
+                <description>The information regarding a single  switched Data&lt;br&gt;Link Connection Identifier.</description>
+                <indices>
+                    <index>frSvcIfIndex</index>
+                    <index>frSvcDlci</index>
+                </indices>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>frSvcIfIndex</objectName>
+                <objectId>1</objectId>
+                <parent>frSvcEntry</parent>
+                <syntax>
+                    <type>InterfaceIndex</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The ifIndex Value of the ifEntry this  virtual&lt;br&gt;circuit is layered onto.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>frSvcDlci</objectName>
+                <objectId>2</objectId>
+                <parent>frSvcEntry</parent>
+                <syntax>
+                    <type>DLCI</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The Data Link Connection Identifier  for  this&lt;br&gt;virtual circuit.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>frSvcReceivedFECNs</objectName>
+                <objectId>3</objectId>
+                <parent>frSvcEntry</parent>
+                <syntax>
+                    <type>Counter32</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>Number of frames received from the network in-&lt;br&gt;dicating  forward  congestion since the virtual&lt;br&gt;circuit was created.</description>
+                <reference>Draft American National  Standard  T1.618-1991,&lt;br&gt;Section 3.3.3</reference>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>frSvcReceivedBECNs</objectName>
+                <objectId>4</objectId>
+                <parent>frSvcEntry</parent>
+                <syntax>
+                    <type>Counter32</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>Number of frames received from the network in-&lt;br&gt;dicating  backward congestion since the virtual&lt;br&gt;circuit was created.</description>
+                <reference>Draft American National  Standard  T1.618-1991,&lt;br&gt;Section 3.3.4</reference>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>frSvcSentFrames</objectName>
+                <objectId>5</objectId>
+                <parent>frSvcEntry</parent>
+                <syntax>
+                    <type>Counter32</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The number of frames sent  from  this  virtual&lt;br&gt;circuit since it was created.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>frSvcSentOctets</objectName>
+                <objectId>6</objectId>
+                <parent>frSvcEntry</parent>
+                <syntax>
+                    <type>Counter32</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The number of octets sent  from  this  virtual&lt;br&gt;circuit since it was created.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>frSvcReceivedFrames</objectName>
+                <objectId>7</objectId>
+                <parent>frSvcEntry</parent>
+                <syntax>
+                    <type>Counter32</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>Number of frames received  over  this  virtual&lt;br&gt;circuit since it was created.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>frSvcReceivedOctets</objectName>
+                <objectId>8</objectId>
+                <parent>frSvcEntry</parent>
+                <syntax>
+                    <type>Counter32</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>Number of octets received  over  this  virtual&lt;br&gt;circuit since it was created.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>frSvcCreationTime</objectName>
+                <objectId>9</objectId>
+                <parent>frSvcEntry</parent>
+                <syntax>
+                    <type>TimeTicks</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The value of sysUpTime when the  virtual  cir-&lt;br&gt;cuit was created.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>frSvcInMaxFmifSize</objectName>
+                <objectId>10</objectId>
+                <parent>frSvcEntry</parent>
+                <syntax>
+                    <type>Integer32</type>
+                    <defaultValue>262</defaultValue>
+                </syntax>
+                <access>read-write</access>
+                <status>mandatory</status>
+                <description>This variable indicates the maximum amount  of&lt;br&gt;end user data octets in a frame for in the direction&lt;br&gt;of the calling user to the called user. The default&lt;br&gt;value is 262 octets.</description>
+                <reference>ITU-T Standard Q.933,&lt;br&gt;Section 4.5.19</reference>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>frSvcOutMaxFmifSize</objectName>
+                <objectId>11</objectId>
+                <parent>frSvcEntry</parent>
+                <syntax>
+                    <type>Integer32</type>
+                    <defaultValue>262</defaultValue>
+                </syntax>
+                <access>read-write</access>
+                <status>mandatory</status>
+                <description>This variable indicates the maximum amount  of&lt;br&gt;end user data octets in a frame for in the direction&lt;br&gt;of the called user to the calling user. The default&lt;br&gt;value is 262 octets.</description>
+                <reference>ITU-T Standard Q.933,&lt;br&gt;Section 4.5.19</reference>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>frSvcInCommittedBurst</objectName>
+                <objectId>12</objectId>
+                <parent>frSvcEntry</parent>
+                <syntax>
+                    <type>Integer32</type>
+                    <defaultValue>0</defaultValue>
+                </syntax>
+                <access>read-write</access>
+                <status>mandatory</status>
+                <description>This variable indicates the maximum amount  of&lt;br&gt;data,  in  bits,  that  the  network  agrees to&lt;br&gt;accept under normal  conditions,  during  the&lt;br&gt;measurement interval. The default value is 0.</description>
+                <reference>ITU-T Standard Q.933,&lt;br&gt;Section 4.5.19</reference>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>frSvcOutCommittedBurst</objectName>
+                <objectId>13</objectId>
+                <parent>frSvcEntry</parent>
+                <syntax>
+                    <type>Integer32</type>
+                    <defaultValue>0</defaultValue>
+                </syntax>
+                <access>read-write</access>
+                <status>mandatory</status>
+                <description>This variable indicates the maximum amount  of&lt;br&gt;data,  in  bits,  that  the  network  agrees to&lt;br&gt;transfer under normal  conditions,  during  the&lt;br&gt;measurement interval. The default value is 0.</description>
+                <reference>ITU-T Standard Q.933,&lt;br&gt;Section 4.5.19</reference>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>frSvcInExcessBurst</objectName>
+                <objectId>14</objectId>
+                <parent>frSvcEntry</parent>
+                <syntax>
+                    <type>Integer32</type>
+                </syntax>
+                <access>read-write</access>
+                <status>mandatory</status>
+                <description>This variable indicates the maximum amount  of&lt;br&gt;uncommitted data bits that the network will at-&lt;br&gt;tempt to receive over the measurement interval.&lt;br&gt;By default, if not configured when creating the&lt;br&gt;entry, the Excess Information Burst Size is set&lt;br&gt;to the value of ifSpeed.</description>
+                <reference>ITU-T Standard Q.933,&lt;br&gt;Section 4.5.19</reference>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>frSvcOutExcessBurst</objectName>
+                <objectId>15</objectId>
+                <parent>frSvcEntry</parent>
+                <syntax>
+                    <type>Integer32</type>
+                </syntax>
+                <access>read-write</access>
+                <status>mandatory</status>
+                <description>This variable indicates the maximum amount  of&lt;br&gt;uncommitted data bits that the network will at-&lt;br&gt;tempt to deliver over the measurement interval.&lt;br&gt;By default, if not configured when creating the&lt;br&gt;entry, the Excess Information Burst Size is set&lt;br&gt;to the value of ifSpeed.</description>
+                <reference>ITU-T Standard Q.933,&lt;br&gt;Section 4.5.19</reference>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>frSvcInCIR</objectName>
+                <objectId>16</objectId>
+                <parent>frSvcEntry</parent>
+                <syntax>
+                    <type>Integer32</type>
+                    <defaultValue>0</defaultValue>
+                </syntax>
+                <access>read-write</access>
+                <status>mandatory</status>
+                <description>CIR is the average number of 'Frame Re-&lt;br&gt;lay  Information  Field'  bits  received per&lt;br&gt;second across a user network interface  to the&lt;br&gt;calling user, measured over the measurement inter-&lt;br&gt;val. The default value is 0.</description>
+                <reference>ITU-T Standard Q.933,&lt;br&gt;Section 4.5.19</reference>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>frSvcOutCIR</objectName>
+                <objectId>17</objectId>
+                <parent>frSvcEntry</parent>
+                <syntax>
+                    <type>Integer32</type>
+                    <defaultValue>0</defaultValue>
+                </syntax>
+                <access>read-write</access>
+                <status>mandatory</status>
+                <description>CIR is the average number of 'Frame Re-&lt;br&gt;lay  Information  Field'  bits  transferred per&lt;br&gt;second across a user network interface  from the&lt;br&gt;calling user, measured over the measurement inter-&lt;br&gt;val. The default value is 0.</description>
+                <reference>ITU-T Standard Q.933,&lt;br&gt;Section 4.5.19</reference>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>frSvcInMinCIR</objectName>
+                <objectId>18</objectId>
+                <parent>frSvcEntry</parent>
+                <syntax>
+                    <type>Integer32</type>
+                    <defaultValue>0</defaultValue>
+                </syntax>
+                <access>read-write</access>
+                <status>mandatory</status>
+                <description>Minimum Acceptable CIR is the lowest&lt;br&gt;throughput value, in the direction to the&lt;br&gt;calling user, expressed in bits per second,&lt;br&gt;that the calling user is willing to accept for&lt;br&gt;the call. If the network or the called user is&lt;br&gt;unable to support this throughput, the call&lt;br&gt;will be cleared. The default value is 0.</description>
+                <reference>ITU-T Standard Q.933,&lt;br&gt;Section 4.5.19</reference>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>frSvcOutMinCIR</objectName>
+                <objectId>19</objectId>
+                <parent>frSvcEntry</parent>
+                <syntax>
+                    <type>Integer32</type>
+                    <defaultValue>0</defaultValue>
+                </syntax>
+                <access>read-write</access>
+                <status>mandatory</status>
+                <description>Minimum Acceptable CIR is the lowest&lt;br&gt;throughput value, in the direction from the&lt;br&gt;calling user, expressed in bits per second,&lt;br&gt;that the calling user is willing to accept for&lt;br&gt;the call. If the network or the called user is&lt;br&gt;unable to support this throughput, the call&lt;br&gt;will be cleared. The default value is 0.</description>
+                <reference>ITU-T Standard Q.933,&lt;br&gt;Section 4.5.19</reference>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>frSvcState</objectName>
+                <objectId>20</objectId>
+                <parent>frSvcEntry</parent>
+                <syntax>
+                    <type>INTEGER</type>
+                    <valueList>
+                        <valueItem>
+                            <label>inProcess</label>
+                            <val>1</val>
+                        </valueItem>
+                        <valueItem>
+                            <label>complete</label>
+                            <val>2</val>
+                        </valueItem>
+                    </valueList>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>Indicates whether the Connection has&lt;br&gt;been completed and data can proceed (2),&lt;br&gt;or if the call setup is still in process (1).</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>frSvcCallReferenceValue</objectName>
+                <objectId>21</objectId>
+                <parent>frSvcEntry</parent>
+                <syntax>
+                    <type>Integer32</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>Indicates the call identity number of the call&lt;br&gt;on the interface.</description>
+                <reference>ITU-T Standard Q.931,&lt;br&gt;Section 4.5.6</reference>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>frSvcCallingAddr</objectName>
+                <objectId>22</objectId>
+                <parent>frSvcEntry</parent>
+                <syntax>
+                    <type>DisplayString</type>
+                </syntax>
+                <access>read-write</access>
+                <status>mandatory</status>
+                <description>Indicates the address of the calling&lt;br&gt;party.</description>
+                <reference>ITU-T Standard Q.931,&lt;br&gt;Section 4.5.9</reference>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>frSvcCallingSubAddr</objectName>
+                <objectId>23</objectId>
+                <parent>frSvcEntry</parent>
+                <syntax>
+                    <type>DisplayString</type>
+                </syntax>
+                <access>read-write</access>
+                <status>mandatory</status>
+                <description>Indicates the sub-address of the&lt;br&gt;calling party.</description>
+                <reference>ITU-T Standard Q.931,&lt;br&gt;Section 4.5.10</reference>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>frSvcCalledAddr</objectName>
+                <objectId>24</objectId>
+                <parent>frSvcEntry</parent>
+                <syntax>
+                    <type>DisplayString</type>
+                </syntax>
+                <access>read-write</access>
+                <status>mandatory</status>
+                <description>Indicates the address of the called&lt;br&gt;party.</description>
+                <reference>ITU-T Standard Q.931,&lt;br&gt;Section 4.5.7</reference>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>frSvcCalledSubAddr</objectName>
+                <objectId>25</objectId>
+                <parent>frSvcEntry</parent>
+                <syntax>
+                    <type>DisplayString</type>
+                </syntax>
+                <access>read-write</access>
+                <status>mandatory</status>
+                <description>Indicates the sub-address of the&lt;br&gt;called party.</description>
+                <reference>ITU-T Standard Q.931,&lt;br&gt;Section 4.5.8</reference>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>frSvcCallSetup</objectName>
+                <objectId>26</objectId>
+                <parent>frSvcEntry</parent>
+                <syntax>
+                    <type>INTEGER</type>
+                    <valueList>
+                        <valueItem>
+                            <label>setup</label>
+                            <val>1</val>
+                        </valueItem>
+                        <valueItem>
+                            <label>disconnect</label>
+                            <val>2</val>
+                        </valueItem>
+                    </valueList>
+                </syntax>
+                <access>read-write</access>
+                <status>mandatory</status>
+                <description>Indicates whether the call should&lt;br&gt;be Setup or Disconnected.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>frSvcCallOrigination</objectName>
+                <objectId>27</objectId>
+                <parent>frSvcEntry</parent>
+                <syntax>
+                    <type>INTEGER</type>
+                    <valueList>
+                        <valueItem>
+                            <label>remote</label>
+                            <val>1</val>
+                        </valueItem>
+                        <valueItem>
+                            <label>local</label>
+                            <val>2</val>
+                        </valueItem>
+                    </valueList>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>Indicates the direction of the call.&lt;br&gt;identifies the circuit as the calling&lt;br&gt;(local) or the called side (remote).</description>
+                <reference>ITU-T Standard Q.931,&lt;br&gt;Section 4.5.9</reference>
+            </objectType>
+        </mibObject>
+    </objects>
+</mib>
