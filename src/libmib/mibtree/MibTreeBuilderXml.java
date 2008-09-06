@@ -344,4 +344,14 @@ public class MibTreeBuilderXml extends AbstractMibTreeBuilder
         return objSyntax;
     }
 
+
+    /**
+     * @see libmib.mibtree.MibTreeBuilder#getMibFolder() 
+     */
+	@Override
+	public String getMibFolder()
+	{
+		return "xml";
+	}
+
 }

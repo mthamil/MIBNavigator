@@ -63,10 +63,11 @@ public class MibBrowser implements ActionListener, TreeSelectionListener, ListSe
     
     private Color backgroundColor;
 
-    private StringBuilder oidNameBuff;
-    private StringBuilder oidNumBuff;
+    private StringBuilder currentOidName;
+    private StringBuilder currentOidNumber;
     
-    public static final File DEFAULT_MIB_DIR = new File("." + File.separator + "mibs"); //base MIB directory (has been tested on Linux and Windows)
+	// Base MIB directory (has been tested on Linux and Windows)
+    public static final String DEFAULT_MIB_DIR = "." + File.separator + "mibs"; 
     
     private GetRequestWorker snmpGetWorker = null;
     
@@ -88,8 +89,8 @@ public class MibBrowser implements ActionListener, TreeSelectionListener, ListSe
         
         treeBuilder = newBuilder;
         
-        oidNameBuff = new StringBuilder();
-        oidNumBuff = new StringBuilder();
+        currentOidName = new StringBuilder();
+        currentOidNumber = new StringBuilder();
 
         initializeComponents();
         layoutComponents(); 
@@ -190,7 +191,7 @@ public class MibBrowser implements ActionListener, TreeSelectionListener, ListSe
         // Configure the mib tree.
         try
         {
-            treeBuilder.addMIBDirectory(DEFAULT_MIB_DIR);
+            treeBuilder.addMIBDirectory(new File(DEFAULT_MIB_DIR + File.separator + treeBuilder.getMibFolder()));
         }
         catch (IllegalArgumentException e) // if the default directory doesn't exist
         {
@@ -519,12 +520,12 @@ public class MibBrowser implements ActionListener, TreeSelectionListener, ListSe
     public List<String> getAddresses()
     {
         int ipCount = addressBox.getItemCount();
-        List<String> ipList = new ArrayList<String>(ipCount);
+        List<String> addresses = new ArrayList<String>(ipCount);
         
         for (int i = 0; i < ipCount; i++)
-            ipList.add((String)addressBox.getItemAt(i));
+        	addresses.add((String)addressBox.getItemAt(i));
 
-        return ipList;
+        return addresses;
     }
     
     /**
@@ -532,9 +533,9 @@ public class MibBrowser implements ActionListener, TreeSelectionListener, ListSe
      * combo box's data model.  External modifications to newAddressList after passing it to 
      * MibBrowser will not change MibBrowser's address combo box.
      */
-    public void setAddresses(List<String> newAddressList)
+    public void setAddresses(List<String> newAddresses)
     {
-        addressBox.setModel(new DefaultComboBoxModel(newAddressList.toArray()));
+        addressBox.setModel(new DefaultComboBoxModel(newAddresses.toArray()));
     }
     
     // *** End of MibBrowser data access methods. ***
@@ -621,8 +622,8 @@ public class MibBrowser implements ActionListener, TreeSelectionListener, ListSe
 
 		// Reset the string buffers; these buffers are continuously reused to avoid 
         // always creating new ones.
-		oidNameBuff.delete(0, oidNameBuff.length());
-		oidNumBuff.delete(0, oidNumBuff.length());
+		currentOidName.delete(0, currentOidName.length());
+		currentOidNumber.delete(0, currentOidNumber.length());
 
 		// Construct the mib object name and oid path strings from the object path 
         // array; start at 1 to exclude the root.
@@ -634,20 +635,20 @@ public class MibBrowser implements ActionListener, TreeSelectionListener, ListSe
 			// Don't put a '.' at the beginning.
 			if (i > 1)
 			{
-				oidNameBuff.append(".");
-				oidNumBuff.append(".");
+				currentOidName.append(".");
+				currentOidNumber.append(".");
 			}
 
-			oidNameBuff.append(curMIBObject.getName());
-			oidNumBuff.append(String.valueOf(curMIBObject.getId()));
+			currentOidName.append(curMIBObject.getName());
+			currentOidNumber.append(String.valueOf(curMIBObject.getId()));
 		}
 
 		// Set the oid name and number strings.
-		oidNameField.setText(oidNameBuff.toString());
-		oidNumberField.setText(oidNumBuff.toString());
+		oidNameField.setText(currentOidName.toString());
+		oidNumberField.setText(currentOidNumber.toString());
 
         if (!oidInputField.getText().trim().equals(oidNumberField.getText().trim()))
-		    oidInputField.setText(oidNumBuff.toString()); // synch the input field with the tree display
+		    oidInputField.setText(currentOidNumber.toString()); // synch the input field with the tree display
 
 		curNode = (MibTreeNode)tPath.getLastPathComponent();
 		curMIBObject = (MibObjectType)curNode.getUserObject();

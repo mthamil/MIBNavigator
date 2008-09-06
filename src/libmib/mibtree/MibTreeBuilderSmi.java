@@ -367,4 +367,13 @@ public class MibTreeBuilderSmi extends AbstractMibTreeBuilder
         return line;
     }
     
+    
+    /**
+     * @see libmib.mibtree.MibTreeBuilder#getMibFolder() 
+     */
+	@Override
+	public String getMibFolder()
+	{
+		return "asn";
+	}
 }

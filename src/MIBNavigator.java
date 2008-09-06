@@ -23,7 +23,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.File;
 import java.util.Enumeration;
 
 import javax.swing.JFrame;
@@ -34,17 +33,16 @@ import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
 import javax.swing.plaf.FontUIResource;
-import javax.xml.parsers.ParserConfigurationException;
 
+import libmib.MibFormat;
+import libmib.mibtree.CannotCreateBuilderException;
 import libmib.mibtree.MibTreeBuilder;
-import libmib.mibtree.MibTreeBuilderXml;
+import libmib.mibtree.MibTreeBuilderFactory;
 
-import org.xml.sax.SAXException;
+import settings.UserSettings;
 
 /**
  * MIBNavigator is the main class for the application. It performs initial configuration and starts the user interface.
- * It can be easily modified to use regular SMI syntax MIBs by using MibTreeBuilderSmi in place of MibTreeBuilderXml 
- * because they implement a common interface.
  * <br><br>
  * The application reads MIB files and presents them visually for navigation through MibBrowser. The OID hierarchy is 
  * displayed in a tree and information about each OID node is also shown. In addition, it uses SNMP GetNextRequests to 
@@ -63,11 +61,11 @@ import org.xml.sax.SAXException;
  */
 public class MIBNavigator 
 {
-    private MIBNavigatorSettings settings;  // saves and loads application state
-    private MibBrowser browser;             // main graphical component
+    private UserSettings settings;  	// Saves and loads application state
+    private MibBrowser browser;         // Main graphical component
    
-    private int maxAddresses;               // stores the maximum number of addresses to save (currently not modifiable 
-                                            // within the application, only through editing a file by hand)
+    private int maxAddresses;           // Stores the maximum number of addresses to save (currently not modifiable 
+                                        // within the application, only through editing a file by hand)
 
     /**
      * Creates and configures MIBNavigator's interface. The MibTreeBuilder is 
@@ -75,7 +73,7 @@ public class MIBNavigator
      */
     public MIBNavigator(MibTreeBuilder newBuilder)
     {
-        settings = new MIBNavigatorSettings();
+        settings = new UserSettings();
         settings.loadSettings();
         maxAddresses = settings.getMaxAddresses();
         
@@ -84,38 +82,7 @@ public class MIBNavigator
         browser = new MibBrowser(newBuilder);
         browser.setAddresses(settings.getAddressList());
         
-        JPanel navPanel = browser.getBrowserPanel();
-        
-        // Configure the application's JFrame.
-        JFrame navFrame = new JFrame();
-        navFrame = new JFrame();
-        navFrame.setTitle("MIB Navigator");
-        navFrame.getRootPane().setBorder(new BevelBorder(BevelBorder.RAISED));
-        
-        MIBNavigatorMenu navMenu = new MIBNavigatorMenu(this);
-        navFrame.setJMenuBar(navMenu.getMenuBar());
-        
-        navFrame.add(navPanel);  // Add the browser panel to the JFrame's content pane.
-        navFrame.pack();
-        navFrame.setLocationRelativeTo(null);
-        navFrame.setVisible(true);
-        
-        // This is necesary because certain interface components do not scale when the frame is resized below a set
-        // initial width and/or height.  This simply uses the initial, packed size as the minimum.
-        Dimension frameSize = navFrame.getSize();
-        navFrame.addComponentListener(new MinimumSizeEnforcer((long)frameSize.getWidth(), (long)frameSize.getHeight()));
-             
-        // Catch window closing events with an anonymous event handler so that the browser's state can be saved.
-        navFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        navFrame.addWindowListener(new 
-                WindowAdapter()
-                {
-                    public void windowClosing(WindowEvent we)
-                    {
-                        saveState();
-                        System.exit(0);
-                    }
-                });
+        configureFrame(browser.getBrowserPanel());
     }
     
     
@@ -141,12 +108,12 @@ public class MIBNavigator
     
     
     /**
-     * Utility method that sets all fonts in the UI table to smaller than normal size.
+     * Sets all fonts in the UI table to smaller than normal size.
      */
     private void shrinkFonts()
     {
         FontUIResource appFont = new FontUIResource("SansSerif", Font.PLAIN, 10);
-        UIDefaults defaults = UIManager.getDefaults();//UIManager.getLookAndFeelDefaults();
+        UIDefaults defaults = UIManager.getDefaults();
         Enumeration<Object> keys = defaults.keys();
 
         while (keys.hasMoreElements())
@@ -158,6 +125,43 @@ public class MIBNavigator
     }
     
 
+    /**
+     * Creates and configures the application's JFrame.
+     * @param content - the application content panel
+     */
+    private void configureFrame(JPanel content)
+    {
+    	JFrame navFrame = new JFrame();
+        navFrame = new JFrame();
+        navFrame.setTitle("MIB Navigator");
+        navFrame.getRootPane().setBorder(new BevelBorder(BevelBorder.RAISED));
+        
+        MIBNavigatorMenu navMenu = new MIBNavigatorMenu(this);
+        navFrame.setJMenuBar(navMenu.getMenuBar());
+        
+        navFrame.add(content);  // Add the browser panel to the JFrame's content pane.
+        navFrame.pack();
+        navFrame.setLocationRelativeTo(null);
+        navFrame.setVisible(true);
+        
+        // This is necessary because certain interface components do not scale when the frame is resized below a set
+        // initial width and/or height.  This simply uses the initial, packed size as the minimum.
+        Dimension frameSize = navFrame.getSize();
+        navFrame.addComponentListener(new MinimumSizeEnforcer((long)frameSize.getWidth(), (long)frameSize.getHeight()));
+             
+        // Catch window closing events with an anonymous event handler so that the browser's state can be saved.
+        navFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        navFrame.addWindowListener(new 
+                WindowAdapter()
+                {
+                    public void windowClosing(WindowEvent we)
+                    {
+                        saveState();
+                        System.exit(0);
+                    }
+                });
+    }
+    
     
     /**
      * Static initializer for the MIBNavigator application.
@@ -181,42 +185,25 @@ public class MIBNavigator
         try
         { 
             // ***Configure MIB Compiler***
-            // If the schema file used for parsing and validating the MIB files can't be found
-            // then there is no point in continuing since XML files can't be added later.
-            File schemaFile = new File("." + File.separator + "mib.xsd");
-            if (schemaFile.exists())
-            {    
-                final MibTreeBuilder treeBuilder = new MibTreeBuilderXml(schemaFile);
-                //final MibTreeBuilder treeBuilder = new MibTreeBuilderSmi();
+        	MibTreeBuilderFactory mibTreeFactory = new MibTreeBuilderFactory();
+        	final MibTreeBuilder treeBuilder = mibTreeFactory.createTreeBuilder(MibFormat.ASN);
+            
+            // Create and configure the interface components in the EventDispatch 
+            // thread according to best practices for using Swing.
+            Runnable createInterface = new 
+                Runnable()
+                {
+                    public void run()
+                    {   
+                        MIBNavigator navApp = new MIBNavigator(treeBuilder);
+                    }
+                };
                 
-                // Create and configure the interface components in the EventDispatch 
-                // thread according to best practices for using Swing.
-                Runnable createInterface = new 
-                    Runnable()
-                    {
-                        public void run()
-                        {   
-                            MIBNavigator navApp = new MIBNavigator(treeBuilder);
-                        }
-                    };
-                SwingUtilities.invokeLater(createInterface);
-            }
-            else
-            {
-                String message = "The schema file, " + schemaFile.getName() + ", was not found.";
-                JOptionPane.showMessageDialog(null, message, "MIB Schema Error", JOptionPane.ERROR_MESSAGE);
-            }
+            SwingUtilities.invokeLater(createInterface);
         }
-        // The following exceptions are non-recoverable and application terminating.
-        catch (SAXException e)
+        catch(CannotCreateBuilderException e)
         {
-            JOptionPane.showMessageDialog(null, "An error occurred while parsing the schema file.", 
-                    "MIB Tree Compiler Error", JOptionPane.ERROR_MESSAGE);
-        }
-        catch (ParserConfigurationException e)
-        {
-            JOptionPane.showMessageDialog(null, "An error occurred configuring the XML parser.", 
-                    "MIB Tree Compiler Error", JOptionPane.ERROR_MESSAGE);
+        	JOptionPane.showMessageDialog(null, e.getMessage(), "Application Error", JOptionPane.ERROR_MESSAGE);
         }
 
     }

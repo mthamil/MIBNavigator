@@ -35,15 +35,15 @@ import libmib.oid.MibObjectType;
 
 /**
  * AbstractMibTreeBuilder implements functionality that can be shared by different MIB parsers.  It 
- * conains most of the logic that does not pertain to the actual processing of a MIB file's structure 
+ * contains most of the logic that does not pertain to the actual processing of a MIB file's structure 
  * and leaves the details of how to actually parse a MIB up to concrete subclasses.
  */
 public abstract class AbstractMibTreeBuilder implements MibTreeBuilder
 {
     protected TreeModel mibTreeModel = null;
     
-    // contains nodes that couldn't be added to the MIB tree at creation time and their parents
-    // in small pairs of (lost node, parent name)
+    // Contains nodes that couldn't be added to the MIB tree at creation time and their parents
+    // in pairs of (lost node, parent name).
     protected List<Object[]> lostChildren;
     
     // This improves performance in searching for existing nodes with what seems to be 
@@ -208,6 +208,12 @@ public abstract class AbstractMibTreeBuilder implements MibTreeBuilder
     {
         return mibTreeModel;
     }
+    
+    
+    /** 
+     * @see libmib.mibtree.MibTreeBuilder#getMibFolder() 
+     */
+    abstract public String getMibFolder();
     
     
     /**

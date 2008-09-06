@@ -19,7 +19,7 @@
  *
  */
 
-package xmlfilefilters;
+package filefilters;
 
 import java.io.File;
 import javax.swing.filechooser.FileFilter;

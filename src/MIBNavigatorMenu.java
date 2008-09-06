@@ -37,10 +37,11 @@ import javax.swing.JOptionPane;
 import javax.swing.JRootPane;
 import javax.swing.tree.DefaultTreeModel;
 
+import filefilters.FileFilterXml;
+
 import libmib.InvalidMibFormatException;
 import libmib.mibtree.MibTreeBuilder;
 
-import xmlfilefilters.FileFilterXml;
 
 
 /**
@@ -171,7 +172,7 @@ public class MIBNavigatorMenu implements ActionListener
                     if (destMibFile.exists())
                     {
                         // ask the user if they want to overwrite the file if it already exists
-                        String popupMsg = destMibFile.getName() + " already exists in the \"" + MibBrowser.DEFAULT_MIB_DIR.getName() 
+                        String popupMsg = destMibFile.getName() + " already exists in the \"" + MibBrowser.DEFAULT_MIB_DIR 
                             + "\" directory." + "  Overwrite existing MIB file?";
                         int confirmValue = JOptionPane.showConfirmDialog(menuParentFrame, popupMsg ,"MIB File Already Exists", 
                                 JOptionPane.YES_NO_OPTION);

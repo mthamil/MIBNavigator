@@ -44,7 +44,6 @@ public interface MibTreeBuilder
      */
     public void addMIBDirectory(File mibDir);
     
-    
     /**
      * Adds an individual MIB file to the MIB tree.
      * 
@@ -54,10 +53,15 @@ public interface MibTreeBuilder
      */
     public void addMIBFile(File mibFile) throws InvalidMibFormatException;
     
-    
     /**
      * Retrieves the TreeModel used by the builder.
      */
     public TreeModel getMibTreeModel();
+    
+    /**
+     * Gets the format-specific base folder name used by the tree builder.
+     * @return
+     */
+    public String getMibFolder();
 
 }
