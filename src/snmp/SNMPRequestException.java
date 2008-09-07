@@ -80,7 +80,7 @@ public class SNMPRequestException extends SNMPException
     
     
     /**
-     *  Create exception with errorIndex, errorStatus
+     *  Creates exception with errorIndex, errorStatus
      */
     public SNMPRequestException(int errorIndex, int errorStatus)
     {
@@ -92,7 +92,7 @@ public class SNMPRequestException extends SNMPException
     
     
     /**
-     *  Create exception with errorIndex, errorStatus, and message string
+     *  Creates exception with errorIndex, errorStatus, and message string
      */
     public SNMPRequestException(String message, int errorIndex, int errorStatus)
     {

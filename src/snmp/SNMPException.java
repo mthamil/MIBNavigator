@@ -29,7 +29,9 @@ package snmp;
  */
 public class SNMPException extends Exception
 {
-    
+	/**
+     *  Creates a new exception.
+     */
     public SNMPException()
     {
         super();
@@ -37,11 +39,11 @@ public class SNMPException extends Exception
     
     
     /**
-     *  Create a new exception with message string.
+     *  Creates a new exception with message string.
      */
-    public SNMPException(String s)
+    public SNMPException(String message)
     {
-        super(s);
+        super(message);
     }
     
     

@@ -30,7 +30,7 @@ public class SNMPNSAPAddress extends SNMPOctetString
     // length limited to 6 octets
     
     /**
-     *  Initialize address to 0.0.0.0.0.0.
+     *  Initializes address to 0.0.0.0.0.0.
      */
     public SNMPNSAPAddress()
     {
@@ -53,7 +53,7 @@ public class SNMPNSAPAddress extends SNMPOctetString
     
     
     /** 
-     *  Used to initialize from the BER encoding, as received in a response from 
+     *  Initializes from the BER encoding, as received in a response from 
      *  an SNMP device responding to an SNMPGetRequest, or from a supplied byte array
      *  containing the address components.
      *  
@@ -72,7 +72,7 @@ public class SNMPNSAPAddress extends SNMPOctetString
     
     
     /** 
-     *  Used to set the value from a byte array containing the address.
+     * Sets the value from a byte array containing the address.
      *  
      *  @throws SNMPBadValueException Indicates an incorrect object type supplied, or array of
      *  incorrect size.
@@ -90,7 +90,7 @@ public class SNMPNSAPAddress extends SNMPOctetString
     
 
     /** 
-     *  Return pretty-printed (dash-separated) address.
+     *  Returns pretty-printed (dash-separated) address.
      */
     public String toString()
     {

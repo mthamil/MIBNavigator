@@ -94,7 +94,7 @@ public class UserSettings
 	/**
 	 * Gets the list of saved IP addresses.
 	 */
-	public List<String> getAddressList()
+	public List<String> getAddresses()
 	{
 		return addresses;
 	}
@@ -102,17 +102,17 @@ public class UserSettings
 	/**
 	 * Sets the list of saved IP addresses.
 	 */
-	public void setAddressList(List<String> newList)
+	public void setAddresses(List<String> newAddresses)
 	{
-		if (newList == null)
+		if (newAddresses == null)
 			throw new IllegalArgumentException("Address list cannot be null.");
 
-		if (newList != addresses)
+		if (newAddresses != addresses)
 		{
 			// Check to to see if the Lists are equivalent.
-			if (!newList.equals(addresses))
+			if (!newAddresses.equals(addresses))
 			{
-				addresses = newList;
+				addresses = newAddresses;
 				settingsChanged = true;
 			}
 		}

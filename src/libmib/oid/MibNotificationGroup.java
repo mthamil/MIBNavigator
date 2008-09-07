@@ -39,7 +39,7 @@ package libmib.oid;
  * </code>
  * </pre>
  */
-public class MibNotificationGroup extends MibGenericGroup 
+public class MibNotificationGroup extends MibGroup 
 {
 
     /**

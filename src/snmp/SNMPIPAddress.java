@@ -30,7 +30,7 @@ public class SNMPIPAddress extends SNMPOctetString
     // length limited to 4 octets
     
     /** 
-     *  Initialize address to 0.0.0.0
+     *  Initializes address to 0.0.0.0
      */  
     public SNMPIPAddress()
     {
@@ -43,7 +43,7 @@ public class SNMPIPAddress extends SNMPOctetString
     
     
     /** 
-     *  Used to initialize from a string containing a standard "dotted" IP address.
+     *  Initializes from a string containing a standard "dotted" IP address.
      *   
      *  @throws SNMPBadValueException Indicates an invalid string supplied: more than 4 components,
      *  component values not between 0 and 255, etc.
@@ -57,7 +57,7 @@ public class SNMPIPAddress extends SNMPOctetString
     
     
     /** 
-     *  Used to initialize from the BER encoding, as received in a response from 
+     *  Initializes from the BER encoding, as received in a response from 
      *  an SNMP device responding to an SNMPGetRequest, or from a supplied byte array
      *  containing the address components.
      *  
@@ -76,7 +76,7 @@ public class SNMPIPAddress extends SNMPOctetString
     
     
     /** 
-     *  Used to set the value from a byte array containing the address.
+     *  Sets the value from a byte array containing the address.
      *  
      *  @throws SNMPBadValueException Indicates an incorrect object type supplied, or array of
      *  incorrect size.
@@ -84,7 +84,7 @@ public class SNMPIPAddress extends SNMPOctetString
     public void setValue(Object newAddress)
         throws SNMPBadValueException
     {
-        if ((newAddress instanceof byte[]) && (((byte[])newAddress).length == 4))
+        if (newAddress instanceof byte[] && ((byte[])newAddress).length == 4)
             data = (byte[])newAddress;
         else if (newAddress instanceof String)
             data = parseIPAddress((String)newAddress);
@@ -94,36 +94,8 @@ public class SNMPIPAddress extends SNMPOctetString
     
     
     
-    /** 
-     *  Return pretty-printed IP address.
-     */
-    public String toString()
-    {
-        StringBuffer returnStringBuffer = new StringBuffer();
-        
-        if (data.length > 0)
-        {
-            int convert = data[0];
-            if (convert < 0)
-                    convert += 256;
-                returnStringBuffer.append(convert);
-                    
-            for (int i = 1; i < data.length; i++)
-            {
-                convert = data[i];
-                if (convert < 0)
-                    convert += 256;
-                returnStringBuffer.append(".");
-                returnStringBuffer.append(convert);
-            }
-        }
-        
-        return returnStringBuffer.toString();
-    }
-    
-    
     private byte[] parseIPAddress(String addressString)
-        throws SNMPBadValueException
+    	throws SNMPBadValueException
     {
         try
         {
@@ -188,6 +160,34 @@ public class SNMPIPAddress extends SNMPOctetString
         }*/
         
     }
+
+
+	/** 
+	 *  Returns pretty-printed IP address.
+	 */
+	public String toString()
+	{
+	    StringBuffer returnStringBuffer = new StringBuffer();
+	    
+	    if (data.length > 0)
+	    {
+	        int convert = data[0];
+	        if (convert < 0)
+	                convert += 256;
+	            returnStringBuffer.append(convert);
+	                
+	        for (int i = 1; i < data.length; i++)
+	        {
+	            convert = data[i];
+	            if (convert < 0)
+	                convert += 256;
+	            returnStringBuffer.append(".");
+	            returnStringBuffer.append(convert);
+	        }
+	    }
+	    
+	    return returnStringBuffer.toString();
+	}
     
     /*public static void main(String[] args)
     {

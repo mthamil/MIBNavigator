@@ -140,10 +140,11 @@ package snmp;
  * @see <a href="http://www.ietf.org/rfc/rfc1448.txt">RFC 1448</a>
  */
 public class SNMPv2TrapPDU extends SNMPPDU
+						   implements SNMPTrapPDU
 {
 
     /**
-     *  Create a new Trap PDU with given trapOID and sysUptime,
+     *  Creates a new Trap PDU with given trapOID and sysUptime,
      *  and containing the supplied SNMP sequence as data.
      */
     public SNMPv2TrapPDU(SNMPTimeTicks sysUptime, SNMPObjectIdentifier snmpTrapOID, SNMPSequence varList)
@@ -164,7 +165,7 @@ public class SNMPv2TrapPDU extends SNMPPDU
     
     
     /**
-     *  Create a new Trap PDU with given trapOID and sysUptime,
+     *  Creates a new Trap PDU with given trapOID and sysUptime,
      *  and containing an empty SNMP sequence (VarBindList) as additional data.
      */
     public SNMPv2TrapPDU(SNMPObjectIdentifier snmpTrapOID, SNMPTimeTicks sysUptime)
@@ -175,7 +176,7 @@ public class SNMPv2TrapPDU extends SNMPPDU
     
     
     /**
-     *  Create a new PDU of the specified type from the supplied BER encoding.
+     *  Creates a new PDU of the specified type from the supplied BER encoding.
      *  
      *  @throws SNMPBadValueException Indicates invalid SNMP PDU encoding supplied in enc.
      */
@@ -213,7 +214,7 @@ public class SNMPv2TrapPDU extends SNMPPDU
     
     
     /** 
-     *  A utility method that extracts the snmpTrapOID from the variable bind list (it's the second of the 
+     *  Extracts the snmpTrapOID from the variable bind list (it's the second of the 
      *  variable pairs).
      */
     public SNMPObjectIdentifier getSNMPTrapOID()
@@ -225,7 +226,7 @@ public class SNMPv2TrapPDU extends SNMPPDU
     
 
     /** 
-     *  A utility method that extracts the sysUptime from the variable bind list (it's the first of the 
+     *  Extracts the sysUptime from the variable bind list (it's the first of the 
      *  variable pairs).
      */
     public SNMPTimeTicks getSysUptime()

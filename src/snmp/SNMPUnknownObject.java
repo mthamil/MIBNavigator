@@ -35,7 +35,7 @@ public class SNMPUnknownObject extends SNMPObject
     protected SNMPBERType tag = SNMPBERType.SNMP_UNKNOWN_OBJECT;    
     
     /**
-     *  Just takes a byte array, and uses this as raw bytes.
+     *  Takes a byte array and uses it as raw bytes.
      */
     public SNMPUnknownObject(byte[] enc)
     {
@@ -44,7 +44,7 @@ public class SNMPUnknownObject extends SNMPObject
     
     
     /**
-     *  Return a byte array containing the raw bytes supplied.
+     *  Returns a byte array containing the raw bytes supplied.
      */
     public Object getValue()
     {
@@ -66,7 +66,7 @@ public class SNMPUnknownObject extends SNMPObject
     
     
     /**
-     *  Return the BER encoding of this object.
+     *  Returns the BER encoding of this object.
      */
     protected byte[] getBEREncoding()
     {
@@ -85,7 +85,7 @@ public class SNMPUnknownObject extends SNMPObject
     
     
     /**
-     *  Return String created from raw bytes of this object.
+     *  Returns a String created from raw bytes of this object.
      */
     public String toString()
     {

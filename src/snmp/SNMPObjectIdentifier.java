@@ -22,6 +22,7 @@
 package snmp;
 
 import java.io.*;
+import java.util.Arrays;
 
 /**
  *  Class representing ASN.1 object identifiers. These are unbounded sequences (arrays) of
@@ -34,7 +35,7 @@ public class SNMPObjectIdentifier extends SNMPObject
     protected SNMPBERType tag = SNMPBERType.SNMP_OBJECT_IDENTIFIER;
 
     /**
-     *  Create a new empty object identifier (0-length array).
+     *  Creates a new empty object identifier (0-length array).
      */
     public SNMPObjectIdentifier()
     {
@@ -43,7 +44,7 @@ public class SNMPObjectIdentifier extends SNMPObject
 
     
     /**
-     *  Create a new object identifier from the supplied string of dot-separated nonegative
+     *  Creates a new object identifier from the supplied string of dot-separated nonegative
      *  decimal integer values.
      *  
      *  @throws SNMPBadValueException Indicates incorrectly-formatted string supplied.
@@ -51,12 +52,12 @@ public class SNMPObjectIdentifier extends SNMPObject
     public SNMPObjectIdentifier(String digitString)
         throws SNMPBadValueException
     {
-        convertDigitString(digitString);
+        parseObjectIdentifier(digitString);
     }
 
 
     /**
-     *  Create a new object identifier from the supplied array of nonegative
+     *  Creates a new object identifier from the supplied array of non-negative
      *  integer values.
      *  
      *  @throws SNMPBadValueException Negative value(s) supplied.
@@ -79,7 +80,7 @@ public class SNMPObjectIdentifier extends SNMPObject
 
     
     /**
-     *  Create a new object identifier from the supplied array of nonegative
+     *  Creates a new object identifier from the supplied array of nonegative
      *  long values.
      *  
      *  @throws SNMPBadValueException Negative value(s) supplied.
@@ -100,7 +101,7 @@ public class SNMPObjectIdentifier extends SNMPObject
 
 
     /**
-     *  Used to initialize from the BER encoding, as received in a response from
+     *  Initializes from the BER encoding, as received in a response from
      *  an SNMP device responding to an SNMPGetRequest.
      *  
      *  @throws SNMPBadValueException Indicates an invalid BER encoding supplied. Shouldn't
@@ -114,7 +115,7 @@ public class SNMPObjectIdentifier extends SNMPObject
 
 
     /**
-     *  Return array of integers corresponding to components of identifier.
+     *  Returns array of integers corresponding to components of identifier.
      */
     public Object getValue()
     {
@@ -123,7 +124,7 @@ public class SNMPObjectIdentifier extends SNMPObject
 
 
     /**
-     *  Used to set the value from an integer or long array containing the identifier components, or from
+     *  Sets the value from an integer or long array containing the identifier components, or from
      *  a String containing a dot-separated sequence of nonegative values.
      *  
      *  @throws SNMPBadValueException Indicates an incorrect object type supplied, or negative array
@@ -157,14 +158,14 @@ public class SNMPObjectIdentifier extends SNMPObject
             this.digits = longDigits;
         }
         else if (digits instanceof String)
-            convertDigitString((String)digits);
+            parseObjectIdentifier((String)digits);
         else
             throw new SNMPBadValueException(" Object Identifier: bad object supplied to set value ");
     }
 
 
     /**
-     *  Return BER encoding for this object identifier.
+     *  Returns the BER encoding for this object identifier.
      */
     protected byte[] getBEREncoding()
     {
@@ -241,7 +242,7 @@ public class SNMPObjectIdentifier extends SNMPObject
     }
 
 
-    private void convertDigitString(String digitString)
+    private void parseObjectIdentifier(String digitString)
         throws SNMPBadValueException
     {
 		try
@@ -415,7 +416,7 @@ public class SNMPObjectIdentifier extends SNMPObject
         SNMPObjectIdentifier otherSNMPObject = (SNMPObjectIdentifier)other;
 
         // see if their embedded arrays are equal
-        if (java.util.Arrays.equals((long[])this.getValue(),(long[])otherSNMPObject.getValue()))
+        if (Arrays.equals((long[])this.getValue(), (long[])otherSNMPObject.getValue()))
             return true;
          
         return false;
@@ -446,7 +447,7 @@ public class SNMPObjectIdentifier extends SNMPObject
 
 
     /**
-     *  Return dot-separated sequence of decimal values.
+     *  Returns a dot-separated sequence of decimal values.
      */
     public String toString()
     {

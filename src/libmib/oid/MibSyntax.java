@@ -24,27 +24,28 @@ package libmib.oid;
 import java.util.List;
 
 /**
- * This class is a logical grouping of attributes that define the syntax of a
- * MIB Object. This includes a data type name and the optional default value and value list.
+ * This class is a logical grouping of attributes that define the type of a
+ * MIB Object. This includes a data type name and the optional default 
+ * value and list of allowed name-value pairs.
  */
 public class MibSyntax 
 {
     private String dataType;
     private String defaultValue;
-    private List<MibValueListItem> valuesList;
+    private List<MibNameValuePair> values;
     
     public MibSyntax()
     {
         dataType = "";
         defaultValue = "";
-        valuesList = null;
+        values = null;
     }
     
     public MibSyntax(String newType)
     {
         dataType = newType;
         defaultValue = "";
-        valuesList = null; 
+        values = null; 
     }
     
     
@@ -95,22 +96,22 @@ public class MibSyntax
      * 
      * @return a list of possible values
      */
-    public List<MibValueListItem> getValuesList()
+    public List<MibNameValuePair> getValues()
     {
-        return valuesList;
+        return values;
     }
     
     /**
      * Sets the list of possible values for this MIB object.
      * 
-     * @param newList a list of possible values
+     * @param newValues a list of possible values
      */
-    public void setValuesList(List<MibValueListItem> newList)
+    public void setValues(List<MibNameValuePair> newValues)
     {
-        if (newList == null)
+        if (newValues == null)
             throw new IllegalArgumentException("Values list cannot be set to null.");
         
-        valuesList = newList;
+        values = newValues;
     }
     
     /**
@@ -118,12 +119,12 @@ public class MibSyntax
      * 
      * @return false if no list has been created
      */
-    public boolean hasValueList()
+    public boolean hasValues()
     {
-        if (valuesList == null)
+        if (values == null)
             return false;
         
-        //if not null
+        // If not null
         return true;
 
     }
@@ -138,26 +139,22 @@ public class MibSyntax
      * @return the String name associated with the integer value or an empty String if the 
      *         value wasn't found
      */
-    public String matchValueName(int searchValue)
+    public String findValueName(int searchValue)
     {
-        if (valuesList == null)
+        if (!this.hasValues())
             throw new NullPointerException("This syntax has no values list.");
         
         //Use a simple O(N) search since value lists shouldn't be very long.
-        int i = 0;
-        boolean found = false;
         String valueName = "";
         
-        while (i < valuesList.size() && !found)
+        for (int i = 0; i < values.size(); i++)
         {
-            MibValueListItem curItem = valuesList.get(i);
-            if (searchValue == curItem.getValueNumber())
+            MibNameValuePair curItem = values.get(i);
+            if (searchValue == curItem.getValue())
             {
-                valueName = curItem.getValueName();
-                found = true; //value found, stop searching
+                valueName = curItem.getName();
+                break; // value found, stop searching
             }
-            
-            i++;
         }
         
         return valueName;

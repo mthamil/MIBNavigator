@@ -30,7 +30,7 @@ public class SNMPBitString extends SNMPOctetString
     protected SNMPBERType tag = SNMPBERType.SNMP_BITSTRING;
         
     /**
-     *  Create a zero-length bit string.
+     *  Creates a zero-length bit string.
      */
     public SNMPBitString()
     {
@@ -39,16 +39,16 @@ public class SNMPBitString extends SNMPOctetString
     
     
     /**
-     *  Create a bit string from the bytes of the supplied String.
+     *  Creates a bit string from the bytes of the supplied String.
      */
-    public SNMPBitString(String stringData)
+    public SNMPBitString(String dataString)
     {
-        this.data = stringData.getBytes();
+        this.data = dataString.getBytes();
     }
     
     
     /**
-     *  Create a bit string from the supplied byte array. The array may be either
+     *  Creates a bit string from the supplied byte array. The array may be either
      *  user-supplied, or part of a retrieved BER encoding. Note that the BER encoding
      *  of the data of a bit string is just the raw bytes.
      */

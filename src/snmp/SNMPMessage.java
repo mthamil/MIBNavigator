@@ -78,14 +78,14 @@ public class SNMPMessage extends SNMPSequence
 {
     
     /**
-     * Create an SNMP message with specified version, community, and pdu. Use
-     * version = 0 for SNMP version 1, or version = 1 for enhanced capapbilities
+     * Creates an SNMP message with specified version, community, and PDU. Use
+     * version = 0 for SNMP version 1, or version = 1 for enhanced capabilities
      * provided through RFC 1157.
      */
     public SNMPMessage(int version, String community, SNMPPDU pdu)
     {
         super();
-        Vector<SNMPObject> contents = new Vector<SNMPObject>();
+        List<SNMPObject> contents = new Vector<SNMPObject>();
         contents.add(0, new SNMPInteger(version));
         contents.add(1, new SNMPOctetString(community));
         contents.add(2, pdu);
@@ -102,14 +102,14 @@ public class SNMPMessage extends SNMPSequence
     
 
     /**
-     *  Create an SNMP message with specified version, community, and trap pdu.
-     *  Use version = 0 for SNMP version 1, or version = 1 for enhanced capapbilities
+     *  Creates an SNMP message with specified version, community, and trap PDU.
+     *  Use version = 0 for SNMP version 1, or version = 1 for enhanced capabilities
      *  provided through RFC 1157.
      */
     public SNMPMessage(int version, String community, SNMPv1TrapPDU pdu)
     {
         super();
-        Vector<SNMPObject> contents = new Vector<SNMPObject>();
+        List<SNMPObject> contents = new Vector<SNMPObject>();
         contents.add(0, new SNMPInteger(version));
         contents.add(1, new SNMPOctetString(community));
         contents.add(2, pdu);
@@ -126,13 +126,13 @@ public class SNMPMessage extends SNMPSequence
     
     
     /**
-     *  Create an SNMP message with specified version, community, and v2 trap pdu.
+     *  Creates an SNMP message with specified version, community, and v2 trap pdu.
      *  Use version = 1.
      */
     public SNMPMessage(int version, String community, SNMPv2TrapPDU pdu)
     {
         super();
-        Vector<SNMPObject> contents = new Vector<SNMPObject>();
+        List<SNMPObject> contents = new Vector<SNMPObject>();
         contents.add(0, new SNMPInteger(version));
         contents.add(1, new SNMPOctetString(community));
         contents.add(2, pdu);
@@ -149,7 +149,7 @@ public class SNMPMessage extends SNMPSequence
     
     
     /**
-     *  Construct an SNMPMessage from a received ASN.1 byte representation.
+     *  Constructs an SNMPMessage from a received ASN.1 byte representation.
      *  
      *  @throws SNMPBadValueException Indicates invalid SNMP message encoding supplied.
      */
@@ -159,7 +159,7 @@ public class SNMPMessage extends SNMPSequence
         super(enc);
         
         // validate the message: make sure we have the appropriate pieces
-        Vector contents = (Vector)(this.getValue());
+        List<SNMPObject> contents = sequence;
         
         if (contents.size() != 3)
             throw new SNMPBadValueException("Bad SNMP message");
@@ -178,27 +178,23 @@ public class SNMPMessage extends SNMPSequence
     
     
     /** 
-     *  Utility method which returns the PDU contained in the SNMP message as a plain Java Object. 
-     *  The pdu is the third component of the sequence, after the version and community name.
+     *  Returns the PDU contained in the SNMP message as a plain Java Object. 
+     *  The PDU is the third component of the sequence, after the version and community name.
      */
-    public Object getPDUAsObject()
-        throws SNMPBadValueException
+    public Object getPDUAsObject() throws SNMPBadValueException
     {
-        Vector contents = (Vector)(this.getValue());
-        Object pdu = contents.get(2);
+        Object pdu = sequence.get(2);
         return pdu;
     }
     
     
     /** 
-     *  Utility method which returns the PDU contained in the SNMP message. The pdu is the third component
+     *  Returns the PDU contained in the SNMP message. The PDU is the third component
      *  of the sequence, after the version and community name.
      */
-    public SNMPPDU getPDU()
-        throws SNMPBadValueException
+    public SNMPPDU getPDU() throws SNMPBadValueException
     {
-        Vector contents = (Vector)(this.getValue());
-        Object pdu = contents.get(2);
+        Object pdu = sequence.get(2);
         
         if (!(pdu instanceof SNMPPDU))
             throw new SNMPBadValueException("Wrong PDU type in message: expected SNMPPDU, have " + pdu.getClass().toString());
@@ -208,14 +204,12 @@ public class SNMPMessage extends SNMPSequence
     
     
     /** 
-     *  Utility method which returns the PDU contained in the SNMP message as an SNMPv1TrapPDU. The pdu is the 
+     *  Returns the PDU contained in the SNMP message as an SNMPv1TrapPDU. The PDU is the 
      *  third component of the sequence, after the version and community name.
      */
-    public SNMPv1TrapPDU getv1TrapPDU()
-        throws SNMPBadValueException
+    public SNMPv1TrapPDU getv1TrapPDU() throws SNMPBadValueException
     {
-        Vector contents = (Vector)(this.getValue());
-        Object pdu = contents.get(2);
+        Object pdu = sequence.get(2);
         
         if (!(pdu instanceof SNMPv1TrapPDU))
             throw new SNMPBadValueException("Wrong PDU type in message: expected SNMPTrapPDU, have " + pdu.getClass().toString());
@@ -225,14 +219,12 @@ public class SNMPMessage extends SNMPSequence
     
     
     /** 
-     *  Utility method which returns the PDU contained in the SNMP message as an SNMPv2TrapPDU. The pdu is the 
+     *  Returns the PDU contained in the SNMP message as an SNMPv2TrapPDU. The PDU is the 
      *  third component of the sequence, after the version and community name.
      */
-    public SNMPv2TrapPDU getv2TrapPDU()
-        throws SNMPBadValueException
+    public SNMPv2TrapPDU getv2TrapPDU() throws SNMPBadValueException
     {
-        Vector contents = (Vector)(this.getValue());
-        Object pdu = contents.get(2);
+        Object pdu = sequence.get(2);
         
         if (!(pdu instanceof SNMPv2TrapPDU))
             throw new SNMPBadValueException("Wrong PDU type in message: expected SNMPv2TrapPDU, have " + pdu.getClass().toString());
@@ -243,14 +235,12 @@ public class SNMPMessage extends SNMPSequence
     
     
     /** 
-     *  Utility method which returns the community name contained in the SNMP message. The community name is the 
+     *  Returns the community name contained in the SNMP message. The community name is the 
      *  second component of the sequence, after the version.
      */
-    public String getCommunityName()
-        throws SNMPBadValueException
+    public String getCommunityName() throws SNMPBadValueException
     {
-        Vector contents = (Vector)(this.getValue());
-        Object communityName = contents.get(1);
+        Object communityName = sequence.get(1);
         
         if (!(communityName instanceof SNMPOctetString))
             throw new SNMPBadValueException("Wrong SNMP type for community name in message: expected SNMPOctetString, have " 

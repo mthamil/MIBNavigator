@@ -55,7 +55,7 @@ public class SNMPTrapReceiver implements Runnable
     
 
     /**
-     *  Construct a new trap receiver object to receive traps from remote SNMP hosts.
+     *  Constructs a new trap receiver object to receive traps from remote SNMP hosts.
      *  This version will accept messages from all hosts using any community name.
      */
     public SNMPTrapReceiver()
@@ -67,7 +67,7 @@ public class SNMPTrapReceiver implements Runnable
     
     
     /**
-     *  Construct a new trap receiver object to receive traps from remote SNMP hosts.
+     *  Constructs a new trap receiver object to receive traps from remote SNMP hosts.
      *  This version will accept messages from all hosts using any community name. Uses the
      *  specified Writer to deliver error messages.
      */
@@ -87,7 +87,7 @@ public class SNMPTrapReceiver implements Runnable
     
     
     /**
-     *  Set the specified PrintWriter to receive error messages.
+     *  Sets the specified PrintWriter to receive error messages.
      */
     public void setErrorReceiver(PrintWriter errorReceiver)
     {
@@ -186,7 +186,7 @@ public class SNMPTrapReceiver implements Runnable
 
     
     /**
-     *  Start listening for trap and inform messages.
+     *  Starts listening for trap and inform messages.
      */
     public void startReceiving()
     {
@@ -200,7 +200,7 @@ public class SNMPTrapReceiver implements Runnable
     
     
     /**
-     *  Stop listening for trap and inform messages.
+     *  Stops listening for trap and inform messages.
      */
     public void stopReceiving()
         throws SocketException
@@ -303,7 +303,7 @@ public class SNMPTrapReceiver implements Runnable
     
     
     /**
-     *  Set the size of the buffer used to receive response packets. RFC 1157 stipulates that an SNMP
+     *  Sets the size of the buffer used to receive response packets. RFC 1157 stipulates that an SNMP
      *  implementation must be able to receive packets of at least 484 bytes, so if you try to set the
      *  size to a value less than this, the receive buffer size will be set to 484 bytes. In addition,
      *  the maximum size of a UDP packet payload is 65535 bytes, so setting the buffer to a larger size

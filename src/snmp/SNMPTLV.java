@@ -28,6 +28,6 @@ package snmp;
 class SNMPTLV
 {
     SNMPBERType tag;
-    int totalLength;
+    int length;
     byte[] value;
 }

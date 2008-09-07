@@ -39,7 +39,7 @@ package libmib.oid;
  * </code>
  * </pre>
  */
-public class MibObjectGroup extends MibGenericGroup 
+public class MibObjectGroup extends MibGroup 
 {
     /**
      * Constructs a new, default empty MibObjectGroup.

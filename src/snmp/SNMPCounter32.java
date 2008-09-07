@@ -37,7 +37,7 @@ public class SNMPCounter32 extends SNMPInteger
     private static BigInteger maxValue = new BigInteger("4294967295");
     
     /** 
-     *  Initialize value to 0.
+     *  Initializes value to 0.
      */
     public SNMPCounter32()
     {
@@ -57,7 +57,7 @@ public class SNMPCounter32 extends SNMPInteger
     
     
     /** 
-     *  Used to initialize from the BER encoding, usually received in a response from 
+     *  Initializes from the BER encoding, usually received in a response from 
      *  an SNMP device responding to an SNMPGetRequest.
      *  
      *  @throws SNMPBadValueException Indicates an invalid BER encoding supplied. Shouldn't
@@ -76,7 +76,7 @@ public class SNMPCounter32 extends SNMPInteger
     
     
     /** 
-     *  Used to set the value with an instance of java.lang.Integer or
+     *  Sets the value with an instance of java.lang.Integer or
      *  java.lang.BigInteger. The value of the constructed SNMPCounter32 object is the
      *  supplied value mod 2^32.
      *  

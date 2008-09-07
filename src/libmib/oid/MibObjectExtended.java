@@ -24,7 +24,7 @@ package libmib.oid;
 import java.util.List;
 
 /**
- * This class is an extended version of the MibObjectType class.  It can contain
+ * This class is an extended version of the MibObjectType class.  It contains
  * more MIB object attributes found in ASN.1 module definitions.
  */
 public class MibObjectExtended extends MibObjectType 
@@ -35,8 +35,8 @@ public class MibObjectExtended extends MibObjectType
     private String lastUpdated;
     private String organization;
     private String contact;
-    private List<String> objectGroupList;
-    private List<MibModuleIdRevision> revisionList;
+    private List<String> objectGroup;
+    private List<MibModuleIdRevision> revisions;
     
     /**
      *  Creates a default MibObjectExtended object.
@@ -50,8 +50,8 @@ public class MibObjectExtended extends MibObjectType
         lastUpdated = "";
         organization = "";
         contact = "";
-        objectGroupList = null;
-        revisionList = null;
+        objectGroup = null;
+        revisions = null;
     }
     
     /**
@@ -70,8 +70,8 @@ public class MibObjectExtended extends MibObjectType
         lastUpdated = "";
         organization = "";
         contact = "";
-        objectGroupList = null;
-        revisionList = null;
+        objectGroup = null;
+        revisions = null;
     }
     
     /**
@@ -204,7 +204,7 @@ public class MibObjectExtended extends MibObjectType
      */
     public List<String> getObjectGroup()
     {
-        return objectGroupList;
+        return objectGroup;
     }
     
     /**
@@ -217,7 +217,7 @@ public class MibObjectExtended extends MibObjectType
         if (newGroup == null)
             throw new IllegalArgumentException("Object Group list cannot be set to null.");
         
-        objectGroupList = newGroup;
+        objectGroup = newGroup;
     }
 
     /**
@@ -227,7 +227,7 @@ public class MibObjectExtended extends MibObjectType
      */
     public boolean hasObjectGroup()
     {
-        if (objectGroupList == null)
+        if (objectGroup == null)
             return false;
  
         //if not null
@@ -242,7 +242,7 @@ public class MibObjectExtended extends MibObjectType
      */
     public List<MibModuleIdRevision> getRevisions()
     {
-        return revisionList;
+        return revisions;
     }
     
     /**
@@ -255,7 +255,7 @@ public class MibObjectExtended extends MibObjectType
         if (newRevisions == null)
             throw new IllegalArgumentException("Revisions list cannot be set to null.");
         
-        revisionList = newRevisions;
+        revisions = newRevisions;
     }
 
     /**
@@ -265,7 +265,7 @@ public class MibObjectExtended extends MibObjectType
      */
     public boolean hasRevisions()
     {
-        if (revisionList == null)
+        if (revisions == null)
             return false;
  
         //if not null

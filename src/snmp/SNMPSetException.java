@@ -30,7 +30,7 @@ package snmp;
 public class SNMPSetException extends SNMPRequestException
 {
     /**
-     *  Create exception with errorIndex and errorStatus
+     *  Creates exception with errorIndex and errorStatus.
      */
     public SNMPSetException(int errorIndex, int errorStatus)
     {
@@ -39,7 +39,7 @@ public class SNMPSetException extends SNMPRequestException
     
     
     /**
-     *  Create exception with errorIndex, errorStatus and message string
+     *  Creates exception with errorIndex, errorStatus and message string.
      */
     public SNMPSetException(String message, int errorIndex, int errorStatus)
     {

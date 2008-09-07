@@ -22,6 +22,7 @@
 package snmp;
 
 import java.io.*;
+import java.util.Arrays;
 
 /**
  *  Class representing a general string of octets.
@@ -33,7 +34,7 @@ public class SNMPOctetString extends SNMPObject
 
 
     /**
-     *  Create a zero-length octet string.
+     *  Creates a zero-length octet string.
      */
     public SNMPOctetString()
     {
@@ -42,7 +43,7 @@ public class SNMPOctetString extends SNMPObject
 
 
     /**
-     *  Create an octet string from the bytes of the supplied String.
+     *  Creates an octet string from the bytes of the supplied String.
      */
     public SNMPOctetString(String stringData)
     {
@@ -51,7 +52,7 @@ public class SNMPOctetString extends SNMPObject
 
 
     /**
-     *  Create an octet string from the supplied byte array. The array may be either
+     *  Creates an octet string from the supplied byte array. The array may be either
      *  user-supplied, or part of a retrieved BER encoding. Note that the BER encoding
      *  of the data of an octet string is just the raw bytes.
      */
@@ -62,7 +63,7 @@ public class SNMPOctetString extends SNMPObject
 
 
     /**
-     *  Return the array of raw bytes.
+     *  Returns the array of raw bytes.
      */
     public Object getValue()
     {
@@ -71,7 +72,7 @@ public class SNMPOctetString extends SNMPObject
 
 
     /**
-     *  Used to set the value from a byte array.
+     *  Sets the value from a byte array.
      *  
      *  @throws SNMPBadValueException Indicates an incorrect object type supplied.
      */
@@ -133,7 +134,7 @@ public class SNMPOctetString extends SNMPObject
         SNMPOctetString otherSNMPObject = (SNMPOctetString)other;
 
         // see if their embedded arrays are equal
-        if (java.util.Arrays.equals((byte[])this.getValue(),(byte[])otherSNMPObject.getValue()))
+        if (Arrays.equals((byte[])this.getValue(), (byte[])otherSNMPObject.getValue()))
             return true;
         
         return false;
@@ -165,41 +166,6 @@ public class SNMPOctetString extends SNMPObject
 
 
     /**
-     *  Returns a String constructed from the raw bytes. If the bytes contain a printable String, 
-     *  a printable String will be returned.  Otherwise, a hex String representation of the data
-     *  will be returned.
-     */
-    public String toString()
-    {
-        //Added by Matt Hamilton on July 13, 2005
-        //The following code tries to format the Octet String appropriately
-        //depending on its contents.  This is to ensure that actual character strings
-        //are displayed properly, while binary data is shown as Hex Strings.
-        
-        String returnString = "";
-        
-        if (this.isPrintable())
-        {
-            returnString = new String(data);
-
-            int nullLocation = returnString.indexOf('\0');
-
-            //truncate at first null character if the string doesn't start with null
-            if (nullLocation > 0)
-                returnString = returnString.substring(0, nullLocation);
-        }
-        else
-        {
-            //Display non-printable character data as a hex string.  
-            //This converts the raw bytes to a presentable format.
-            returnString = this.toHexString().toUpperCase();
-        }
-
-		return returnString;
-    }
-    
-    
-    /**
      * Added by Matt Hamilton on 8/9/05.
      * Checks whether the bytes in the OctetString can be displayed or printed as a
      * valid sequence of Unicode characters.  Due to the internal byte array format 
@@ -220,28 +186,22 @@ public class SNMPOctetString extends SNMPObject
     {
         int maxLength = data.length;
         
-        //if (data.length == 1 && data[data.length - 1] == 0)      //special case for single null bytes so that the null hex string is returned
-            //return false;
-        //else 
-        if (data.length > 0 && data[data.length - 1] == 0)  //if the last byte is null (0x00), exclude that byte from the check
+        // If the last byte is null (0x00), exclude that byte from the check.
+        if (data.length > 0 && data[data.length - 1] == 0)
             maxLength = maxLength - 1; 
 
         
-        //Valid, printable, 8-bit Unicode characters should be detected properly.  However,
-        //characters with codes greater than those supported by Unicode Basic Latin and Latin-1 
-        //(up to 0x00FF) will not display properly since bytes are individually checked. Thus each character
-        //displayed will really only be those that can fit into 1 byte, while Java supports 16 bit Unicode 
-        //which uses 2 bytes.
-        //See: <a href="http://www.unicode.org/charts/">Unicode Charts</a>
+        // Valid, printable, 8-bit Unicode characters should be detected properly.  However,
+        // characters with codes greater than those supported by Unicode Basic Latin and Latin-1 
+        // (up to 0x00FF) will not display properly since bytes are individually checked. Thus each character
+        // displayed will really only be those that can fit into 1 byte, while Java supports 16 bit Unicode 
+        // which uses 2 bytes.
+        // See: <a href="http://www.unicode.org/charts/">Unicode Charts</a>
         //
-        //Data should display as hex strings, unless the data manages to be all non-control values, then
-        //it will display characters whether it makes sense or not.
+        // Data should display as hex strings, unless the data manages to be all non-control values, then
+        // it will display characters whether it makes sense or not.
         for (int i = 0; i < maxLength; i++)
         {
-            /*char c = (char)data[i];
-            if (Character.isIdentifierIgnorable(c) || Character.isISOControl(c))
-                return false;*/
-            
             if (Character.isIdentifierIgnorable(data[i]) || Character.isISOControl(data[i]))
                 return false;
         }
@@ -256,8 +216,8 @@ public class SNMPOctetString extends SNMPObject
         if (pos < 0)
             pos += 256;
         String returnString = new String();
-        returnString += Integer.toHexString(pos/16);
-        returnString += Integer.toHexString(pos%16);
+        returnString += Integer.toHexString(pos / 16);
+        returnString += Integer.toHexString(pos % 16);
         return returnString;
     }
 
@@ -267,13 +227,49 @@ public class SNMPOctetString extends SNMPObject
      */
     public String toHexString()
     {
-        StringBuffer returnStringBuffer = new StringBuffer();
+        StringBuffer hexString = new StringBuffer();
 
-        //for (int i = 0; i < data.length; i++)
         for (byte octet : data)
-            returnStringBuffer.append(this.hexByte(octet) + " ");
+            hexString.append(this.hexByte(octet) + " ");
 
-        return returnStringBuffer.toString();
+        return hexString.toString();
     }
+
+
+	
+    
+    /**
+	 *  Returns a String constructed from the raw bytes. If the bytes contain a printable String, 
+	 *  a printable String will be returned.  Otherwise, a hex String representation of the data
+	 *  will be returned.
+	 */
+	public String toString()
+	{
+	    // Added by Matt Hamilton on July 13, 2005
+	    // The following code tries to format the Octet String appropriately
+	    // depending on its contents.  This is to ensure that actual character strings
+	    // are displayed properly, while binary data is shown as Hex Strings.
+	    
+	    String returnString = "";
+	    
+	    if (this.isPrintable())
+	    {
+	        returnString = new String(data);
+	
+	        int nullLocation = returnString.indexOf('\0');
+	
+	        // Truncate at first null character if the string doesn't start with null.
+	        if (nullLocation > 0)
+	            returnString = returnString.substring(0, nullLocation);
+	    }
+	    else
+	    {
+	        // Display non-printable character data as a hex string.  
+	        // This converts the raw bytes to a presentable format.
+	        returnString = this.toHexString().toUpperCase();
+	    }
+	
+		return returnString;
+	}
 
 }

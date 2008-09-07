@@ -25,7 +25,6 @@ import java.io.*;
 import java.net.*;
 
 
-
 /**
  *  The class SNMPInformRequestSender implements a method for sending SNMPv2 inform request messages to a remote SNMP manager. 
  *  The approach is that from version 2c of SNMP, using no encryption of data. Communication occurs via UDP, using port 162, 
@@ -36,7 +35,7 @@ public class SNMPInformRequestSender
     private DatagramSocket dSocket;
     
     /**
-     *  Construct a new inform request sender object to send inform requests to remote SNMP hosts.
+     *  Constructs a new inform request sender object to send inform requests to remote SNMP hosts.
      */
     public SNMPInformRequestSender()
         throws SocketException
@@ -46,7 +45,7 @@ public class SNMPInformRequestSender
     
 
     /**
-     *  Construct a new inform request sender object to send inform requests to remote SNMP hosts, binding to
+     *  Constructs a new inform request sender object to send inform requests to remote SNMP hosts, binding to
      *  the specified local port.
      */
     public SNMPInformRequestSender(int localPort)
@@ -56,7 +55,7 @@ public class SNMPInformRequestSender
     }
     
     /**
-     *  Send the supplied SNMPv2 inform request pdu to the specified host, using the supplied version number
+     *  Sends the supplied SNMPv2 inform request pdu to the specified host, using the supplied version number
      *  and community name. 
      */
     public void sendInformRequest(int version, InetAddress hostAddress, String community, SNMPv2InformRequestPDU pdu)
@@ -92,7 +91,7 @@ public class SNMPInformRequestSender
     
     
     /**
-     *  Send the supplied inform request pdu to the specified host, using the supplied community name and
+     *  Sends the supplied inform request pdu to the specified host, using the supplied community name and
      *  using 1 for the version field in the SNMP message.
      */
     public void sendInformRequest(InetAddress hostAddress, String community, SNMPv2InformRequestPDU pdu)

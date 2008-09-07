@@ -37,7 +37,7 @@ import libmib.oid.MibObjectType.Access;
 import libmib.oid.MibObjectType.Status;
 import libmib.oid.MibObjectExtended;
 import libmib.oid.MibSyntax;
-import libmib.oid.MibValueListItem;
+import libmib.oid.MibNameValuePair;
 
 /**
  * Class for converting ASN.1 MIB definition files to an XML file format.
@@ -317,7 +317,7 @@ public class MibToXmlConverter
         String objOrg = "";
         StringBuilder objContact = new StringBuilder();
         
-        List<MibValueListItem> objValues = null;  //synchronization not needed
+        List<MibNameValuePair> objValues = null;  //synchronization not needed
         List<String> objIndices = null;
         List<String> objGroup = null;  
         List<MibModuleIdRevision> objRevList = null;
@@ -490,7 +490,7 @@ public class MibToXmlConverter
             MibSyntax objSyntax = new MibSyntax(objDataType);
             objSyntax.setDefaultValue(defaultValue);
             if (objValues != null)
-                objSyntax.setValuesList(objValues);
+                objSyntax.setValues(objValues);
             
             mibObject.setSyntax(objSyntax);
         }

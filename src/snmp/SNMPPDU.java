@@ -24,8 +24,6 @@ package snmp;
 import java.util.*;
 import java.math.*;
 
-
-
 /**
  * The SNMPPDU class represents an SNMP PDU from <a href="http://www.ietf.org/rfc/rfc1157.txt">RFC 1157</a>, as indicated below.
  * This forms the payload of an SNMP message.
@@ -101,7 +99,7 @@ public class SNMPPDU extends SNMPSequence
 {
     
     /**
-     * Create a new PDU of the specified type, with given request ID, error
+     * Creates a new PDU of the specified type, with given request ID, error
      * status, and error index, and containing the supplied SNMP sequence as
      * data.
      */
@@ -109,7 +107,7 @@ public class SNMPPDU extends SNMPSequence
         throws SNMPBadValueException
     {
         super();
-        Vector<SNMPObject> contents = new Vector<SNMPObject>();
+        List<SNMPObject> contents = new Vector<SNMPObject>();
         tag = pduType;
         contents.add(0, new SNMPInteger(requestID));
         contents.add(1, new SNMPInteger(errorStatus));
@@ -120,7 +118,7 @@ public class SNMPPDU extends SNMPSequence
     
     
     /**
-     *  Create a new PDU of the specified type from the supplied BER encoding.
+     *  Creates a new PDU of the specified type from the supplied BER encoding.
      *  
      *  @throws SNMPBadValueException Indicates invalid SNMP PDU encoding supplied in enc.
      */
@@ -131,7 +129,7 @@ public class SNMPPDU extends SNMPSequence
         extractFromBEREncoding(enc);
         
         // validate the message: make sure we have the appropriate pieces
-        Vector contents = (Vector)(this.getValue());
+        List<SNMPObject> contents = sequence;
         
         if (contents.size() != 4)
             throw new SNMPBadValueException("Bad PDU");
@@ -170,51 +168,47 @@ public class SNMPPDU extends SNMPSequence
     
     
     /** 
-     *  A utility method that extracts the variable binding list from the pdu. Useful for retrieving
+     *  Extracts the variable binding list from the pdu. Useful for retrieving
      *  the set of (object identifier, value) pairs returned in response to a request to an SNMP
      *  device. The variable binding list is just an SNMP sequence containing the identifier, value pairs.
      *  @see snmp.SNMPVarBindList
      */
     public SNMPSequence getVarBindList()
     {
-        Vector contents = (Vector)(this.getValue());
-        return (SNMPSequence)(contents.get(3));
+        return (SNMPSequence)(sequence.get(3));
     }
     
     
     /** 
-     *  A utility method that extracts the request ID number from this PDU.
+     *  Extracts the request ID number from this PDU.
      */
     public int getRequestID()
     {
-        Vector contents = (Vector)(this.getValue());
-        return ((BigInteger)((SNMPInteger)(contents.get(0))).getValue()).intValue();
+        return ((BigInteger)((SNMPInteger)(sequence.get(0))).getValue()).intValue();
     }
     
     
     /** 
-     *  A utility method that extracts the error status for this PDU; if nonzero, can get index of
+     *  Extracts the error status for this PDU; if nonzero, can get index of
      *  problematic variable using getErrorIndex().
      */
     public int getErrorStatus()
     {
-        Vector contents = (Vector)(this.getValue());
-        return ((BigInteger)((SNMPInteger)(contents.get(1))).getValue()).intValue();
+        return ((BigInteger)((SNMPInteger)(sequence.get(1))).getValue()).intValue();
     }
     
 
     /** 
-     *  A utility method that returns the error index for this PDU, identifying the problematic variable.
+     *  Returns the error index for this PDU, identifying the problematic variable.
      */
     public int getErrorIndex()
     {
-        Vector contents = (Vector)(this.getValue());
-        return ((BigInteger)((SNMPInteger)(contents.get(2))).getValue()).intValue();
+        return ((BigInteger)((SNMPInteger)(sequence.get(2))).getValue()).intValue();
     }
     
 
     /** 
-     *  A utility method that returns the PDU type of this PDU.
+     *  Returns the PDU type of this PDU.
      */
     public SNMPBERType getPDUType()
     {

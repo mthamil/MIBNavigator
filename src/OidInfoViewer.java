@@ -38,7 +38,7 @@ import contextmenu.TextContextMenuListener;
 
 import libmib.oid.MibObjectType;
 import libmib.oid.MibSyntax;
-import libmib.oid.MibValueListItem;
+import libmib.oid.MibNameValuePair;
 import libmib.oid.MibObjectType.Access;
 import libmib.oid.MibObjectType.Status;
 
@@ -301,9 +301,9 @@ public class OidInfoViewer
             oidValueBox.setEnabled(true);
             curModel.removeAllElements();
             
-            List<MibValueListItem> valList = currOID.getSyntax().getValuesList();
-            for (MibValueListItem item : valList)
-                curModel.addElement(item.getValueName() + " (" + item.getValueNumber() + ")");
+            List<MibNameValuePair> valList = currOID.getSyntax().getValues();
+            for (MibNameValuePair item : valList)
+                curModel.addElement(item.getName() + " (" + item.getValue() + ")");
         }
         else
         {

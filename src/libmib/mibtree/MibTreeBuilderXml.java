@@ -40,7 +40,7 @@ import javax.xml.validation.Validator;
 import libmib.InvalidXmlMibFormatException;
 import libmib.oid.MibObjectType;
 import libmib.oid.MibSyntax;
-import libmib.oid.MibValueListItem;
+import libmib.oid.MibNameValuePair;
 import libmib.oid.MibObjectType.Access;
 import libmib.oid.MibObjectType.Status;
 
@@ -164,76 +164,74 @@ public class MibTreeBuilderXml extends AbstractMibTreeBuilder
      * 
      * @param mibObjectNode the Node to extract data from
      */
-    private void handleMIBObjectNode(final Node newMibObjectNode, String mibName)
-    {
-        Node mibObjectNode = newMibObjectNode;
-        
+    private void handleMIBObjectNode(Node mibObjectNode, String mibName)
+    {      
         if (mibObjectNode.getNodeType() == Node.ELEMENT_NODE)
         {
             mibObjectNode.normalize();
             Element mibObjectElement = (Element)mibObjectNode;
 
-            // ***only valid MIB object types will be accepted due to validation***
+            // *** Only valid MIB object types will be accepted due to validation ***
             
-            // get the MIB object's name
+            // Get the MIB object's name.
             String name = extractSubElementText(mibObjectElement, "objectName");
 
             // Check to see if this node is already in the tree or if the name is empty.
             // If either occur, do not attempt to construct a node and add it to the tree.
             if (!name.equals("") && !nodeMap.containsKey(name)) //check the HashMap
             {
-                MibObjectType curMIBObject = new MibObjectType();
-                curMIBObject.setName(name);
+                MibObjectType mibObject = new MibObjectType();
+                mibObject.setName(name);
                 //System.out.println(name);
 
-                // get the MIB object's id
+                // Get the MIB object's id.
                 NodeList idList = mibObjectElement.getElementsByTagName("objectId");
                 Element idElement = (Element)idList.item(0);
 
                 NodeList idText = idElement.getChildNodes();
                 String idString = idText.item(0).getNodeValue().trim();
-                curMIBObject.setId(Integer.parseInt(idString));
+                mibObject.setId(Integer.parseInt(idString));
 
-                // get the MIB object's syntax
+                // Get the MIB object's syntax.
                 NodeList syntaxList = mibObjectElement.getElementsByTagName("syntax");
 
-                // parse the syntax element
+                // Parse the syntax element.
                 if (syntaxList.getLength() > 0)
                 {
                     Element syntaxElement = (Element)syntaxList.item(0);
                     MibSyntax objSyntax = this.parseSyntaxElement(syntaxElement);
                     if (objSyntax != null)
-                        curMIBObject.setSyntax(objSyntax);
+                        mibObject.setSyntax(objSyntax);
                 }
 
-                // get the MIB object's access
+                // Get the MIB object's access.
                 String access = extractSubElementText(mibObjectElement, "access");
                 if (!access.equals(""))
-                    curMIBObject.setAccess(Access.valueOf(access.toUpperCase().replaceAll("-", "_")));
+                    mibObject.setAccess(Access.valueOf(access.toUpperCase().replaceAll("-", "_")));
 
-                // get the MIB object's status
+                // Get the MIB object's status.
                 String status = extractSubElementText(mibObjectElement, "status");
                 if (!status.equals(""))
-                    curMIBObject.setStatus(Status.valueOf(status.toUpperCase()));
+                    mibObject.setStatus(Status.valueOf(status.toUpperCase()));
 
-                // get the MIB object's description
+                // Get the MIB object's description.
                 String description = extractSubElementText(mibObjectElement, "description");
                 if (!description.equals(""))
-                    curMIBObject.setDescription(description);
+                    mibObject.setDescription(description);
 
-                curMIBObject.setMibName(mibName);
+                mibObject.setMibName(mibName);
 
-                // get the MIB object's parent and see if it exists
+                // Get the MIB object's parent and see if it exists.
                 NodeList parentList = mibObjectElement.getElementsByTagName("parent");
                 Element parentElement = (Element)parentList.item(0);
 
                 NodeList parentText = parentElement.getChildNodes();
                 String parentName = parentText.item(0).getNodeValue().trim();
 
-                this.addMibObject(curMIBObject, parentName);
+                this.addMibObject(mibObject, parentName);
 
-            } //if the node didn't already exist and it had a valid name element
-        } //if the object node is an element
+            } // if the node didn't already exist and it had a valid name element
+        } // if the object node is an element
     }
     
     
@@ -265,7 +263,7 @@ public class MibTreeBuilderXml extends AbstractMibTreeBuilder
             // Don't allow empty element nodes, even though the schema forbids it anyway.
             // Also, make sure the node is a text node, though according to the schema, it should be.
             Node textNode = textElementList.item(0);
-            if ( (textNode != null) && (textNode.getNodeType() == Node.TEXT_NODE) )
+            if ( textNode != null && textNode.getNodeType() == Node.TEXT_NODE )
             {
                 String elementContents = textNode.getNodeValue().trim(); //the trim is crucial here
                 return elementContents;
@@ -281,11 +279,11 @@ public class MibTreeBuilderXml extends AbstractMibTreeBuilder
     {
         MibSyntax objSyntax = null;
         
-        // get the data type or sequence from the syntax element
+        // Get the data type or sequence from the syntax element.
         NodeList typeList = syntaxElement.getElementsByTagName("type");
         if (typeList.getLength() > 0)
         {
-            // get data type element
+            // Get data type element.
             Element typeElement = (Element)typeList.item(0);
 
             NodeList typeText = typeElement.getChildNodes();
@@ -293,7 +291,7 @@ public class MibTreeBuilderXml extends AbstractMibTreeBuilder
         }
         else
         {
-            // get sequence element
+            // Get sequence element.
             NodeList sequenceList = syntaxElement.getElementsByTagName("sequence");
             Element sequenceElement = (Element)sequenceList.item(0);
 
@@ -301,21 +299,21 @@ public class MibTreeBuilderXml extends AbstractMibTreeBuilder
             objSyntax = new MibSyntax("Sequence of " + sequenceText.item(0).getNodeValue().trim() );
         }
 
-        // get the value list from the syntax element if one exists
+        // Get the value list from the syntax element if one exists.
         NodeList valuesList = syntaxElement.getElementsByTagName("valueList");
         if (valuesList.getLength() > 0)
         {
-            List<MibValueListItem> values = new ArrayList<MibValueListItem>(); 
+            List<MibNameValuePair> values = new ArrayList<MibNameValuePair>(); 
             
             Element valuesListElement = (Element)valuesList.item(0);
             NodeList valueItemList = valuesListElement.getElementsByTagName("valueItem");
 
-            // loop through all of the value items in the list
+            // Loop through all of the value items in the list.
             for (int j = 0; j < valueItemList.getLength(); j++)
             {
                 Element valueItemElement = (Element)valueItemList.item(j);
 
-                // get the value item's label
+                // Get the value item's label.
                 NodeList labelList = valueItemElement.getElementsByTagName("label");
                 Element labelElement = (Element)labelList.item(0);
 
@@ -330,15 +328,15 @@ public class MibTreeBuilderXml extends AbstractMibTreeBuilder
                 String numberString = valText.item(0).getNodeValue().trim();
                 int numberValue = Integer.parseInt(numberString);
 
-                // add the value list entry
-                MibValueListItem curValueItem = new MibValueListItem(valueLabel, numberValue);
+                // Add the value list entry.
+                MibNameValuePair curValueItem = new MibNameValuePair(valueLabel, numberValue);
                 values.add(curValueItem);
             }
 
             // Since the MIB file must have validated, objSyntax should always be non-null at this point,
             // but you can never be too careful.
             if (objSyntax != null)
-                objSyntax.setValuesList(values);
+                objSyntax.setValues(values);
         }
         
         return objSyntax;

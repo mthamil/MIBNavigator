@@ -67,7 +67,8 @@ public class MibBrowser implements ActionListener, TreeSelectionListener, ListSe
     private StringBuilder currentOidNumber;
     
 	// Base MIB directory (has been tested on Linux and Windows)
-    public static final String DEFAULT_MIB_DIR = "." + File.separator + "mibs"; 
+    private static final String MIB_DIR_NAME = "." + File.separator + "mibs";
+    private File mibDirectory;
     
     private GetRequestWorker snmpGetWorker = null;
     
@@ -91,6 +92,8 @@ public class MibBrowser implements ActionListener, TreeSelectionListener, ListSe
         
         currentOidName = new StringBuilder();
         currentOidNumber = new StringBuilder();
+        
+        mibDirectory = new File(MIB_DIR_NAME + File.separator + treeBuilder.getMibFolder());
 
         initializeComponents();
         layoutComponents(); 
@@ -191,7 +194,7 @@ public class MibBrowser implements ActionListener, TreeSelectionListener, ListSe
         // Configure the mib tree.
         try
         {
-            treeBuilder.addMIBDirectory(new File(DEFAULT_MIB_DIR + File.separator + treeBuilder.getMibFolder()));
+            treeBuilder.addMIBDirectory(mibDirectory);
         }
         catch (IllegalArgumentException e) // if the default directory doesn't exist
         {
@@ -488,7 +491,17 @@ public class MibBrowser implements ActionListener, TreeSelectionListener, ListSe
         browserPanel.add(bottomPanel);
 	}
     
+    
     // *** Start of MibBrowser data access methods. ***
+    
+    /**
+     * Gets the directory where MIB files are contained.
+     */
+    public File getMibDirectory()
+    {
+    	return mibDirectory;
+    }
+    
     
     /**
      * Gets the internal JPanel created and used by MibBrowser.

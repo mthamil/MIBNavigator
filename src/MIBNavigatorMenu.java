@@ -119,20 +119,20 @@ public class MIBNavigatorMenu implements ActionListener
         {
             // Add a new MIB to the browser's tree if it is valid.
 
-            // Create a file chooser that has a filter for xml files.
-            JFileChooser fc = new JFileChooser(new File("."));
-            fc.setFileFilter(xmlFilter);
+        	// Create a file chooser with the correct filter for MIB files.
+            JFileChooser chooser = new JFileChooser(new File("."));
+            chooser.setFileFilter(xmlFilter);
             
             JRootPane menuParentFrame = theMenubar.getRootPane();  // use the root pane's parent frame to launch dialogs
-            int returnValue = fc.showOpenDialog(menuParentFrame);
+            int returnValue = chooser.showOpenDialog(menuParentFrame);
 
             if (returnValue == JFileChooser.APPROVE_OPTION)
             {
-                File mibFile = fc.getSelectedFile();
+                File mib = chooser.getSelectedFile();
                 MibTreeBuilder treeBuilder = navigator.getBrowser().getMibBuilder();
                 try
                 {
-                    treeBuilder.addMIBFile(mibFile);
+                    treeBuilder.addMIBFile(mib);
                     
                     // If the MIB isn't valid, it will not be added and there will be no reason to reload.
                     ((DefaultTreeModel)treeBuilder.getMibTreeModel()).reload();
@@ -145,35 +145,37 @@ public class MIBNavigatorMenu implements ActionListener
         }
         else if (actionCommand.equals("permanently add mib"))
         {
-            // Try to add a new MIB to the browser's tree, and if it is valid, copy and paste it into the default MIBs directory.
+            // Try to add a new MIB to the browser's tree, and if it is valid, copy it into the default MIBs directory.
 
-            // Create a file chooser that has a filter for xml files.
-            JFileChooser fc = new JFileChooser(new File("."));
-            fc.setFileFilter(xmlFilter);
+            // Create a file chooser with the correct filter for MIB files.
+            JFileChooser chooser = new JFileChooser(new File("."));
+            chooser.setFileFilter(xmlFilter);
             
-            JRootPane menuParentFrame = theMenubar.getRootPane();  // use the root pane's parent frame to launch dialogs
-            int returnValue = fc.showOpenDialog(menuParentFrame);
+            JRootPane menuParentFrame = theMenubar.getRootPane();  // Use the root pane's parent frame to launch dialogs
+            int returnValue = chooser.showOpenDialog(menuParentFrame);
 
             if (returnValue == JFileChooser.APPROVE_OPTION)
             {
-                File sourceMibFile = fc.getSelectedFile();
+                File sourceMib = chooser.getSelectedFile();
                 MibTreeBuilder treeBuilder = navigator.getBrowser().getMibBuilder();
+                File mibDirectory = navigator.getBrowser().getMibDirectory();
 
                 try
                 {
-                    treeBuilder.addMIBFile(sourceMibFile);
+                    treeBuilder.addMIBFile(sourceMib);
                     
                     // If the MIB isn't valid, it will not be added and there will be no reason to reload.
                     ((DefaultTreeModel)treeBuilder.getMibTreeModel()).reload();  
                     
-                    File destMibFile = new File("." + File.separator + "mibs" + File.separator + sourceMibFile.getName());
-                    boolean proceedWithCopy = true;
+                    File destinationMib = new File(mibDirectory.getPath() + File.separator + sourceMib.getName());
                     
-                    if (destMibFile.exists())
+                    boolean proceedWithCopy = true;
+                    if (destinationMib.exists())
                     {
                         // ask the user if they want to overwrite the file if it already exists
-                        String popupMsg = destMibFile.getName() + " already exists in the \"" + MibBrowser.DEFAULT_MIB_DIR 
-                            + "\" directory." + "  Overwrite existing MIB file?";
+                        String popupMsg = destinationMib.getName() + " already exists in the \"" 
+                        	+ mibDirectory.getName()  + "\" directory." + "  Overwrite existing MIB file?";
+                        
                         int confirmValue = JOptionPane.showConfirmDialog(menuParentFrame, popupMsg ,"MIB File Already Exists", 
                                 JOptionPane.YES_NO_OPTION);
                         
@@ -183,7 +185,7 @@ public class MIBNavigatorMenu implements ActionListener
 
                     // if the destination file didn't already exist or the user approved an overwrite
                     if (proceedWithCopy)
-                       fileCopy(sourceMibFile, destMibFile);
+                       fileCopy(sourceMib, destinationMib);
                     
                 }
                 catch (IOException e)
@@ -192,7 +194,6 @@ public class MIBNavigatorMenu implements ActionListener
                 }
                 catch (InvalidMibFormatException e)
                 {
-                    //System.out.println(e.getMessage());
                     JOptionPane.showMessageDialog(menuParentFrame, e.getMessage(), "MIB File Error", JOptionPane.ERROR_MESSAGE);
                 }
             }

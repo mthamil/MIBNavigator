@@ -22,7 +22,8 @@
 package snmp;
 
 /**
- * This interface serves as a marker interface identifying classes that represent a PDU.
- * Since not all PDU types share functionality, no methods are required for implementation.
+ * Marker interface identifying classes that represent a PDU.
+ * Since not all PDU types share functionality, no methods 
+ * are required for implementation.
  */
 public interface SNMPPDUMarker {}

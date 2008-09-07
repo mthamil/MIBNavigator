@@ -28,6 +28,9 @@ package snmp;
 public class SNMPTimeTicks extends SNMPInteger
 {
 
+	/**
+	 * Initializes with a zero value.
+	 */
     public SNMPTimeTicks()
     {
         this(0);    // initialize value to 0
@@ -35,7 +38,8 @@ public class SNMPTimeTicks extends SNMPInteger
 
 
     /**
-     *   The long value is truncated to 32 bits for SNMP v2 compatibility.
+     *  Initializes with a long value that is truncated to 
+     *  32 bits for SNMP v2 compatibility.
      */
     public SNMPTimeTicks(long value)
     {
@@ -65,38 +69,37 @@ public class SNMPTimeTicks extends SNMPInteger
     public String toString()
     {
         StringBuilder returnTime = new StringBuilder();
-        //StringBuffer returnTime = new StringBuffer();
 
-        //This conversion will not cause a loss of precision because 
-        //long values are truncated during SNMPTimeTicks creation. Long
-        //is used rather than int as a precaution, however.
+        // This conversion will not cause a loss of precision because 
+        // long values are truncated during SNMPTimeTicks creation. Long
+        // is used rather than int as a precaution, however.
         long hundredths = value.longValue();
 
-        //get days
+        // Get days
         long lngTime = hundredths / 8640000;        // (24 * 60 * 60 * 100) number of 100ths of seconds in a day
         long lngRemaining = hundredths % 8640000;
         returnTime.append(lngTime);
         returnTime.append(":");
         
-        //get hours
+        // Get hours
         lngTime = lngRemaining / 360000;            // (60 * 60 * 100) number of 100ths of seconds in an hour
         lngRemaining = lngRemaining % 360000;
         returnTime.append(lngTime);
         returnTime.append(":");
         
-        //get minutes
+        // Get minutes
         lngTime = lngRemaining / 6000;              // (60 * 100) number of 100ths of seconds in a minute
         lngRemaining = lngRemaining % 6000;
         returnTime.append(lngTime);
         returnTime.append(":");
         
-        //get seconds
+        // Get seconds
         lngTime = lngRemaining / 100;
         lngRemaining = lngRemaining % 100;
         returnTime.append(lngTime);
         returnTime.append(".");
         
-        //get hundredths of a second
+        // Get hundredths of a second
         returnTime.append(lngRemaining);
 
         return returnTime.toString();

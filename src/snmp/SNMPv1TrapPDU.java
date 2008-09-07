@@ -25,7 +25,6 @@ import java.util.*;
 import java.math.*;
 
 
-
 /**
  * The SNMPTrapPDU class represents an SNMPv1 Trap PDU from <a href="http://www.ietf.org/rfc/rfc1157.txt">RFC 1157</a>, as
  * indicated below. This forms the payload of an SNMP Trap message. *
@@ -112,18 +111,18 @@ public class SNMPv1TrapPDU extends SNMPSequence
 {
     
     /**
-     * Create a new Trap PDU of the specified type, with given request ID, error
+     * Creates a new Trap PDU of the specified type, with given request ID, error
      * status, and error index, and containing the supplied SNMP sequence as
      * data.
      */
-    public SNMPv1TrapPDU(SNMPObjectIdentifier enterpriseOID, SNMPIPAddress agentAddress, int genericTrap, int specificTrap, SNMPTimeTicks timestamp, SNMPSequence varList)
-        throws SNMPBadValueException
+    public SNMPv1TrapPDU(SNMPObjectIdentifier enterpriseOID, SNMPIPAddress agentAddress, int genericTrap, 
+    	int specificTrap, SNMPTimeTicks timestamp, SNMPSequence varList) throws SNMPBadValueException
     {
         super();
         
         tag = SNMPBERType.SNMP_TRAP;
         
-        Vector<SNMPObject> contents = new Vector<SNMPObject>();
+        List<SNMPObject> contents = new Vector<SNMPObject>();
         
         contents.add(enterpriseOID);
         contents.add(agentAddress);
@@ -137,17 +136,17 @@ public class SNMPv1TrapPDU extends SNMPSequence
     
     
     /**
-     *  Create a new Trap PDU of the specified type, with given request ID, error status, and error index,
+     *  Creates a new Trap PDU of the specified type, with given request ID, error status, and error index,
      *  and containing an empty SNMP sequence (VarBindList) as additional data.
      */
-    public SNMPv1TrapPDU(SNMPObjectIdentifier enterpriseOID, SNMPIPAddress agentAddress, int genericTrap, int specificTrap, SNMPTimeTicks timestamp)
-        throws SNMPBadValueException
+    public SNMPv1TrapPDU(SNMPObjectIdentifier enterpriseOID, SNMPIPAddress agentAddress, int genericTrap, 
+    	int specificTrap, SNMPTimeTicks timestamp)  throws SNMPBadValueException
     {
         super();
         
         tag = SNMPBERType.SNMP_TRAP;
         
-        Vector<SNMPObject> contents = new Vector<SNMPObject>();
+        List<SNMPObject> contents = new Vector<SNMPObject>();
         
         contents.add(enterpriseOID);
         contents.add(agentAddress);
@@ -161,18 +160,17 @@ public class SNMPv1TrapPDU extends SNMPSequence
     
     
     /**
-     *  Create a new PDU of the specified type from the supplied BER encoding.
+     *  Creates a new PDU of the specified type from the supplied BER encoding.
      *  
      *  @throws SNMPBadValueException Indicates invalid SNMP PDU encoding supplied in enc.
      */
-    protected SNMPv1TrapPDU(byte[] enc)
-        throws SNMPBadValueException
+    protected SNMPv1TrapPDU(byte[] enc) throws SNMPBadValueException
     {
         tag = SNMPBERType.SNMP_TRAP;
         extractFromBEREncoding(enc);
         
         // validate the message: make sure we have the appropriate pieces
-        Vector contents = (Vector)(this.getValue());
+        List<SNMPObject> contents = sequence;
         
         if (contents.size() != 6)
             throw new SNMPBadValueException("Bad Trap PDU");
@@ -215,65 +213,59 @@ public class SNMPv1TrapPDU extends SNMPSequence
     
     
     /** 
-     *  A utility method that extracts the variable binding list from the pdu. Useful for retrieving
+     *  Extracts the variable binding list from the pdu. Useful for retrieving
      *  the set of (object identifier, value) pairs returned in response to a request to an SNMP
      *  device. The variable binding list is just an SNMP sequence containing the identifier, value pairs.
      *  @see snmp.SNMPVarBindList
      */
     public SNMPSequence getVarBindList()
     {
-        Vector contents = (Vector)(this.getValue());
-        return (SNMPSequence)(contents.get(5));
+        return (SNMPSequence)(sequence.get(5));
     }
     
     
     /** 
-     *  A utility method that extracts the enterprise OID from this PDU.
+     *  Extracts the enterprise OID from this PDU.
      */
     public SNMPObjectIdentifier getEnterpriseOID()
     {
-        Vector contents = (Vector)(this.getValue());
-        return (SNMPObjectIdentifier)contents.get(0);
+        return (SNMPObjectIdentifier)sequence.get(0);
     }
     
     
     /** 
-     *  A utility method that extracts the sending agent address this PDU.
+     *  Extracts the sending agent address this PDU.
      */
     public SNMPIPAddress getAgentAddress()
     {
-        Vector contents = (Vector)(this.getValue());
-        return (SNMPIPAddress)contents.get(1);
+        return (SNMPIPAddress)sequence.get(1);
     }
     
     
     /** 
-     *  A utility method that returns the generic trap code for this PDU.
+     *  Returns the generic trap code for this PDU.
      */
     public int getGenericTrap()
     {
-        Vector contents = (Vector)(this.getValue());
-        return ((BigInteger)((SNMPInteger)(contents.get(2))).getValue()).intValue();
+        return ((BigInteger)((SNMPInteger)(sequence.get(2))).getValue()).intValue();
     }
     
     
     /** 
-     *  A utility method that returns the specific trap code for this PDU.
+     *  Returns the specific trap code for this PDU.
      */
     public int getSpecificTrap()
     {
-        Vector contents = (Vector)(this.getValue());
-        return ((BigInteger)((SNMPInteger)(contents.get(3))).getValue()).intValue();
+        return ((BigInteger)((SNMPInteger)(sequence.get(3))).getValue()).intValue();
     }
     
     
     /** 
-     *  A utility method that returns the timestamp for this PDU.
+     *  Returns the timestamp for this PDU.
      */
     public long getTimestamp()
     {
-        Vector contents = (Vector)(this.getValue());
-        return ((BigInteger)((SNMPTimeTicks)(contents.get(4))).getValue()).longValue();
+        return ((BigInteger)((SNMPTimeTicks)(sequence.get(4))).getValue()).longValue();
     }
     
 }

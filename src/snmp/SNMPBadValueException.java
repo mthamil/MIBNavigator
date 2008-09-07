@@ -23,12 +23,15 @@ package snmp;
 
 
 /**
- *  Exception thrown whenever an attempt is made to create an SNMPObject subclass with inappropriate
- *  data, or to set its value with inappropriate data.
+ *  Exception thrown whenever an attempt is made to create an 
+ *  SNMPObject subclass with inappropriate data, or to set 
+ *  its value with inappropriate data.
  */
 public class SNMPBadValueException extends Exception
 {
-    
+    /**
+     * Creates a new exception.
+     */
     public SNMPBadValueException()
     {
         super();
@@ -36,11 +39,11 @@ public class SNMPBadValueException extends Exception
     
     
     /**
-     *  Create a new exception with message string.
+     *  Creates a new exception with message string.
      */
-    public SNMPBadValueException(String s)
+    public SNMPBadValueException(String message)
     {
-        super(s);
+        super(message);
     }
     
 }

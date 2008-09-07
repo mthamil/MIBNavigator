@@ -21,8 +21,6 @@
 
 package snmp;
 
-import java.util.*;
-
 
 /**
  * The SNMPVarBindList class is a specialization of SNMPSequence that contains a
@@ -67,16 +65,15 @@ public class SNMPVarBindList extends SNMPSequence
      */
     public String toString()
     {
-        Vector sequence = (Vector)(this.getValue());
-        StringBuffer valueStringBuffer = new StringBuffer();
+        StringBuffer valueString = new StringBuffer();
         
         for (Object pair : sequence)
         {
-            valueStringBuffer.append(pair.toString());
-            valueStringBuffer.append(" ");
+            valueString.append(pair.toString());
+            valueString.append(" ");
         }
         
-        return valueStringBuffer.toString();
+        return valueString.toString();
     }
      
 }

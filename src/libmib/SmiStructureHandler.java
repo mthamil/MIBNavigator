@@ -26,7 +26,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import libmib.oid.MibValueListItem;
+import libmib.oid.MibNameValuePair;
 
 /**
  * Class that handles various block structure parsing when reading SMI format MIB files.
@@ -251,11 +251,11 @@ public class SmiStructureHandler
      * 
      * @return a MibValueListItem ArrayList
      */
-    public List<MibValueListItem> readValueList(String line, String keyword) throws IOException
+    public List<MibNameValuePair> readValueList(String line, String keyword) throws IOException
     {
         List<String> valueLines = readList(line, keyword);
         
-        List<MibValueListItem> valueList = new ArrayList<MibValueListItem>();
+        List<MibNameValuePair> valueList = new ArrayList<MibNameValuePair>();
         
         for (int i = 0; i < valueLines.size(); i++)
         {
@@ -272,7 +272,7 @@ public class SmiStructureHandler
                 String number = curLine.substring(curLine.indexOf("(") + 1, curLine.lastIndexOf(")")).trim();
                 
                 //add the value list entry
-                MibValueListItem curValueItem = new MibValueListItem(label, Integer.parseInt(number));
+                MibNameValuePair curValueItem = new MibNameValuePair(label, Integer.parseInt(number));
                 valueList.add(curValueItem);
             }
         }

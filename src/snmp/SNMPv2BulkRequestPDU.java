@@ -22,6 +22,7 @@
 package snmp;
 
 import java.math.BigInteger;
+import java.util.List;
 import java.util.Vector;
 
 
@@ -130,7 +131,7 @@ public class SNMPv2BulkRequestPDU extends SNMPSequence
 {
     
     /**
-     * Create a new PDU of the specified type, with given request ID,
+     * Creates a new PDU of the specified type, with given request ID,
      * non-repeaters, and max-repetitions fields, and containing the supplied
      * SNMP sequence as data.
      */
@@ -138,7 +139,7 @@ public class SNMPv2BulkRequestPDU extends SNMPSequence
         throws SNMPBadValueException
     {
         super();
-        Vector<SNMPObject> contents = new Vector<SNMPObject>();
+        List<SNMPObject> contents = new Vector<SNMPObject>();
         tag = SNMPBERType.SNMPv2_BULK_REQUEST;
         contents.add(0, new SNMPInteger(requestID));
         contents.add(1, new SNMPInteger(nonRepeaters));
@@ -149,7 +150,7 @@ public class SNMPv2BulkRequestPDU extends SNMPSequence
     
     
     /**
-     * Create a new PDU of the specified type from the supplied BER encoding.
+     * Creates a new PDU of the specified type from the supplied BER encoding.
      * 
      * @throws SNMPBadValueException
      *             Indicates invalid SNMP Bulk PDU encoding supplied in enc.
@@ -161,7 +162,7 @@ public class SNMPv2BulkRequestPDU extends SNMPSequence
         extractFromBEREncoding(enc);
         
         // validate the message: make sure we have the appropriate pieces
-        Vector contents = (Vector)(this.getValue());
+        List<SNMPObject> contents = sequence;
         
         if (contents.size() != 4)
             throw new SNMPBadValueException("Bad Bulk Request PDU");
@@ -199,50 +200,46 @@ public class SNMPv2BulkRequestPDU extends SNMPSequence
     
     
     /** 
-     *  A utility method that extracts the variable binding list from the pdu. Useful for retrieving
+     *  Extracts the variable binding list from the pdu. Useful for retrieving
      *  the set of (object identifier, value) pairs returned in response to a request to an SNMP
      *  device. The variable binding list is just an SNMP sequence containing the identifier, value pairs.
      *  @see snmp.SNMPVarBindList
      */
     public SNMPSequence getVarBindList()
     {
-        Vector contents = (Vector)(this.getValue());
-        return (SNMPSequence)(contents.get(3));
+        return (SNMPSequence)(sequence.get(3));
     }
     
     
     /** 
-     *  A utility method that extracts the request ID number from this PDU.
+     *  Extracts the request ID number from this PDU.
      */
     public int getRequestID()
     {
-        Vector contents = (Vector)(this.getValue());
-        return ((BigInteger)((SNMPInteger)(contents.get(0))).getValue()).intValue();
+        return ((BigInteger)((SNMPInteger)(sequence.get(0))).getValue()).intValue();
     }
     
     
     /** 
-     *  A utility method that extracts the non-repeaters field for this PDU.
+     *  Extracts the non-repeaters field for this PDU.
      */
     public int getNonRepeaters()
     {
-        Vector contents = (Vector)(this.getValue());
-        return ((BigInteger)((SNMPInteger)(contents.get(1))).getValue()).intValue();
+        return ((BigInteger)((SNMPInteger)(sequence.get(1))).getValue()).intValue();
     }
     
     
     /** 
-     *  A utility method that returns the max-repetitions field for this PDU.
+     *  Returns the max-repetitions field for this PDU.
      */
     public int getMaxRepetitions()
     {
-        Vector contents = (Vector)(this.getValue());
-        return ((BigInteger)((SNMPInteger)(contents.get(2))).getValue()).intValue();
+        return ((BigInteger)((SNMPInteger)(sequence.get(2))).getValue()).intValue();
     }
     
 
     /** 
-     *  A utility method that returns the PDU type of this PDU.
+     *  Returns the PDU type of this PDU.
      */
     public SNMPBERType getPDUType()
     {

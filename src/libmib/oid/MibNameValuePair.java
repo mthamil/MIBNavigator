@@ -26,73 +26,71 @@ package libmib.oid;
  * MIB object.  It consists of an integer and a corresponding 'alias' for
  * that number.  Essentially it is a just a name-value pair.
  */
-public class MibValueListItem 
+public class MibNameValuePair 
 {
-    private int valueNumber;
-    private String valueName;
+    private int value;
+    private String name;
     
     /**
-     * Constructs a default value list item.
+     * Constructs a default name-value pair.
      */
-    public MibValueListItem()
+    public MibNameValuePair()
     {
-        valueNumber = 0;
-        valueName = "";
+        value = 0;
+        name = "";
     }
     
     /**
-     * Constructs a new value list item.
+     * Constructs a new name-value pair.
      * 
-     * @param newValueName
-     * @param newValueNumber
+     * @param newName
+     * @param newValue
      */
-    public MibValueListItem(String newValueName, int newValueNumber)
+    public MibNameValuePair(String newName, int newValue)
     {
-        valueNumber = newValueNumber;
-        valueName = newValueName;
+        value = newValue;
+        name = newName;
     }
     
     /**
-     * Returns this item's integer value.
+     * Returns a pair's integer value.
      * 
-     * @return this item's integer value
+     * @return a pair's integer value
      */
-    public int getValueNumber()
+    public int getValue()
     {
-        return valueNumber;
+        return value;
     }
     
     /**
-     * Sets the item's integer value.
+     * Sets a pair's integer value.
      * 
-     * @param newValue the integer value
-     * of this item
+     * @param newValue the integer value of a pair
      */
-    public void setValueNumber(int newValue)
+    public void setValue(int newValue)
     {
-        valueNumber = newValue;
+        value = newValue;
     }
     
     /**
-     * Returns this item's name.
+     * Returns a pair's name.
      * 
-     * @return this item's String name
+     * @return a pair's String name
      */
-    public String getValueName()
+    public String getName()
     {
-        return valueName;
+        return name;
     }
     
     /**
-     * Sets the name of this item.
+     * Sets the name of a pair.
      * 
-     * @param newName the String name of this
-     * value
+     * @param newName the String name of a
+     * pair
      */
-    public void setValueName(String newName)
+    public void setName(String newName)
     {
-        valueName = newName;
+        name = newName;
     }
-    
     
 }

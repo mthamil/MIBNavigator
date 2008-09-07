@@ -218,7 +218,7 @@ public class GetRequestWorker extends SwingWorker
                         {
                             int intValue = ((BigInteger)snmpValue.getValue()).intValue();
                             
-                            String valueName = curObj.getSyntax().matchValueName(intValue);
+                            String valueName = curObj.getSyntax().findValueName(intValue);
                             
                             //valueName will be empty if either the value wasn't found or for some reason the name was "".
                             //Either way, the number is more informative than an empty String in this case.

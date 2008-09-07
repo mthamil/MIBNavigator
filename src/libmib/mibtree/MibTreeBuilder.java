@@ -60,7 +60,7 @@ public interface MibTreeBuilder
     
     /**
      * Gets the format-specific base folder name used by the tree builder.
-     * @return
+     * @return the name of the tree builder's MIB directory
      */
     public String getMibFolder();
 

@@ -24,8 +24,6 @@ package snmp;
 import java.util.*;
 import java.io.*;
 
-
-
 /**
  *  One of the most important SNMP classes. Represents a sequence of other SNMP data types.
  *  Virtually all compound structures are subclasses of SNMPSequence - for example, the 
@@ -35,47 +33,35 @@ import java.io.*;
 public class SNMPSequence extends SNMPObject
                           //implements Iterable
 {
-    protected Vector sequence;    // Vector of whatever is in sequence
-    
+    protected List<SNMPObject> sequence;    // List of whatever is in sequence
     protected SNMPBERType tag = SNMPBERType.SNMP_SEQUENCE;
         
     /**
-     *  Create a new empty sequence.
+     *  Creates a new empty sequence.
      */
     public SNMPSequence()
     {
-        sequence = new Vector();
+        sequence = new Vector<SNMPObject>();
     }
     
     
     /**
-     *  Create a new SNMP sequence from the supplied Vector of SNMPObjects.
+     *  Creates a new SNMP sequence from the supplied Vector of SNMPObjects.
      *  
      *  @throws SNMPBadValueException Thrown if non-SNMP object supplied in Vector v.
      */
-    public SNMPSequence(Vector v)
+    public SNMPSequence(Vector<SNMPObject> v)
         throws SNMPBadValueException
     {
-        for (Object item : v)
-        {
-            if ( !(item instanceof SNMPObject) )
-                throw new SNMPBadValueException("Non-SNMPObject supplied to SNMPSequence.");
-        }
-        
-        /*Enumeration e = v.elements();
-        
-        while (e.hasMoreElements())
-        {
-            if (!(e.nextElement() instanceof SNMPObject))
-                throw new SNMPBadValueException("Non-SNMPObject supplied to SNMPSequence.");
-        }*/
-        
+        if (v == null)
+        	throw new SNMPBadValueException("Sequence cannot be null");
+    	
         sequence = v;
     }
     
       
     /**
-     *  Construct an SNMPMessage from a received ASN.1 byte representation.
+     *  Constructs an SNMPMessage from a received ASN.1 byte representation.
      *  
      *  @throws SNMPBadValueException Indicates invalid SNMP sequence encoding supplied.
      */
@@ -96,33 +82,29 @@ public class SNMPSequence extends SNMPObject
     
     
     /** 
-     *  Used to set the contained SNMP objects from a supplied Vector.
+     *  Sets the contained SNMP objects from a supplied Vector.
      *  
-     *  @throws SNMPBadValueException Indicates an incorrect object type supplied, or that the supplied
-     *  Vector contains non-SNMPObjects.
+     *  @throws SNMPBadValueException Indicates an incorrect object 
+     *  type supplied, or that the supplied Vector contains non-SNMPObjects.
      */
-    public void setValue(Object newSequence)
+    public void setValue(Object value)
         throws SNMPBadValueException
     {
-        if (newSequence instanceof Vector)
+        if (value instanceof Vector)
         {
-            // check that all objects in vector are SNMPObjects
-            Vector newValue = (Vector)newSequence;
-            for (Object item : newValue)
+        	Vector<?> newValue = (Vector<?>)value;
+        	
+            // Check that all objects in vector are SNMPObjects.
+            List<SNMPObject> newSequence = new Vector<SNMPObject>(newValue.size());
+            for (Object element : newValue)
             {
-                if ( !(item instanceof SNMPObject) )
+                if ( !(element instanceof SNMPObject) )
                     throw new SNMPBadValueException("Non-SNMPObject supplied to SNMPSequence.");
+
+                newSequence.add((SNMPObject)element);
             }
             
-            /*Enumeration e = ((Vector)newSequence).elements();
-            
-            while (e.hasMoreElements())
-            {
-                if (!(e.nextElement() instanceof SNMPObject))
-                    throw new SNMPBadValueException("Non-SNMPObject supplied to SNMPSequence.");
-            }*/
-            
-            this.sequence = (Vector)newSequence;
+            this.sequence = newSequence;
         }
         else
             throw new SNMPBadValueException(" Sequence: bad object supplied to set value ");
@@ -148,11 +130,10 @@ public class SNMPSequence extends SNMPObject
     
     
     /** 
-     *  Add the SNMP object to the end of the sequence.
+     *  Adds the SNMP object to the end of the sequence.
      *  
      *  @throws SNMPBadValueException Relevant only in subclasses
      */
-    @SuppressWarnings("unchecked")
     public void addSNMPObject(SNMPObject newObject)
         throws SNMPBadValueException
     {
@@ -161,11 +142,10 @@ public class SNMPSequence extends SNMPObject
     
     
     /** 
-     *  Insert the SNMP object at the specified position in the sequence.
+     *  Inserts the SNMP object at the specified position in the sequence.
      *  
      *  @throws SNMPBadValueException Relevant only in subclasses
      */
-    @SuppressWarnings("unchecked")
     public void insertSNMPObjectAt(SNMPObject newObject, int index)
         throws SNMPBadValueException
     {
@@ -174,16 +154,16 @@ public class SNMPSequence extends SNMPObject
     
     
     /** 
-     *  Return the SNMP object at the specified index. Indices are 0-based.
+     *  Returns the SNMP object at the specified index. Indices are 0-based.
      */
     public SNMPObject getSNMPObjectAt(int index)
     {
-        return (SNMPObject)(sequence.get(index));
+        return sequence.get(index);
     }
     
 
     /** 
-     *  Return the BER encoding for the sequence.
+     *  Returns the BER encoding for the sequence.
      */
     protected byte[] getBEREncoding()
     {
@@ -223,7 +203,7 @@ public class SNMPSequence extends SNMPObject
     protected void extractFromBEREncoding(byte[] enc)
         throws SNMPBadValueException
     {
-        Vector<SNMPObject> newVector = new Vector<SNMPObject>();
+        List<SNMPObject> newVector = new Vector<SNMPObject>();
         
         int totalLength = enc.length;
         int position = 0;
@@ -232,7 +212,7 @@ public class SNMPSequence extends SNMPObject
         {
             SNMPTLV nextTLV = SNMPBERCodec.extractNextTLV(enc, position);
             newVector.add(newVector.size(), SNMPBERCodec.extractEncoding(nextTLV));
-            position += nextTLV.totalLength;
+            position += nextTLV.length;
         }
         
         sequence = newVector;
@@ -240,7 +220,7 @@ public class SNMPSequence extends SNMPObject
     
     
     /** 
-     *  Return a sequence of representations of the contained objects, separated by spaces
+     *  Returns a sequence of representations of the contained objects, separated by spaces
      *  and enclosed in parentheses.
      */
     public String toString()

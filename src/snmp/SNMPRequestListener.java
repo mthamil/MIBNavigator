@@ -21,8 +21,6 @@
 
 package snmp;
 
-
-
 /**
  *  SNMPRequestListener is an interface that must be implemented by any class which wishes
  *  to act as a handler for request messages sent from remote SNMP management entities.

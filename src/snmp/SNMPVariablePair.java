@@ -54,7 +54,7 @@ public class SNMPVariablePair extends SNMPSequence
         throws SNMPBadValueException
     {
         super();
-        Vector<SNMPObject> contents = new Vector<SNMPObject>();
+        List<SNMPObject> contents = new Vector<SNMPObject>();
         contents.add(0, objectID);
         contents.add(1, value);
         this.setValue(contents);

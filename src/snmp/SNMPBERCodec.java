@@ -30,44 +30,7 @@ import java.io.*;
  *  is the usual behavior when a received encoded message is received from an SNMP device.
  */
 public class SNMPBERCodec
-{
-    
-    // *** Begin SNMP Data Types ***
-    /*public static final byte SNMP_UNKNOWN_OBJECT = 0x00;
-    
-    public static final byte SNMP_INTEGER = 0x02;
-    public static final byte SNMP_BITSTRING = 0x03;
-    public static final byte SNMP_OCTETSTRING = 0x04;
-    public static final byte SNMP_NULL = 0x05;
-    public static final byte SNMP_OBJECT_IDENTIFIER = 0x06;
-    public static final byte SNMP_SEQUENCE = 0x30;
-    
-    public static final byte SNMP_IPADDRESS = (byte)0x40;
-    public static final byte SNMP_COUNTER32 = (byte)0x41;
-    public static final byte SNMP_GAUGE32 = (byte)0x42;
-    public static final byte SNMP_TIMETICKS = (byte)0x43;
-    public static final byte SNMP_OPAQUE = (byte)0x44;
-    public static final byte SNMP_NSAPADDRESS = (byte)0x45;
-    public static final byte SNMP_COUNTER64 = (byte)0x46;
-    public static final byte SNMP_UINTEGER32 = (byte)0x47;
-    
-    public static final byte SNMP_GET_REQUEST = (byte)0xA0;
-    public static final byte SNMP_GET_NEXT_REQUEST = (byte)0xA1;
-    public static final byte SNMP_GET_RESPONSE = (byte)0xA2;
-    public static final byte SNMP_SET_REQUEST = (byte)0xA3;
-    public static final byte SNMP_TRAP = (byte)0xA4;
-
-    public static final byte SNMPv2_BULK_REQUEST = (byte)0xA5;
-    public static final byte SNMPv2_INFORM_REQUEST = (byte)0xA6;
-    public static final byte SNMPv2_TRAP = (byte)0xA7;
-    //  *** End SNMP Data Types ***
-    
-    public static final byte SNMPv2pCOMMUNICATION = (byte)0xA2;
-    public static final byte SNMPv2pAUTHORIZEDMESSAGE = (byte)0xA1;
-    public static final byte SNMPv2pENCRYPTEDMESSAGE = (byte)0xA1;
-    public static final byte SNMPv2pENCRYPTEDDATA = (byte)0xA1;
-*/
-     
+{    
     /** 
      *  Extracts an SNMP object given its type, length, and value triple as an SNMPTLV object.
      *  Called by SNMPObject subclass constructors.
@@ -75,70 +38,70 @@ public class SNMPBERCodec
      *  @throws SNMPBadValueException Indicates byte array in value field is not interpretable for
      *  the specified SNMP object type.
      */
-    public static SNMPObject extractEncoding(SNMPTLV theTLV)
+    public static SNMPObject extractEncoding(SNMPTLV tlv)
         throws SNMPBadValueException
     {
-        switch (theTLV.tag)
+        switch (tlv.tag)
         {
             case SNMP_INTEGER:
-                return new SNMPInteger(theTLV.value);
+                return new SNMPInteger(tlv.value);
             
             case SNMP_SEQUENCE:
-                return new SNMPSequence(theTLV.value);
+                return new SNMPSequence(tlv.value);
             
             case SNMP_OBJECT_IDENTIFIER:
-                return new SNMPObjectIdentifier(theTLV.value);
+                return new SNMPObjectIdentifier(tlv.value);
             
             case SNMP_OCTETSTRING:
-                return new SNMPOctetString(theTLV.value);
+                return new SNMPOctetString(tlv.value);
             
             case SNMP_BITSTRING:
-                return new SNMPBitString(theTLV.value);
+                return new SNMPBitString(tlv.value);
             
             case SNMP_IPADDRESS:
-                return new SNMPIPAddress(theTLV.value);
+                return new SNMPIPAddress(tlv.value);
             
             case SNMP_COUNTER32:
-                return new SNMPCounter32(theTLV.value);
+                return new SNMPCounter32(tlv.value);
             
             case SNMP_GAUGE32:
-                return new SNMPGauge32(theTLV.value);
+                return new SNMPGauge32(tlv.value);
             
             case SNMP_TIMETICKS:
-                return new SNMPTimeTicks(theTLV.value);
+                return new SNMPTimeTicks(tlv.value);
             
             case SNMP_NSAPADDRESS:
-                return new SNMPNSAPAddress(theTLV.value);
+                return new SNMPNSAPAddress(tlv.value);
             
             case SNMP_COUNTER64:
-                return new SNMPCounter64(theTLV.value);
+                return new SNMPCounter64(tlv.value);
             
             case SNMP_UINTEGER32:
-                return new SNMPUInteger32(theTLV.value);
+                return new SNMPUInteger32(tlv.value);
                 
-            //fall through
+            // Fall through
             case SNMP_GET_REQUEST:
             case SNMP_GET_NEXT_REQUEST:
             case SNMP_GET_RESPONSE:
             case SNMP_SET_REQUEST:
-                return new SNMPPDU(theTLV.value, theTLV.tag);
+                return new SNMPPDU(tlv.value, tlv.tag);
             
             case SNMP_TRAP:
-                return new SNMPv1TrapPDU(theTLV.value);
+                return new SNMPv1TrapPDU(tlv.value);
             
             case SNMPv2_TRAP:
-                return new SNMPv2TrapPDU(theTLV.value);
+                return new SNMPv2TrapPDU(tlv.value);
             
             case SNMPv2_INFORM_REQUEST:
-                return new SNMPv2InformRequestPDU(theTLV.value);
+                return new SNMPv2InformRequestPDU(tlv.value);
             
-            //fall through
+            // Fall through
             case SNMP_NULL: 
             case SNMP_OPAQUE:
                 return new SNMPNull();
             
             default:
-                return new SNMPUnknownObject(theTLV.value);
+                return new SNMPUnknownObject(tlv.value);
         }
     }
     
@@ -224,7 +187,7 @@ public class SNMPBERCodec
             currentPos++;    // now at start of data
             
             // set total length
-            nextTLV.totalLength = currentPos - position + dataLength;
+            nextTLV.length = currentPos - position + dataLength;
             
             // extract data portion
             
@@ -250,7 +213,7 @@ public class SNMPBERCodec
     
     
     /** 
-     *  Utility function for encoding a length as a BER byte sequence
+     *  Encodes a length as a BER byte sequence.
      */
     public static byte[] encodeLength(int length)
     {

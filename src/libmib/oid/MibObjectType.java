@@ -201,7 +201,7 @@ public class MibObjectType extends MibObjectIdentifier
         if (syntax == null) //no syntax, no value list
             return false;
             
-        return syntax.hasValueList();
+        return syntax.hasValues();
     }
 
     

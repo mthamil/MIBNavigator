@@ -50,7 +50,7 @@ public class SNMPNull extends SNMPObject
     
 
     /**
-     *  Return BER encoding for a null object: two bytes, tag and length of 0.
+     *  Returns BER encoding for a null object: two bytes, tag and length of 0.
      */
     protected byte[] getBEREncoding()
     {

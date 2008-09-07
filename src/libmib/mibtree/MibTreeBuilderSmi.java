@@ -33,7 +33,7 @@ import libmib.SmiKeywords;
 import libmib.SmiStructureHandler;
 import libmib.oid.MibObjectType;
 import libmib.oid.MibSyntax;
-import libmib.oid.MibValueListItem;
+import libmib.oid.MibNameValuePair;
 import libmib.oid.MibObjectType.Access;
 import libmib.oid.MibObjectType.Status;
 
@@ -41,7 +41,7 @@ import libmib.oid.MibObjectType.Status;
  * This class is a very simple reader and parser for ASN.1 specification SMI MIB module
  * definition files. It reads the files, attempts to interpret the syntax of the structures 
  * within, extracts relevant data, and inserts it into nodes for use in a tree structure.  
- * Thus, it compiles the SMI MIB modules into a DefaultTreeModel. It in no way attempts to 
+ * Then, it compiles the SMI MIB modules into a DefaultTreeModel. It in no way attempts to 
  * implement the entire SMI syntax, only a small subset. Nodes in the tree are indexed by 
  * a HashMap that maps MIB object names to MIBTreeNodes.
  */
@@ -247,7 +247,7 @@ public class MibTreeBuilderSmi extends AbstractMibTreeBuilder
             String nodeStatus = "";
             
             StringBuilder nodeDesc = new StringBuilder();
-            List<MibValueListItem> nodeValues = null;
+            List<MibNameValuePair> nodeValues = null;
     
             // read until the end of the object definition, retrieving relevant information
             line = in.readLine().trim();
@@ -350,7 +350,7 @@ public class MibTreeBuilderSmi extends AbstractMibTreeBuilder
             {
                 MibSyntax nodeSyntax = new MibSyntax(nodeDataType);
                 if (nodeValues != null)
-                    nodeSyntax.setValuesList(Collections.synchronizedList(nodeValues)); //synchronize because there MAY be 
+                    nodeSyntax.setValues(Collections.synchronizedList(nodeValues)); //synchronize because there MAY be 
                                                                                         //simultaneous access
                 mibObject.setSyntax(nodeSyntax);
             }

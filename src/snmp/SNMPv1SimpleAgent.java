@@ -56,7 +56,7 @@ public class SNMPv1SimpleAgent implements Runnable
     private int errorStatus = SNMPRequestException.NO_ERROR;
     
     /**
-     *  Construct a new agent object to listen for requests from remote SNMP managers. The agent listens
+     *  Constructs a new agent object to listen for requests from remote SNMP managers. The agent listens
      *  on the standard SNMP UDP port 161.
      */
     public SNMPv1SimpleAgent(int newVersion)
@@ -67,7 +67,7 @@ public class SNMPv1SimpleAgent implements Runnable
     
 
     /**
-     *  Construct a new agent object to listen for requests from remote SNMP managers. The agent listens
+     *  Constructs a new agent object to listen for requests from remote SNMP managers. The agent listens
      *  on the supplied port.
      */
     public SNMPv1SimpleAgent(int newVersion, int localPort)
@@ -78,7 +78,7 @@ public class SNMPv1SimpleAgent implements Runnable
     
     
     /**
-     *  Construct a new agent object to listen for requests from remote SNMP managers. The agent listens
+     *  Constructs a new agent object to listen for requests from remote SNMP managers. The agent listens
      *  on the standard SNMP UDP port 161, and sends error messages to the specified PrintWriter.
      */
     public SNMPv1SimpleAgent(int newVersion, PrintWriter errorReceiver)
@@ -89,7 +89,7 @@ public class SNMPv1SimpleAgent implements Runnable
     
     
     /**
-     *  Construct a new agent object to listen for requests from remote SNMP managers. The agent listens
+     *  Constructs a new agent object to listen for requests from remote SNMP managers. The agent listens
      *  on the supplied port, and sends error messages to the specified PrintWriter.
      */
     public SNMPv1SimpleAgent(int newVersion, int localPort, PrintWriter errorReceiver)
@@ -104,7 +104,7 @@ public class SNMPv1SimpleAgent implements Runnable
     
     
     /**
-     *  Set the specified PrintWriter to receive error messages.
+     *  Sets the specified PrintWriter to receive error messages.
      */
     public void setErrorReceiver(PrintWriter errorReceiver)
     {
@@ -142,7 +142,7 @@ public class SNMPv1SimpleAgent implements Runnable
 
     
     /**
-     *  Start listening for requests from remote managers.
+     *  Starts listening for requests from remote managers.
      */
     public void startReceiving()
     {
@@ -156,7 +156,7 @@ public class SNMPv1SimpleAgent implements Runnable
     
     
     /**
-     *  Stop listening for requests from remote managers.
+     *  Stops listening for requests from remote managers.
      */
     public void stopReceiving()
         throws SocketException
@@ -275,7 +275,7 @@ public class SNMPv1SimpleAgent implements Runnable
     
     
     /**
-     * Pass the received PDU and community name to the processRequest method of any listeners;
+     * Passes the received PDU and community name to the processRequest method of any listeners;
      * handles slightly differently depending on whether the request is a get-next, or a get or set.
      */
     private void handleRequest(SNMPPDU receivedPDU, String communityName, SNMPBERType requestPDUType)

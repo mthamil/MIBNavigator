@@ -29,21 +29,21 @@ import java.util.List;
  * Specific MIB object structures that use this format should extend this class 
  * since it provides most if not all of the functionality they may need.
  */
-public class MibGenericGroup extends MibObjectIdentifier 
+public class MibGroup extends MibObjectIdentifier 
 {
     private String status;
     private String description;
-    private List<String> groupMemberList;
+    private List<String> groupMembers;
 
     /**
      * Constructs a new, default empty MIB group structure.
      */
-    public MibGenericGroup() 
+    public MibGroup() 
     {
         super();
         status = "";
         description = "";
-        groupMemberList = null;
+        groupMembers = null;
     }
 
     /**
@@ -53,12 +53,12 @@ public class MibGenericGroup extends MibObjectIdentifier
      * @param newId the id of the MIB group structure. This value is only unique
      * relative to its parent.
      */
-    public MibGenericGroup(String newName, int newId) 
+    public MibGroup(String newName, int newId) 
     {
         super(newName, newId);
         status = "";
         description = "";
-        groupMemberList = null;
+        groupMembers = null;
     }
     
     
@@ -107,35 +107,35 @@ public class MibGenericGroup extends MibObjectIdentifier
     /**
      * Gets the list of object names in the MIB group object.
      * 
-     * @return a List containing the names of the members of the MIB group object.
+     * @return a list containing the names of the members of the MIB group object.
      */
     public List<String> getGroupMembers()
     {
-        return groupMemberList;
+        return groupMembers;
     }
     
     /**
      * Sets the list of object names in the MIB group object.
      * 
-     * @param newMemberList a List containing the names of members of the MIB group object.
+     * @param newMembers a list containing the names of members of the MIB group object.
      */
-    public void setGroupMembers(List<String> newMemberList)
+    public void setGroupMembers(List<String> newMembers)
     {
-        if (newMemberList == null)
+        if (newMembers == null)
             throw new IllegalArgumentException("Group member list cannot be set to null.");
         
-        groupMemberList = newMemberList;
+        groupMembers = newMembers;
     }
     
     /**
      * Adds the name of a MIB object to the group member List.
      * 
-     * @param newMemberName the name of a MIB object to add
+     * @param newMember the name of a MIB object to add
      * to the group
      */
-    public void addGroupMember(String newMemberName)
+    public void addGroupMember(String newMember)
     {
-        groupMemberList.add(newMemberName);
+        groupMembers.add(newMember);
     }
 
 }

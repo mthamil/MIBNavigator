@@ -50,7 +50,7 @@ import libmib.mibtree.BasicXmlErrorHandler;
 import libmib.oid.MibModuleIdRevision;
 import libmib.oid.MibObjectExtended;
 import libmib.oid.MibSyntax;
-import libmib.oid.MibValueListItem;
+import libmib.oid.MibNameValuePair;
 
 /**
  * This class uses JAXP to construct a Document corresponding to a MIB module.  MIB objects and imports can be directly added
@@ -371,24 +371,24 @@ public class MibDocumentBuilder
         }
         
         //VALUE LIST
-        if (newSyntax.hasValueList())
+        if (newSyntax.hasValues())
         {
             Element valueListElement = mibDocument.createElement("valueList");
             syntaxElement.appendChild(valueListElement);
             
-            List<MibValueListItem> valList = newSyntax.getValuesList();
-            for (MibValueListItem valItem : valList)
+            List<MibNameValuePair> valList = newSyntax.getValues();
+            for (MibNameValuePair valItem : valList)
             {    
                 Element valueItemElement = mibDocument.createElement("valueItem");
                 valueListElement.appendChild(valueItemElement);
                 
                 Element labelElement = mibDocument.createElement("label");
-                Text labelText = mibDocument.createTextNode(valItem.getValueName());
+                Text labelText = mibDocument.createTextNode(valItem.getName());
                 labelElement.appendChild(labelText);
                 valueItemElement.appendChild(labelElement);
                 
                 Element valueElement = mibDocument.createElement("val");
-                Text valueText = mibDocument.createTextNode(String.valueOf(valItem.getValueNumber()));
+                Text valueText = mibDocument.createTextNode(String.valueOf(valItem.getValue()));
                 valueElement.appendChild(valueText);
                 valueItemElement.appendChild(valueElement);
             }

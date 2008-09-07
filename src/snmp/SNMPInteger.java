@@ -40,7 +40,7 @@ public class SNMPInteger extends SNMPObject
     protected SNMPBERType tag = SNMPBERType.SNMP_INTEGER;
     
     /** 
-     *  Initialize value to 0.
+     *  Initializes value to 0.
      */
     public SNMPInteger()
     {
@@ -61,7 +61,7 @@ public class SNMPInteger extends SNMPObject
     
     
     /** 
-     *  Used to initialize from the BER encoding, usually received in a response from 
+     *  Initializes from the BER encoding, usually received in a response from 
      *  an SNMP device responding to an SNMPGetRequest.
      *  
      *  @throws SNMPBadValueException Indicates an invalid BER encoding supplied. Shouldn't
@@ -84,7 +84,7 @@ public class SNMPInteger extends SNMPObject
     
     
     /** 
-     *  Used to set the value with an instance of java.lang.Integer or
+     *  Sets the value with an instance of java.lang.Integer or
      *  java.lang.BigInteger.
      *  
      *  @throws SNMPBadValueException Indicates an incorrect object type supplied.
@@ -128,7 +128,7 @@ public class SNMPInteger extends SNMPObject
     
     
     /** 
-     *  Used to extract a value from the BER encoding of the value. Called in constructors for
+     *  Extracts a value from the BER encoding of the value. Called in constructors for
      *  SNMPInteger subclasses.
      *  
      *  @throws SNMPBadValueException Indicates an invalid BER encoding supplied. Shouldn't

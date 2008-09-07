@@ -39,7 +39,7 @@ package libmib.oid;
  * </code>
  * </pre>
  */
-public class MibNotificationType extends MibGenericGroup 
+public class MibNotificationType extends MibGroup 
 {
     /**
      * Constructs a new, default empty MibNotificationType.

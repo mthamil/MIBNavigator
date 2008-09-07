@@ -34,7 +34,6 @@ import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
 import javax.swing.plaf.FontUIResource;
 
-import libmib.MibFormat;
 import libmib.mibtree.CannotCreateBuilderException;
 import libmib.mibtree.MibTreeBuilder;
 import libmib.mibtree.MibTreeBuilderFactory;
@@ -68,21 +67,23 @@ public class MIBNavigator
                                         // within the application, only through editing a file by hand)
 
     /**
-     * Creates and configures MIBNavigator's interface. The MibTreeBuilder is 
-     * simply passed through to the MibBrowser.
+     * Creates and configures the application.
+     * 
+     *  @param newBuilder - MibTreeBuilder that is 
+     *  	   simply passed through to the MibBrowser
+     *  @param settings - Application user settings
      */
-    public MIBNavigator(MibTreeBuilder newBuilder)
+    public MIBNavigator(MibTreeBuilder newBuilder, UserSettings settings)
     {
-        settings = new UserSettings();
-        settings.loadSettings();
+    	this.settings = settings;
         maxAddresses = settings.getMaxAddresses();
         
         this.shrinkFonts();
 
         browser = new MibBrowser(newBuilder);
-        browser.setAddresses(settings.getAddressList());
+        browser.setAddresses(settings.getAddresses());
         
-        configureFrame(browser.getBrowserPanel());
+        this.configureFrame(browser.getBrowserPanel());
     }
     
     
@@ -101,7 +102,7 @@ public class MIBNavigator
     public void saveState()
     {
         settings.setMaxAddresses(maxAddresses);
-        settings.setAddressList(browser.getAddresses());
+        settings.setAddresses(browser.getAddresses());
         settings.saveSettings();
     }
     
@@ -178,6 +179,10 @@ public class MIBNavigator
             // NOTE: In the event of an exception, the app will fall back to Java's Metal style.
         }
 
+        // Load preferences.
+        final UserSettings settings = new UserSettings();
+        settings.loadSettings();
+        
         // The initialization of the MibTreeBuilder occurs first because it is the most crucial 
         // component of the application.  It also helps to decouple the rest of the application 
         // from a specific type of MibTreeBuilder (such as SMI or XML) and provide better exception 
@@ -186,7 +191,7 @@ public class MIBNavigator
         { 
             // ***Configure MIB Compiler***
         	MibTreeBuilderFactory mibTreeFactory = new MibTreeBuilderFactory();
-        	final MibTreeBuilder treeBuilder = mibTreeFactory.createTreeBuilder(MibFormat.ASN);
+        	final MibTreeBuilder treeBuilder = mibTreeFactory.createTreeBuilder(settings.getMibFormat());
             
             // Create and configure the interface components in the EventDispatch 
             // thread according to best practices for using Swing.
@@ -195,7 +200,7 @@ public class MIBNavigator
                 {
                     public void run()
                     {   
-                        MIBNavigator navApp = new MIBNavigator(treeBuilder);
+                        MIBNavigator navApp = new MIBNavigator(treeBuilder, settings);
                     }
                 };
                 

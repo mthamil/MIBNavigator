@@ -38,7 +38,7 @@ public class SNMPTrapSender
     private DatagramSocket dSocket;
     
     /**
-     *  Construct a new trap sender object to send traps to remote SNMP hosts.
+     *  Constructs a new trap sender object to send traps to remote SNMP hosts.
      */
     public SNMPTrapSender()
         throws SocketException
@@ -48,7 +48,7 @@ public class SNMPTrapSender
     
 
     /**
-     *  Construct a new trap sender object to send traps to remote SNMP hosts, binding to
+     *  Constructs a new trap sender object to send traps to remote SNMP hosts, binding to
      *  the specified local port.
      */
     public SNMPTrapSender(int localPort)
@@ -59,7 +59,7 @@ public class SNMPTrapSender
     
 
     /**
-     *  Send the supplied SNMPv1 trap pdu to the specified host, using the supplied version number
+     *  Sends the supplied SNMPv1 trap pdu to the specified host, using the supplied version number
      *  and community name. Use version = 0 for SNMP version 1, or version = 1 for enhanced 
      *  capabilities provided through RFC 1157.
      */
@@ -96,7 +96,7 @@ public class SNMPTrapSender
     
     
     /**
-     *  Send the supplied trap pdu to the specified host, using the supplied community name and
+     *  Sends the supplied trap pdu to the specified host, using the supplied community name and
      *  using 0 for the version field in the SNMP message (corresponding to SNMP version 1).
      */
     public void sendTrap(InetAddress hostAddress, String community, SNMPv1TrapPDU pdu)
@@ -109,7 +109,7 @@ public class SNMPTrapSender
     
     
     /**
-     *  Send the supplied SNMPv2 trap pdu to the specified host, using the supplied version number
+     *  Sends the supplied SNMPv2 trap pdu to the specified host, using the supplied version number
      *  and community name. 
      */
     public void sendTrap(int version, InetAddress hostAddress, String community, SNMPv2TrapPDU pdu)
@@ -144,7 +144,7 @@ public class SNMPTrapSender
     
     
     /**
-     *  Send the supplied trap pdu to the specified host, using the supplied community name and
+     *  Sends the supplied trap pdu to the specified host, using the supplied community name and
      *  using 1 for the version field in the SNMP message.
      */
     public void sendTrap(InetAddress hostAddress, String community, SNMPv2TrapPDU pdu)
