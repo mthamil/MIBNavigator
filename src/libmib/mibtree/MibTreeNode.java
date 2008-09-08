@@ -1,7 +1,7 @@
 /**
  * libmib - Java SNMP Management Information Base Library
  *
- * Copyright (C) 2005, Matt Hamilton <matthew.hamilton@washburn.edu>
+ * Copyright (C) 2008, Matt Hamilton <mhamilton2383@comcast.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,9 @@
 
 package libmib.mibtree;
 
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.List;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
@@ -36,9 +38,6 @@ import libmib.oid.MibObjectType;
 public class MibTreeNode extends DefaultMutableTreeNode 
 {
     public enum NodeSearchOption { MATCH_NEAREST_PATH, MATCH_EXACT_PATH; }
-    
-    //public static final boolean MATCH_NEAREST_PATH = true;
-    //public static final boolean MATCH_EXACT_PATH = false;
     
     /**
      * Constructs a new default MibTreeNode.
@@ -68,24 +67,16 @@ public class MibTreeNode extends DefaultMutableTreeNode
      * @param nodeName the name of the node to search for
      * @return the node if it is found or null if it is not
      */
-    public MibTreeNode getNodeByName(String nodeName)
+    @SuppressWarnings("unchecked")
+	public MibTreeNode getNodeByName(String nodeName)
     {
-        //find node by name
-        boolean found = false;
-        MibTreeNode node = null;
+        List<MibTreeNode> nodes = Collections.list(this.breadthFirstEnumeration());
 
-        Enumeration e = this.breadthFirstEnumeration();
-
-        while (e.hasMoreElements() && !found)
+        for (MibTreeNode node : nodes)
         {
-            node = (MibTreeNode)e.nextElement();
-
-            if ( nodeName.equalsIgnoreCase(String.valueOf(node)) )
-                found = true;
+        	if (nodeName.equalsIgnoreCase(String.valueOf(node)))
+        		return node;
         }
-
-        if (found)
-            return node;
         
         // Return null if the node is not found.
         return null;
@@ -108,7 +99,8 @@ public class MibTreeNode extends DefaultMutableTreeNode
      * @return the node if it is found or null if it is not
      * @throws NumberFormatException 
      */
-    public MibTreeNode getNodeByOid(String oid, NodeSearchOption matchType) throws NumberFormatException
+    @SuppressWarnings("unchecked")
+	public MibTreeNode getNodeByOid(String oid, NodeSearchOption matchType) throws NumberFormatException
     {    
         String[] oidArray = oid.trim().split("\\.");
 
@@ -183,7 +175,8 @@ public class MibTreeNode extends DefaultMutableTreeNode
      *        
      * @return the node if it is found or null if it is not
      */
-    public MibTreeNode getNodeByOidName(String oid, NodeSearchOption matchType) throws NumberFormatException
+    @SuppressWarnings("unchecked")
+	public MibTreeNode getNodeByOidName(String oid, NodeSearchOption matchType) throws NumberFormatException
     {    
         String[] oidArray = oid.trim().split("\\.");
 

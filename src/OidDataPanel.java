@@ -1,7 +1,7 @@
 /**
  * MIB Navigator
  *
- * Copyright (C) 2005, Matt Hamilton <matthew.hamilton@washburn.edu>
+ * Copyright (C) 2008, Matt Hamilton <mhamilton2383@comcast.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,18 +33,23 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.TreePath;
 
+import contextmenu.TextContextMenu;
 import contextmenu.TextContextMenuListener;
 
+import libmib.mibtree.MibTreeNode;
 import libmib.oid.MibObjectType;
 import libmib.oid.MibSyntax;
 import libmib.oid.MibNameValuePair;
 import libmib.oid.MibObjectType.Access;
 import libmib.oid.MibObjectType.Status;
 
-public class OidInfoViewer
+public class OidDataPanel implements TreeSelectionListener
 {
-    private JPanel oidInfoPanel;
+    private JPanel oidInfoPanel;	// The main panel.
     private JLabel oidDescLabel;
     private JEditorPane oidDesc;
     private JScrollPane oidDescScroll;
@@ -55,33 +60,34 @@ public class OidInfoViewer
     private JLabel oidDataTypeLabel, oidAccessLabel, oidStatusLabel, oidMIBNameLabel;
     private JTextField oidDataTypeField, oidAccessField, oidStatusField, oidMIBNameField;
     
-    private TextContextMenuListener popListen;  //listens for popup events on internal swing components
-    
     private Color uneditableBackColor;
     
     private static final String DESC_HTML_PREFIX = "<font face=\"SansSerif\" size=\"2\">";
     private static final String DESC_HTML_SUFFIX = "</font>";
 
     
-    public OidInfoViewer(TextContextMenuListener popup) 
+    public OidDataPanel() 
     {
-        popListen = popup;
         configureComponents();
         layoutComponents();
     }
     
     private void configureComponents()
     {
-        oidInfoPanel = new JPanel(); //instantiate the main panel
+        oidInfoPanel = new JPanel();
         
-        uneditableBackColor = oidInfoPanel.getBackground();  //This is to ensure that uneditable text fields match the background.
+        // This is to ensure that uneditable text fields match the background.
+        uneditableBackColor = oidInfoPanel.getBackground();
         
-        //oid details
+        TextContextMenu contextMenu = new TextContextMenu();
+		TextContextMenuListener contextMenuListener = new TextContextMenuListener(contextMenu);
+        
+        // OID details
         oidDataTypeLabel = new JLabel("Type:");
         oidDataTypeField = new JTextField(18);
         oidDataTypeField.setEditable(false);
         oidDataTypeField.setBackground(uneditableBackColor);
-        oidDataTypeField.addMouseListener(popListen);
+        oidDataTypeField.addMouseListener(contextMenuListener);
 
         Dimension valuesSize = new Dimension(167, 20);
         oidValueBoxLabel = new JLabel("Values:");
@@ -95,26 +101,26 @@ public class OidInfoViewer
         oidAccessField = new JTextField(12);
         oidAccessField.setEditable(false);
         oidAccessField.setBackground(uneditableBackColor);
-        oidAccessField.addMouseListener(popListen);
+        oidAccessField.addMouseListener(contextMenuListener);
         
         oidStatusLabel = new JLabel("Status:");
         oidStatusField = new JTextField(12);
         oidStatusField.setEditable(false);
         oidStatusField.setBackground(uneditableBackColor);
-        oidStatusField.addMouseListener(popListen);
+        oidStatusField.addMouseListener(contextMenuListener);
 
         oidMIBNameLabel = new JLabel("Defined in:");
         oidMIBNameField = new JTextField(18);
         oidMIBNameField.setEditable(false);
         oidMIBNameField.setBackground(uneditableBackColor);
-        oidMIBNameField.addMouseListener(popListen);
+        oidMIBNameField.addMouseListener(contextMenuListener);
 
         oidDesc = new JEditorPane();
         oidDesc.setEditable(false);
         oidDesc.setBackground(uneditableBackColor);
         oidDesc.setBackground(oidStatusLabel.getBackground());
         oidDesc.setContentType("text/html");
-        oidDesc.addMouseListener(popListen);
+        oidDesc.addMouseListener(contextMenuListener);
 
         oidDescScroll = new JScrollPane(oidDesc);
         oidDescScroll.setPreferredSize(new Dimension(75, 100));
@@ -123,45 +129,13 @@ public class OidInfoViewer
     
     
     private void layoutComponents()
-    {
- /*       //OID DETAILS
-        GridLayout detailsLayout = new GridLayout(3, 4, 3, 3);
-        
-        JPanel detailPanel = new JPanel();
-        detailPanel.setLayout(detailsLayout);
-        
-        detailPanel.add(oidDataTypeLabel);
-        detailPanel.add(oidDataTypeField);
-
-        detailPanel.add(oidAccessLabel);
-        detailPanel.add(oidAccessField);
-
-        detailPanel.add(oidValueBoxLabel);
-        detailPanel.add(oidValueBox);
-
-        detailPanel.add(oidStatusLabel);
-        detailPanel.add(oidStatusField);
-
-        detailPanel.add(oidMIBNameLabel);
-        detailPanel.add(oidMIBNameField);
-        
-        
-        //MAIN PANEL
-        BorderLayout mainLayout = new BorderLayout(2, 2);
-        
-        oidInfoPanel = new JPanel();
-        oidInfoPanel.setLayout(mainLayout);
-        
-        oidInfoPanel.add(detailPanel, BorderLayout.NORTH);
-        oidInfoPanel.add(oidDescScroll, BorderLayout.SOUTH);*/
-        
-        
+    {       
         GridBagLayout layout = new GridBagLayout();
         GridBagConstraints cons = new GridBagConstraints();
         Insets ins = new Insets(2, 2, 2, 3);
         cons.insets = ins;
         
-        //OID DETAILS PANEL
+        // OID DETAILS PANEL
         JPanel detailPanel = new JPanel();
         detailPanel.setLayout(layout);
 
@@ -218,7 +192,7 @@ public class OidInfoViewer
         layout.setConstraints(oidMIBNameField, cons);
         detailPanel.add(oidMIBNameField);
 
-        //OID DESCRIPTION PANEL
+        // OID DESCRIPTION PANEL
         JPanel descPanel = new JPanel();
         descPanel.setLayout(layout);
 
@@ -240,7 +214,7 @@ public class OidInfoViewer
         layout.setConstraints(oidDescScroll, cons);
         descPanel.add(oidDescScroll);
 
-        //OID DETAIL AND DESCRIPTION CONTAINER PANEL (the main panel)
+        // OID DETAIL AND DESCRIPTION CONTAINER PANEL (the main panel)
         oidInfoPanel.setLayout(layout);
 
         ins.set(2, 0, 2, 0);
@@ -264,10 +238,10 @@ public class OidInfoViewer
     }
     
     
-    public void setMIBObject(MibObjectType currOID)
+    private void setMIBObject(MibObjectType mibObject)
     {
-        //display the OID's details in the panel
-        MibSyntax oidSyntax = currOID.getSyntax();
+        // Display the OID's details in the panel.
+        MibSyntax oidSyntax = mibObject.getSyntax();
         if (oidSyntax != null)
             oidDataTypeField.setText(oidSyntax.getDataType());
         else
@@ -275,33 +249,33 @@ public class OidInfoViewer
         
         oidDataTypeField.setCaretPosition(0);
         
-        Status oidStatus = currOID.getStatus();
+        Status oidStatus = mibObject.getStatus();
         if (oidStatus != null)
             oidStatusField.setText(oidStatus.toString());
         else
             oidStatusField.setText("");
         
-        Access oidAccess = currOID.getAccess();
+        Access oidAccess = mibObject.getAccess();
         if (oidAccess != null)
             oidAccessField.setText(oidAccess.toString());
         else
             oidAccessField.setText("");
 
-        //The oidDesc JEditorPane automatically converts escaped special characters
-        //to the correct display characters, ie. "&amp" -> "&" and "&gt;" -> ">".
-        oidDesc.setText(DESC_HTML_PREFIX + currOID.getDescription() + DESC_HTML_SUFFIX);
+        // The oidDesc JEditorPane automatically converts escaped special characters
+        // to the correct display characters, ie. "&amp" -> "&" and "&gt;" -> ">".
+        oidDesc.setText(DESC_HTML_PREFIX + mibObject.getDescription() + DESC_HTML_SUFFIX);
         oidDesc.setCaretPosition(0);
-        oidMIBNameField.setText(currOID.getMibName());
+        oidMIBNameField.setText(mibObject.getMibName());
         oidMIBNameField.setCaretPosition(0);
 
-        //if a particular MibObjectType has an enumerated data type
+        // Process the object's enumerated data type.
         DefaultComboBoxModel curModel = (DefaultComboBoxModel)oidValueBox.getModel();
-        if (currOID.hasValueList())
+        if (mibObject.hasValueList())
         {
             oidValueBox.setEnabled(true);
             curModel.removeAllElements();
             
-            List<MibNameValuePair> valList = currOID.getSyntax().getValues();
+            List<MibNameValuePair> valList = mibObject.getSyntax().getValues();
             for (MibNameValuePair item : valList)
                 curModel.addElement(item.getName() + " (" + item.getValue() + ")");
         }
@@ -314,10 +288,33 @@ public class OidInfoViewer
 
     }
     
+    
     public JPanel getPanel()
     {
         return oidInfoPanel;
     }
+
+    
+	/**
+     * TreeSelectionListener implementation method: reacts to tree node 
+     * selections.
+     * 
+     * @param event the TreeSelectionEvent generated by a node selection 
+     * change
+	 */
+	public void valueChanged(TreeSelectionEvent event)
+	{	
+		TreePath treePath = event.getPath();
+		Object[] path = treePath.getPath();
+		MibTreeNode node;
+		MibObjectType mibObject;
+	
+		node = (MibTreeNode)treePath.getLastPathComponent();
+		mibObject = (MibObjectType)node.getUserObject();
+		
+		// Display the selected OID's details.
+        this.setMIBObject(mibObject);
+	}
     
     
     /*public static void main(String[] args)

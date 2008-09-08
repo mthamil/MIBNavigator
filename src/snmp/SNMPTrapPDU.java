@@ -22,6 +22,7 @@
 
 package snmp;
 
+
 /**
  * Interface for recent version SNMP traps.
  */

@@ -45,7 +45,7 @@ public class SNMPv1SimpleAgent implements Runnable
     
     private DatagramSocket dSocket;
     private Thread receiveThread;
-    private Vector<SNMPRequestListener> requestListeners;
+    private List<SNMPRequestListener> requestListeners;
     
     private PrintWriter errorLogger;
     
@@ -59,8 +59,7 @@ public class SNMPv1SimpleAgent implements Runnable
      *  Constructs a new agent object to listen for requests from remote SNMP managers. The agent listens
      *  on the standard SNMP UDP port 161.
      */
-    public SNMPv1SimpleAgent(int newVersion)
-        throws SocketException
+    public SNMPv1SimpleAgent(int newVersion) throws SocketException
     {
         this(newVersion, SNMPv1Communicator.DEFAULT_SNMP_PORT, new PrintWriter(System.out));
     }
@@ -70,8 +69,7 @@ public class SNMPv1SimpleAgent implements Runnable
      *  Constructs a new agent object to listen for requests from remote SNMP managers. The agent listens
      *  on the supplied port.
      */
-    public SNMPv1SimpleAgent(int newVersion, int localPort)
-        throws SocketException
+    public SNMPv1SimpleAgent(int newVersion, int localPort) throws SocketException
     {
         this(newVersion, localPort, new PrintWriter(System.out));
     }
@@ -112,32 +110,17 @@ public class SNMPv1SimpleAgent implements Runnable
     }
     
     
-    public void addRequestListener(SNMPRequestListener listener)
+    public void addRequestListener(SNMPRequestListener newListener)
     {
-        // see if listener already added; if so, ignore
-        for (int i = 0; i < requestListeners.size(); i++)
-        {
-            if (listener == requestListeners.get(i))
-                return;
-        }
-        
-        // if got here, it's not in the list; add it
-        requestListeners.add(listener);
+        // See if listener already added; if so, ignore.           
+        if (!requestListeners.contains(newListener))
+        	requestListeners.add(newListener);
     }
     
     
     public void removeRequestListener(SNMPRequestListener listener)
-    {
-        // see if listener in list; if so, remove, if not, ignore
-        for (int i = 0; i < requestListeners.size(); i++)
-        {
-            if (listener == requestListeners.get(i))
-            {
-                requestListeners.remove(i);
-                break;
-            }
-        }
-        
+    {       
+        requestListeners.remove(listener);
     }
 
     
@@ -158,8 +141,7 @@ public class SNMPv1SimpleAgent implements Runnable
     /**
      *  Stops listening for requests from remote managers.
      */
-    public void stopReceiving()
-        throws SocketException
+    public void stopReceiving() throws SocketException
     {
         // interrupt receive thread so it will die a natural death
         receiveThread.interrupt();
@@ -211,13 +193,6 @@ public class SNMPv1SimpleAgent implements Runnable
                         default:
                             continue;  // some other PDU type; silently ignore and skip the rest of this loop iteration
                     }
-                    
-                    /*if ( (requestPDUType == SNMPBERType.SNMP_GET_REQUEST) || (requestPDUType == SNMPBERType.SNMP_SET_REQUEST)
-                            || (requestPDUType == SNMPBERType.SNMP_GET_NEXT_REQUEST) )
-                        this.handleRequest(receivedPDU, communityName, requestPDUType);
-                    else
-                        continue;   // some other PDU type; silently ignore
-                    */
                 }
                 catch (SNMPRequestException e)
                 {
@@ -351,10 +326,7 @@ public class SNMPv1SimpleAgent implements Runnable
      */
     public void setReceiveBufferSize(int receiveBufferSize)
     {
-        if (receiveBufferSize >= 484)
-            this.receiveBufferSize = receiveBufferSize;
-        else
-            this.receiveBufferSize = 484;
+    	this.receiveBufferSize = (receiveBufferSize >= 484) ? receiveBufferSize : 484;
     }
     
     
@@ -363,7 +335,7 @@ public class SNMPv1SimpleAgent implements Runnable
      */
     public int getReceiveBufferSize()
     {
-        return this.receiveBufferSize;
+        return receiveBufferSize;
     }
 
 }

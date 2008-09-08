@@ -35,8 +35,8 @@ public class SNMPv1Communicator
 {
     public static final int DEFAULT_SNMP_PORT = 161;
 
-    // largest size for datagram packet payload; based on
-    // RFC 1157, need to handle messages of at least 484 bytes
+    // Largest size for datagram packet payload; based on
+    // RFC 1157, need to handle messages of at least 484 bytes.
     private int receiveBufferSize = 512;
 
     private int version;
@@ -69,8 +69,7 @@ public class SNMPv1Communicator
      *  Permits setting timeout value for underlying datagram socket (in milliseconds).
      *  The timeout must be greater than zero.
      */
-    public void setSocketTimeout(int socketTimeout)
-        throws SocketException
+    public void setTimeout(int socketTimeout) throws SocketException
     {
         // Timeouts cannot be negative and 0 would be an infinite timeout which is undesirable.
         if (socketTimeout <= 0)
@@ -103,10 +102,7 @@ public class SNMPv1Communicator
      */
     public void setReceiveBufferSize(int receiveBufferSize)
     {
-        if (receiveBufferSize >= 484)
-            this.receiveBufferSize = receiveBufferSize;
-        else
-            this.receiveBufferSize = 484;
+    	this.receiveBufferSize = (receiveBufferSize >= 484) ? receiveBufferSize : 484;
     }
 
 
@@ -115,7 +111,7 @@ public class SNMPv1Communicator
      */
     public int getReceiveBufferSize()
     {
-        return this.receiveBufferSize;
+        return receiveBufferSize;
     }
 
 
@@ -433,8 +429,7 @@ public class SNMPv1Communicator
                         retrievedVars.addSNMPObject(newPair);
                     else      // wrong OID; throw GetException
                         throw new SNMPSetException("OID " + itemIds[i] + " expected at index " + i + ", OID " + newObjectIdentifier 
-                                + " received", 
-                                i + 1, SNMPRequestException.FAILED);
+                                + " received", i + 1, SNMPRequestException.FAILED);
                 }
 
                 break;
@@ -485,7 +480,7 @@ public class SNMPv1Communicator
             errorStatus = receivedPDU.getErrorStatus();
 
             // Check request identifier; if incorrect, just ignore packet and continue waiting.
-            if ( (receivedPDU.getRequestID() == requestID) && (errorStatus == SNMPRequestException.NO_ERROR) )
+            if (receivedPDU.getRequestID() == requestID && errorStatus == SNMPRequestException.NO_ERROR)
             {
                 // Check error status; if retrieval problem, just break - could be there are no additional OIDs.
                 //if (receivedPDU.getErrorStatus() != 0)

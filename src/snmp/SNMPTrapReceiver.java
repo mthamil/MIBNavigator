@@ -27,6 +27,7 @@ import java.util.*;
 
 
 
+
 /**
  *  The class SNMPTrapListenerInterface implements a server which listens for trap and inform request 
  * 	messages sent from remote SNMP entities. The approach is that from version 1 and 2c of SNMP, using no 
@@ -41,16 +42,16 @@ import java.util.*;
  */
 public class SNMPTrapReceiver implements Runnable
 {    
-    // largest size for datagram packet payload; based on
-    // RFC 1157, need to handle messages of at least 484 bytes
+    // Largest size for datagram packet payload; based on
+    // RFC 1157, need to handle messages of at least 484 bytes.
     private int receiveBufferSize = 512;
     
     private DatagramSocket dSocket;
     private Thread receiveThread;
     
-    private Vector<SNMPv1TrapListener> v1TrapListeners;
-    private Vector<SNMPv2TrapListener> v2TrapListeners;
-    private Vector<SNMPv2InformRequestListener> v2InformRequestListeners;
+    private List<SNMPv1TrapListener> v1TrapListeners;
+    private List<SNMPv2TrapListener> v2TrapListeners;
+    private List<SNMPv2InformRequestListener> v2InformRequestListeners;
     private PrintWriter errorLogger;
     
 
@@ -58,8 +59,7 @@ public class SNMPTrapReceiver implements Runnable
      *  Constructs a new trap receiver object to receive traps from remote SNMP hosts.
      *  This version will accept messages from all hosts using any community name.
      */
-    public SNMPTrapReceiver()
-        throws SocketException
+    public SNMPTrapReceiver() throws SocketException
     {
         // set System.out as the error writer
         this(new PrintWriter(System.out));
@@ -71,8 +71,7 @@ public class SNMPTrapReceiver implements Runnable
      *  This version will accept messages from all hosts using any community name. Uses the
      *  specified Writer to deliver error messages.
      */
-    public SNMPTrapReceiver(PrintWriter errorReceiver)
-        throws SocketException
+    public SNMPTrapReceiver(PrintWriter errorReceiver) throws SocketException
     {
         dSocket = new DatagramSocket(SNMPTrapSender.SNMP_TRAP_PORT);
         
@@ -95,93 +94,45 @@ public class SNMPTrapReceiver implements Runnable
     }
     
     
-    public void addv1TrapListener(SNMPv1TrapListener listener)
+    public void addV1TrapListener(SNMPv1TrapListener listener)
     {
-        // see if listener already added; if so, ignore
-        //for (int i = 0; i < v1TrapListeners.size(); i++)
-        for (SNMPv1TrapListener trapListener : v1TrapListeners)
-        {
-            if (listener == trapListener)
-                return;
-        }
-        
-        // if got here, it's not in the list; add it
-        v1TrapListeners.add(listener);
+        // See if listener already added; if so, ignore.
+        if (!v1TrapListeners.contains(listener))
+        	v1TrapListeners.add(listener);
     }
     
     
-    public void removev1TrapListener(SNMPv1TrapListener listener)
-    {
-        // see if listener in list; if so, remove, if not, ignore
-        for (int i = 0; i < v1TrapListeners.size(); i++)
-        {
-            if (listener == v1TrapListeners.get(i))
-            {
-                v1TrapListeners.remove(i);
-                break;
-            }
-        }
-        
+    public void removeV1TrapListener(SNMPv1TrapListener listener)
+    {       
+        v1TrapListeners.remove(listener);
     }
     
     
-    public void addv2TrapListener(SNMPv2TrapListener listener)
+    public void addV2TrapListener(SNMPv2TrapListener listener)
     {
-        // see if listener already added; if so, ignore
-        //for (int i = 0; i < v2TrapListeners.size(); i++)
-        for (SNMPv2TrapListener trapListener : v2TrapListeners)
-        {
-            if (listener == trapListener)
-                return;
-        }
-        
-        // if got here, it's not in the list; add it
-        v2TrapListeners.add(listener);
+        // See if listener already added; if so, ignore.
+    	if (!v2TrapListeners.contains(listener))
+    		v2TrapListeners.add(listener);
     }
     
     
-    public void removev2TrapListener(SNMPv2TrapListener listener)
+    public void removeV2TrapListener(SNMPv2TrapListener listener)
     {
-        // see if listener in list; if so, remove, if not, ignore
-        for (int i = 0; i < v2TrapListeners.size(); i++)
-        {
-            if (listener == v2TrapListeners.get(i))
-            {
-                v2TrapListeners.remove(i);
-                break;
-            }
-        }
-        
+        v2TrapListeners.remove(listener);
     }
     
     
-    public void addv2InformRequestListener(SNMPv2InformRequestListener listener)
+    public void addV2InformRequestListener(SNMPv2InformRequestListener listener)
     {
-        // see if listener already added; if so, ignore
-        //for (int i = 0; i < v2InformRequestListeners.size(); i++)
-        for (SNMPv2InformRequestListener requestListener : v2InformRequestListeners)
-        {
-            if (listener == requestListener)
-                return;
-        }
-        
-        // if got here, it's not in the list; add it
-        v2InformRequestListeners.add(listener);
+        // See if listener already added; if so, ignore.
+    	if (!v2InformRequestListeners.contains(listener))
+    		v2InformRequestListeners.add(listener);
     }
     
     
-    public void removev2InformRequestListener(SNMPv2InformRequestListener listener)
+    public void removeV2InformRequestListener(SNMPv2InformRequestListener listener)
     {
-        // see if listener in list; if so, remove, if not, ignore
-        for (int i = 0; i < v2InformRequestListeners.size(); i++)
-        {
-            if (listener == v2InformRequestListeners.get(i))
-            {
-                v2InformRequestListeners.remove(i);
-                break;
-            }
-        }
-        
+        v2InformRequestListeners.remove(listener);
     }
 
     
@@ -202,8 +153,7 @@ public class SNMPTrapReceiver implements Runnable
     /**
      *  Stops listening for trap and inform messages.
      */
-    public void stopReceiving()
-        throws SocketException
+    public void stopReceiving() throws SocketException
     {
         // interrupt receive thread so it will die a natural death
         receiveThread.interrupt();
@@ -212,7 +162,7 @@ public class SNMPTrapReceiver implements Runnable
     
     /**
      *  The run() method for the trap interface's listener. Just waits for trap or inform messages to
-     *  come in on port 162, then dispatches the recieved PDUs to each of the registered 
+     *  come in on port 162, then dispatches the received PDUs to each of the registered 
      *  listeners by calling their processTrap() or processInform() methods.
      */
     public void run()
@@ -228,8 +178,13 @@ public class SNMPTrapReceiver implements Runnable
                 SNMPMessage receivedMessage = new SNMPMessage(SNMPBERCodec.extractNextTLV(encodedMessage,0).value);
                 Object receivedPDU = receivedMessage.getPDUAsObject();
                 
-                if ( !(receivedPDU instanceof SNMPv1TrapPDU) && !(receivedPDU instanceof SNMPv2TrapPDU) && !(receivedPDU instanceof SNMPv2InformRequestPDU) )
-                    throw new SNMPBadValueException("PDU received that's not a v1 or v2 trap or inform request; message payload of type " + receivedPDU.getClass().toString());
+                if ( !(receivedPDU instanceof SNMPv1TrapPDU) && 
+                	 !(receivedPDU instanceof SNMPv2TrapPDU) && 
+                	 !(receivedPDU instanceof SNMPv2InformRequestPDU) )
+                {
+                    	throw new SNMPBadValueException("PDU received that's not a v1 or v2 trap or inform request; message payload of type " 
+                    			+ receivedPDU.getClass().toString());
+                }
                 
                 // pass the received trap PDU to the processTrap or procesv2Trap method of any listeners
                 if (receivedPDU instanceof SNMPv1TrapPDU)
@@ -271,36 +226,7 @@ public class SNMPTrapReceiver implements Runnable
         }
                 
     }
-    
-    
-    /*private String hexByte(byte b)
-    {
-        int pos = b;
-        if (pos < 0)
-            pos += 256;
-        String returnString = new String();
-        returnString += Integer.toHexString(pos/16);
-        returnString += Integer.toHexString(pos%16);
-        return returnString;
-    }
-    
-    
-    private String getHex(byte theByte)
-    {
-        int b = theByte;
-        
-        if (b < 0)
-            b += 256;
-        
-        String returnString = new String(Integer.toHexString(b));
-        
-        // add leading 0 if needed
-        if (returnString.length()%2 == 1)
-            returnString = "0" + returnString;
-            
-        return returnString;
-    }*/
-    
+      
     
     /**
      *  Sets the size of the buffer used to receive response packets. RFC 1157 stipulates that an SNMP
@@ -312,10 +238,7 @@ public class SNMPTrapReceiver implements Runnable
      */
     public void setReceiveBufferSize(int receiveBufferSize)
     {
-        if (receiveBufferSize >= 484)
-            this.receiveBufferSize = receiveBufferSize;
-        else
-            this.receiveBufferSize = 484;
+    	this.receiveBufferSize = (receiveBufferSize >= 484) ? receiveBufferSize : 484;
     }
     
     
@@ -324,7 +247,7 @@ public class SNMPTrapReceiver implements Runnable
      */
     public int getReceiveBufferSize()
     {
-        return this.receiveBufferSize;
+        return receiveBufferSize;
     }
     
 }

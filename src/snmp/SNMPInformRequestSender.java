@@ -25,6 +25,7 @@ import java.io.*;
 import java.net.*;
 
 
+
 /**
  *  The class SNMPInformRequestSender implements a method for sending SNMPv2 inform request messages to a remote SNMP manager. 
  *  The approach is that from version 2c of SNMP, using no encryption of data. Communication occurs via UDP, using port 162, 

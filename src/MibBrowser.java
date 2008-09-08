@@ -1,7 +1,7 @@
 /**
  * MIB Navigator
  *
- * Copyright (C) 2005, Matt Hamilton <matthew.hamilton@washburn.edu>
+ * Copyright (C) 2008, Matt Hamilton <mhamilton2383@comcast.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ import contextmenu.*;
  *  MibBrowser creates and manages the graphical interface for the MIB Navigator 
  *  application. 
  */
-public class MibBrowser implements ActionListener, TreeSelectionListener, ListSelectionListener, GetRequestListener
+public class MibBrowser
 {
     private JPanel browserPanel;
     
@@ -49,7 +49,7 @@ public class MibBrowser implements ActionListener, TreeSelectionListener, ListSe
     private MibTreeBuilder treeBuilder;
     private JScrollPane mibTreeScroll;
     
-    private OidInfoViewer oidViewer;
+    private OidDataPanel oidViewer;
 
     private JLabel oidNameLabel, oidNumberLabel, addressLabel, communityLabel, portLabel, timeoutLabel, oidInputLabel;
     private JTextField oidNameField, oidNumberField, resolvedAddrField, communityField, portField, timeoutField, oidInputField; 
@@ -69,12 +69,6 @@ public class MibBrowser implements ActionListener, TreeSelectionListener, ListSe
 	// Base MIB directory (has been tested on Linux and Windows)
     private static final String MIB_DIR_NAME = "." + File.separator + "mibs";
     private File mibDirectory;
-    
-    private GetRequestWorker snmpGetWorker = null;
-    
-    private static final String GET_START_LABEL = "Get Data";
-    private static final String GET_STOP_LABEL = "Stop";
-        
 
     /**
      * Creates a new MibBrowser that uses the given MibTreeBuilder to manage its MIB tree.
@@ -107,12 +101,12 @@ public class MibBrowser implements ActionListener, TreeSelectionListener, ListSe
     {
         browserPanel = new JPanel();
 
-        TextContextMenu textPopMenu = new TextContextMenu();
-		TextContextMenuListener textPopListen = new TextContextMenuListener(textPopMenu);
-
-        oidViewer = new OidInfoViewer(textPopListen); 
+        oidViewer = new OidDataPanel(); 
         
-		// oid info
+        TextContextMenu contextMenu = new TextContextMenu();
+		TextContextMenuListener contextMenuListener = new TextContextMenuListener(contextMenu);
+        
+		// OID info
         oidNameLabel = new JLabel("OID Name: ");
         backgroundColor = oidNameLabel.getBackground(); //this is for look and feel purposes
         oidNumberLabel = new JLabel("OID Number: ");
@@ -120,15 +114,15 @@ public class MibBrowser implements ActionListener, TreeSelectionListener, ListSe
         oidNameField = new JTextField(37);
         oidNameField.setEditable(false);
         oidNameField.setBackground(backgroundColor);
-        oidNameField.addMouseListener(textPopListen);
+        oidNameField.addMouseListener(contextMenuListener);
 
         oidNumberField = new JTextField(37);
         oidNumberField.setEditable(false);
         oidNumberField.setBackground(backgroundColor);
-        oidNumberField.addMouseListener(textPopListen);
+        oidNumberField.addMouseListener(contextMenuListener);
         
         
-		// host info
+		// Host info
 		addressLabel = new JLabel("IP Address:");
         addressBox = new JComboBox();
         addressBox.setMaximumRowCount(15);
@@ -137,61 +131,60 @@ public class MibBrowser implements ActionListener, TreeSelectionListener, ListSe
         addressBox.setPreferredSize(addressSize);
         addressBox.setMaximumSize(addressSize);
         
-        // Add a context menu to the combo box's text component.
+        // Add a context menu to the combo box's editor component.
         ComboBoxEditor editor = addressBox.getEditor();
         Component comp = editor.getEditorComponent();
-        comp.addMouseListener(textPopListen);
+        comp.addMouseListener(contextMenuListener);
 
         resolvedAddrField = new JTextField(17);
         resolvedAddrField.setEditable(false);
         resolvedAddrField.setHorizontalAlignment(JTextField.CENTER);
         resolvedAddrField.setBackground(backgroundColor);
-        resolvedAddrField.addMouseListener(textPopListen);
+        resolvedAddrField.addMouseListener(contextMenuListener);
 
         communityLabel = new JLabel("Community String:");
         communityField = new JTextField(12);
         communityField.setText("public");
         communityField.setEditable(true);
-        communityField.addMouseListener(textPopListen);
+        communityField.addMouseListener(contextMenuListener);
         
         portLabel = new JLabel("Port:");
         portField = new JTextField(4);
         portField.setText("161");
-        portField.addMouseListener(textPopListen);
+        portField.addMouseListener(contextMenuListener);
         
         timeoutLabel = new JLabel("Timeout:");
         timeoutField = new JTextField(4);
         timeoutField.setText("4000");
-        timeoutField.addMouseListener(textPopListen);
+        timeoutField.addMouseListener(contextMenuListener);
 
         oidInputLabel = new JLabel("OID:");
         oidInputField = new JTextField(21);
         oidInputField.setText("");
         oidInputField.setEditable(true);
-        oidInputField.addMouseListener(textPopListen);
+        oidInputField.addMouseListener(contextMenuListener);
         oidInputField.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0),"treeSearch");
-        oidInputField.getActionMap().put("treeSearch", new OidTreeSearchAction());
+        oidInputField.getActionMap().put("treeSearch", new OidTreeSearchAction(this));
 
-        ListContextMenu listPopMenu = new ListContextMenu();
-        ListContextMenuListener listPopListen = new ListContextMenuListener(listPopMenu);
+        ListContextMenu listContextMenu = new ListContextMenu();
+        ListContextMenuListener listContextMenuListener = new ListContextMenuListener(listContextMenu);
         
 		resultsLabel = new JLabel("Results:");
         resultsList = new JList(new DefaultListModel());
         resultsList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-        resultsList.addMouseListener(listPopListen);
-        resultsList.addListSelectionListener(this);
+        resultsList.addMouseListener(listContextMenuListener);
+        resultsList.addListSelectionListener(new ResultsListListener());
         
         resultsScroll = new JScrollPane(resultsList);
 		resultsScroll.setPreferredSize(new Dimension(50, 75));
 
-        getButton = new JButton(GET_START_LABEL);
+        getButton = new JButton();
         getButton.setPreferredSize(new Dimension(80, 25));
-        getButton.setActionCommand("start get");
-        getButton.addActionListener(this);
+        getButton.setAction(new GetRequestAction());
         getButton.setMnemonic(KeyEvent.VK_G);
 
 
-        // Configure the mib tree.
+        // Configure the MIB tree.
         try
         {
             treeBuilder.addMIBDirectory(mibDirectory);
@@ -207,7 +200,8 @@ public class MibBrowser implements ActionListener, TreeSelectionListener, ListSe
         mibTree = new JTree();
         mibTree.setModel(mibModel); 
         mibTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-        mibTree.addTreeSelectionListener(this);
+        mibTree.addTreeSelectionListener(new MibTreeListener());
+        mibTree.addTreeSelectionListener(oidViewer);
         mibTree.setRootVisible(false);
                 
         DefaultTreeCellRenderer cellRenderer = new DefaultTreeCellRenderer();
@@ -553,22 +547,54 @@ public class MibBrowser implements ActionListener, TreeSelectionListener, ListSe
     
     // *** End of MibBrowser data access methods. ***
     
-    
-	/**
-	 * ActionListener implementation method: reacts to menu and button actions, which are usually 
-     * clicks or the pressing of the Enter key when a button has focus.
+    /**
+     * Searches for a node by a specified OID string such as 1.3.6.1.1, etc., and then sets 
+     * the selected node in the JTree to that node. Note that in the event that the OID is 
+     * found in the tree, a TreeSelectionListener valueChanged event will be triggered.
      * 
-     * @param event the ActionEvent generated when a component's default action occurs
+     * @param oidString the OID path string to search for
+     * @param matchType determines whether to match the closest path or the exact path
      */
-	public void actionPerformed(ActionEvent event)
-	{
-        String actionCommand = event.getActionCommand();
+	public void setVisibleNodeByOID(String oidString, NodeSearchOption matchType) throws NumberFormatException
+    {
+        MibTreeNode root = (MibTreeNode)mibModel.getRoot(); //get the root node to search from the root
+        MibTreeNode testNode = root.getNodeByOid(oidString, matchType);
+        //MibTreeNode testNode = root.getNodeByOidName(oidString, matchType);
 
-		if (actionCommand.equals("start get"))
-		{    
+        if (testNode != null)
+        {
+            TreePath nodePath = new TreePath(testNode.getPath());
+            
+            mibTree.setSelectionPath(nodePath);
+            mibTree.scrollPathToVisible(nodePath);
+        }
+    }
+    
+
+    private class GetRequestAction extends AbstractAction
+    {
+        public static final String GET_START_LABEL = "Get Data";
+        public static final String GET_STOP_LABEL = "Stop";
+    	
+    	private boolean requestStarted;
+    	private GetRequestWorker snmpGetWorker = null;
+    	
+    	public GetRequestAction()
+    	{
+    		putValue(NAME, GET_START_LABEL);
+    	}
+    	
+		/**
+		 * ActionListener implementation method: reacts to menu and button actions, which are usually 
+	     * clicks or the pressing of the Enter key when a button has focus.
+	     * 
+	     * @param event the ActionEvent generated when a component's default action occurs
+	     */
+		public void actionPerformed(ActionEvent event)
+		{  
 		    // Spawn a new GetRequestWorker thread for retrieving data from a device running an SNMP agent.
             
-            if (getButton.getText().equals(GET_START_LABEL))
+            if (getValue(NAME).equals(GET_START_LABEL))  //getButton.getText().equals(GET_START_LABEL))
             {
                 // This check is just to avoid even attempting to use an empty OID or IP address field.
                 if (!oidInputField.getText().trim().equals("") 
@@ -588,19 +614,19 @@ public class MibBrowser implements ActionListener, TreeSelectionListener, ListSe
                         int timeout = Integer.parseInt(timeoutField.getText().trim());
     
                         // Try to scroll to the correct OID.
-                        String oidInputString = trimCharacter(oidInputField.getText().trim(), '.');
+                        String oidInputString = Utilities.trimCharacter(oidInputField.getText().trim(), '.');
                         String oidTreeNumberString = oidNumberField.getText();
                         
                         if (!oidInputString.equals(oidTreeNumberString))
                             setVisibleNodeByOID(oidInputString, NodeSearchOption.MATCH_EXACT_PATH);
     
                         resultsListModel.removeAllElements();
-                        getButton.setText(GET_STOP_LABEL);
+                        putValue(NAME, GET_STOP_LABEL);
                         
                         // Initialize and start the GetRequest process in a different thread using a SwingWorker.
                         snmpGetWorker = new GetRequestWorker(communityString, oidInputString, addressString,
                                 (MibTreeNode)mibModel.getRoot());
-                        snmpGetWorker.addGetRequestListener(this);
+                        snmpGetWorker.addGetRequestListener(new MibGetRequestListener());
                         snmpGetWorker.setPort(port);
                         snmpGetWorker.setTimeout(timeout);
                         snmpGetWorker.start();
@@ -611,230 +637,170 @@ public class MibBrowser implements ActionListener, TreeSelectionListener, ListSe
                         resultsListModel.addElement("Bad numerical input: " + e.getMessage() + "\n");
                     } 
                 }
-            } // if the button says "Get Data"
+            }
             else
             {
                 if (snmpGetWorker != null)
                     snmpGetWorker.interrupt();  // stop the Get process
             }
 		}
-	}
-    
+    }
 
+    
 	/**
-     * TreeSelectionListener implementation method: reacts to tree node selections (ie. user clicks a node)
-     * 
-     * @param event the TreeSelectionEvent generated by a node selection change
+	 * Class that listens for and responds to MIB tree node
+	 * selection changes.
 	 */
-	public void valueChanged(TreeSelectionEvent event)
+	private class MibTreeListener implements TreeSelectionListener
 	{
-		TreePath tPath = event.getPath();
-		Object[] path = tPath.getPath();
-		MibTreeNode curNode;
-		MibObjectType curMIBObject;
-
-		// Reset the string buffers; these buffers are continuously reused to avoid 
-        // always creating new ones.
-		currentOidName.delete(0, currentOidName.length());
-		currentOidNumber.delete(0, currentOidNumber.length());
-
-		// Construct the mib object name and oid path strings from the object path 
-        // array; start at 1 to exclude the root.
-		for (int i = 1; i < path.length; i++)
+		/**
+	     * TreeSelectionListener implementation method: reacts to tree node selections 
+	     * (ie. user clicks a node)
+	     * 
+	     * @param event the TreeSelectionEvent generated by a node selection change
+		 */
+		public void valueChanged(TreeSelectionEvent event)
 		{
-			curNode = (MibTreeNode)path[i];
-			curMIBObject = (MibObjectType)curNode.getUserObject();
+			// Reset the string buffers; these buffers are continuously reused to avoid 
+	        // always creating new ones.
+			currentOidName.delete(0, currentOidName.length());
+			currentOidNumber.delete(0, currentOidNumber.length());
 
-			// Don't put a '.' at the beginning.
-			if (i > 1)
+			Object[] path = event.getPath().getPath();
+			MibTreeNode node;
+			MibObjectType mibObject;
+			
+			// Construct the MIB object name and OID path strings from the object path 
+	        // array; start at 1 to exclude the root.
+			for (int i = 1; i < path.length; i++)
 			{
-				currentOidName.append(".");
-				currentOidNumber.append(".");
+				node = (MibTreeNode)path[i];
+				mibObject = (MibObjectType)node.getUserObject();
+	
+				// Don't put a '.' at the beginning.
+				if (i > 1)
+				{
+					currentOidName.append(".");
+					currentOidNumber.append(".");
+				}
+	
+				currentOidName.append(mibObject.getName());
+				currentOidNumber.append(String.valueOf(mibObject.getId()));
 			}
-
-			currentOidName.append(curMIBObject.getName());
-			currentOidNumber.append(String.valueOf(curMIBObject.getId()));
+	
+			// Set the OID name and number strings.
+			oidNameField.setText(currentOidName.toString());
+			oidNumberField.setText(currentOidNumber.toString());
+	
+	        if (!oidInputField.getText().trim().equals(oidNumberField.getText().trim()))
+			    oidInputField.setText(currentOidNumber.toString()); // synch the input field with the tree display
 		}
-
-		// Set the oid name and number strings.
-		oidNameField.setText(currentOidName.toString());
-		oidNumberField.setText(currentOidNumber.toString());
-
-        if (!oidInputField.getText().trim().equals(oidNumberField.getText().trim()))
-		    oidInputField.setText(currentOidNumber.toString()); // synch the input field with the tree display
-
-		curNode = (MibTreeNode)tPath.getLastPathComponent();
-		curMIBObject = (MibObjectType)curNode.getUserObject();
-
-		// Display the selected OID's details.
-        oidViewer.setMIBObject(curMIBObject);
 	}
-    
-    /**
-     * ListSelectionListener implementation method: reacts to changes in the selection on a JList.
-     * When the user selects a row or more, the oid of the selected row with the lowest index is 
-     * retrieved, searched for in the MIB tree, and then displayed.
-     */
-    public void valueChanged(ListSelectionEvent selectEvent) 
-    {
-        // The IsAdjusting check is to make sure the code that occurs on a selection value
-        // change does not run twice.
-        // The second time valueChanged is called is when a new row has been selected, the first time
-        // is when the previous selections are removed.  The second time valueChanged is called,
-        // this value is false.
-        if (!selectEvent.getValueIsAdjusting())
-        {
-            JList source = (JList)selectEvent.getSource();
-            int selectedIndex = source.getSelectedIndex();
-            
-            if (selectedIndex > -1)
-            {
-                Object selectedObject = source.getModel().getElementAt(selectedIndex);
-                
-                try
-                {
-                    if (selectedObject instanceof GetRequestResult)
-                    {
-                        String selectedOID = ((GetRequestResult)selectedObject).getOIDNumber();
-                        setVisibleNodeByOID(selectedOID, NodeSearchOption.MATCH_NEAREST_PATH);
-                    }
-                }
-                // Catch bad OIDs, though this is very unlikely if the OID is in the results list.
-                catch (NumberFormatException e) 
-                {
-                    // do nothing
-                    // They say it is horrible to have empty catch blocks but I do not care when this happens!
-                }
-            }
-        }
-        
-    }
-    
-
-    /**
-     * Action for performing a search of the MIB tree based on the OID string
-     * in the OID input field.
-     */
-	private class OidTreeSearchAction extends AbstractAction
+	
+	
+	
+	private class ResultsListListener implements ListSelectionListener
 	{
-        public void actionPerformed(ActionEvent event)
-        {
-            try
-            {
-                setVisibleNodeByOID(oidInputField.getText().trim(), NodeSearchOption.MATCH_EXACT_PATH);
-            }
-            catch (NumberFormatException e)
-            {
-                // just do nothing, I may add an "OID not found" message later
-            }
-        }
+	    /**
+	     * ListSelectionListener implementation method: reacts to changes in the selection on a JList.
+	     * When the user selects a row or more, the OID of the selected row with the lowest index is 
+	     * retrieved, searched for in the MIB tree, and then displayed.
+	     */
+	    public void valueChanged(ListSelectionEvent selectEvent) 
+	    {
+	        // The IsAdjusting check is to make sure the code that occurs on a selection value
+	        // change does not run twice.
+	        // The second time valueChanged is called is when a new row has been selected, the first time
+	        // is when the previous selections are removed.  The second time valueChanged is called,
+	        // this value is false.
+	        if (!selectEvent.getValueIsAdjusting())
+	        {
+	            JList source = (JList)selectEvent.getSource();
+	            int selectedIndex = source.getSelectedIndex();
+	            
+	            if (selectedIndex > -1)
+	            {
+	                Object selectedObject = source.getModel().getElementAt(selectedIndex);
+	                
+	                try
+	                {
+	                    if (selectedObject instanceof GetRequestResult)
+	                    {
+	                        String selectedOID = ((GetRequestResult)selectedObject).getOIDNumber();
+	                        setVisibleNodeByOID(selectedOID, NodeSearchOption.MATCH_NEAREST_PATH);
+	                    }
+	                }
+	                // Catch bad OIDs, though this is very unlikely if the OID is in the results list.
+	                catch (NumberFormatException e) 
+	                {
+	                    // do nothing
+	                    // They say it is horrible to have empty catch blocks but I do not care when this happens!
+	                }
+	            }
+	        }
+	        
+	    }
 	}
     
 
     /**
-     * Searches for a node by a specified OID string such as 1.3.6.1.1, etc., and then sets 
-     * the selected node in the JTree to that node. Note that in the event that the OID is 
-     * found in the tree, a TreeSelectionListener valueChanged event will be triggered.
-     * 
-     * @param oidString the OID path string to search for
-     * @param matchType determines whether to match the closest path or the exact path
+     * Listens for and handles events from a GetRequestWorker.
      */
-    private void setVisibleNodeByOID(final String oidString, NodeSearchOption matchType) throws NumberFormatException
+    private class MibGetRequestListener implements GetRequestListener
     {
-        MibTreeNode root = (MibTreeNode)mibModel.getRoot(); //get the root node to search from the root
-        MibTreeNode testNode = root.getNodeByOid(oidString, matchType);
-        //MibTreeNode testNode = root.getNodeByOidName(oidString, matchType);
-
-        if (testNode != null)
-        {
-            TreePath nodePath = new TreePath(testNode.getPath());
-            
-            mibTree.setSelectionPath(nodePath);
-            mibTree.scrollPathToVisible(nodePath);
-        }
+	    /**
+	     * Displays the resolved name of an IP address next to the input combo box, 
+	     * and adds the raw address to this combo box if it does not already exist.
+	     */
+	    public void hostAddressResolved(String validAddress, String resolvedAddress) 
+	    {
+	        // Display the resolved address.
+	        resolvedAddrField.setText(resolvedAddress);
+	        resolvedAddrField.setCaretPosition(0);
+	        
+	        int listLength = addressBox.getItemCount();
+	        
+	        // Do a search to determine if this address already exists in the combo box.
+	        boolean alreadyExists = false;
+	        int i = 0;
+	        while (i < listLength && !alreadyExists)
+	        {
+	            String currentAddr = (String)addressBox.getItemAt(i);
+	            if (validAddress.equals(currentAddr))
+	                alreadyExists = true;
+	            
+	            i++;
+	        }
+	        
+	        // If the address doesn't already exist, add it to the beginning of the list.
+	        if (!alreadyExists)
+	            addressBox.insertItemAt(validAddress, 0);
+	    }
+	    
+	    
+	    /**
+	     * Adds a new GetRequestResult to the resultsList.
+	     * A GetRequestResult encapsulates data about a single OID and its
+	     * returned value. Both the partial OID name and full OID number are stored in it.
+	     * @see GetRequestResult
+	     */
+	    public void requestResultReceived(GetRequestResult dataResultItem) 
+	    {
+	        ((DefaultListModel)resultsList.getModel()).addElement(dataResultItem);
+	    }
+	    
+	    
+	   /**
+	    * Adds the termination status of the GetRequestWorker to the results list.  If it terminated
+	    * successfully, an empty String will be returned.  It also resets the get data button.
+	    */
+	    public void requestTerminated(String messageString)
+	    {
+	        if (!messageString.equals("")) // only add error messages, do nothing when successful
+	            ((DefaultListModel)resultsList.getModel()).addElement(messageString);
+	                 
+	        getButton.getAction().putValue(GetRequestAction.NAME, GetRequestAction.GET_START_LABEL);
+	    }
     }
-
-
-    /**
-     * Removes all leading and trailing instances of a character from a String.
-     * 
-     * @param untrimmed the String to trim the characters from
-     * @param trimChar the character to trim
-     * @return the trimmed String
-     */
-    private String trimCharacter(String untrimmed, char trimChar)
-    {
-        String trimmed = untrimmed;
-        String stringToTrim = String.valueOf(trimChar);
-        
-        //Trim leading characters.
-        while (trimmed.startsWith(stringToTrim))
-            trimmed = trimmed.substring(trimmed.indexOf(stringToTrim) + 1);
-
-        //Trim trailing characters.
-        while (trimmed.endsWith(stringToTrim))
-            trimmed = trimmed.substring(0, trimmed.lastIndexOf(stringToTrim));
-
-        return trimmed;
-    }
-
-    
-    // *** Start of GetRequestListener implementation methods. ***
-    
-    /**
-     * Displays the resolved name of an IP address next to the input combo box, 
-     * and adds the raw address to this combo box if it does not already exist.
-     */
-    public void hostAddressResolved(String validAddress, String resolvedAddress) 
-    {
-        // Display the resolved address.
-        resolvedAddrField.setText(resolvedAddress);
-        resolvedAddrField.setCaretPosition(0);
-        
-        int listLength = addressBox.getItemCount();
-        
-        // Do a search to determine if this address already exists in the combo box.
-        boolean alreadyExists = false;
-        int i = 0;
-        while (i < listLength && !alreadyExists)
-        {
-            String currentAddr = (String)addressBox.getItemAt(i);
-            if (validAddress.equals(currentAddr))
-                alreadyExists = true;
-            
-            i++;
-        }
-        
-        // If the address doesn't already exist, add it to the beginning of the list.
-        if (!alreadyExists)
-            addressBox.insertItemAt(validAddress, 0);
-    }
-    
-    
-    /**
-     * Adds a new GetRequestResult to the resultsList.
-     * A GetRequestResult encapsulates data about a single OID and its
-     * returned value. Both the partial OID name and full OID number are stored in it.
-     * @see GetRequestResult
-     */
-    public void requestResultReceived(GetRequestResult dataResultItem) 
-    {
-        ((DefaultListModel)resultsList.getModel()).addElement(dataResultItem);
-    }
-    
-    
-   /**
-    * Adds the termination status of the GetRequestWorker to the results list.  If it terminated
-    * successfully, an empty String will be returned.  It also resets the get data button.
-    */
-    public void requestTerminated(String messageString)
-    {
-        if (!messageString.equals("")) // only add error messages, do nothing when successful
-            ((DefaultListModel)resultsList.getModel()).addElement(messageString);
-                 
-        getButton.setText(GET_START_LABEL);
-    }
-    
-    // *** End of GetRequestListener implementation methods. ***
     
 }

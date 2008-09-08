@@ -2,6 +2,7 @@
  * SNMP Package
  *
  * Copyright (C) 2004, Jonathan Sevy <jsevy@mcs.drexel.edu>
+ * 			 (C) 2008, Matt Hamilton <mhamil6@uic.edu>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,7 +21,6 @@
  */
 
 package snmp;
-
 
 
 /**
@@ -140,34 +140,24 @@ package snmp;
  * @see <a href="http://www.ietf.org/rfc/rfc1905.txt">RFC 1905</a>
  * @see <a href="http://www.ietf.org/rfc/rfc1448.txt">RFC 1448</a>
  */
-public class SNMPv2InformRequestPDU extends SNMPPDU
-									implements SNMPTrapPDU
+public class SNMPv2InformRequestPDU extends SNMPAbstractTrapPDU
 {
     
-    /**
-     * Creates a new Inform Request PDU with given trapOID and sysUptime, and
-     * containing the supplied SNMP sequence as data.
+	/**
+     *  Creates a new Inform Request PDU with given trapOID and sysUptime,
+     *  and containing the supplied SNMP sequence as data.
      */
     public SNMPv2InformRequestPDU(SNMPTimeTicks sysUptime, SNMPObjectIdentifier snmpTrapOID, SNMPSequence varList)
         throws SNMPBadValueException
     {
-        super(SNMPBERType.SNMPv2_INFORM_REQUEST, 0, 0, 0, varList);
-        
-        // create a variable pair for sysUptime, and insert into varBindList
-        SNMPObjectIdentifier sysUptimeOID = new SNMPObjectIdentifier("1.3.6.1.2.1.1.3.0");
-        SNMPVariablePair sysUptimePair = new SNMPVariablePair(sysUptimeOID, sysUptime);
-        varList.insertSNMPObjectAt(sysUptimePair, 0);
-        
-        // create a variable pair for snmpTrapOID, and insert into varBindList
-        SNMPObjectIdentifier snmpTrapOIDOID = new SNMPObjectIdentifier("1.3.6.1.6.3.1.1.4.1.0");
-        SNMPVariablePair snmpOIDPair = new SNMPVariablePair(snmpTrapOIDOID, snmpTrapOID);
-        varList.insertSNMPObjectAt(snmpOIDPair, 1); 
+        super(sysUptime, snmpTrapOID, varList, SNMPBERType.SNMPv2_INFORM_REQUEST);
     }
     
-
+    
     /**
      *  Creates a new Inform Request PDU with given trapOID and sysUptime,
-     *  and containing an empty SNMP sequence (VarBindList) as additional data.
+     *  and containing an empty SNMP sequence (VarBindList) as additional 
+     *  data.
      */
     public SNMPv2InformRequestPDU(SNMPObjectIdentifier snmpTrapOID, SNMPTimeTicks sysUptime)
         throws SNMPBadValueException
@@ -175,66 +165,15 @@ public class SNMPv2InformRequestPDU extends SNMPPDU
         this(sysUptime, snmpTrapOID, new SNMPSequence());
     }
     
-
+    
     /**
-     *  Creates a new PDU of the specified type from the supplied BER encoding.
+     *  Creates a new Inform Request PDU from the supplied BER encoding.
      *  
-     *  @throws SNMPBadValueException Indicates invalid SNMP PDU encoding supplied in enc.
+     *  @throws SNMPBadValueException Indicates invalid SNMP PDU encoding.
      */
-    protected SNMPv2InformRequestPDU(byte[] enc)
-        throws SNMPBadValueException
+    protected SNMPv2InformRequestPDU(byte[] encoding) throws SNMPBadValueException
     {
-        super(enc, SNMPBERType.SNMPv2_INFORM_REQUEST);
-        
-        // validate the message: make sure the first two components of the varBindList
-        // are the appropriate variable pairs
-        SNMPSequence varBindList = this.getVarBindList();
-        
-        if (varBindList.size() < 2)
-            throw new SNMPBadValueException("Bad v2 Inform Request PDU: missing snmpTrapOID or sysUptime");
-        
-        // validate that the first variable binding is the sysUptime
-        SNMPSequence variablePair = (SNMPSequence)varBindList.getSNMPObjectAt(0);
-        SNMPObjectIdentifier oid = (SNMPObjectIdentifier)variablePair.getSNMPObjectAt(0);
-        SNMPObject value = variablePair.getSNMPObjectAt(1);
-        SNMPObjectIdentifier sysUptimeOID = new SNMPObjectIdentifier("1.3.6.1.2.1.1.3.0");
-        
-        if (!(value instanceof SNMPTimeTicks) || !oid.equals(sysUptimeOID))
-            throw new SNMPBadValueException("Bad v2 Inform Request PDU: bad sysUptime in variable binding list");
-        
-        // validate that the second variable binding is the snmpTrapOID
-        variablePair = (SNMPSequence)varBindList.getSNMPObjectAt(1);
-        oid = (SNMPObjectIdentifier)variablePair.getSNMPObjectAt(0);
-        value = variablePair.getSNMPObjectAt(1);
-        SNMPObjectIdentifier snmpTrapOIDOID = new SNMPObjectIdentifier("1.3.6.1.6.3.1.1.4.1.0");
-        
-        if (!(value instanceof SNMPObjectIdentifier) || !oid.equals(snmpTrapOIDOID))
-            throw new SNMPBadValueException("Bad v2 Inform Request PDU: bad snmpTrapOID in variable binding list");
-        
+        super(encoding, SNMPBERType.SNMPv2_INFORM_REQUEST);
     }
-    
-
-    /** 
-     *  Extracts the snmpTrapOID from the variable bind list (it's the second of the 
-     *  variable pairs).
-     */
-    public SNMPObjectIdentifier getSNMPTrapOID()
-    {
-        SNMPSequence contents = this.getVarBindList();
-        SNMPSequence variablePair = (SNMPSequence)contents.getSNMPObjectAt(1);
-        return (SNMPObjectIdentifier)variablePair.getSNMPObjectAt(1);
-    }
-    
-    
-    /** 
-     *  Extracts the sysUptime from the variable bind list (it's the first of the 
-     *  variable pairs).
-     */
-    public SNMPTimeTicks getSysUptime()
-    {
-        SNMPSequence contents = this.getVarBindList();
-        SNMPSequence variablePair = (SNMPSequence)contents.getSNMPObjectAt(0);
-        return (SNMPTimeTicks)variablePair.getSNMPObjectAt(1);
-    }
-    
+	
 }

@@ -26,6 +26,7 @@ import java.net.*;
 
 
 
+
 /**
  *  The class SNMPTrapSender implements an interface for sending SNMPv1 and SNMPv2 trap messages to a 
  *  remote SNMP manager. The approach is that from version 1 of SNMP, using no encryption of data. 
@@ -40,8 +41,7 @@ public class SNMPTrapSender
     /**
      *  Constructs a new trap sender object to send traps to remote SNMP hosts.
      */
-    public SNMPTrapSender()
-        throws SocketException
+    public SNMPTrapSender() throws SocketException
     {
         dSocket = new DatagramSocket();
     }
@@ -51,15 +51,14 @@ public class SNMPTrapSender
      *  Constructs a new trap sender object to send traps to remote SNMP hosts, binding to
      *  the specified local port.
      */
-    public SNMPTrapSender(int localPort)
-        throws SocketException
+    public SNMPTrapSender(int localPort) throws SocketException
     {
         dSocket = new DatagramSocket(localPort);
     }
     
 
     /**
-     *  Sends the supplied SNMPv1 trap pdu to the specified host, using the supplied version number
+     *  Sends the supplied SNMPv1 trap PDU to the specified host, using the supplied version number
      *  and community name. Use version = 0 for SNMP version 1, or version = 1 for enhanced 
      *  capabilities provided through RFC 1157.
      */
@@ -96,7 +95,7 @@ public class SNMPTrapSender
     
     
     /**
-     *  Sends the supplied trap pdu to the specified host, using the supplied community name and
+     *  Sends the supplied trap PDU to the specified host, using the supplied community name and
      *  using 0 for the version field in the SNMP message (corresponding to SNMP version 1).
      */
     public void sendTrap(InetAddress hostAddress, String community, SNMPv1TrapPDU pdu)
@@ -109,7 +108,7 @@ public class SNMPTrapSender
     
     
     /**
-     *  Sends the supplied SNMPv2 trap pdu to the specified host, using the supplied version number
+     *  Sends the supplied SNMPv2 trap PDU to the specified host, using the supplied version number
      *  and community name. 
      */
     public void sendTrap(int version, InetAddress hostAddress, String community, SNMPv2TrapPDU pdu)
@@ -144,7 +143,7 @@ public class SNMPTrapSender
     
     
     /**
-     *  Sends the supplied trap pdu to the specified host, using the supplied community name and
+     *  Sends the supplied trap PDU to the specified host, using the supplied community name and
      *  using 1 for the version field in the SNMP message.
      */
     public void sendTrap(InetAddress hostAddress, String community, SNMPv2TrapPDU pdu)
@@ -153,34 +152,5 @@ public class SNMPTrapSender
         int version = 1;
         sendTrap(version, hostAddress, community, pdu);
     }
-    
-    
-   /* private String hexByte(byte b)
-    {
-        int pos = b;
-        if (pos < 0)
-            pos += 256;
-        String returnString = new String();
-        returnString += Integer.toHexString(pos/16);
-        returnString += Integer.toHexString(pos%16);
-        return returnString;
-    }
-    
-    
-    private String getHex(byte theByte)
-    {
-        int b = theByte;
-        
-        if (b < 0)
-            b += 256;
-        
-        String returnString = new String(Integer.toHexString(b));
-        
-        // add leading 0 if needed
-        if (returnString.length()%2 == 1)
-            returnString = "0" + returnString;
-            
-        return returnString;
-    }*/
-    
+  
 }

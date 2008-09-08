@@ -1,7 +1,7 @@
 /**
  * MIB Navigator
  *
- * Copyright (C) 2005, Matt Hamilton <matthew.hamilton@washburn.edu>
+ * Copyright (C) 2008, Matt Hamilton <mhamilton2383@comcast.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,7 +71,7 @@ public class TextContextMenu extends JPopupMenu
         source.requestFocusInWindow();
         menuSource = source;
 
-        //only show the paste option for editable fields
+        // Only show the paste option for editable fields.
         if (menuSource.isEditable())
             pasteItem.setVisible(true);
         else
@@ -119,19 +119,19 @@ public class TextContextMenu extends JPopupMenu
             
             if (actionCommand.equals("copy"))
             {
-                //copy the text component's selected text to the clipboard
+                // Copy the text component's selected text to the clipboard.
                 menuSource.requestFocusInWindow();
                 menuSource.copy();
             }
             else if (actionCommand.equals("paste"))
             {           
-                //paste from the clipboard into the text component
+                // Paste from the clipboard into the text component.
                 menuSource.requestFocusInWindow();
                 menuSource.paste();
             }
             else if (actionCommand.equals("select all"))
             {
-                //select the entire text component's contents
+                // Select the entire text component's contents.
                 menuSource.requestFocusInWindow();
                 menuSource.selectAll();
             }

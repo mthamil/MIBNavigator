@@ -1,7 +1,7 @@
 /**
  * MIB Navigator
  *
- * Copyright (C) 2005, Matt Hamilton <matthew.hamilton@washburn.edu>
+ * Copyright (C) 2008, Matt Hamilton <mhamilton2383@comcast.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,6 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
-import javax.swing.border.BevelBorder;
 import javax.swing.plaf.FontUIResource;
 
 import libmib.mibtree.CannotCreateBuilderException;
@@ -135,7 +134,6 @@ public class MIBNavigator
     	JFrame navFrame = new JFrame();
         navFrame = new JFrame();
         navFrame.setTitle("MIB Navigator");
-        navFrame.getRootPane().setBorder(new BevelBorder(BevelBorder.RAISED));
         
         MIBNavigatorMenu navMenu = new MIBNavigatorMenu(this);
         navFrame.setJMenuBar(navMenu.getMenuBar());

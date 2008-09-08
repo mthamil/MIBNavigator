@@ -1,7 +1,7 @@
 /**
  * MIB Navigator
  *
- * Copyright (C) 2005, Matt Hamilton <matthew.hamilton@washburn.edu>
+ * Copyright (C) 2008, Matt Hamilton <mhamilton2383@comcast.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,7 +74,7 @@ public class MinimumSizeEnforcer extends ComponentAdapter
         curWidth = compSize.getWidth();
         curHeight = compSize.getHeight();
         
-        if ((curWidth < this.width) && (curHeight < this.height))
+        if (curWidth < this.width && curHeight < this.height)
         {
             compSize.setSize(this.width, this.height);
             comp.setSize(compSize);

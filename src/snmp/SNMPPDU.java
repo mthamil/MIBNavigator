@@ -120,13 +120,12 @@ public class SNMPPDU extends SNMPSequence
     /**
      *  Creates a new PDU of the specified type from the supplied BER encoding.
      *  
-     *  @throws SNMPBadValueException Indicates invalid SNMP PDU encoding supplied in enc.
+     *  @throws SNMPBadValueException Indicates invalid SNMP PDU encoding.
      */
-    protected SNMPPDU(byte[] enc, SNMPBERType pduType)
-        throws SNMPBadValueException
+    protected SNMPPDU(byte[] encoding, SNMPBERType pduType) throws SNMPBadValueException
     {
         tag = pduType;
-        extractFromBEREncoding(enc);
+        extractFromBEREncoding(encoding);
         
         // validate the message: make sure we have the appropriate pieces
         List<SNMPObject> contents = sequence;
@@ -159,10 +158,9 @@ public class SNMPPDU extends SNMPSequence
             
             // variable binding sequence must have 2 elements, first of which must be an object identifier
             SNMPSequence varBind = (SNMPSequence)element;
-            if ((varBind.size() != 2) || !(varBind.getSNMPObjectAt(0) instanceof SNMPObjectIdentifier))
+            if (varBind.size() != 2 || !(varBind.getSNMPObjectAt(0) instanceof SNMPObjectIdentifier))
                 throw new SNMPBadValueException("Bad PDU: bad variable binding at index" + i);
         }
-        
         
     }
     

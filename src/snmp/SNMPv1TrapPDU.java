@@ -25,6 +25,7 @@ import java.util.*;
 import java.math.*;
 
 
+
 /**
  * The SNMPTrapPDU class represents an SNMPv1 Trap PDU from <a href="http://www.ietf.org/rfc/rfc1157.txt">RFC 1157</a>, as
  * indicated below. This forms the payload of an SNMP Trap message. *

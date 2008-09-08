@@ -24,6 +24,7 @@ package snmp;
 import java.io.*;
 
 
+
 /** 
  *  SNMPBERCodec defines methods for converting from ASN.1 BER encoding to SNMPObject subclasses. The extraction
  *  process usually produces a tree structure of objects with an SNMPSequence object at the root; this

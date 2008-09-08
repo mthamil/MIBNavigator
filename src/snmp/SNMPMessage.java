@@ -25,6 +25,7 @@ import java.util.*;
 
 
 
+
 /**
  * Defines the SNMPMessage class as a special case of SNMPSequence. Defines a
  * top-level SNMP message, as per the following definitions from <a href="http://www.ietf.org/rfc/rfc1157.txt">RFC 1157</a> and
