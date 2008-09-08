@@ -1,3 +1,10 @@
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
 /**
  * Utilities
  *
@@ -45,6 +52,29 @@ public class Utilities
             trimmed = trimmed.substring(0, trimmed.lastIndexOf(stringToTrim));
 
         return trimmed;
+    }
+    
+    
+    /**
+     * Simply copies a file from one location to another.
+     * 
+     * @param sourceFile the source file to copy
+     * @param destFile the destination of the copy operation
+     * @throws IOException
+     */
+    public static void fileCopy(File sourceFile, File destFile) throws IOException
+    {
+        InputStream in = new FileInputStream(sourceFile);
+        OutputStream out = new FileOutputStream(destFile);
+    
+        // Transfer the file as raw bytes from in to out.
+        byte[] buffer = new byte[1024];
+        int len;
+        while ((len = in.read(buffer)) > 0) 
+            out.write(buffer, 0, len);
+
+        in.close();
+        out.close();
     }
 
 }

@@ -57,7 +57,7 @@ public class MibTreeBuilderFactory
 	{
 		switch(mibFormat)
 		{
-			case ASN:
+			case SMI:
 				return new MibTreeBuilderSmi();
 				
 			case XML:

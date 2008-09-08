@@ -23,11 +23,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 
 import javax.swing.JFileChooser;
 import javax.swing.JMenu;
@@ -35,13 +31,11 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JRootPane;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.tree.DefaultTreeModel;
-
-import filefilters.FileFilterXml;
 
 import libmib.InvalidMibFormatException;
 import libmib.mibtree.MibTreeBuilder;
-
 
 
 /**
@@ -54,7 +48,7 @@ public class MIBNavigatorMenu implements ActionListener
     private JMenu optionMenu;
     private JMenuItem addMIBItem, importItem, closeItem;
     
-    private FileFilterXml xmlFilter = null;
+    private FileFilter mibFilter = null;
     private MIBNavigator navigator = null;
     
     
@@ -91,8 +85,17 @@ public class MIBNavigatorMenu implements ActionListener
         optionMenu.add(closeItem);
         
         theMenubar.add(optionMenu);
-        
-        xmlFilter = new FileFilterXml();
+    }
+    
+    
+    /**
+     * Sets the FileFilter used by the menubar's
+     * file choosers.
+     * @param newFilter
+     */
+    public void setFileFilter(FileFilter newFilter)
+    {
+    	mibFilter = newFilter;
     }
     
     
@@ -121,7 +124,7 @@ public class MIBNavigatorMenu implements ActionListener
 
         	// Create a file chooser with the correct filter for MIB files.
             JFileChooser chooser = new JFileChooser(new File("."));
-            chooser.setFileFilter(xmlFilter);
+            chooser.setFileFilter(mibFilter);
             
             JRootPane menuParentFrame = theMenubar.getRootPane();  // use the root pane's parent frame to launch dialogs
             int returnValue = chooser.showOpenDialog(menuParentFrame);
@@ -149,7 +152,7 @@ public class MIBNavigatorMenu implements ActionListener
 
             // Create a file chooser with the correct filter for MIB files.
             JFileChooser chooser = new JFileChooser(new File("."));
-            chooser.setFileFilter(xmlFilter);
+            chooser.setFileFilter(mibFilter);
             
             JRootPane menuParentFrame = theMenubar.getRootPane();  // Use the root pane's parent frame to launch dialogs
             int returnValue = chooser.showOpenDialog(menuParentFrame);
@@ -185,7 +188,7 @@ public class MIBNavigatorMenu implements ActionListener
 
                     // if the destination file didn't already exist or the user approved an overwrite
                     if (proceedWithCopy)
-                       fileCopy(sourceMib, destinationMib);
+                       Utilities.fileCopy(sourceMib, destinationMib);
                     
                 }
                 catch (IOException e)
@@ -201,27 +204,7 @@ public class MIBNavigatorMenu implements ActionListener
         
     }
     
-    /**
-     * Simply copies a file from one location to another.
-     * 
-     * @param sourceFile the source file to copy
-     * @param destFile the destination of the copy operation
-     * @throws IOException
-     */
-    private void fileCopy(File sourceFile, File destFile) throws IOException
-    {
-        InputStream in = new FileInputStream(sourceFile);
-        OutputStream out = new FileOutputStream(destFile);
-    
-        // Transfer the file as raw bytes from in to out.
-        byte[] buffer = new byte[1024];
-        int len;
-        while ((len = in.read(buffer)) > 0) 
-            out.write(buffer, 0, len);
 
-        in.close();
-        out.close();
-    }
     
     
 }

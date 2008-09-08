@@ -374,6 +374,6 @@ public class MibTreeBuilderSmi extends AbstractMibTreeBuilder
 	@Override
 	public String getMibFolder()
 	{
-		return "asn";
+		return "smi";
 	}
 }

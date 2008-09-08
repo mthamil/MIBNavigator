@@ -24,4 +24,4 @@ package libmib;
 /**
  * Defines accepted MIB formats.
  */
-public enum MibFormat { XML, ASN }
+public enum MibFormat { XML, SMI }

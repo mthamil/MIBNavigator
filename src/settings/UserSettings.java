@@ -158,7 +158,7 @@ public class UserSettings
 
             addressNum    = settings.getProperty(SettingsProperties.MaximumAddresses.toString(), "15");
             hostAddresses = settings.getProperty(SettingsProperties.IPAddresses.toString(), "");
-            formatString  = settings.getProperty(SettingsProperties.MibFileFormat.toString(), MibFormat.ASN.toString());
+            formatString  = settings.getProperty(SettingsProperties.MibFileFormat.toString(), MibFormat.SMI.toString());
         }
         catch (IOException e)
         {

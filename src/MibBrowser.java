@@ -164,7 +164,7 @@ public class MibBrowser
         oidInputField.setEditable(true);
         oidInputField.addMouseListener(contextMenuListener);
         oidInputField.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0),"treeSearch");
-        oidInputField.getActionMap().put("treeSearch", new OidTreeSearchAction(this));
+        oidInputField.getActionMap().put("treeSearch", new MibTreeSearchAction(this));
 
         ListContextMenu listContextMenu = new ListContextMenu();
         ListContextMenuListener listContextMenuListener = new ListContextMenuListener(listContextMenu);
@@ -173,7 +173,7 @@ public class MibBrowser
         resultsList = new JList(new DefaultListModel());
         resultsList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         resultsList.addMouseListener(listContextMenuListener);
-        resultsList.addListSelectionListener(new ResultsListListener());
+        resultsList.addListSelectionListener(new ResultsListListener(this));
         
         resultsScroll = new JScrollPane(resultsList);
 		resultsScroll.setPreferredSize(new Dimension(50, 75));
@@ -697,51 +697,6 @@ public class MibBrowser
 		}
 	}
 	
-	
-	
-	private class ResultsListListener implements ListSelectionListener
-	{
-	    /**
-	     * ListSelectionListener implementation method: reacts to changes in the selection on a JList.
-	     * When the user selects a row or more, the OID of the selected row with the lowest index is 
-	     * retrieved, searched for in the MIB tree, and then displayed.
-	     */
-	    public void valueChanged(ListSelectionEvent selectEvent) 
-	    {
-	        // The IsAdjusting check is to make sure the code that occurs on a selection value
-	        // change does not run twice.
-	        // The second time valueChanged is called is when a new row has been selected, the first time
-	        // is when the previous selections are removed.  The second time valueChanged is called,
-	        // this value is false.
-	        if (!selectEvent.getValueIsAdjusting())
-	        {
-	            JList source = (JList)selectEvent.getSource();
-	            int selectedIndex = source.getSelectedIndex();
-	            
-	            if (selectedIndex > -1)
-	            {
-	                Object selectedObject = source.getModel().getElementAt(selectedIndex);
-	                
-	                try
-	                {
-	                    if (selectedObject instanceof GetRequestResult)
-	                    {
-	                        String selectedOID = ((GetRequestResult)selectedObject).getOIDNumber();
-	                        setVisibleNodeByOID(selectedOID, NodeSearchOption.MATCH_NEAREST_PATH);
-	                    }
-	                }
-	                // Catch bad OIDs, though this is very unlikely if the OID is in the results list.
-	                catch (NumberFormatException e) 
-	                {
-	                    // do nothing
-	                    // They say it is horrible to have empty catch blocks but I do not care when this happens!
-	                }
-	            }
-	        }
-	        
-	    }
-	}
-    
 
     /**
      * Listens for and handles events from a GetRequestWorker.

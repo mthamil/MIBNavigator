@@ -31,11 +31,11 @@ import libmib.mibtree.MibTreeNode.NodeSearchOption;
  * Action for performing a search of a MIB tree based on an
  * OID string in a text field.
  */
-public class OidTreeSearchAction extends AbstractAction
+public class MibTreeSearchAction extends AbstractAction
 {
 	private MibBrowser browser;
 	
-	public OidTreeSearchAction(MibBrowser browser)
+	public MibTreeSearchAction(MibBrowser browser)
 	{
 		this.browser = browser;
 	}
