@@ -62,7 +62,7 @@ import settings.UserSettings;
  */
 public class MIBNavigator 
 {
-    private UserSettings settings;  	// Saves and loads application state
+    private UserSettings appSettings;  	// Saves and loads application state
     private MibBrowser browser;         // Main graphical component
    
     private int maxAddresses;           // Stores the maximum number of addresses to save (currently not modifiable 
@@ -77,7 +77,7 @@ public class MIBNavigator
      */
     public MIBNavigator(MibTreeBuilder newBuilder, UserSettings settings)
     {
-    	this.settings = settings;
+    	this.appSettings = settings;
         maxAddresses = settings.getMaxAddresses();
         
         this.shrinkFonts();
@@ -103,11 +103,10 @@ public class MIBNavigator
      */
     public void saveState()
     {
-        settings.setMaxAddresses(maxAddresses);
-        settings.setAddresses(browser.getAddresses());
-        settings.saveSettings();
+        appSettings.setMaxAddresses(maxAddresses);
+        appSettings.setAddresses(browser.getAddresses());
+        appSettings.saveSettings();
     }
-    
     
     
     /**
@@ -140,7 +139,7 @@ public class MIBNavigator
         
         MIBNavigatorMenu navMenu = new MIBNavigatorMenu(this);
         
-        switch (settings.getMibFormat())
+        switch (appSettings.getMibFormat())
         {
         	case SMI:
         		navMenu.setFileFilter(new SmiFileFilter());

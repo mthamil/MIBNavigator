@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
-import libmib.MibFormat;
+import libmib.format.MibFormat;
 
 /**
  * Class for managing application user preferences. It provides an application

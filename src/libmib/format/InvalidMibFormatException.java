@@ -19,7 +19,7 @@
  *
  */
 
-package libmib;
+package libmib.format;
 
 import java.io.File;
 

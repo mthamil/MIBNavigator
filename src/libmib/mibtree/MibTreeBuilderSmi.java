@@ -28,14 +28,14 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-import libmib.InvalidSmiMibFormatException;
-import libmib.SmiTokens;
-import libmib.SmiStructureHandler;
-import libmib.oid.MibObjectType;
-import libmib.oid.MibSyntax;
-import libmib.oid.MibNameValuePair;
-import libmib.oid.MibObjectType.Access;
-import libmib.oid.MibObjectType.Status;
+import libmib.MibNameValuePair;
+import libmib.MibObjectType;
+import libmib.MibSyntax;
+import libmib.MibObjectType.Access;
+import libmib.MibObjectType.Status;
+import libmib.format.InvalidSmiMibFormatException;
+import libmib.format.SmiStructureHandler;
+import libmib.format.SmiTokens;
 
 /**
  * This class is a very simple reader and parser for ASN.1 specification SMI MIB module

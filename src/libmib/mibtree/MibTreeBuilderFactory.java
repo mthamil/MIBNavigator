@@ -30,7 +30,7 @@ import org.xml.sax.SAXException;
 import filefilters.SmiFilenameFilter;
 import filefilters.XmlFilenameFilter;
 
-import libmib.MibFormat;
+import libmib.format.MibFormat;
 
 /**
  * Class that creates an appropriate tree builder for

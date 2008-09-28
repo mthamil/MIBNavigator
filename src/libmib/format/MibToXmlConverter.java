@@ -18,6 +18,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+package libmib.format;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -25,19 +27,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.JFileChooser;
-
-import libmib.MibDocumentBuilder;
 import libmib.MibImport;
-import libmib.InvalidSmiMibFormatException;
-import libmib.SmiTokens;
-import libmib.SmiStructureHandler;
-import libmib.oid.MibModuleIdRevision;
-import libmib.oid.MibObjectType.Access;
-import libmib.oid.MibObjectType.Status;
-import libmib.oid.MibObjectExtended;
-import libmib.oid.MibSyntax;
-import libmib.oid.MibNameValuePair;
+import libmib.MibModuleIdRevision;
+import libmib.MibNameValuePair;
+import libmib.MibObjectExtended;
+import libmib.MibSyntax;
+import libmib.MibObjectType.Access;
+import libmib.MibObjectType.Status;
 
 /**
  * Class for converting ASN.1 MIB definition files to an XML file format.
@@ -232,7 +228,7 @@ public class MibToXmlConverter
         // Read the entire IMPORTS section into a StringBuilder.
         char c = 0;
         StringBuilder importSection = new StringBuilder("");
-        while ( (c != -1) && (c != ';'))
+        while (c != -1 && c != ';')
         {
             c = (char)in.read();
             importSection.append(c);
@@ -324,7 +320,7 @@ public class MibToXmlConverter
         
         // read until the end of the object definition, retrieving relevant information
         line = in.readLine().trim();
-        while (!line.startsWith("::=") && line != null)
+        while (line != null && !line.startsWith("::="))
         {
             // strip comments
             if (line.contains("--"))
@@ -534,71 +530,4 @@ public class MibToXmlConverter
     {    
         mibDocFactory.writeDocument(outputXMLFile);
     }
-    
-    
-	public static void main(String args[])
-	{   
-        // some basic code to execute the converter
-        File inFile = null;
-        File outFile = null;
-        
-        if (args.length > 0)
-        {
-            inFile = new File(args[0].trim());  		// first option as input file
-        	
-        	if (args.length > 1)
-        		outFile = new File(args[1].trim());		// second option as output file
-        }
-        else  
-        {
-            // if there were no command line options, pop up a file dialog
-            JFileChooser fc = new JFileChooser(new File("."));
-            int retVal = fc.showOpenDialog(null);
-    
-            if (retVal == JFileChooser.APPROVE_OPTION)
-                inFile = fc.getSelectedFile();
-            
-            retVal = fc.showSaveDialog(null);
-            if (retVal == JFileChooser.APPROVE_OPTION)
-                outFile = fc.getSelectedFile();
-        }
-        
-        if (inFile != null && inFile.exists())
-        {
-            try
-            {
-                if (outFile == null)
-                {
-                    // Construct the output xml file's name to be the same as the 
-                    // input file but with a different extension.
-                	
-                    String mibFilename = inFile.getName();
-                    if (mibFilename.contains(".")) 
-                        mibFilename = mibFilename.substring(0, mibFilename.lastIndexOf("."));
-                    
-                    outFile = new File(mibFilename + ".xml");
-                }
-                else if (outFile.isDirectory())
-                {
-                	String mibFilename = inFile.getName();
-                    if (mibFilename.contains(".")) 
-                        mibFilename = mibFilename.substring(0, mibFilename.lastIndexOf("."));
-                    
-                    outFile = new File(outFile.getAbsoluteFile() + File.separator + mibFilename + ".xml");
-                }
-
-                
-                MibToXmlConverter converter = new MibToXmlConverter();
-                converter.readMIB(inFile);
-                converter.writeXML(outFile);
-            }
-            catch (InvalidSmiMibFormatException e)
-            {
-                System.out.println(e.getMessage());
-            }
-        }
-        else
-            System.out.println("Error Opening File: " + inFile.getName() + " not found.");
-    }
-    
 }

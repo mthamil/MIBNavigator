@@ -40,12 +40,12 @@ import javax.swing.tree.TreePath;
 import contextmenu.TextContextMenu;
 import contextmenu.TextContextMenuListener;
 
+import libmib.MibNameValuePair;
+import libmib.MibObjectType;
+import libmib.MibSyntax;
+import libmib.MibObjectType.Access;
+import libmib.MibObjectType.Status;
 import libmib.mibtree.MibTreeNode;
-import libmib.oid.MibObjectType;
-import libmib.oid.MibSyntax;
-import libmib.oid.MibNameValuePair;
-import libmib.oid.MibObjectType.Access;
-import libmib.oid.MibObjectType.Status;
 
 public class OidDataPanel implements TreeSelectionListener
 {

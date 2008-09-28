@@ -28,9 +28,9 @@ import java.net.UnknownHostException;
 import javax.swing.SwingUtilities;
 import javax.swing.event.EventListenerList;
 
+import libmib.MibObjectType;
 import libmib.mibtree.MibTreeNode;
 import libmib.mibtree.MibTreeNode.NodeSearchOption;
-import libmib.oid.MibObjectType;
 import snmp.SNMPBadValueException;
 import snmp.SNMPGetException;
 import snmp.SNMPInteger;
@@ -304,7 +304,7 @@ public class GetRequestWorker extends SwingWorker
 
     // *** Firing methods for updating the GetRequestListeners ***
 
-    private void fireAddressResolvedEvent(final String addressString, final String resolvedAddress)
+    private void fireAddressResolvedEvent(final String address, final String resolvedAddress)
     {
         final Object[] listeners = requestListeners.getListenerList();
         
@@ -317,7 +317,7 @@ public class GetRequestWorker extends SwingWorker
                 {
                     public void run() 
                     {
-                        currentListener.hostAddressResolved(addressString, resolvedAddress);
+                        currentListener.hostAddressResolved(address, resolvedAddress);
                     }
                 };
                 SwingUtilities.invokeLater(doFireAddressResolved);

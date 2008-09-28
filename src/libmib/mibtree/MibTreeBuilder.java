@@ -26,7 +26,7 @@ import java.io.FilenameFilter;
 
 import javax.swing.tree.TreeModel;
 
-import libmib.InvalidMibFormatException;
+import libmib.format.InvalidMibFormatException;
 
 
 /**

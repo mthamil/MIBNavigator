@@ -37,13 +37,13 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
-import libmib.ElementNames;
-import libmib.InvalidXmlMibFormatException;
-import libmib.oid.MibObjectType;
-import libmib.oid.MibSyntax;
-import libmib.oid.MibNameValuePair;
-import libmib.oid.MibObjectType.Access;
-import libmib.oid.MibObjectType.Status;
+import libmib.MibNameValuePair;
+import libmib.MibObjectType;
+import libmib.MibSyntax;
+import libmib.MibObjectType.Access;
+import libmib.MibObjectType.Status;
+import libmib.format.ElementNames;
+import libmib.format.InvalidXmlMibFormatException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

@@ -34,7 +34,7 @@ import javax.swing.JRootPane;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.tree.DefaultTreeModel;
 
-import libmib.InvalidMibFormatException;
+import libmib.format.InvalidMibFormatException;
 import libmib.mibtree.MibTreeBuilder;
 
 

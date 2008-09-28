@@ -19,14 +19,14 @@
  *
  */
 
-package libmib;
+package libmib.format;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import libmib.oid.MibNameValuePair;
+import libmib.MibNameValuePair;
 
 /**
  * Class that handles various block structure parsing when reading SMI format MIB files.

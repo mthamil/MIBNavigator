@@ -19,42 +19,42 @@
  *
  */
 
-package libmib;
+package libmib.format;
 
 import java.io.File;
 
-public class InvalidSmiMibFormatException extends InvalidMibFormatException
+public class InvalidXmlMibFormatException extends InvalidMibFormatException 
 {
-
+    
     /**
-     *  Creates a new InvalidSmiMibFormatException containing the
+     *  Creates a new InvalidXmlMibFormatException containing the
      *  default message: "This file is not a valid MIB file."
      */
-    public InvalidSmiMibFormatException() 
+    public InvalidXmlMibFormatException() 
     {
         super();
     }
     
     /**
-     * Creates a new InvalidSmiMibFormatException containing the File that
+     * Creates a new InvalidXmlMibFormatException containing the File that
      * caused the exception to be thrown and an extra String allowing the 
      * specification of more details.
      * 
      * @param extraDetails a String containing any extra details about the exception
      * @param newInvalidFile
      */
-    public InvalidSmiMibFormatException(String extraDetails, File newInvalidFile) 
+    public InvalidXmlMibFormatException(String extraDetails, File newInvalidFile) 
     {
-        super("The file \"" + newInvalidFile.getName() + "\" is not a valid SMI MIB file." + extraDetails, newInvalidFile);
+        super("The file \"" + newInvalidFile.getName() + "\" is not a valid XML MIB file." + extraDetails, newInvalidFile);
     }
     
     /**
-     * Creates a new InvalidSmiMibFormatException with the invalid File that caused the exception
+     * Creates a new InvalidXmlMibFormatException with the invalid File that caused the exception
      * and an error message containing the name of this File.
      * 
      * @param newInvalidFile the MIB file that caused the exception
      */
-    public InvalidSmiMibFormatException(File newInvalidFile) 
+    public InvalidXmlMibFormatException(File newInvalidFile) 
     {
         super(newInvalidFile); 
     }

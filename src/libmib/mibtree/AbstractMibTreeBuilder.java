@@ -31,8 +31,8 @@ import java.util.List;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
 
-import libmib.InvalidMibFormatException;
-import libmib.oid.MibObjectType;
+import libmib.MibObjectType;
+import libmib.format.InvalidMibFormatException;
 
 /**
  * AbstractMibTreeBuilder implements functionality that can be shared by different MIB parsers.  It 

@@ -19,7 +19,7 @@
  *
  */
 
-package libmib;
+package libmib.format;
 
 /**
  * Defines accepted MIB formats.

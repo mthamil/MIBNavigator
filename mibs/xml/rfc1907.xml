@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<mib name="SNMPv2-MIB">
+    <imports>
+        <source name="SNMPv2-SMI">
+            <import>MODULE-IDENTITY</import>
+            <import>OBJECT-TYPE</import>
+            <import>NOTIFICATION-TYPE</import>
+            <import>TimeTicks</import>
+            <import>Counter32</import>
+            <import>snmpModules</import>
+            <import>mib-2</import>
+        </source>
+        <source name="SNMPv2-TC">
+            <import>DisplayString</import>
+            <import>TestAndIncr</import>
+            <import>TimeStamp</import>
+        </source>
+        <source name="SNMPv2-CONF">
+            <import>MODULE-COMPLIANCE</import>
+            <import>OBJECT-GROUP</import>
+            <import>NOTIFICATION-GROUP</import>
+        </source>
+    </imports>
+    <objects>
+        <object>
+            <moduleIdentity>
+                <objectName>snmpMIB</objectName>
+                <objectId>1</objectId>
+                <parent>snmpModules</parent>
+                <lastUpdated>9511090000Z</lastUpdated>
+                <organization>IETF SNMPv2 Working Group</organization>
+                <contactInfo>Marshall T. Rose&lt;br&gt;&lt;br&gt;Postal: Dover Beach Consulting, Inc.&lt;br&gt;420 Whisman Court&lt;br&gt;Mountain View, CA  94043-2186&lt;br&gt;US&lt;br&gt;&lt;br&gt;Tel: +1 415 968 1052&lt;br&gt;&lt;br&gt;E-mail: mrose@dbc.mtview.ca.us</contactInfo>
+                <description>The MIB module for SNMPv2 entities.</description>
+                <revision revisionId="9304010000Z">
+                    <description>The initial revision of this MIB module was published as&lt;br&gt;RFC 1450.</description>
+                </revision>
+            </moduleIdentity>
+        </object>
+        <object>
+            <objectIdentifier>
+                <objectName>snmpMIBObjects</objectName>
+                <objectId>1</objectId>
+                <parent>snmpMIB</parent>
+            </objectIdentifier>
+        </object>
+        <object>
+            <objectIdentifier>
+                <objectName>system</objectName>
+                <objectId>1</objectId>
+                <parent>mib-2</parent>
+            </objectIdentifier>
+        </object>
+        <object>
+            <objectType>
+                <objectName>sysORLastChange</objectName>
+                <objectId>8</objectId>
+                <parent>system</parent>
+                <syntax>
+                    <type>TimeStamp</type>
+                </syntax>
+                <access>read-only</access>
+                <status>current</status>
+                <description>The value of sysUpTime at the time of the most recent&lt;br&gt;change in state or value of any instance of sysORID.</description>
+            </objectType>
+        </object>
+        <object>
+            <objectType>
+                <objectName>sysORTable</objectName>
+                <objectId>9</objectId>
+                <parent>system</parent>
+                <syntax>
+                    <sequence>SysOREntry</sequence>
+                </syntax>
+                <access>not-accessible</access>
+                <status>current</status>
+                <description>The (conceptual) table listing the capabilities of the&lt;br&gt;local SNMPv2 entity acting in an agent role with respect to&lt;br&gt;various MIB modules.  SNMPv2 entities having dynamically-&lt;br&gt;configurable support of MIB modules will have a&lt;br&gt;dynamically-varying number of conceptual rows.</description>
+            </objectType>
+        </object>
+        <object>
+            <objectType>
+                <objectName>sysOREntry</objectName>
+                <objectId>1</objectId>
+                <parent>sysORTable</parent>
+                <syntax>
+                    <type>SysOREntry</type>
+                </syntax>
+                <access>not-accessible</access>
+                <status>current</status>
+                <description>An entry (conceptual row) in the sysORTable.</description>
+                <indices>
+                    <index>sysORIndex</index>
+                </indices>
+            </objectType>
+        </object>
+        <object>
+            <objectType>
+                <objectName>sysORIndex</objectName>
+                <objectId>1</objectId>
+                <parent>sysOREntry</parent>
+                <syntax>
+                    <type>INTEGER (1..2147483647)</type>
+                </syntax>
+                <access>not-accessible</access>
+                <status>current</status>
+                <description>The auxiliary variable used for identifying instances of&lt;br&gt;the columnar objects in the sysORTable.</description>
+            </objectType>
+        </object>
+        <object>
+            <objectType>
+                <objectName>sysORID</objectName>
+                <objectId>2</objectId>
+                <parent>sysOREntry</parent>
+                <syntax>
+                    <type>OBJECT IDENTIFIER</type>
+                </syntax>
+                <access>read-only</access>
+                <status>current</status>
+                <description>An authoritative identification of a capabilities statement&lt;br&gt;with respect to various MIB modules supported by the local&lt;br&gt;SNMPv2 entity acting in an agent role.</description>
+            </objectType>
+        </object>
+        <object>
+            <objectType>
+                <objectName>sysORDescr</objectName>
+                <objectId>3</objectId>
+                <parent>sysOREntry</parent>
+                <syntax>
+                    <type>DisplayString</type>
+                </syntax>
+                <access>read-only</access>
+                <status>current</status>
+                <description>A textual description of the capabilities identified by the&lt;br&gt;corresponding instance of sysORID.</description>
+            </objectType>
+        </object>
+        <object>
+            <objectType>
+                <objectName>sysORUpTime</objectName>
+                <objectId>4</objectId>
+                <parent>sysOREntry</parent>
+                <syntax>
+                    <type>TimeStamp</type>
+                </syntax>
+                <access>read-only</access>
+                <status>current</status>
+                <description>The value of sysUpTime at the time this conceptual row was&lt;br&gt;last instanciated.</description>
+            </objectType>
+        </object>
+        <object>
+            <objectIdentifier>
+                <objectName>snmp</objectName>
+                <objectId>11</objectId>
+                <parent>mib-2</parent>
+            </objectIdentifier>
+        </object>
+        <object>
+            <objectType>
+                <objectName>snmpSilentDrops</objectName>
+                <objectId>31</objectId>
+                <parent>snmp</parent>
+                <syntax>
+                    <type>Counter32</type>
+                </syntax>
+                <access>read-only</access>
+                <status>current</status>
+                <description>The total number of GetRequest-PDUs, GetNextRequest-PDUs,&lt;br&gt;GetBulkRequest-PDUs, SetRequest-PDUs, and InformRequest-PDUs&lt;br&gt;delivered to the SNMP entity which were silently dropped&lt;br&gt;because the size of a reply containing an alternate&lt;br&gt;Response-PDU with an empty variable-bindings field was&lt;br&gt;greater than either a local constraint or the maximum&lt;br&gt;message size associated with the originator of the request.</description>
+            </objectType>
+        </object>
+        <object>
+            <objectType>
+                <objectName>snmpProxyDrops</objectName>
+                <objectId>32</objectId>
+                <parent>snmp</parent>
+                <syntax>
+                    <type>Counter32</type>
+                </syntax>
+                <access>read-only</access>
+                <status>current</status>
+                <description>The total number of GetRequest-PDUs, GetNextRequest-PDUs,&lt;br&gt;GetBulkRequest-PDUs, SetRequest-PDUs, and InformRequest-PDUs&lt;br&gt;delivered to the SNMP entity which were silently dropped&lt;br&gt;because the transmission of the (possibly translated)&lt;br&gt;message to a proxy target failed in a manner (other than a&lt;br&gt;time-out) such that no Response-PDU could be returned.</description>
+            </objectType>
+        </object>
+        <object>
+            <objectIdentifier>
+                <objectName>snmpTrap</objectName>
+                <objectId>4</objectId>
+                <parent>snmpMIBObjects</parent>
+            </objectIdentifier>
+        </object>
+        <object>
+            <objectType>
+                <objectName>snmpTrapOID</objectName>
+                <objectId>1</objectId>
+                <parent>snmpTrap</parent>
+                <syntax>
+                    <type>OBJECT IDENTIFIER</type>
+                </syntax>
+                <access>accessible-for-notify</access>
+                <status>current</status>
+                <description>The authoritative identification of the notification&lt;br&gt;currently being sent.  This variable occurs as the second&lt;br&gt;varbind in every SNMPv2-Trap-PDU and InformRequest-PDU.</description>
+            </objectType>
+        </object>
+        <object>
+            <objectType>
+                <objectName>snmpTrapEnterprise</objectName>
+                <objectId>3</objectId>
+                <parent>snmpTrap</parent>
+                <syntax>
+                    <type>OBJECT IDENTIFIER</type>
+                </syntax>
+                <access>accessible-for-notify</access>
+                <status>current</status>
+                <description>The authoritative identification of the enterprise&lt;br&gt;associated with the trap currently being sent.  When a&lt;br&gt;SNMPv2 proxy agent is mapping an RFC1157 Trap-PDU into a&lt;br&gt;SNMPv2-Trap-PDU, this variable occurs as the last varbind.</description>
+            </objectType>
+        </object>
+        <object>
+            <objectIdentifier>
+                <objectName>snmpTraps</objectName>
+                <objectId>5</objectId>
+                <parent>snmpMIBObjects</parent>
+            </objectIdentifier>
+        </object>
+        <object>
+            <notification>
+                <objectName>coldStart</objectName>
+                <objectId>1</objectId>
+                <parent>snmpTraps</parent>
+                <status>current</status>
+                <description>A coldStart trap signifies that the SNMPv2 entity, acting&lt;br&gt;in an agent role, is reinitializing itself and that its&lt;br&gt;configuration may have been altered.</description>
+            </notification>
+        </object>
+        <object>
+            <notification>
+                <objectName>warmStart</objectName>
+                <objectId>2</objectId>
+                <parent>snmpTraps</parent>
+                <status>current</status>
+                <description>A warmStart trap signifies that the SNMPv2 entity, acting&lt;br&gt;in an agent role, is reinitializing itself such that its&lt;br&gt;configuration is unaltered.</description>
+            </notification>
+        </object>
+        <object>
+            <notification>
+                <objectName>authenticationFailure</objectName>
+                <objectId>5</objectId>
+                <parent>snmpTraps</parent>
+                <status>current</status>
+                <description>An authenticationFailure trap signifies that the SNMPv2&lt;br&gt;entity, acting in an agent role, has received a protocol&lt;br&gt;message that is not properly authenticated.  While all&lt;br&gt;implementations of the SNMPv2 must be capable of generating&lt;br&gt;this trap, the snmpEnableAuthenTraps object indicates&lt;br&gt;whether this trap will be generated.</description>
+            </notification>
+        </object>
+        <object>
+            <objectIdentifier>
+                <objectName>snmpSet</objectName>
+                <objectId>6</objectId>
+                <parent>snmpMIBObjects</parent>
+            </objectIdentifier>
+        </object>
+        <object>
+            <objectType>
+                <objectName>snmpSetSerialNo</objectName>
+                <objectId>1</objectId>
+                <parent>snmpSet</parent>
+                <syntax>
+                    <type>TestAndIncr</type>
+                </syntax>
+                <access>read-write</access>
+                <status>current</status>
+                <description>An advisory lock used to allow several cooperating SNMPv2&lt;br&gt;entities, all acting in a manager role, to coordinate their&lt;br&gt;use of the SNMPv2 set operation.&lt;br&gt;&lt;br&gt;This object is used for coarse-grain coordination.  To&lt;br&gt;achieve fine-grain coordination, one or more similar objects&lt;br&gt;might be defined within each MIB group, as appropriate.</description>
+            </objectType>
+        </object>
+    </objects>
+</mib>

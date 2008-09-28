@@ -19,7 +19,7 @@
  *
  */
 
-package libmib;
+package libmib.format;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -46,11 +46,12 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 import org.xml.sax.InputSource;
 
+import libmib.MibImport;
+import libmib.MibModuleIdRevision;
+import libmib.MibNameValuePair;
+import libmib.MibObjectExtended;
+import libmib.MibSyntax;
 import libmib.mibtree.BasicXmlErrorHandler;
-import libmib.oid.MibModuleIdRevision;
-import libmib.oid.MibObjectExtended;
-import libmib.oid.MibSyntax;
-import libmib.oid.MibNameValuePair;
 
 /**
  * This class uses JAXP to construct a Document corresponding to a MIB module.  MIB objects and imports can be directly added

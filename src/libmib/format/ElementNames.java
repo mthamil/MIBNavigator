@@ -19,8 +19,11 @@
  *
  */
 
-package libmib;
+package libmib.format;
 
+/**
+ * Contains constant string tokens for use in XML MIB elements.
+ */
 public class ElementNames
 {
 	public static String NAME_ATTR = "name";

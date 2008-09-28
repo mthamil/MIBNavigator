@@ -28,8 +28,8 @@ import java.util.List;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 
-import libmib.oid.MibObjectIdentifier;
-import libmib.oid.MibObjectType;
+import libmib.MibObjectIdentifier;
+import libmib.MibObjectType;
 
 /**
  * This extension of DefaultMutableTreeNode includes some MIB specific methods for searching, 

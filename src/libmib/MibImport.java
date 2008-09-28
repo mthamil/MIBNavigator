@@ -27,8 +27,7 @@ import java.util.List;
 /**
  *  This class represents a MIB definition import statement.
  *  It consists of a list of one or more general "items" that
- *  are imported from a source MIB.  MibImport also specifies that
- *  source.
+ *  are imported from a source MIB.
  */
  public class MibImport extends Object
  {

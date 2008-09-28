@@ -2,7 +2,6 @@ package libmib;
 import java.util.ArrayList;
 import java.util.List;
 
-import libmib.oid.MibObjectType;
 
 /**
  * Class representing a MIB module definition.  It stores Imports, Data Types, 

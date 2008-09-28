@@ -29,10 +29,10 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.tree.*;
 
+import libmib.MibObjectType;
 import libmib.mibtree.MibTreeBuilder;
 import libmib.mibtree.MibTreeNode;
 import libmib.mibtree.MibTreeNode.NodeSearchOption;
-import libmib.oid.MibObjectType;
 import contextmenu.*;
 
 

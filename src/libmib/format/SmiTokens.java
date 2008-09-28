@@ -19,7 +19,7 @@
  *
  */
 
-package libmib;
+package libmib.format;
 
 /**
  * This class simply provides static access to SMI format keyword constants.
