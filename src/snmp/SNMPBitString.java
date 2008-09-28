@@ -27,7 +27,7 @@ package snmp;
  */
 public class SNMPBitString extends SNMPOctetString
 {
-    protected SNMPBERType tag = SNMPBERType.SNMP_BITSTRING;
+    protected SNMPBERType tag = SNMPBERType.SnmpBitString;
         
     /**
      *  Creates a zero-length bit string.

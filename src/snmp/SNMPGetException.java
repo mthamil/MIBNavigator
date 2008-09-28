@@ -32,7 +32,7 @@ public class SNMPGetException extends SNMPRequestException
     /**
      *  Creates exception with errorIndex and errorStatus.
      */
-    public SNMPGetException(int errorIndex, int errorStatus)
+    public SNMPGetException(int errorIndex, ErrorStatus errorStatus)
     {
         super(errorIndex, errorStatus);
     }
@@ -41,7 +41,7 @@ public class SNMPGetException extends SNMPRequestException
     /**
      *  Creates exception with errorIndex, errorStatus and message string.
      */
-    public SNMPGetException(String message, int errorIndex, int errorStatus)
+    public SNMPGetException(String message, int errorIndex, ErrorStatus errorStatus)
     {
         super(message, errorIndex, errorStatus);
     }

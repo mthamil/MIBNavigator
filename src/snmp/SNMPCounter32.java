@@ -47,7 +47,7 @@ public class SNMPCounter32 extends SNMPInteger
     
     public SNMPCounter32(long newValue)
     {
-        tag = SNMPBERType.SNMP_COUNTER32;
+        tag = SNMPBERType.SnmpCounter32;
         
         value = new BigInteger(new Long(newValue).toString());
         
@@ -66,7 +66,7 @@ public class SNMPCounter32 extends SNMPInteger
     protected SNMPCounter32(byte[] enc)
         throws SNMPBadValueException
     {
-        tag = SNMPBERType.SNMP_COUNTER32;
+        tag = SNMPBERType.SnmpCounter32;
         
         extractValueFromBEREncoding(enc);
         

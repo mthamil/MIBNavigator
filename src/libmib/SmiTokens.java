@@ -24,9 +24,10 @@ package libmib;
 /**
  * This class simply provides static access to SMI format keyword constants.
  */
-public class SmiKeywords
+public class SmiTokens
 {
-    //SMI MIB format string constants
+    // SMI MIB format string constants
+	public static final String CAPABILITIES = "AGENT-CAPABILITIES";
     public static final String MODULE_ID = "MODULE-IDENTITY";
     public static final String MODULE_COMP = "MODULE-COMPLIANCE";
     public static final String NOTIF = "NOTIFICATION-TYPE";

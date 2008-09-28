@@ -204,16 +204,16 @@ public abstract class AbstractMibTreeBuilder implements MibTreeBuilder
      * 
      * @return a TreeModel representing the MIB object structure
      */
-    public TreeModel getMibTreeModel()
+    public TreeModel getTreeModel()
     {
         return mibTreeModel;
     }
     
     
     /** 
-     * @see libmib.mibtree.MibTreeBuilder#getMibFolder() 
+     * @see libmib.mibtree.MibTreeBuilder#getMibDirectory() 
      */
-    abstract public String getMibFolder();
+    abstract public String getMibDirectory();
     
     
     /**

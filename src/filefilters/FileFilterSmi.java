@@ -35,20 +35,19 @@ public class FileFilterSmi extends FileFilter
         super();
     }
 
-    /* (non-Javadoc)
+    /**
      * @see javax.swing.filechooser.FileFilter#accept(java.io.File)
      */
     public boolean accept(File thisFile) 
     {
     	String fileName = thisFile.getName().toLowerCase();
-        if ( fileName.endsWith(".mib") || fileName.contains("rfc") || thisFile.isDirectory())
+        if (fileName.endsWith(".mib") || fileName.contains("rfc") || thisFile.isDirectory())
             return true;
         
-        //otherwise
         return false;
     }
 
-    /* (non-Javadoc)
+    /**
      * @see javax.swing.filechooser.FileFilter#getDescription()
      */
     public String getDescription() 

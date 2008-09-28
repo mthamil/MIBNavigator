@@ -44,61 +44,61 @@ public class SNMPBERCodec
     {
         switch (tlv.tag)
         {
-            case SNMP_INTEGER:
+            case SnmpInteger:
                 return new SNMPInteger(tlv.value);
             
-            case SNMP_SEQUENCE:
+            case SnmpSequence:
                 return new SNMPSequence(tlv.value);
             
-            case SNMP_OBJECT_IDENTIFIER:
+            case SnmpObjectIdentifier:
                 return new SNMPObjectIdentifier(tlv.value);
             
-            case SNMP_OCTETSTRING:
+            case SnmpOctetString:
                 return new SNMPOctetString(tlv.value);
             
-            case SNMP_BITSTRING:
+            case SnmpBitString:
                 return new SNMPBitString(tlv.value);
             
-            case SNMP_IPADDRESS:
+            case SnmpIpAddress:
                 return new SNMPIPAddress(tlv.value);
             
-            case SNMP_COUNTER32:
+            case SnmpCounter32:
                 return new SNMPCounter32(tlv.value);
             
-            case SNMP_GAUGE32:
+            case SnmpGauge32:
                 return new SNMPGauge32(tlv.value);
             
-            case SNMP_TIMETICKS:
+            case SnmpTimeTicks:
                 return new SNMPTimeTicks(tlv.value);
             
-            case SNMP_NSAPADDRESS:
+            case SnmpNsapAddress:
                 return new SNMPNSAPAddress(tlv.value);
             
-            case SNMP_COUNTER64:
+            case SnmpCounter64:
                 return new SNMPCounter64(tlv.value);
             
-            case SNMP_UINTEGER32:
+            case SnmpUInteger32:
                 return new SNMPUInteger32(tlv.value);
                 
             // Fall through
-            case SNMP_GET_REQUEST:
-            case SNMP_GET_NEXT_REQUEST:
-            case SNMP_GET_RESPONSE:
-            case SNMP_SET_REQUEST:
+            case SnmpGetRequest:
+            case SnmpGetNextRequest:
+            case SnmpGetResponse:
+            case SnmpSetRequest:
                 return new SNMPPDU(tlv.value, tlv.tag);
             
-            case SNMP_TRAP:
+            case SnmpTrap:
                 return new SNMPv1TrapPDU(tlv.value);
             
-            case SNMPv2_TRAP:
+            case SnmpV2Trap:
                 return new SNMPv2TrapPDU(tlv.value);
             
-            case SNMPv2_INFORM_REQUEST:
+            case SnmpV2InformRequest:
                 return new SNMPv2InformRequestPDU(tlv.value);
             
             // Fall through
-            case SNMP_NULL: 
-            case SNMP_OPAQUE:
+            case SnmpNull: 
+            case SnmpOpaque:
                 return new SNMPNull();
             
             default:
@@ -151,7 +151,7 @@ public class SNMPBERCodec
             }
             catch (IllegalArgumentException e)  // if no corresponding instance exists
             {
-                nextTLV.tag = SNMPBERType.SNMP_UNKNOWN_OBJECT;
+                nextTLV.tag = SNMPBERType.SnmpUnknownObject;
             }
             currentPos++;    // now at start of length info
             

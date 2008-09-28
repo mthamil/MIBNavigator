@@ -27,37 +27,37 @@ package snmp;
  */
 public enum SNMPBERType
 {
-    SNMP_UNKNOWN_OBJECT((byte)0x00),
+    SnmpUnknownObject((byte)0x00),
 
-    //Primitive ASN.1 data types
-    SNMP_INTEGER((byte)0x02),
-    SNMP_BITSTRING((byte)0x03),
-    SNMP_OCTETSTRING((byte)0x04),
-    SNMP_NULL((byte)0x05),
-    SNMP_OBJECT_IDENTIFIER((byte)0x06),
+    // Primitive ASN.1 data types
+    SnmpInteger((byte)0x02),
+    SnmpBitString((byte)0x03),
+    SnmpOctetString((byte)0x04),
+    SnmpNull((byte)0x05),
+    SnmpObjectIdentifier((byte)0x06),
     
-    //Constructed ASN.1 data types
-    SNMP_SEQUENCE((byte)0x30),
+    // Complex ASN.1 data types
+    SnmpSequence((byte)0x30),
 
-    //Primitive SNMP data types
-    SNMP_IPADDRESS((byte)0x40),
-    SNMP_COUNTER32((byte)0x41),
-    SNMP_GAUGE32((byte)0x42),
-    SNMP_TIMETICKS((byte)0x43),
-    SNMP_OPAQUE((byte)0x44),
-    SNMP_NSAPADDRESS((byte)0x45),
-    SNMP_COUNTER64((byte)0x46),
-    SNMP_UINTEGER32((byte)0x47),
+    // Primitive SNMP data types
+    SnmpIpAddress((byte)0x40),
+    SnmpCounter32((byte)0x41),
+    SnmpGauge32((byte)0x42),
+    SnmpTimeTicks((byte)0x43),
+    SnmpOpaque((byte)0x44),
+    SnmpNsapAddress((byte)0x45),
+    SnmpCounter64((byte)0x46),
+    SnmpUInteger32((byte)0x47),
 
-    //BER PDU Message types
-    SNMP_GET_REQUEST((byte)0xA0),
-    SNMP_GET_NEXT_REQUEST((byte)0xA1),
-    SNMP_GET_RESPONSE((byte)0xA2),
-    SNMP_SET_REQUEST((byte)0xA3),
-    SNMP_TRAP((byte)0xA4),
-    SNMPv2_BULK_REQUEST((byte)0xA5),
-    SNMPv2_INFORM_REQUEST((byte)0xA6),
-    SNMPv2_TRAP((byte)0xA7);
+    // BER PDU Message types
+    SnmpGetRequest((byte)0xA0),
+    SnmpGetNextRequest((byte)0xA1),
+    SnmpGetResponse((byte)0xA2),
+    SnmpSetRequest((byte)0xA3),
+    SnmpTrap((byte)0xA4),
+    SnmpV2BulkRequest((byte)0xA5),
+    SnmpV2InformRequest((byte)0xA6),
+    SnmpV2Trap((byte)0xA7);
     
     private byte byteValue;
     
@@ -76,23 +76,6 @@ public enum SNMPBERType
     }
     
     
-    /**
-     * Gets the SNMPBERType instance corresponding to the given byte value.
-     * If no such instance exists, an exception is thrown.
-     * 
-     * @param byteVal the byte value of an SNMPBERType
-     */
-   /* public static SNMPBERType getInstance(byte byteVal) 
-    {
-        for (SNMPBERType type : SNMPBERType.values()) 
-        {
-           if (type.getByte() == byteVal) 
-              return type;
-        }
-
-        throw new IllegalArgumentException("No corresponding instance.");          
-    }*/
-    
     
     /**
      * Gets the SNMPBERType instance corresponding to the given byte value.
@@ -105,54 +88,54 @@ public enum SNMPBERType
         switch (byteVal)
         {
             case 0x00:
-                return SNMP_UNKNOWN_OBJECT;
+                return SnmpUnknownObject;
             case 0x02:
-                return SNMP_INTEGER;
+                return SnmpInteger;
             case 0x03:
-                return SNMP_BITSTRING;
+                return SnmpBitString;
             case 0x04:
-                return SNMP_OCTETSTRING;
+                return SnmpOctetString;
             case 0x05:
-                return SNMP_NULL;
+                return SnmpNull;
             case 0x06:
-                return SNMP_OBJECT_IDENTIFIER;
+                return SnmpObjectIdentifier;
                 
             case 0x30:
-                return SNMP_SEQUENCE;
+                return SnmpSequence;
                 
             case 0x40:
-                return SNMP_IPADDRESS;
+                return SnmpIpAddress;
             case 0x41:
-                return SNMP_COUNTER32;
+                return SnmpCounter32;
             case 0x42:
-                return SNMP_GAUGE32;
+                return SnmpGauge32;
             case 0x43:
-                return SNMP_TIMETICKS;
+                return SnmpTimeTicks;
             case 0x44:
-                return SNMP_OPAQUE;
+                return SnmpOpaque;
             case 0x45:
-                return SNMP_NSAPADDRESS;
+                return SnmpNsapAddress;
             case 0x46:
-                return SNMP_COUNTER64;
+                return SnmpCounter64;
             case 0x47:
-                return SNMP_UINTEGER32;
+                return SnmpUInteger32;
                 
             case (byte) 0xA0:
-                return SNMP_GET_REQUEST;
+                return SnmpGetRequest;
             case (byte) 0xA1:
-                return SNMP_GET_NEXT_REQUEST;
+                return SnmpGetNextRequest;
             case (byte) 0xA2:
-                return SNMP_GET_RESPONSE;
+                return SnmpGetResponse;
             case (byte) 0xA3:
-                return SNMP_SET_REQUEST;
+                return SnmpSetRequest;
             case (byte) 0xA4:
-                return SNMP_TRAP;
+                return SnmpTrap;
             case (byte) 0xA5:
-                return SNMPv2_BULK_REQUEST;
+                return SnmpV2BulkRequest;
             case (byte) 0xA6:
-                return SNMPv2_INFORM_REQUEST;
+                return SnmpV2InformRequest;
             case (byte) 0xA7:
-                return SNMPv2_TRAP;
+                return SnmpV2Trap;
             default:
                 throw new IllegalArgumentException("No corresponding instance.");
         }
@@ -162,7 +145,7 @@ public enum SNMPBERType
     
     public static void main(String[] args)
     {
-        byte test = SNMPBERType.SNMP_GAUGE32.getByte();
+        byte test = SNMPBERType.SnmpGauge32.getByte();
         SNMPBERType test2 = SNMPBERType.getInstance((byte)0xA7);
     }
 }

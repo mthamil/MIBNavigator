@@ -22,6 +22,8 @@
 
 package snmp;
 
+import snmp.SNMPRequestException.ErrorStatus;
+
 
 /**
  * Abstract class that implements basic recent version trap PDU functions.
@@ -37,7 +39,7 @@ public class SNMPAbstractTrapPDU extends SNMPPDU
     public SNMPAbstractTrapPDU(SNMPTimeTicks sysUptime, SNMPObjectIdentifier snmpTrapOID, 
     		SNMPSequence varList, SNMPBERType type) throws SNMPBadValueException
     {
-        super(type, 0, 0, 0, varList);
+        super(type, 0, ErrorStatus.NoError, 0, varList);
         
         // create a variable pair for sysUptime, and insert into varBindList
         SNMPObjectIdentifier sysUptimeOID = new SNMPObjectIdentifier("1.3.6.1.2.1.1.3.0");

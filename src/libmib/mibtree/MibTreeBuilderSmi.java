@@ -29,7 +29,7 @@ import java.util.Collections;
 import java.util.List;
 
 import libmib.InvalidSmiMibFormatException;
-import libmib.SmiKeywords;
+import libmib.SmiTokens;
 import libmib.SmiStructureHandler;
 import libmib.oid.MibObjectType;
 import libmib.oid.MibSyntax;
@@ -73,7 +73,7 @@ public class MibTreeBuilderSmi extends AbstractMibTreeBuilder
             
 
             //System.out.println(mibFile.getName() + ": valid");
-            while ( ((line = in.readLine()) != null) && !line.trim().equals(SmiKeywords.MIB_END))
+            while ( ((line = in.readLine()) != null) && !line.trim().equals(SmiTokens.MIB_END))
             {
                 // Strip comments.
                 if (line.contains("--"))
@@ -87,7 +87,7 @@ public class MibTreeBuilderSmi extends AbstractMibTreeBuilder
                     continue;
                     
                 // Skip the 'IMPORTS' section.
-                if (line.contains(SmiKeywords.IMPORTS_BEGIN))               
+                if (line.contains(SmiTokens.IMPORTS_BEGIN))               
                 {
                     char c = 0;
                     while ( (c != -1) && (c != ';'))
@@ -102,15 +102,15 @@ public class MibTreeBuilderSmi extends AbstractMibTreeBuilder
                 {
                     while ( (line = in.readLine()) != null )
                     {
-                        if (line.trim().equals(SmiKeywords.MIB_END))
+                        if (line.trim().equals(SmiTokens.MIB_END))
                             break;
                     }
                     continue;
                 }
                 
                 // Special case for basic MIB objects consisting of only a name, parent, and OID index.
-                if ( line.contains(SmiKeywords.OBJECT_ID) && !line.contains(SmiKeywords.OID_SYNTAX) && !line.contains(",") 
-                        && !line.contains(SmiKeywords.IMPORT_FROM) && !line.trim().startsWith(SmiKeywords.OBJECT_ID))
+                if ( line.contains(SmiTokens.OBJECT_ID) && !line.contains(SmiTokens.OID_SYNTAX) && !line.contains(",") 
+                        && !line.contains(SmiTokens.IMPORT_FROM) && !line.trim().startsWith(SmiTokens.OBJECT_ID))
                 {
                     StringBuilder oidDef = new StringBuilder();
                     oidDef.append(line);
@@ -132,7 +132,7 @@ public class MibTreeBuilderSmi extends AbstractMibTreeBuilder
                         String nodeName = "";    
                         
                         // Get the mib object name.
-                        int index = oidString.indexOf(SmiKeywords.OBJECT_ID);
+                        int index = oidString.indexOf(SmiTokens.OBJECT_ID);
                         nodeName = oidString.substring(0, index).trim();
                         //System.out.println(nodeName);
 
@@ -144,7 +144,7 @@ public class MibTreeBuilderSmi extends AbstractMibTreeBuilder
                             String nodeParentName = "";
                             String nodeIndex = "";;  
                             
-                            nodeInfo = oidString.substring(index + SmiKeywords.OBJECT_ID.length());
+                            nodeInfo = oidString.substring(index + SmiTokens.OBJECT_ID.length());
                             nodeInfo = nodeInfo.substring(nodeInfo.indexOf("{") + 1, nodeInfo.indexOf("}")).trim();
 
                             String parents = "";
@@ -182,22 +182,22 @@ public class MibTreeBuilderSmi extends AbstractMibTreeBuilder
                 {
                     // Test for object type.
                     String objectType = "";
-                    if (line.contains(SmiKeywords.OBJECT_TYPE))
-                        objectType = SmiKeywords.OBJECT_TYPE;
-                    else if (line.contains(SmiKeywords.OBJECT_GRP))
-                        objectType = SmiKeywords.OBJECT_GRP;
-                    else if (line.contains(SmiKeywords.NOTIF))
-                        objectType = SmiKeywords.NOTIF;
-                    else if (line.contains(SmiKeywords.MODULE_COMP))
-                        objectType = SmiKeywords.MODULE_COMP;
-                    else if (line.contains(SmiKeywords.MODULE_ID))
-                        objectType = SmiKeywords.MODULE_ID;
-                    else if (line.contains(SmiKeywords.NOTIF_GRP))
-                        objectType = SmiKeywords.NOTIF_GRP;
+                    if (line.contains(SmiTokens.OBJECT_TYPE))
+                        objectType = SmiTokens.OBJECT_TYPE;
+                    else if (line.contains(SmiTokens.OBJECT_GRP))
+                        objectType = SmiTokens.OBJECT_GRP;
+                    else if (line.contains(SmiTokens.NOTIF))
+                        objectType = SmiTokens.NOTIF;
+                    else if (line.contains(SmiTokens.MODULE_COMP))
+                        objectType = SmiTokens.MODULE_COMP;
+                    else if (line.contains(SmiTokens.MODULE_ID))
+                        objectType = SmiTokens.MODULE_ID;
+                    else if (line.contains(SmiTokens.NOTIF_GRP))
+                        objectType = SmiTokens.NOTIF_GRP;
                                             
                     // Read other object types.
                     if ( !objectType.equals("") && !line.trim().equalsIgnoreCase(objectType) 
-                            && !line.contains(SmiKeywords.IMPORT_FROM) && !line.contains(",") )
+                            && !line.contains(SmiTokens.IMPORT_FROM) && !line.contains(",") )
                     {
                         MibObjectType mibObject = new MibObjectType();
                         mibObject.setMibName(mibName);
@@ -263,41 +263,41 @@ public class MibTreeBuilderSmi extends AbstractMibTreeBuilder
                 if (!line.trim().equals(""))
                 {
                     // SYNTAX
-                    if (line.contains(SmiKeywords.OID_SYNTAX) && !objectType.equals(SmiKeywords.MODULE_COMP))
+                    if (line.contains(SmiTokens.OID_SYNTAX) && !objectType.equals(SmiTokens.MODULE_COMP))
                     {
-                        if (line.trim().equals(SmiKeywords.OID_SYNTAX))
+                        if (line.trim().equals(SmiTokens.OID_SYNTAX))
                             line = in.readLine();
     
                         // if the OID has a list of specific integer values
                         if (line.contains("{"))
                         {
                             index = line.indexOf("{");
-                            nodeDataType = line.substring(SmiKeywords.OID_SYNTAX.length(), index).trim();
+                            nodeDataType = line.substring(SmiTokens.OID_SYNTAX.length(), index).trim();
                             
-                            nodeValues = handler.readValueList(line, SmiKeywords.OID_SYNTAX);
+                            nodeValues = handler.readValueList(line, SmiTokens.OID_SYNTAX);
                         }
                         else
-                            nodeDataType = line.substring(SmiKeywords.OID_SYNTAX.length()).trim();
+                            nodeDataType = line.substring(SmiTokens.OID_SYNTAX.length()).trim();
                     }
                     
                     // ACCESS
-                    else if (line.contains(SmiKeywords.OID_ACCESS) && !objectType.equals(SmiKeywords.MODULE_COMP))
+                    else if (line.contains(SmiTokens.OID_ACCESS) && !objectType.equals(SmiTokens.MODULE_COMP))
                     {
-                        index = line.indexOf(SmiKeywords.OID_ACCESS) + SmiKeywords.OID_ACCESS.length();
+                        index = line.indexOf(SmiTokens.OID_ACCESS) + SmiTokens.OID_ACCESS.length();
                         nodeAccess = line.substring(index).trim();
                     }
                     
                     // STATUS
-                    else if (line.contains(SmiKeywords.OID_STATUS))
+                    else if (line.contains(SmiTokens.OID_STATUS))
                     {
-                        index = line.indexOf(SmiKeywords.OID_STATUS) + SmiKeywords.OID_STATUS.length();
+                        index = line.indexOf(SmiTokens.OID_STATUS) + SmiTokens.OID_STATUS.length();
                         nodeStatus = line.substring(index).trim();
                     }
     
                     // DESCRIPTION
-                    else if (line.contains(SmiKeywords.OID_DESCRIPTION))
+                    else if (line.contains(SmiTokens.OID_DESCRIPTION))
                     {
-                        nodeDesc.append(handler.readQuotedSection(line, SmiKeywords.OID_DESCRIPTION));
+                        nodeDesc.append(handler.readQuotedSection(line, SmiTokens.OID_DESCRIPTION));
                     }
 
                     line = in.readLine().trim();
@@ -369,10 +369,10 @@ public class MibTreeBuilderSmi extends AbstractMibTreeBuilder
     
     
     /**
-     * @see libmib.mibtree.MibTreeBuilder#getMibFolder() 
+     * @see libmib.mibtree.MibTreeBuilder#getMibDirectory() 
      */
 	@Override
-	public String getMibFolder()
+	public String getMibDirectory()
 	{
 		return "smi";
 	}

@@ -71,9 +71,9 @@ public class SmiStructureHandler
         
         while ( ((line = in.readLine()) != null) && (lineCnt < 100) )
         {
-            if (line.contains(SmiKeywords.MIB_BEGIN))
+            if (line.contains(SmiTokens.MIB_BEGIN))
             {
-                mibName = line.substring(0, line.indexOf(SmiKeywords.MIB_BEGIN) - 1).trim();
+                mibName = line.substring(0, line.indexOf(SmiTokens.MIB_BEGIN) - 1).trim();
                 break;  // don't read any more lines
             }
 

@@ -32,7 +32,7 @@ public class SNMPObjectIdentifier extends SNMPObject
 {
     private long[] digits;    // array of longs
 
-    protected SNMPBERType tag = SNMPBERType.SNMP_OBJECT_IDENTIFIER;
+    protected SNMPBERType tag = SNMPBERType.SnmpObjectIdentifier;
 
     /**
      *  Creates a new empty object identifier (0-length array).

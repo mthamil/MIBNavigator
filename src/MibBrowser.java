@@ -87,7 +87,7 @@ public class MibBrowser
         currentOidName = new StringBuilder();
         currentOidNumber = new StringBuilder();
         
-        mibDirectory = new File(MIB_DIR_NAME + File.separator + treeBuilder.getMibFolder());
+        mibDirectory = new File(MIB_DIR_NAME + File.separator + treeBuilder.getMibDirectory());
 
         initializeComponents();
         layoutComponents(); 
@@ -195,7 +195,7 @@ public class MibBrowser
         }
         
         // If the mibs directory wasn't found, this will return a tree model with only default nodes.
-        mibModel = (DefaultTreeModel)treeBuilder.getMibTreeModel();
+        mibModel = (DefaultTreeModel)treeBuilder.getTreeModel();
 
         mibTree = new JTree();
         mibTree.setModel(mibModel); 
@@ -618,7 +618,7 @@ public class MibBrowser
                         String oidTreeNumberString = oidNumberField.getText();
                         
                         if (!oidInputString.equals(oidTreeNumberString))
-                            setVisibleNodeByOID(oidInputString, NodeSearchOption.MATCH_EXACT_PATH);
+                            setVisibleNodeByOID(oidInputString, NodeSearchOption.MatchExactPath);
     
                         resultsListModel.removeAllElements();
                         putValue(NAME, GET_STOP_LABEL);
@@ -629,6 +629,11 @@ public class MibBrowser
                         snmpGetWorker.addGetRequestListener(new MibGetRequestListener());
                         snmpGetWorker.setPort(port);
                         snmpGetWorker.setTimeout(timeout);
+                        
+                        // Disable the Get button because clicking Stop will not do anything
+                        // while waiting for the timeout.
+                        this.setEnabled(false);
+                        
                         snmpGetWorker.start();
                     }
                     catch (NumberFormatException e)
@@ -741,6 +746,10 @@ public class MibBrowser
 	     */
 	    public void requestResultReceived(GetRequestResult dataResultItem) 
 	    {
+	    	Action getAction = getButton.getAction();
+	    	if (!getAction.isEnabled())
+	    		getAction.setEnabled(true);
+	    	
 	        ((DefaultListModel)resultsList.getModel()).addElement(dataResultItem);
 	    }
 	    
@@ -751,7 +760,12 @@ public class MibBrowser
 	    */
 	    public void requestTerminated(String messageString)
 	    {
-	        if (!messageString.equals("")) // only add error messages, do nothing when successful
+	    	Action getAction = getButton.getAction();
+	    	if (!getAction.isEnabled())
+	    		getAction.setEnabled(true);
+	    	
+	    	// Message string will only contain error messages, has nothing when successful.
+	        if (!messageString.equals(""))
 	            ((DefaultListModel)resultsList.getModel()).addElement(messageString);
 	                 
 	        getButton.getAction().putValue(GetRequestAction.NAME, GetRequestAction.GET_START_LABEL);

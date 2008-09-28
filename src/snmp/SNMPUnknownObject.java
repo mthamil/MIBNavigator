@@ -32,7 +32,7 @@ public class SNMPUnknownObject extends SNMPObject
 {
     private byte[] data;
     
-    protected SNMPBERType tag = SNMPBERType.SNMP_UNKNOWN_OBJECT;    
+    protected SNMPBERType tag = SNMPBERType.SnmpUnknownObject;    
     
     /**
      *  Takes a byte array and uses it as raw bytes.

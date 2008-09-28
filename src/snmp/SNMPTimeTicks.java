@@ -46,7 +46,7 @@ public class SNMPTimeTicks extends SNMPInteger
         // we truncate the long value to 32 bits for SNMP v2 compatibility
         super(value & 0x00000000FFFFFFFFL);
 
-        tag = SNMPBERType.SNMP_TIMETICKS;
+        tag = SNMPBERType.SnmpTimeTicks;
     }
 
 
@@ -55,7 +55,7 @@ public class SNMPTimeTicks extends SNMPInteger
     {
         super(enc);
 
-        tag = SNMPBERType.SNMP_TIMETICKS;
+        tag = SNMPBERType.SnmpTimeTicks;
     }
 
 

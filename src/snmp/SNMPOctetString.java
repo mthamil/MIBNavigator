@@ -30,7 +30,7 @@ import java.util.Arrays;
 public class SNMPOctetString extends SNMPObject
 {
     protected byte[] data;
-    protected SNMPBERType tag = SNMPBERType.SNMP_OCTETSTRING;
+    protected SNMPBERType tag = SNMPBERType.SnmpOctetString;
 
 
     /**

@@ -47,7 +47,7 @@ public class MibTreeSearchAction extends AbstractAction
 			JTextField textField = (JTextField)event.getSource();
 		    try
 		    {
-		        browser.setVisibleNodeByOID(textField.getText().trim(), NodeSearchOption.MATCH_EXACT_PATH);
+		        browser.setVisibleNodeByOID(textField.getText().trim(), NodeSearchOption.MatchExactPath);
 		    }
 		    catch (NumberFormatException e)
 		    {

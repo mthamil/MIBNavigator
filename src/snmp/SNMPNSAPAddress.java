@@ -34,7 +34,7 @@ public class SNMPNSAPAddress extends SNMPOctetString
      */
     public SNMPNSAPAddress()
     {
-        tag = SNMPBERType.SNMP_NSAPADDRESS;
+        tag = SNMPBERType.SnmpNsapAddress;
         
         // initialize to 0.0.0.0.0.0
         data = new byte[6];
@@ -46,7 +46,7 @@ public class SNMPNSAPAddress extends SNMPOctetString
     public SNMPNSAPAddress(String string)
         throws SNMPBadValueException
     {
-        tag = SNMPBERType.SNMP_NSAPADDRESS;
+        tag = SNMPBERType.SnmpNsapAddress;
         
         data = parseNSAPAddress(string);
     }
@@ -62,7 +62,7 @@ public class SNMPNSAPAddress extends SNMPOctetString
     public SNMPNSAPAddress(byte[] enc)
         throws SNMPBadValueException
     {
-        tag = SNMPBERType.SNMP_NSAPADDRESS;
+        tag = SNMPBERType.SnmpNsapAddress;
         
         if (enc.length == 6)
             data = enc;

@@ -21,10 +21,17 @@
 
 package snmp;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Vector;
 
+import snmp.SNMPRequestException.ErrorStatus;
 
 
 /**
@@ -53,7 +60,7 @@ public class SNMPv1SimpleAgent implements Runnable
     private SNMPSequence responseVarList;
     private Hashtable<SNMPObjectIdentifier,SNMPObject> variablePairs;
     private int errorIndex = 0;
-    private int errorStatus = SNMPRequestException.NO_ERROR;
+    private ErrorStatus errorStatus = ErrorStatus.NoError;
     
     /**
      *  Constructs a new agent object to listen for requests from remote SNMP managers. The agent listens
@@ -177,16 +184,16 @@ public class SNMPv1SimpleAgent implements Runnable
                 variablePairs = new Hashtable<SNMPObjectIdentifier,SNMPObject>();
                 responseVarList = new SNMPSequence();
                 errorIndex = 0;
-                errorStatus = SNMPRequestException.NO_ERROR;
+                errorStatus = ErrorStatus.NoError;
                 int requestID = receivedPDU.getRequestID();
                 
                 try
                 {
                     switch (requestPDUType)
                     {
-                        case SNMP_GET_REQUEST:
-                        case SNMP_SET_REQUEST:
-                        case SNMP_GET_NEXT_REQUEST:
+                        case SnmpGetRequest:
+                        case SnmpSetRequest:
+                        case SnmpGetNextRequest:
                             this.handleRequest(receivedPDU, communityName, requestPDUType);
                             break;
                         
@@ -207,7 +214,7 @@ public class SNMPv1SimpleAgent implements Runnable
                 {
                     // don't have a specific index and cause of error; return message as general error, index 0
                     errorIndex = 0;
-                    errorStatus = SNMPRequestException.FAILED;
+                    errorStatus = ErrorStatus.Failed;
                     
                     // just return request variable list as response variable list
                     responseVarList = requestedVarList;
@@ -218,7 +225,7 @@ public class SNMPv1SimpleAgent implements Runnable
                 }
                 
                 // Construct and send response.
-                SNMPPDU pdu = new SNMPPDU(SNMPBERType.SNMP_GET_RESPONSE, requestID, errorStatus, errorIndex, responseVarList);
+                SNMPPDU pdu = new SNMPPDU(SNMPBERType.SnmpGetResponse, requestID, errorStatus, errorIndex, responseVarList);
                 SNMPMessage message = new SNMPMessage(version, communityName, pdu);
                 byte[] messageEncoding = message.getBEREncoding();
                 
@@ -262,7 +269,7 @@ public class SNMPv1SimpleAgent implements Runnable
             // Return value is a sequence of nested variable pairs for those OIDs handled by the listener:
             // consists of (supplied OID, (following OID, value)) nested variable pairs.
             SNMPSequence handledVarList;
-            if (requestPDUType == SNMPBERType.SNMP_GET_NEXT_REQUEST)
+            if (requestPDUType == SNMPBERType.SnmpGetNextRequest)
                 handledVarList = listener.processGetNextRequest(receivedPDU, communityName);
             else
                 handledVarList = listener.processRequest(receivedPDU, communityName);
@@ -290,9 +297,9 @@ public class SNMPv1SimpleAgent implements Runnable
             if (!variablePairs.containsKey(snmpOID))
             {
                 errorIndex = j + 1;
-                errorStatus = SNMPRequestException.VALUE_NOT_AVAILABLE;
+                errorStatus = ErrorStatus.ValueNotAvailable;
 
-                if (requestPDUType == SNMPBERType.SNMP_SET_REQUEST)
+                if (requestPDUType == SNMPBERType.SnmpSetRequest)
                     throw new SNMPSetException("OID " + snmpOID + " not handled", errorIndex, errorStatus);
 
                 // GetRequest and GetNextRequest exceptions.
@@ -300,7 +307,7 @@ public class SNMPv1SimpleAgent implements Runnable
             }
 
             SNMPVariablePair responsePair;
-            if (requestPDUType == SNMPBERType.SNMP_GET_NEXT_REQUEST)
+            if (requestPDUType == SNMPBERType.SnmpGetNextRequest)
             {
                 // value in hashtable is complete variable pair
                 responsePair = (SNMPVariablePair)variablePairs.get(snmpOID);

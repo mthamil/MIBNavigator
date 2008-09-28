@@ -61,7 +61,7 @@ public class ResultsListListener implements ListSelectionListener
                     if (selectedObject instanceof GetRequestResult)
                     {
                         String selectedOID = ((GetRequestResult)selectedObject).getOIDNumber();
-                        browser.setVisibleNodeByOID(selectedOID, NodeSearchOption.MATCH_NEAREST_PATH);
+                        browser.setVisibleNodeByOID(selectedOID, NodeSearchOption.MatchNearestPath);
                     }
                 }
                 // Catch bad OIDs, though this is very unlikely if the OID is in the results list.

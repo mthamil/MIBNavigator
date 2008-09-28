@@ -56,12 +56,12 @@ public interface MibTreeBuilder
     /**
      * Retrieves the TreeModel used by the builder.
      */
-    public TreeModel getMibTreeModel();
+    public TreeModel getTreeModel();
     
     /**
      * Gets the format-specific base folder name used by the tree builder.
      * @return the name of the tree builder's MIB directory
      */
-    public String getMibFolder();
+    public String getMibDirectory();
 
 }

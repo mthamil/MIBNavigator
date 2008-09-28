@@ -34,7 +34,7 @@ public class SNMPSequence extends SNMPObject
                           //implements Iterable
 {
     protected List<SNMPObject> sequence;    // List of whatever is in sequence
-    protected SNMPBERType tag = SNMPBERType.SNMP_SEQUENCE;
+    protected SNMPBERType tag = SNMPBERType.SnmpSequence;
         
     /**
      *  Creates a new empty sequence.

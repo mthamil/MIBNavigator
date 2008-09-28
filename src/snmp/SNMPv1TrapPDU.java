@@ -25,7 +25,6 @@ import java.util.*;
 import java.math.*;
 
 
-
 /**
  * The SNMPTrapPDU class represents an SNMPv1 Trap PDU from <a href="http://www.ietf.org/rfc/rfc1157.txt">RFC 1157</a>, as
  * indicated below. This forms the payload of an SNMP Trap message. *
@@ -110,24 +109,42 @@ import java.math.*;
 public class SNMPv1TrapPDU extends SNMPSequence
                            implements SNMPPDUMarker
 {
+	
+	/**
+	 * Predefined generic trap codes.
+	 */
+	public enum GenericTrapType 
+	{ 
+		ColdStart, WarmStart, LinkDown, LinkUp, AuthenticationFailure, NeighborLoss, Enterprise;
+		
+		public static GenericTrapType getInstance(int value)
+		{
+		    if (value > GenericTrapType.values().length)
+		        throw new IllegalArgumentException("No corresponding instance.");
+		    
+		    GenericTrapType[] vals = GenericTrapType.values();
+		    return vals[value];
+		}
+	
+	}
     
     /**
      * Creates a new Trap PDU of the specified type, with given request ID, error
      * status, and error index, and containing the supplied SNMP sequence as
      * data.
      */
-    public SNMPv1TrapPDU(SNMPObjectIdentifier enterpriseOID, SNMPIPAddress agentAddress, int genericTrap, 
+    public SNMPv1TrapPDU(SNMPObjectIdentifier enterpriseOID, SNMPIPAddress agentAddress, GenericTrapType trapType, 
     	int specificTrap, SNMPTimeTicks timestamp, SNMPSequence varList) throws SNMPBadValueException
     {
         super();
         
-        tag = SNMPBERType.SNMP_TRAP;
+        tag = SNMPBERType.SnmpTrap;
         
         List<SNMPObject> contents = new Vector<SNMPObject>();
         
         contents.add(enterpriseOID);
         contents.add(agentAddress);
-        contents.add(new SNMPInteger(genericTrap));
+        contents.add(new SNMPInteger(trapType.ordinal()));
         contents.add(new SNMPInteger(specificTrap));
         contents.add(timestamp);
         contents.add(varList);
@@ -140,23 +157,10 @@ public class SNMPv1TrapPDU extends SNMPSequence
      *  Creates a new Trap PDU of the specified type, with given request ID, error status, and error index,
      *  and containing an empty SNMP sequence (VarBindList) as additional data.
      */
-    public SNMPv1TrapPDU(SNMPObjectIdentifier enterpriseOID, SNMPIPAddress agentAddress, int genericTrap, 
+    public SNMPv1TrapPDU(SNMPObjectIdentifier enterpriseOID, SNMPIPAddress agentAddress, GenericTrapType trapType, 
     	int specificTrap, SNMPTimeTicks timestamp)  throws SNMPBadValueException
     {
-        super();
-        
-        tag = SNMPBERType.SNMP_TRAP;
-        
-        List<SNMPObject> contents = new Vector<SNMPObject>();
-        
-        contents.add(enterpriseOID);
-        contents.add(agentAddress);
-        contents.add(new SNMPInteger(genericTrap));
-        contents.add(new SNMPInteger(specificTrap));
-        contents.add(timestamp);
-        contents.add(new SNMPVarBindList());
-        
-        this.setValue(contents);
+        this(enterpriseOID, agentAddress, trapType, specificTrap, timestamp, new SNMPVarBindList());
     }
     
     
@@ -167,7 +171,7 @@ public class SNMPv1TrapPDU extends SNMPSequence
      */
     protected SNMPv1TrapPDU(byte[] enc) throws SNMPBadValueException
     {
-        tag = SNMPBERType.SNMP_TRAP;
+        tag = SNMPBERType.SnmpTrap;
         extractFromBEREncoding(enc);
         
         // validate the message: make sure we have the appropriate pieces
@@ -214,7 +218,7 @@ public class SNMPv1TrapPDU extends SNMPSequence
     
     
     /** 
-     *  Extracts the variable binding list from the pdu. Useful for retrieving
+     *  Extracts the variable binding list from the PDU. Useful for retrieving
      *  the set of (object identifier, value) pairs returned in response to a request to an SNMP
      *  device. The variable binding list is just an SNMP sequence containing the identifier, value pairs.
      *  @see snmp.SNMPVarBindList
@@ -246,9 +250,11 @@ public class SNMPv1TrapPDU extends SNMPSequence
     /** 
      *  Returns the generic trap code for this PDU.
      */
-    public int getGenericTrap()
+    public GenericTrapType getGenericTrap()
     {
-        return ((BigInteger)((SNMPInteger)(sequence.get(2))).getValue()).intValue();
+    	SNMPInteger value = (SNMPInteger)sequence.get(2);
+    	int ordinal = ((BigInteger)value.getValue()).intValue();
+    	return GenericTrapType.getInstance(ordinal);
     }
     
     

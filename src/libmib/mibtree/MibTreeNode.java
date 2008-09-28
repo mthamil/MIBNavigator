@@ -37,7 +37,7 @@ import libmib.oid.MibObjectType;
  */
 public class MibTreeNode extends DefaultMutableTreeNode 
 {
-    public enum NodeSearchOption { MATCH_NEAREST_PATH, MATCH_EXACT_PATH; }
+    public enum NodeSearchOption { MatchNearestPath, MatchExactPath; }
     
     /**
      * Constructs a new default MibTreeNode.
@@ -148,7 +148,7 @@ public class MibTreeNode extends DefaultMutableTreeNode
                     oidFound = true;
             }
     
-            if (oidFound || matchType == NodeSearchOption.MATCH_NEAREST_PATH)
+            if (oidFound || matchType == NodeSearchOption.MatchNearestPath)
                 return foundNode;
 
             // Return null if the node is not found.
@@ -228,7 +228,7 @@ public class MibTreeNode extends DefaultMutableTreeNode
             treeDepth++;
         }
 
-        if (oidFound || matchType == NodeSearchOption.MATCH_NEAREST_PATH)
+        if (oidFound || matchType == NodeSearchOption.MatchNearestPath)
             return foundNode;
         
         // Return null if the node is not found.

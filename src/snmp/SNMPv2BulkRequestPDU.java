@@ -140,7 +140,7 @@ public class SNMPv2BulkRequestPDU extends SNMPSequence
     {
         super();
         List<SNMPObject> contents = new Vector<SNMPObject>();
-        tag = SNMPBERType.SNMPv2_BULK_REQUEST;
+        tag = SNMPBERType.SnmpV2BulkRequest;
         contents.add(0, new SNMPInteger(requestID));
         contents.add(1, new SNMPInteger(nonRepeaters));
         contents.add(2, new SNMPInteger(maxRepetitions));

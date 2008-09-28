@@ -47,7 +47,7 @@ public class SNMPUInteger32 extends SNMPInteger
      */
     public SNMPUInteger32(long newValue)
     {
-        tag = SNMPBERType.SNMP_UINTEGER32;
+        tag = SNMPBERType.SnmpUInteger32;
         
         value = new BigInteger(new Long(newValue).toString());
         
@@ -66,7 +66,7 @@ public class SNMPUInteger32 extends SNMPInteger
     protected SNMPUInteger32(byte[] enc)
         throws SNMPBadValueException
     {
-        tag = SNMPBERType.SNMP_UINTEGER32;
+        tag = SNMPBERType.SnmpUInteger32;
         
         extractValueFromBEREncoding(enc);
         

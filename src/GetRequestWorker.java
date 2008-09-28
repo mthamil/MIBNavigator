@@ -196,7 +196,7 @@ public class GetRequestWorker extends SwingWorker
                     //with data models, and none of them are updated.  From what I've read,
                     //the single thread rule applies to UPDATING Swing VISUAL components.
                     
-                    MibTreeNode curNode = root.getNodeByOid(nextOid, NodeSearchOption.MATCH_NEAREST_PATH);
+                    MibTreeNode curNode = root.getNodeByOid(nextOid, NodeSearchOption.MatchNearestPath);
                     
                     String displayOid = nextOid;
                     

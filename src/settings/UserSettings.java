@@ -105,7 +105,7 @@ public class UserSettings
 	public void setAddresses(List<String> newAddresses)
 	{
 		if (newAddresses == null)
-			throw new IllegalArgumentException("Address list cannot be null.");
+			return;						// Ignore null
 
 		if (newAddresses != addresses)
 		{

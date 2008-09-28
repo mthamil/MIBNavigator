@@ -35,7 +35,7 @@ public class SNMPIPAddress extends SNMPOctetString
     public SNMPIPAddress()
     {
         // initialize to 0.0.0.0
-        tag = SNMPBERType.SNMP_IPADDRESS;
+        tag = SNMPBERType.SnmpIpAddress;
         data = new byte[4];
         for (int i = 0; i < 4; i++)
             data[i] = 0;
@@ -51,7 +51,7 @@ public class SNMPIPAddress extends SNMPOctetString
     public SNMPIPAddress(String string)
         throws SNMPBadValueException
     {
-        tag = SNMPBERType.SNMP_IPADDRESS;
+        tag = SNMPBERType.SnmpIpAddress;
         this.data = parseIPAddress(string);
     }
     
@@ -66,7 +66,7 @@ public class SNMPIPAddress extends SNMPOctetString
     public SNMPIPAddress(byte[] enc)
         throws SNMPBadValueException
     {
-        tag = SNMPBERType.SNMP_IPADDRESS;
+        tag = SNMPBERType.SnmpIpAddress;
         
         if (enc.length == 4)
             data = enc;

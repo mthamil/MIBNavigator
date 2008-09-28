@@ -344,10 +344,10 @@ public class MibTreeBuilderXml extends AbstractMibTreeBuilder
 
 
     /**
-     * @see libmib.mibtree.MibTreeBuilder#getMibFolder() 
+     * @see libmib.mibtree.MibTreeBuilder#getMibDirectory() 
      */
 	@Override
-	public String getMibFolder()
+	public String getMibDirectory()
 	{
 		return "xml";
 	}

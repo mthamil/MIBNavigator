@@ -138,7 +138,7 @@ public class MIBNavigatorMenu implements ActionListener
                     treeBuilder.addMIBFile(mib);
                     
                     // If the MIB isn't valid, it will not be added and there will be no reason to reload.
-                    ((DefaultTreeModel)treeBuilder.getMibTreeModel()).reload();
+                    ((DefaultTreeModel)treeBuilder.getTreeModel()).reload();
                 }
                 catch (InvalidMibFormatException e)
                 {
@@ -168,7 +168,7 @@ public class MIBNavigatorMenu implements ActionListener
                     treeBuilder.addMIBFile(sourceMib);
                     
                     // If the MIB isn't valid, it will not be added and there will be no reason to reload.
-                    ((DefaultTreeModel)treeBuilder.getMibTreeModel()).reload();  
+                    ((DefaultTreeModel)treeBuilder.getTreeModel()).reload();  
                     
                     File destinationMib = new File(mibDirectory.getPath() + File.separator + sourceMib.getName());
                     

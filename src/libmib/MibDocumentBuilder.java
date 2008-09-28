@@ -176,19 +176,19 @@ public class MibDocumentBuilder
         mibObjects.appendChild(objectElement);
         
         String objType = newObject.getObjectType();
-        if (objType.equals(SmiKeywords.OBJECT_ID))
+        if (objType.equals(SmiTokens.OBJECT_ID))
             objType = "objectIdentifier";
-        else if (objType.equals(SmiKeywords.OBJECT_TYPE))
+        else if (objType.equals(SmiTokens.OBJECT_TYPE))
             objType = "objectType";
-        else if (objType.equals(SmiKeywords.OBJECT_GRP))
+        else if (objType.equals(SmiTokens.OBJECT_GRP))
             objType = "objectGroup";
-        else if (objType.equals(SmiKeywords.NOTIF))
+        else if (objType.equals(SmiTokens.NOTIF))
             objType = "notification";
-        else if (objType.equals(SmiKeywords.MODULE_ID))
+        else if (objType.equals(SmiTokens.MODULE_ID))
             objType = "moduleIdentity";
-        else if (objType.equals(SmiKeywords.MODULE_COMP))
+        else if (objType.equals(SmiTokens.MODULE_COMP))
             objType = "moduleCompliance";
-        else if (objType.contains(SmiKeywords.NOTIF_GRP))
+        else if (objType.contains(SmiTokens.NOTIF_GRP))
             objType = "notificationGroup";
         
         Element typeElement = mibDocument.createElement(objType);

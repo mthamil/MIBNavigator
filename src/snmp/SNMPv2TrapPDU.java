@@ -149,7 +149,7 @@ public class SNMPv2TrapPDU extends SNMPAbstractTrapPDU
     public SNMPv2TrapPDU(SNMPTimeTicks sysUptime, SNMPObjectIdentifier snmpTrapOID, SNMPSequence varList)
         throws SNMPBadValueException
     {
-        super(sysUptime, snmpTrapOID, varList, SNMPBERType.SNMPv2_TRAP);
+        super(sysUptime, snmpTrapOID, varList, SNMPBERType.SnmpV2Trap);
     }
     
     
@@ -173,7 +173,7 @@ public class SNMPv2TrapPDU extends SNMPAbstractTrapPDU
      */
     protected SNMPv2TrapPDU(byte[] encoding) throws SNMPBadValueException
     {
-        super(encoding, SNMPBERType.SNMPv2_TRAP);
+        super(encoding, SNMPBERType.SnmpV2Trap);
     }
 
 }

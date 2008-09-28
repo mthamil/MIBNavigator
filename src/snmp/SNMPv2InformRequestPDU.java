@@ -150,7 +150,7 @@ public class SNMPv2InformRequestPDU extends SNMPAbstractTrapPDU
     public SNMPv2InformRequestPDU(SNMPTimeTicks sysUptime, SNMPObjectIdentifier snmpTrapOID, SNMPSequence varList)
         throws SNMPBadValueException
     {
-        super(sysUptime, snmpTrapOID, varList, SNMPBERType.SNMPv2_INFORM_REQUEST);
+        super(sysUptime, snmpTrapOID, varList, SNMPBERType.SnmpV2InformRequest);
     }
     
     
@@ -173,7 +173,7 @@ public class SNMPv2InformRequestPDU extends SNMPAbstractTrapPDU
      */
     protected SNMPv2InformRequestPDU(byte[] encoding) throws SNMPBadValueException
     {
-        super(encoding, SNMPBERType.SNMPv2_INFORM_REQUEST);
+        super(encoding, SNMPBERType.SnmpV2InformRequest);
     }
 	
 }

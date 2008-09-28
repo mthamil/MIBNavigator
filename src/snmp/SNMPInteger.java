@@ -37,7 +37,7 @@ import java.io.*;
 public class SNMPInteger extends SNMPObject
 {
     protected BigInteger value;
-    protected SNMPBERType tag = SNMPBERType.SNMP_INTEGER;
+    protected SNMPBERType tag = SNMPBERType.SnmpInteger;
     
     /** 
      *  Initializes value to 0.

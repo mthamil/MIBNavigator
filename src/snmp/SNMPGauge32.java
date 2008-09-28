@@ -47,7 +47,7 @@ public class SNMPGauge32 extends SNMPInteger
     
     public SNMPGauge32(long newValue)
     {
-        tag = SNMPBERType.SNMP_GAUGE32;
+        tag = SNMPBERType.SnmpGauge32;
         
         value = new BigInteger(new Long(newValue).toString());
         
@@ -66,7 +66,7 @@ public class SNMPGauge32 extends SNMPInteger
     protected SNMPGauge32(byte[] enc)
         throws SNMPBadValueException
     {
-        tag = SNMPBERType.SNMP_GAUGE32;
+        tag = SNMPBERType.SnmpGauge32;
         
         extractValueFromBEREncoding(enc);
         

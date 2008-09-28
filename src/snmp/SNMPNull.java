@@ -28,7 +28,7 @@ package snmp;
 public class SNMPNull extends SNMPObject
 {
     
-    protected SNMPBERType tag = SNMPBERType.SNMP_NULL;
+    protected SNMPBERType tag = SNMPBERType.SnmpNull;
     
     /**
      *  Returns Java null reference.
@@ -57,7 +57,7 @@ public class SNMPNull extends SNMPObject
         byte[] encoding = new byte[2];
         
         // set tag byte
-        encoding[0] = SNMPBERType.SNMP_NULL.getByte();
+        encoding[0] = SNMPBERType.SnmpNull.getByte();
             
         // len = 0 since no payload!
         encoding[1] = 0;

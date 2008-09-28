@@ -34,19 +34,18 @@ public class FileFilterXml extends FileFilter
         super();
     }
 
-    /* (non-Javadoc)
+    /**
      * @see javax.swing.filechooser.FileFilter#accept(java.io.File)
      */
     public boolean accept(File thisFile) 
     {
-        if ( thisFile.getName().toLowerCase().endsWith(".xml") || thisFile.isDirectory())
+        if (thisFile.getName().toLowerCase().endsWith(".xml") || thisFile.isDirectory())
             return true;
-        
-        //otherwise
+
         return false;
     }
 
-    /* (non-Javadoc)
+    /**
      * @see javax.swing.filechooser.FileFilter#getDescription()
      */
     public String getDescription() 

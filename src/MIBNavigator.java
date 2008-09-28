@@ -33,6 +33,9 @@ import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 import javax.swing.plaf.FontUIResource;
 
+import filefilters.FileFilterSmi;
+import filefilters.FileFilterXml;
+
 import libmib.mibtree.CannotCreateBuilderException;
 import libmib.mibtree.MibTreeBuilder;
 import libmib.mibtree.MibTreeBuilderFactory;
@@ -136,6 +139,18 @@ public class MIBNavigator
         navFrame.setTitle("MIB Navigator");
         
         MIBNavigatorMenu navMenu = new MIBNavigatorMenu(this);
+        
+        switch (settings.getMibFormat())
+        {
+        	case SMI:
+        		navMenu.setFileFilter(new FileFilterSmi());
+        		break;
+        		
+        	case XML:
+        		navMenu.setFileFilter(new FileFilterXml());
+        		break;
+        }
+        
         navFrame.setJMenuBar(navMenu.getMenuBar());
         
         navFrame.add(content);  // Add the browser panel to the JFrame's content pane.

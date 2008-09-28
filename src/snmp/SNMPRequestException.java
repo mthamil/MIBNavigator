@@ -51,38 +51,32 @@ public class SNMPRequestException extends SNMPException
     //    notWritable(17),
     //    inconsistentName(18) 
     // },
-    public enum RequestErrorStatus
+    public enum ErrorStatus
     {
-        NO_ERROR, VALUE_TOO_BIG, VALUE_NOT_AVAILABLE, BAD_VALUE, VALUE_READ_ONLY, FAILED,  // basic errors
-        NO_ACCESS, WRONG_TYPE, WRONG_LENGTH, WRONG_ENCODING, WRONG_VALUE, CREATION_FAILED, 
-        INCONSISTENT_VALUE, RESOURCE_UNAVAILABLE, COMMIT_FAILED, UNDO_FAILED, AUTHORIZATION_ERROR,
-        NOT_WRITABLE, INCONSISTENT_NAME;
+        NoError, ValueTooBig, ValueNotAvailable, BadValue, ValueReadOnly, Failed,  // basic errors
+        NoAccess, WrongType, WrongLength, WrongEncoding, WrongValue, CreationFailed, 
+        InconsistentValue, ResourceUnavailable, CommitFailed, UndoFailed, AuthorizationError,
+        NotWritable, InconsistentName;
         
-        public static RequestErrorStatus getInstance(int value)
+        public static ErrorStatus getInstance(int value)
         {
-            if (value > RequestErrorStatus.values().length)
+            if (value > ErrorStatus.values().length)
                 throw new IllegalArgumentException("No corresponding instance.");
             
-            RequestErrorStatus[] vals = RequestErrorStatus.values();
+            ErrorStatus[] vals = ErrorStatus.values();
             return vals[value];
         }
     }
-    
-    public static final int NO_ERROR = 0;
-    public static final int VALUE_TOO_BIG = 1;
-    public static final int VALUE_NOT_AVAILABLE = 2;
-    public static final int BAD_VALUE = 3;
-    public static final int VALUE_READ_ONLY = 4;
-    public static final int FAILED = 5;
+
     
     public int errorIndex = 0;
-    public int errorStatus = NO_ERROR;
+    public ErrorStatus errorStatus = ErrorStatus.NoError;
     
     
     /**
      *  Creates exception with errorIndex, errorStatus
      */
-    public SNMPRequestException(int errorIndex, int errorStatus)
+    public SNMPRequestException(int errorIndex, ErrorStatus errorStatus)
     {
         super();
         
@@ -94,7 +88,7 @@ public class SNMPRequestException extends SNMPException
     /**
      *  Creates exception with errorIndex, errorStatus, and message string
      */
-    public SNMPRequestException(String message, int errorIndex, int errorStatus)
+    public SNMPRequestException(String message, int errorIndex, ErrorStatus errorStatus)
     {
         super(message);
         
@@ -105,12 +99,12 @@ public class SNMPRequestException extends SNMPException
     
     public static void main(String[] args)
     {
-        RequestErrorStatus test = RequestErrorStatus.FAILED;
+        ErrorStatus test = ErrorStatus.Failed;
         
         int num = test.ordinal();
         //RequestErrorStatus[] vals = RequestErrorStatus.values();
         //RequestErrorStatus test2 = vals[5];
-        RequestErrorStatus test2 = RequestErrorStatus.getInstance(5);
+        ErrorStatus test2 = ErrorStatus.getInstance(5);
     }
     
 }

@@ -24,6 +24,8 @@ package snmp;
 import java.util.*;
 import java.math.*;
 
+import snmp.SNMPRequestException.ErrorStatus;
+
 /**
  * The SNMPPDU class represents an SNMP PDU from <a href="http://www.ietf.org/rfc/rfc1157.txt">RFC 1157</a>, as indicated below.
  * This forms the payload of an SNMP message.
@@ -103,14 +105,14 @@ public class SNMPPDU extends SNMPSequence
      * status, and error index, and containing the supplied SNMP sequence as
      * data.
      */
-    public SNMPPDU(SNMPBERType pduType, int requestID, int errorStatus, int errorIndex, SNMPSequence varList)
+    public SNMPPDU(SNMPBERType pduType, int requestID, ErrorStatus errorStatus, int errorIndex, SNMPSequence varList)
         throws SNMPBadValueException
     {
         super();
         List<SNMPObject> contents = new Vector<SNMPObject>();
         tag = pduType;
         contents.add(0, new SNMPInteger(requestID));
-        contents.add(1, new SNMPInteger(errorStatus));
+        contents.add(1, new SNMPInteger(errorStatus.ordinal()));
         contents.add(2, new SNMPInteger(errorIndex));
         contents.add(3, varList);
         this.setValue(contents);
@@ -166,7 +168,7 @@ public class SNMPPDU extends SNMPSequence
     
     
     /** 
-     *  Extracts the variable binding list from the pdu. Useful for retrieving
+     *  Extracts the variable binding list from the PDU. Useful for retrieving
      *  the set of (object identifier, value) pairs returned in response to a request to an SNMP
      *  device. The variable binding list is just an SNMP sequence containing the identifier, value pairs.
      *  @see snmp.SNMPVarBindList
@@ -190,9 +192,9 @@ public class SNMPPDU extends SNMPSequence
      *  Extracts the error status for this PDU; if nonzero, can get index of
      *  problematic variable using getErrorIndex().
      */
-    public int getErrorStatus()
+    public ErrorStatus getErrorStatus()
     {
-        return ((BigInteger)((SNMPInteger)(sequence.get(1))).getValue()).intValue();
+        return ErrorStatus.getInstance(((BigInteger)((SNMPInteger)(sequence.get(1))).getValue()).intValue());
     }
     
 
@@ -206,7 +208,7 @@ public class SNMPPDU extends SNMPSequence
     
 
     /** 
-     *  Returns the PDU type of this PDU.
+     *  Returns the BER type of this PDU.
      */
     public SNMPBERType getPDUType()
     {
