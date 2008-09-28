@@ -33,8 +33,8 @@ import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 import javax.swing.plaf.FontUIResource;
 
-import filefilters.FileFilterSmi;
-import filefilters.FileFilterXml;
+import filefilters.SmiFileFilter;
+import filefilters.XmlFileFilter;
 
 import libmib.mibtree.CannotCreateBuilderException;
 import libmib.mibtree.MibTreeBuilder;
@@ -143,11 +143,11 @@ public class MIBNavigator
         switch (settings.getMibFormat())
         {
         	case SMI:
-        		navMenu.setFileFilter(new FileFilterSmi());
+        		navMenu.setFileFilter(new SmiFileFilter());
         		break;
         		
         	case XML:
-        		navMenu.setFileFilter(new FileFilterXml());
+        		navMenu.setFileFilter(new XmlFileFilter());
         		break;
         }
         

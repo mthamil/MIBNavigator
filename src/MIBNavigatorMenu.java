@@ -135,7 +135,7 @@ public class MIBNavigatorMenu implements ActionListener
                 MibTreeBuilder treeBuilder = navigator.getBrowser().getMibBuilder();
                 try
                 {
-                    treeBuilder.addMIBFile(mib);
+                    treeBuilder.addMibFile(mib);
                     
                     // If the MIB isn't valid, it will not be added and there will be no reason to reload.
                     ((DefaultTreeModel)treeBuilder.getTreeModel()).reload();
@@ -165,7 +165,7 @@ public class MIBNavigatorMenu implements ActionListener
 
                 try
                 {
-                    treeBuilder.addMIBFile(sourceMib);
+                    treeBuilder.addMibFile(sourceMib);
                     
                     // If the MIB isn't valid, it will not be added and there will be no reason to reload.
                     ((DefaultTreeModel)treeBuilder.getTreeModel()).reload();  

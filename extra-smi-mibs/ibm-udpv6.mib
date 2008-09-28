@@ -1,0 +1,141 @@
+-- MIB created 11/13/98 22:11:04, by
+--   SMIC (the next generation) version 1.6.29, November 22, 1994.
+
+IPV6-UDP-MIB DEFINITIONS ::= BEGIN
+
+-- From file: "udpv6.mi2"
+-- Compile options "G A T M"
+
+IMPORTS
+    experimental
+            FROM SNMPv2-SMI-v1
+    OBJECT-TYPE
+            FROM RFC-1212
+    mib-2
+            FROM RFC1213-MIB
+    Ipv6Address, Ipv6IfIndexOrZero
+            FROM IPV6-TC;
+
+ipv6UdpMIB OBJECT IDENTIFIER ::= { experimental 87 }
+-- MODULE-IDENTITY
+--  LastUpdated
+--    9801290000Z
+--  OrgName
+--    IETF IPv6 MIB Working Group
+--  ContactInfo
+--                   Mike Daniele
+--    
+--            Postal: Digital Equipment Corporation
+--                    110 Spitbrook Rd
+--                    Nashua, NH 03062.
+--                    US
+--    
+--            Phone:  +1 603 884 1423
+--            Email:  daniele@zk3.dec.com
+--  Descr
+--    The MIB module for entities implementing UDP over IPv6.
+
+udp             OBJECT IDENTIFIER ::= { mib-2 7 }
+ipv6UdpConformance OBJECT IDENTIFIER ::= { ipv6UdpMIB 2 }
+ipv6UdpCompliances OBJECT IDENTIFIER ::= { ipv6UdpConformance 1 }
+ipv6UdpGroups   OBJECT IDENTIFIER ::= { ipv6UdpConformance 2 }
+
+ipv6UdpTable OBJECT-TYPE
+    SYNTAX SEQUENCE OF Ipv6UdpEntry
+    ACCESS not-accessible
+    STATUS mandatory
+    DESCRIPTION
+        "A table containing UDP listener information for
+         UDP/IPv6 endpoints."
+    ::= { udp 6 }
+
+ipv6UdpEntry OBJECT-TYPE
+    SYNTAX Ipv6UdpEntry
+    ACCESS not-accessible
+    STATUS mandatory
+    DESCRIPTION
+        "Information about a particular current UDP listener.
+        
+         Note that conceptual rows in this table require an
+         additional index object compared to udpTable, since
+         IPv6 addresses are not guaranteed to be unique on the
+         managed node."
+    INDEX { ipv6UdpLocalAddress, ipv6UdpLocalPort, ipv6UdpIfIndex }
+    ::= { ipv6UdpTable 1 }
+
+Ipv6UdpEntry ::= SEQUENCE {
+    ipv6UdpLocalAddress Ipv6Address,
+    ipv6UdpLocalPort INTEGER(0..65535),
+    ipv6UdpIfIndex Ipv6IfIndexOrZero
+    }
+
+ipv6UdpLocalAddress OBJECT-TYPE
+    SYNTAX Ipv6Address
+--    Rsyntax OCTET STRING(SIZE(16))
+    ACCESS not-accessible
+    STATUS mandatory
+    DESCRIPTION
+        "The local IPv6 address for this UDP listener.
+         In the case of a UDP listener which is willing
+         to accept datagrams for any IPv6 address
+         associated with the managed node, the value ::0
+         is used."
+    ::= { ipv6UdpEntry 1 }
+
+ipv6UdpLocalPort OBJECT-TYPE
+    SYNTAX INTEGER(0..65535)
+    ACCESS not-accessible
+    STATUS mandatory
+    DESCRIPTION
+        "The local port number for this UDP listener."
+    ::= { ipv6UdpEntry 2 }
+
+ipv6UdpIfIndex OBJECT-TYPE
+    SYNTAX Ipv6IfIndexOrZero
+--    Rsyntax Integer32(0..2147483647)
+    ACCESS read-only
+    STATUS mandatory
+    DESCRIPTION
+        "An index object used to disambiguate conceptual rows in
+         the table, since the ipv6UdpLocalAddress/ipv6UdpLocalPort
+         pair may not be unique.
+        
+         This object identifies the local interface that is
+         associated with ipv6UdpLocalAddress for this UDP listener.
+         If such a local interface cannot be determined, this object
+         should take on the value 0.  (A possible example of this
+         would be if the value of ipv6UdpLocalAddress is ::0.)
+        
+         The interface identified by a particular non-0 value of
+         this index is the same interface as identified by the same
+         value of ipv6IfIndex.
+        
+         The value of this object must remain constant during
+         the life of this UDP endpoint."
+    ::= { ipv6UdpEntry 3 }
+
+ipv6UdpGroup OBJECT IDENTIFIER ::= { ipv6UdpGroups 1 }
+-- OBJECT-GROUP
+--  Status
+--    mandatory
+--  Descr
+--    The group of objects providing management of
+--     UDP over IPv6.
+--  objects
+--    ipv6UdpIfIndex
+
+ipv6UdpCompliance OBJECT IDENTIFIER ::= { ipv6UdpCompliances 1 }
+-- MODULE-COMPLIANCE
+--  Status
+--    mandatory
+--  Descr
+--    The compliance statement for SNMPv2 entities which
+--     implement UDP over IPv6.
+--  Module
+--    >>current<<
+--   MandGroup
+--    ipv6UdpGroup
+
+
+END
+

@@ -22,6 +22,7 @@
 package libmib.mibtree;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -41,6 +42,7 @@ import libmib.oid.MibObjectType;
 public abstract class AbstractMibTreeBuilder implements MibTreeBuilder
 {
     protected TreeModel mibTreeModel = null;
+    private FilenameFilter filter;
     
     // Contains nodes that couldn't be added to the MIB tree at creation time and their parents
     // in pairs of (lost node, parent name).
@@ -60,7 +62,7 @@ public abstract class AbstractMibTreeBuilder implements MibTreeBuilder
                 
         // Tree Initialization
         MibObjectType root = new MibObjectType("root", 0);
-        MibTreeNode rootNode = new MibTreeNode(root); //invisible root for structural purposes
+        MibTreeNode rootNode = new MibTreeNode(root); 			//invisible root for structural purposes
 
         MibObjectType iso = new MibObjectType("iso", 1);
         MibTreeNode isoNode = new MibTreeNode(iso);
@@ -78,7 +80,7 @@ public abstract class AbstractMibTreeBuilder implements MibTreeBuilder
         MibTreeNode dodNode = new MibTreeNode(dod);
         nodeMap.put("dod", dodNode);
 
-        mibTreeModel = new DefaultTreeModel(rootNode); //use a default tree model
+        mibTreeModel = new DefaultTreeModel(rootNode); 			//use a default tree model
 
         rootNode.add(isoNode);
         rootNode.add(ccittNode);
@@ -97,13 +99,13 @@ public abstract class AbstractMibTreeBuilder implements MibTreeBuilder
      * 
      * @throws IllegalArgumentException if mibDir is not a directory
      */
-    public void addMIBDirectory(File mibDir)
+    public void addMibDirectory(File mibDir)
     {
         // Make sure the file exists and is actually a directory.
         if (!mibDir.isDirectory())
             throw new IllegalArgumentException("\"" + mibDir.getName() + "\" is not a directory.");
 
-        File[] mibDirList = mibDir.listFiles();
+        File[] mibDirList = mibDir.listFiles(filter);
 
         // Organize MIB files for a more optimal compile order.
         // This is really half-assed; a proper handling of dependencies is very much in order,
@@ -152,7 +154,7 @@ public abstract class AbstractMibTreeBuilder implements MibTreeBuilder
         {
             try
             {
-                this.addMIBToTree(mibFile);  
+                this.addMibToTree(mibFile);  
             }
             catch (InvalidMibFormatException e)
             {
@@ -171,7 +173,7 @@ public abstract class AbstractMibTreeBuilder implements MibTreeBuilder
      * 
      * @throws InvalidMibFormatException if the MIB file is invalid
      */
-    public void addMIBFile(File mibFile) throws InvalidMibFormatException
+    public void addMibFile(File mibFile) throws InvalidMibFormatException
     {
         // This method really is just a public wrapper for the internal implementation
         // of the MIB adding process.  It uses the lost children list on a single file
@@ -179,7 +181,7 @@ public abstract class AbstractMibTreeBuilder implements MibTreeBuilder
         if (lostChildren == null)
             lostChildren = new ArrayList<Object[]>();
          
-        this.addMIBToTree(mibFile);
+        this.addMibToTree(mibFile);
         
         this.addLostChildren(); 
     }
@@ -194,7 +196,7 @@ public abstract class AbstractMibTreeBuilder implements MibTreeBuilder
      * 
      * @throws InvalidMibFormatException if the MIB file is invalid
      */
-    abstract protected void addMIBToTree(File mibFile) throws InvalidMibFormatException;
+    abstract protected void addMibToTree(File mibFile) throws InvalidMibFormatException;
 
 
     /**
@@ -283,6 +285,17 @@ public abstract class AbstractMibTreeBuilder implements MibTreeBuilder
             //System.out.print("Error, " + nodeParent + " not found.");
         }
     }
+
+
+	/* (non-Javadoc)
+	 * @see libmib.mibtree.MibTreeBuilder#getFileFilter()
+	 */
+	public FilenameFilter getFileFilter() { return filter; }
+
+	/* (non-Javadoc)
+	 * @see libmib.mibtree.MibTreeBuilder#setFileFilter(java.io.FilenameFilter)
+	 */
+	public void setFileFilter(FilenameFilter filter) { this.filter = filter; }
     
     
 }

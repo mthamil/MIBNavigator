@@ -251,7 +251,7 @@ public class SmiStructureHandler
      * 
      * @return a MibValueListItem ArrayList
      */
-    public List<MibNameValuePair> readValueList(String line, String keyword) throws IOException
+    public List<MibNameValuePair> readPairs(String line, String keyword) throws IOException
     {
         List<String> valueLines = readList(line, keyword);
         
@@ -268,11 +268,11 @@ public class SmiStructureHandler
                     curLine = curLine.substring(0, commentPos).trim();
                 
                 //extract the integer value and its label/alias/name
-                String label = curLine.substring(0, curLine.indexOf("(")).trim();
-                String number = curLine.substring(curLine.indexOf("(") + 1, curLine.lastIndexOf(")")).trim();
+                String name = curLine.substring(0, curLine.indexOf("(")).trim();
+                String value = curLine.substring(curLine.indexOf("(") + 1, curLine.lastIndexOf(")")).trim();
                 
                 //add the value list entry
-                MibNameValuePair curValueItem = new MibNameValuePair(label, Integer.parseInt(number));
+                MibNameValuePair curValueItem = new MibNameValuePair(name, Integer.parseInt(value));
                 valueList.add(curValueItem);
             }
         }

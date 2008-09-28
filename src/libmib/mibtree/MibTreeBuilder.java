@@ -22,6 +22,7 @@
 package libmib.mibtree;
 
 import java.io.File;
+import java.io.FilenameFilter;
 
 import javax.swing.tree.TreeModel;
 
@@ -42,7 +43,7 @@ public interface MibTreeBuilder
      * @param mibDir the File object representing a directory containing MIB files to add 
      *        to the MIB tree.
      */
-    public void addMIBDirectory(File mibDir);
+    public void addMibDirectory(File mibDir);
     
     /**
      * Adds an individual MIB file to the MIB tree.
@@ -51,7 +52,7 @@ public interface MibTreeBuilder
      * 
      * @throws InvalidMibFormatException if the MIB file is not in a valid format
      */
-    public void addMIBFile(File mibFile) throws InvalidMibFormatException;
+    public void addMibFile(File mibFile) throws InvalidMibFormatException;
     
     /**
      * Retrieves the TreeModel used by the builder.
@@ -63,5 +64,20 @@ public interface MibTreeBuilder
      * @return the name of the tree builder's MIB directory
      */
     public String getMibDirectory();
+    
+    
+    /**
+     * Sets the file filter used by a builder when adding
+     * files from a directory.
+     * @param filter
+     */
+    public void setFileFilter(FilenameFilter filter);
+    
+    /**
+     * Gets the file filter used by a builder when adding
+     * files from a directory.
+     * @return
+     */
+    public FilenameFilter getFileFilter();
 
 }

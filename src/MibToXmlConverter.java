@@ -90,7 +90,7 @@ public class MibToXmlConverter
             
             mibDocFactory.addDefinitionAttribute(mibName);
 
-            System.out.println("Valid MIB");
+            System.out.println(mibName + ": Valid MIB");
             
 			while ( ((line = in.readLine()) != null) && !line.trim().equals(SmiTokens.MIB_END))
 			{
@@ -106,7 +106,7 @@ public class MibToXmlConverter
 				    continue;		
                     
                 // Read the 'IMPORTS' section.
-                if (line.contains(SmiTokens.IMPORTS_BEGIN))               
+                if (line.contains(SmiTokens.IMPORTS))               
                     readImports(in);     
                 
                 
@@ -123,8 +123,8 @@ public class MibToXmlConverter
                 
                 
                 // READ MIB OBJECTS
-                if ( line.contains(SmiTokens.OBJECT_ID) && !line.contains(SmiTokens.OID_SYNTAX) && !line.contains(",") 
-                        && !line.contains(SmiTokens.IMPORT_FROM) && !line.trim().equals(SmiTokens.OBJECT_ID))
+                if ( line.contains(SmiTokens.OBJECT_ID) && !line.contains(SmiTokens.SYNTAX) && !line.contains(",") 
+                        && !line.contains(SmiTokens.SOURCE) && !line.trim().equals(SmiTokens.OBJECT_ID))
                 {
                     
                     StringBuilder oidDef = new StringBuilder();
@@ -204,7 +204,7 @@ public class MibToXmlConverter
 			    						
 				// read other object types
 				if ( !objectType.equals("") && !line.trim().equalsIgnoreCase(objectType) 
-				        && !line.contains(SmiTokens.IMPORT_FROM) && !line.contains(",") )
+				        && !line.contains(SmiTokens.SOURCE) && !line.contains(",") )
 				{ 
                     MibObjectExtended mibObject = readObject(in, line, objectType);
                     
@@ -262,14 +262,14 @@ public class MibToXmlConverter
                     continue;
                 }
                 
-                if (curElement.contains(SmiTokens.IMPORT_FROM)) // identify source MIBS
+                if (curElement.contains(SmiTokens.SOURCE)) // identify source MIBS
                 {
                     String source = curElement.trim();
                     
                     // take care of imports that get put in the same string as the FROM statement
-                    if (!source.startsWith(SmiTokens.IMPORT_FROM))
+                    if (!source.startsWith(SmiTokens.SOURCE))
                     {
-                        String item = source.substring(0, source.indexOf(SmiTokens.IMPORT_FROM)).trim();
+                        String item = source.substring(0, source.indexOf(SmiTokens.SOURCE)).trim();
                         importItem.addImportItem(item);
                     }
                     
@@ -277,12 +277,12 @@ public class MibToXmlConverter
                     if (source.endsWith(";"))
                         source = source.substring(0, source.length() - 1);
                     
-                    source = source.substring(source.indexOf(SmiTokens.IMPORT_FROM) 
-                             + SmiTokens.IMPORT_FROM.length()).trim();
+                    source = source.substring(source.indexOf(SmiTokens.SOURCE) 
+                             + SmiTokens.SOURCE.length()).trim();
                     importItem.setSource(source);
                     
                     endOfImport = true;
-                    mibDocFactory.addImportItemElement(importItem);
+                    mibDocFactory.addImportElement(importItem);
                     importItem = new MibImport();
                 }
                 else
@@ -300,27 +300,27 @@ public class MibToXmlConverter
     
     private MibObjectExtended readObject(final BufferedReader in, String line, String objectType) throws IOException
     { 
-        // get the node name
-        String objName = "";
+        // Get the node name.
+        String name = "";
         int index = line.indexOf(objectType);
-        objName = line.substring(0, index).trim();
+        name = line.substring(0, index).trim();
 
-        // initialize properties
-        String objDataType = "";
+        // Initialize properties.
+        String dataType = "";
         String defaultValue = "";
-        String objAccess = "";
-        String objStatus = "";
-        String objRef = "";
-        StringBuilder objDesc = new StringBuilder();
+        String access = "";
+        String status = "";
+        String ref = "";
+        StringBuilder description = new StringBuilder();
         
-        String objLastUpdated = "";
-        String objOrg = "";
-        StringBuilder objContact = new StringBuilder();
+        String lastUpdated = "";
+        String organization = "";
+        StringBuilder contact = new StringBuilder();
         
-        List<MibNameValuePair> objValues = null;  //synchronization not needed
-        List<String> objIndices = null;
-        List<String> objGroup = null;  
-        List<MibModuleIdRevision> objRevList = null;
+        List<MibNameValuePair> pairs = null;  //synchronization not needed
+        List<String> indices = null;
+        List<String> group = null;  
+        List<MibModuleIdRevision> revisions = null;
         
         // read until the end of the object definition, retrieving relevant information
         line = in.readLine().trim();
@@ -336,49 +336,49 @@ public class MibToXmlConverter
             if (!line.trim().equals(""))
             {
                 // SYNTAX
-                if (line.contains(SmiTokens.OID_SYNTAX) && !objectType.equals(SmiTokens.MODULE_COMP))
+                if (line.contains(SmiTokens.SYNTAX) && !objectType.equals(SmiTokens.MODULE_COMP))
                 {
-                    if (line.trim().equals(SmiTokens.OID_SYNTAX))
+                    if (line.trim().equals(SmiTokens.SYNTAX))
                         line = in.readLine().trim();
         
                     // if the OID has a list of specific integer values
                     if (line.contains("{"))
                     {
                         index = line.indexOf("{");
-                        objDataType = line.substring(SmiTokens.OID_SYNTAX.length(), index).trim();
+                        dataType = line.substring(SmiTokens.SYNTAX.length(), index).trim();
                         
-                        objValues = handler.readValueList(line, SmiTokens.OID_SYNTAX);
+                        pairs = handler.readPairs(line, SmiTokens.SYNTAX);
                     }
                     else
-                        objDataType = line.substring(SmiTokens.OID_SYNTAX.length()).trim(); 
+                        dataType = line.substring(SmiTokens.SYNTAX.length()).trim(); 
                 }
                 
                 // ACCESS
-                else if (line.contains(SmiTokens.OID_ACCESS) && !objectType.equals(SmiTokens.MODULE_COMP))
+                else if (line.contains(SmiTokens.ACCESS) && !objectType.equals(SmiTokens.MODULE_COMP))
                 {      
-                    index = line.indexOf(SmiTokens.OID_ACCESS) + SmiTokens.OID_ACCESS.length();
-                    objAccess = line.substring(index).trim();
+                    index = line.indexOf(SmiTokens.ACCESS) + SmiTokens.ACCESS.length();
+                    access = line.substring(index).trim();
                 }
                 
                 // STATUS
-                else if (line.contains(SmiTokens.OID_STATUS))
+                else if (line.contains(SmiTokens.STATUS))
                 {
-                    index = line.indexOf(SmiTokens.OID_STATUS) + SmiTokens.OID_STATUS.length();
-                    objStatus = line.substring(index).trim();
+                    index = line.indexOf(SmiTokens.STATUS) + SmiTokens.STATUS.length();
+                    status = line.substring(index).trim();
                 }
                 
                 // LAST-UPDATED
                 else if (line.contains(SmiTokens.MODULE_LAST_UPDATED))
-                    objLastUpdated = line.substring(line.indexOf("\"") + 1, line.lastIndexOf("\"")).trim();
+                    lastUpdated = line.substring(line.indexOf("\"") + 1, line.lastIndexOf("\"")).trim();
                 
                 
                 // ORGANIZATION
                 else if (line.contains(SmiTokens.MODULE_ORGANIZATION))
-                    objOrg = line.substring(line.indexOf("\"") + 1, line.lastIndexOf("\"")).trim();
+                    organization = line.substring(line.indexOf("\"") + 1, line.lastIndexOf("\"")).trim();
                 
                 
                 // DEFAULT VALUE (DEFVAL)
-                else if (line.contains(SmiTokens.OID_DEFAULT_VALUE))
+                else if (line.contains(SmiTokens.DEFAULT))
                 {
                     if (line.contains("{") && line.contains("}"))
                         defaultValue = line.substring(line.indexOf("{") + 1, line.indexOf("}")).trim();
@@ -386,34 +386,34 @@ public class MibToXmlConverter
                 
                 
                 // OBJECT-GROUP members or NOTIFICATION-TYPE member
-                else if ( (line.contains(SmiTokens.OBJS) && objectType.equals(SmiTokens.OBJECT_GRP)) || 
+                else if ( (line.contains(SmiTokens.OBJECTS) && objectType.equals(SmiTokens.OBJECT_GRP)) || 
                          (line.contains(SmiTokens.NOTIFS) && objectType.equals(SmiTokens.NOTIF_GRP)) )
                 {
                     if (line.contains("{"))
-                        objGroup = handler.readList(line, SmiTokens.OBJS);
+                        group = handler.readList(line, SmiTokens.OBJECTS);
                 }
 
                                     
                 // CONTACT-INFO
                 else if (line.contains(SmiTokens.MODULE_CONTACT))
-                    objContact.append(handler.readQuotedSection(line, SmiTokens.MODULE_CONTACT));
+                    contact.append(handler.readQuotedSection(line, SmiTokens.MODULE_CONTACT));
 
                 
                 // DESCRIPTION
-                else if (line.contains(SmiTokens.OID_DESCRIPTION))
-                    objDesc.append(handler.readQuotedSection(line, SmiTokens.OID_DESCRIPTION));
+                else if (line.contains(SmiTokens.DESCRIPTION))
+                    description.append(handler.readQuotedSection(line, SmiTokens.DESCRIPTION));
 
                 
                 // REFERENCE
-                else if (line.contains(SmiTokens.OID_REFERENCE))
-                    objRef = handler.readQuotedSection(line, SmiTokens.OID_REFERENCE);
+                else if (line.contains(SmiTokens.REFERENCE))
+                    ref = handler.readQuotedSection(line, SmiTokens.REFERENCE);
 
                 
                 // INDICES
-                else if (line.contains(SmiTokens.OID_INDICES))
+                else if (line.contains(SmiTokens.INDICES))
                 {
                     if (line.contains("{"))
-                        objIndices = handler.readList(line, SmiTokens.OID_INDICES);
+                        indices = handler.readList(line, SmiTokens.INDICES);
                 }
 
                 
@@ -429,14 +429,14 @@ public class MibToXmlConverter
                     line = in.readLine().trim();
                     
                     String revDesc = "";
-                    if (line.contains(SmiTokens.OID_DESCRIPTION))
-                        revDesc = handler.readQuotedSection(line, SmiTokens.OID_DESCRIPTION);
+                    if (line.contains(SmiTokens.DESCRIPTION))
+                        revDesc = handler.readQuotedSection(line, SmiTokens.DESCRIPTION);
                     
-                    if (objRevList == null)
-                        objRevList = new ArrayList<MibModuleIdRevision>();
+                    if (revisions == null)
+                        revisions = new ArrayList<MibModuleIdRevision>();
                     
                     MibModuleIdRevision revision = new MibModuleIdRevision(revisionId, revDesc);
-                    objRevList.add(revision);
+                    revisions.add(revision);
                 }
                 
                 line = in.readLine().trim();
@@ -448,7 +448,7 @@ public class MibToXmlConverter
 
         // the line with ::= should be processed here
         String objInfo = line.substring(line.indexOf("{") + 1, line.indexOf("}")).trim();
-        String objParent = "";
+        String parent = "";
 
         if (objInfo.contains("(") && objInfo.contains(")"))
         {   // these have the form :={test(1) test2(6) test3(2) 1}
@@ -456,12 +456,12 @@ public class MibToXmlConverter
             String parents = "";
             parents = objInfo.substring(objInfo.indexOf(" "), objInfo.lastIndexOf(")"));
             parents = parents.substring(parents.lastIndexOf(" "), parents.lastIndexOf("("));
-            objParent = parents.trim();
+            parent = parents.trim();
         }
         else
         {   // these have the regular form :={test 1}
             index = objInfo.indexOf(" ");
-            objParent = objInfo.substring(0, index);
+            parent = objInfo.substring(0, index);
         }
         
         int index2 = objInfo.lastIndexOf(" ") + 1;
@@ -471,45 +471,45 @@ public class MibToXmlConverter
         //System.out.println(nodeParent + " " + nodeIndex);
 
         // set basic properties
-        MibObjectExtended mibObject = new MibObjectExtended(objName, Integer.parseInt(objIndex));
+        MibObjectExtended mibObject = new MibObjectExtended(name, Integer.parseInt(objIndex));
         
-        mibObject.setDescription(objDesc.toString());
+        mibObject.setDescription(description.toString());
         
-        if (!objAccess.equals(""))
-            mibObject.setAccess(Access.valueOf(objAccess.toUpperCase().replaceAll("-", "_")));
+        if (!access.equals(""))
+            mibObject.setAccess(Access.valueOf(access.toUpperCase().replaceAll("-", "_")));
 
-        if (!objStatus.equals(""))
-            mibObject.setStatus(Status.valueOf(objStatus.toUpperCase()));
+        if (!status.equals(""))
+            mibObject.setStatus(Status.valueOf(status.toUpperCase()));
         
-        mibObject.setReference(objRef);
+        mibObject.setReference(ref);
         
         // construct the syntax object
         // -the object's type is the only thing required for the existence of a syntax element
-        if (!objDataType.equals("")) 
+        if (!dataType.equals("")) 
         {
-            MibSyntax objSyntax = new MibSyntax(objDataType);
-            objSyntax.setDefaultValue(defaultValue);
-            if (objValues != null)
-                objSyntax.setValues(objValues);
+            MibSyntax syntax = new MibSyntax(dataType);
+            syntax.setDefaultValue(defaultValue);
+            if (pairs != null)
+                syntax.setValuePairs(pairs);
             
-            mibObject.setSyntax(objSyntax);
+            mibObject.setSyntax(syntax);
         }
         
-        if (objIndices != null)
-            mibObject.setIndices(objIndices);
+        if (indices != null)
+            mibObject.setIndices(indices);
         
         // set extended properties
         mibObject.setObjectType(objectType);
-        mibObject.setParent(objParent);
-        mibObject.setLastUpdated(objLastUpdated);
-        mibObject.setOrganization(objOrg);
-        mibObject.setContactInfo(objContact.toString());
+        mibObject.setParent(parent);
+        mibObject.setLastUpdated(lastUpdated);
+        mibObject.setOrganization(organization);
+        mibObject.setContactInfo(contact.toString());
         
-        if (objGroup != null)
-            mibObject.setObjectGroup(objGroup);
+        if (group != null)
+            mibObject.setObjectGroup(group);
         
-        if (objRevList != null)
-            mibObject.setRevisions(objRevList);
+        if (revisions != null)
+            mibObject.setRevisions(revisions);
         
         return mibObject;
     }
@@ -539,10 +539,16 @@ public class MibToXmlConverter
 	public static void main(String args[])
 	{   
         // some basic code to execute the converter
-        File mibFile = null;
+        File inFile = null;
+        File outFile = null;
         
         if (args.length > 0)
-            mibFile = new File(args[0].trim());  //use the first option on the command line as the file name   
+        {
+            inFile = new File(args[0].trim());  		// first option as input file
+        	
+        	if (args.length > 1)
+        		outFile = new File(args[1].trim());		// second option as output file
+        }
         else  
         {
             // if there were no command line options, pop up a file dialog
@@ -550,37 +556,49 @@ public class MibToXmlConverter
             int retVal = fc.showOpenDialog(null);
     
             if (retVal == JFileChooser.APPROVE_OPTION)
-                mibFile = fc.getSelectedFile();
+                inFile = fc.getSelectedFile();
+            
+            retVal = fc.showSaveDialog(null);
+            if (retVal == JFileChooser.APPROVE_OPTION)
+                outFile = fc.getSelectedFile();
         }
         
-        if (mibFile != null)
+        if (inFile != null && inFile.exists())
         {
-            if (mibFile.exists())
+            try
             {
-                try
+                if (outFile == null)
                 {
-                    MibToXmlConverter converter = new MibToXmlConverter();
-                    
-                    // construct the output xml file's name to be the same as the input file but with a different extension
-                    File xmlFile;
-                    String mibFilename = mibFile.getName();
-                    
+                    // Construct the output xml file's name to be the same as the 
+                    // input file but with a different extension.
+                	
+                    String mibFilename = inFile.getName();
                     if (mibFilename.contains(".")) 
                         mibFilename = mibFilename.substring(0, mibFilename.lastIndexOf("."));
                     
-                    xmlFile = new File(mibFilename + ".xml");
-    
-                    converter.readMIB(mibFile);
-                    converter.writeXML(xmlFile);
+                    outFile = new File(mibFilename + ".xml");
                 }
-                catch (InvalidSmiMibFormatException e)
+                else if (outFile.isDirectory())
                 {
-                    System.out.println(e.getMessage());
+                	String mibFilename = inFile.getName();
+                    if (mibFilename.contains(".")) 
+                        mibFilename = mibFilename.substring(0, mibFilename.lastIndexOf("."));
+                    
+                    outFile = new File(outFile.getAbsoluteFile() + File.separator + mibFilename + ".xml");
                 }
+
+                
+                MibToXmlConverter converter = new MibToXmlConverter();
+                converter.readMIB(inFile);
+                converter.writeXML(outFile);
             }
-            else
-                System.out.println("Error Opening File: " + mibFile.getName() + " not found.");
+            catch (InvalidSmiMibFormatException e)
+            {
+                System.out.println(e.getMessage());
+            }
         }
+        else
+            System.out.println("Error Opening File: " + inFile.getName() + " not found.");
     }
     
 }

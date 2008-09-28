@@ -37,24 +37,24 @@ public class SmiTokens
     public static final String OBJECT_GRP = "OBJECT-GROUP";
     public static final String TRAP = "TRAP-TYPE";
     
-    public static final String OID_SYNTAX = "SYNTAX";
-    public static final String OID_ACCESS = "ACCESS";
-    public static final String OID_STATUS = "STATUS";
-    public static final String OID_DESCRIPTION = "DESCRIPTION";
-    public static final String OID_DEFAULT_VALUE = "DEFVAL";
-    public static final String OID_INDICES = "INDEX";
-    public static final String OID_REFERENCE = "REFERENCE";
+    public static final String SYNTAX = "SYNTAX";
+    public static final String ACCESS = "ACCESS";
+    public static final String STATUS = "STATUS";
+    public static final String DESCRIPTION = "DESCRIPTION";
+    public static final String DEFAULT = "DEFVAL";
+    public static final String INDICES = "INDEX";
+    public static final String REFERENCE = "REFERENCE";
     
     public static final String MODULE_LAST_UPDATED = "LAST-UPDATED";
     public static final String MODULE_ORGANIZATION = "ORGANIZATION";
     public static final String MODULE_CONTACT = "CONTACT-INFO";
     public static final String MODULE_REVISION = "REVISION";
-    public static final String OBJS = "OBJECTS";
+    public static final String OBJECTS = "OBJECTS";
     public static final String ENT = "ENTERPRISE";
     public static final String NOTIFS = "NOTIFICATIONS";
     
     public static final String MIB_BEGIN = "DEFINITIONS ::= BEGIN";
     public static final String MIB_END = "END";
-    public static final String IMPORTS_BEGIN = "IMPORTS";
-    public static final String IMPORT_FROM = "FROM";
+    public static final String IMPORTS = "IMPORTS";
+    public static final String SOURCE = "FROM";
 }

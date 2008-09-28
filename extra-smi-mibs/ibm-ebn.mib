@@ -1,0 +1,511 @@
+EBN-MIB DEFINITIONS ::= BEGIN
+
+--IMPORTS
+--       enterprises, MODULE-IDENTITY, OBJECT-TYPE, Counter32,
+--      Integer32, Unsigned32
+--                  FROM SNMPv2-SMI
+--        MODULE-COMPLIANCE, OBJECT-GROUP
+--                   FROM SNMPv2-CONF
+--        DisplayString,  TEXTUAL-CONVENTION
+--                  FROM SNMPv2-TC
+--      SnaControlPointName, SnaClassOfServiceName
+--              FROM APPN-MIB
+--      snanauMIB
+--              FROM SNA-NAU-MIB;
+
+
+IMPORTS
+     enterprises,  Counter,  Gauge
+              FROM RFC1155-SMI
+     DisplayString, mib-2
+              FROM  RFC1213-MIB
+     OBJECT-TYPE
+              FROM RFC-1212;
+
+--ebnMIB   MODULE-IDENTITY
+-- LAST-UPDATED "9612181200Z"
+-- ORGANIZATION "AIW"
+-- CONTACT-INFO
+--    "         Katie D. Lee
+--              IBM
+--              E95A/664
+--              RTP, NC
+--              kdlee@vnet.ibm.com
+--              (919) 254-7507"
+--
+--        DESCRIPTION
+--                  " The MIB Module for Extended Border Node"
+--        ::= { snanauMIB 7 }
+-- snanauMIB ::= { mib-2 34 }
+
+snanauMIB OBJECT IDENTIFIER ::= { mib-2 34 }
+ebnMIB    OBJECT IDENTIFIER ::= { snanauMIB 7 }
+
+-- **************************************************************
+-- Textual Conventions
+-- ---------------------------------------------------------------------
+SnaNAUWildcardName   ::= DisplayString
+
+SnaControlPointName ::=
+    OCTET STRING (SIZE (3..17))                               -- @V9057
+
+-- **************************************************************
+ebnObjects              OBJECT IDENTIFIER ::= { ebnMIB 1 }
+-- **************************************************************
+
+--*********************************************************
+-- EBN Directory Group
+-- The ebnDirTable is an extension to the appnDirTable.  It specifies the
+-- subnet information about LUs in the EBNs directory.
+-- ********************************************************
+
+ebnDir          OBJECT IDENTIFIER ::= { ebnObjects 1 }
+
+ebnDirTable    OBJECT-TYPE
+  SYNTAX       SEQUENCE OF EbnDirEntry
+  ACCESS       not-accessible
+  STATUS       mandatory
+  DESCRIPTION
+    "  The EBN Directory Table        "
+ ::= { ebnDir  1}
+
+ebnDirEntry        OBJECT-TYPE
+  SYNTAX        EbnDirEntry
+  ACCESS        not-accessible
+  STATUS        mandatory
+  DESCRIPTION
+    " Entry of the EBN Directory Table.    "
+   INDEX
+     { ebnDirLuName }
+::= { ebnDirTable 1 }
+
+EbnDirEntry ::= SEQUENCE {
+        ebnDirLuName                   SnaNAUWildcardName,
+        ebnDirSubnetAffiliation        INTEGER     }
+
+ebnDirLuName        OBJECT-TYPE
+  SYNTAX            SnaNAUWildcardName
+  ACCESS            read-only
+  STATUS            mandatory
+  DESCRIPTION
+    " Fully qualified network LU name in the domain of the serving
+      network node.        "
+::= { ebnDirEntry 1 }
+
+ebnDirSubnetAffiliation   OBJECT-TYPE
+  SYNTAX            INTEGER { native (1),
+                              nonNative (2),
+                              subarea (3) }
+  ACCESS          read-only
+  STATUS            mandatory
+  DESCRIPTION
+    " Specifies the subnetwork affiliation of the LU:
+        native(1)      : The LU is in the native APPN subnetwork.
+        nonNative(2) : The LU is in a non-native APPN subnetwork.
+        subarea(3)    : The LU is in a subarea network."
+::= { ebnDirEntry 2 }
+
+--  ********************************************************
+-- EBN Intermediate Session RSCV Group
+-- This table is an extension to the appnIsInTable. It contains the
+-- RSCV and COS used in the direction of the BIND destination.
+-- ********************************************************
+
+ebnIsRscv       OBJECT IDENTIFIER ::= { ebnObjects 2 }
+
+ebnIsRscvTable    OBJECT-TYPE
+  SYNTAX       SEQUENCE OF EbnIsRscvEntry
+  ACCESS       not-accessible
+  STATUS       mandatory
+  DESCRIPTION
+    "The EBN Intermediate Session RSCV table"
+ ::= { ebnIsRscv  1}
+
+ebnIsRscvEntry        OBJECT-TYPE
+  SYNTAX        EbnIsRscvEntry
+  ACCESS        not-accessible
+  STATUS        mandatory
+  DESCRIPTION
+    " Entry in ebnIsRscvTable.         "
+   INDEX
+     { ebnIsRscvCpName,
+       ebnIsRscvPcid     }
+::= { ebnIsRscvTable 1 }
+
+EbnIsRscvEntry ::= SEQUENCE {
+        ebnIsRscvCpName              SnaControlPointName,
+        ebnIsRscvPcid                OCTET STRING,
+        ebnIsRscvDestinationRoute    OCTET STRING,
+        ebnIsRscvDestinationCos      DisplayString      }
+
+ebnIsRscvCpName         OBJECT-TYPE
+  SYNTAX            SnaControlPointName
+  ACCESS         read-only
+  STATUS            mandatory
+  DESCRIPTION
+    "The network-qualified control point name of the node at which
+      the session and PCID originated.  For APPN and LEN nodes, this
+      is either CP name of the APPN node at which the origin LU is
+      located or the CP name of the NN serving the LEN node at which
+      the origin LU is located.  For DLUR resources it is the name of the
+      owning SSCP.   "
+::= { ebnIsRscvEntry 1 }
+
+ebnIsRscvPcid      OBJECT-TYPE
+  SYNTAX            OCTET STRING (SIZE (8))
+  ACCESS         read-only
+  STATUS            mandatory
+  DESCRIPTION
+    "The procedure correlation identifier (PCID) of a session.  It is
+     an 8-octet value.  "
+::= { ebnIsRscvEntry 2 }
+
+ebnIsRscvDestinationRoute   OBJECT-TYPE
+  SYNTAX            OCTET STRING(SIZE (1..256))
+  ACCESS          read-only
+  STATUS            mandatory
+  DESCRIPTION
+    " The route selection control vector (RSCV x'2B') used in the
+       direction towards the SLU."
+::= { ebnIsRscvEntry 3 }
+
+ebnIsRscvDestinationCos   OBJECT-TYPE
+  SYNTAX            DisplayString (SIZE (1..8))
+  ACCESS         read-only
+  STATUS            mandatory
+  DESCRIPTION
+    " The Class of Service (COS) name used in the adjacent non-native
+       subnetwork "
+::= { ebnIsRscvEntry 4 }
+
+--*************************************************************
+-- EBN Directory Config Group
+-- The following simple objects provide information about EBN directory.
+-- *************************************************************
+
+ebnDirConfig    OBJECT IDENTIFIER ::= { ebnObjects 3 }
+
+ebnSearchCacheTime            OBJECT-TYPE
+  SYNTAX             Gauge
+-- UNITS               "minutes"
+  ACCESS         read-only
+  STATUS            mandatory
+  DESCRIPTION
+    " The amount of time in minutes an extended border node will
+       retain information about a multi-subnetwork search, once that
+       that search terminates.  A value 0 indicates that the EBN has no
+       defined limit, and the number of entries is bounded only by
+       memory.  "
+   ::= { ebnDirConfig  1 }
+
+ebnMaxSearchCache         OBJECT-TYPE
+  SYNTAX             Gauge
+  ACCESS         read-only
+  STATUS            mandatory
+  DESCRIPTION
+    " The maximum number of multi-subnet entries to be cached.  The value
+       0 indicates that the local node has no defined limit, and the number of
+       entries is bounded only by memory."
+::= { ebnDirConfig  2 }
+
+ebnDefaultSubnetVisitCount          OBJECT-TYPE
+  SYNTAX           Gauge
+  ACCESS         read-only
+  STATUS            mandatory
+  DESCRIPTION
+    " The default maximum number of subnetworks a LOCATE
+       search procedure may traverse."
+::= { ebnDirConfig  3 }
+
+--*********************************************************
+-- EBN COS Mapping Group
+-- The ebnCosMap Table specifies how non-native COS values are mapped
+-- to a COS value which is defined in the native subnetwork.
+-- ********************************************************
+
+ebnCOS          OBJECT IDENTIFIER ::= { ebnObjects 4 }
+
+ebnCosMapTable    OBJECT-TYPE
+  SYNTAX       SEQUENCE OF EbnCosMapEntry
+  ACCESS       not-accessible
+  STATUS       mandatory
+  DESCRIPTION
+    "   The EBN COS Mapping Table        "
+ ::= { ebnCOS  1}
+
+ebnCosMapEntry        OBJECT-TYPE
+  SYNTAX        EbnCosMapEntry
+  ACCESS        not-accessible
+  STATUS        mandatory
+  DESCRIPTION
+    "  An entry in the EBN COS Mapping table.     "
+   INDEX
+     { ebnCosMapCpName,
+       ebnCosMapNonNativeCos }
+::= { ebnCosMapTable 1 }
+
+EbnCosMapEntry ::= SEQUENCE {
+        ebnCosMapCpName              SnaNAUWildcardName,
+        ebnCosMapNonNativeCos        DisplayString,
+        ebnCosMapNativeCos           DisplayString     }
+
+ebnCosMapCpName         OBJECT-TYPE
+  SYNTAX            SnaNAUWildcardName
+  ACCESS         read-only
+  STATUS            mandatory
+  DESCRIPTION
+    " Fully-qualified network CP name for which the COS mapping
+      apply.    "
+::= { ebnCosMapEntry 1 }
+
+ebnCosMapNonNativeCos        OBJECT-TYPE
+  SYNTAX            DisplayString (SIZE(1..8))
+  ACCESS           read-only
+  STATUS            mandatory
+  DESCRIPTION
+    "An 8-byte name for the class-of-service, as known in the non-native
+     subnetwork.  This variable may contain one '*' character, indicating
+     a default class-of-service mapping, rather than
+     a COS name.  If the non-native COS name to be mapped cannot be
+     found in the cos mapping tablee, then the '*'  is used to
+     resolve the native/non-native COS.  Only one non-native COS name
+     per CP name can have a '*'.         "
+::= { ebnCosMapEntry 2 }
+
+ebnCosMapNativeCos        OBJECT-TYPE
+  SYNTAX            DisplayString (SIZE(1..8))
+  ACCESS         read-only
+  STATUS            mandatory
+  DESCRIPTION
+    "An 8-byte name for the class-of-service, as known in the native
+     subnetwork.        "
+::= { ebnCosMapEntry 3 }
+
+--*********************************************************
+-- EBN Subnet Routing List Group
+-- The EBN Subnet Routing List indicates to which nodes an EBN forwards
+-- search request.  This group contains information pertaining to the
+-- customer-supplied Subnet Routing List.
+-- ********************************************************
+
+ebnSubnetRoutingList    OBJECT IDENTIFIER ::= { ebnObjects 5 }
+
+ebnSubnetSearchTable    OBJECT-TYPE
+  SYNTAX       SEQUENCE OF EbnSubnetSearchEntry
+  ACCESS       not-accessible
+  STATUS       mandatory
+  DESCRIPTION
+    " This table contains one entry for each fully qualified LU
+       name defined to have an associated subnet routing list.
+       Each  contains general characteristics of the
+       subnet search routing list for each LU name.         "
+ ::= { ebnSubnetRoutingList  1}
+
+ebnSubnetSearchEntry        OBJECT-TYPE
+  SYNTAX        EbnSubnetSearchEntry
+  ACCESS        not-accessible
+  STATUS        mandatory
+  DESCRIPTION
+    " An entry for the ebnSubnetSearchTable.  "
+   INDEX
+     { ebnSubnetSearchLuName }
+::= { ebnSubnetSearchTable 1 }
+
+EbnSubnetSearchEntry ::= SEQUENCE {
+        ebnSubnetSearchLuName    SnaNAUWildcardName,
+        ebnSubnetSearchDynamics INTEGER,
+        ebnSubnetSearchOrdering INTEGER   }
+
+ebnSubnetSearchLuName        OBJECT-TYPE
+  SYNTAX            SnaNAUWildcardName
+  ACCESS         read-only
+  STATUS            mandatory
+  DESCRIPTION
+    " Fully qualified network LU name.         "
+::= { ebnSubnetSearchEntry 1 }
+
+ebnSubnetSearchDynamics        OBJECT-TYPE
+  SYNTAX            INTEGER { none(1),
+                              limited (2),
+                              full (3) }
+
+  ACCESS         read-only
+  STATUS            mandatory
+  DESCRIPTION
+    "Indicates whether an EBN may add dynamic entries to a
+     subnetwork routing list.  none(1) means no entries may be
+     added to the subnetwork routing list.  limited(2) means only
+     likely entries may be added to the subnetwork routing list.
+     full(3) means all native extended border nodes and adjacent,
+     non-native EBNs and NNs will be added to the subnetwork
+     routing list.          "
+::= { ebnSubnetSearchEntry 2 }
+
+ebnSubnetSearchOrdering        OBJECT-TYPE
+  SYNTAX            INTEGER{ priority(1),
+                                      defined(2) }
+  ACCESS         read-only
+  STATUS            mandatory
+  DESCRIPTION
+    "Indicates whether an EBN may reorder a subnetwork
+     routing list so that entries which are more likely to be
+     successful are at the top of the subnetwork routing list
+     and entries which are more likely to be unsuccessful
+     are at the bottom of the list.                   "
+::= { ebnSubnetSearchEntry 3 }
+
+-- Border node search table
+
+ebnSearchTable    OBJECT-TYPE
+  SYNTAX       SEQUENCE OF EbnSearchEntry
+  ACCESS       not-accessible
+  STATUS       mandatory
+  DESCRIPTION
+    " This table indicates where an EBN sends Locate searches for a
+       given fully qualified LU name.  Each  in the table indicates
+       one control point which should be included in a multi-subnet
+       search for a particular LU name.         "
+ ::= { ebnSubnetRoutingList  2}
+
+ebnSearchEntry        OBJECT-TYPE
+  SYNTAX        EbnSearchEntry
+  ACCESS        not-accessible
+  STATUS        mandatory
+  DESCRIPTION
+    "An entry in the ebnSearchTable. "
+   INDEX
+     { ebnSearchLuName,
+       ebnSearchIndex }
+::= { ebnSearchTable 1 }
+
+EbnSearchEntry ::= SEQUENCE {
+        ebnSearchLuName       SnaNAUWildcardName,
+        ebnSearchIndex           Gauge,
+        ebnSearchCpName       DisplayString,
+        ebnSearchSNVC           Gauge  }
+
+ebnSearchLuName        OBJECT-TYPE
+  SYNTAX            SnaNAUWildcardName
+  ACCESS         read-only
+  STATUS            mandatory
+  DESCRIPTION
+    " Fully qualified network LU name.        "
+::= { ebnSearchEntry 1 }
+
+ebnSearchIndex        OBJECT-TYPE
+  SYNTAX             Gauge
+  ACCESS            read-only
+  STATUS             mandatory
+  DESCRIPTION
+    "Secondary index which enumerates the order in which
+     search is forwarded to CPs for a particular LU name.  "
+::= { ebnSearchEntry 2 }
+
+ebnSearchCpName        OBJECT-TYPE
+  SYNTAX            DisplayString(SIZE(1..17))
+  ACCESS         read-only
+  STATUS            mandatory
+  DESCRIPTION
+    "This object specifies the CP(s) to which a search should be
+     forwarded. It either follows the SnaNAUWildcardName textual
+     convention or takes one of the following special formats:
+
+      '*' indicates that all native EBNs and all adjacent non-native
+          EBNs and NNs may be added to the routing list dynamically,
+
+      '*SELF' indicates that the EBN should search itself and its
+              native subnetwork at this time during the cross-subnet search,
+
+      '*EBNS' indicates all native EBNs.                                              "
+::= { ebnSearchEntry 3 }
+
+ebnSearchSNVC    OBJECT-TYPE
+  SYNTAX            Gauge
+  ACCESS         read-only
+  STATUS            mandatory
+  DESCRIPTION
+    "The maximum number of subnets a Locate search procedure
+      may traverse.        "
+::= { ebnSearchEntry 4 }
+
+--*********************************************************
+-- HPR Extended Border Node Intermediate Session  Group
+-- The hbnIsInTable is an extension to the appnIsInTable.
+-- In the case where there are back-to-back RTP connections
+-- in an HBN, this table is necessary to provide the NceId
+-- and Tcid of the RTP the second RTP connection.
+--
+-- ********************************************************
+
+hbn             OBJECT IDENTIFIER ::= { ebnObjects 6 }
+
+hbnIsInTable  OBJECT-TYPE
+  SYNTAX       SEQUENCE OF HbnIsInEntry
+  ACCESS   not-accessible
+  STATUS       mandatory
+  DESCRIPTION
+    "  The HBN Intermediate Session table"
+ ::= { hbn  1}
+
+hbnIsInEntry        OBJECT-TYPE
+  SYNTAX        HbnIsInEntry
+  ACCESS    not-accessible
+  STATUS        mandatory
+  DESCRIPTION
+    " Entry of the HBN Intermediate Session Table. "
+   INDEX
+     { hbnIsInFqCpName,
+       hbnIsInPcid      }
+::= { hbnIsInTable 1 }
+
+HbnIsInEntry ::= SEQUENCE {
+        hbnIsInFqCpName          SnaControlPointName,
+        hbnIsInPcid              OCTET STRING,
+        hbnIsInRtpNceId          OCTET STRING,
+        hbnIsInRtpTcid           OCTET STRING     }
+
+hbnIsInFqCpName     OBJECT-TYPE
+  SYNTAX            SnaControlPointName
+  ACCESS            read-only
+  STATUS            mandatory
+  DESCRIPTION
+    "The network-qualified control point name of the node at which
+     the session and PCID originated.  For APPN and LEN nodes, this
+     is either CP name of the APPN node at which the origin LU is
+     located or the CP name of the NN serving the LEN node at which
+     the origin LU is located.  "
+::= { hbnIsInEntry 1 }
+
+hbnIsInPcid         OBJECT-TYPE
+  SYNTAX            OCTET STRING (SIZE(8))
+  ACCESS            read-only
+  STATUS            mandatory
+  DESCRIPTION
+    "The procedure correlation identifier (PCID) of a session.  It is
+     an 8-octet value.  "
+::= { hbnIsInEntry 2 }
+
+hbnIsInRtpNceId     OBJECT-TYPE
+  SYNTAX            OCTET STRING (SIZE(1..8))
+  ACCESS            read-only
+  STATUS              mandatory
+  DESCRIPTION
+    "The HPR local Network Connection Endpoint of the session
+    in the direction of the SLU. When this object exists,
+    the appnIsInRtpNceId object contains the HPR local
+    Network Connection Endpoint of the session in the
+    direction of the PLU."
+::= { hbnIsInEntry 3 }
+
+hbnIsInRtpTcid     OBJECT-TYPE
+  SYNTAX            OCTET STRING (SIZE(8))
+  ACCESS            read-only
+  STATUS            mandatory
+  DESCRIPTION
+    "The RTP connection local TCID of the session in the direction
+    of the SLU.  When this object exists, the appnIsInRtpTcid object
+    contains the RTP connection local TCID of the session in the
+    direction of the PLU."
+::= { hbnIsInEntry 4 }
+
+END

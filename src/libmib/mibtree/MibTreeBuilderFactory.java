@@ -27,6 +27,9 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.xml.sax.SAXException;
 
+import filefilters.SmiFilenameFilter;
+import filefilters.XmlFilenameFilter;
+
 import libmib.MibFormat;
 
 /**
@@ -42,7 +45,7 @@ public class MibTreeBuilderFactory
 	 */
 	public MibTreeBuilderFactory() 
 	{ 
-		schemaFile = new File("." + File.separator + "mib.xsd");
+		schemaFile = new File("." + File.separator + "schema" + File.separator + "mib.xsd");
 	}
 	
 	
@@ -58,9 +61,13 @@ public class MibTreeBuilderFactory
 		switch(mibFormat)
 		{
 			case SMI:
-				return new MibTreeBuilderSmi();
-				
+			{
+				MibTreeBuilder builder = new MibTreeBuilderSmi();
+				builder.setFileFilter(new SmiFilenameFilter());
+				return builder;
+			}
 			case XML:
+			{
 	            try
 	            {
 	            	// If the schema file used for parsing and validating MIB files
@@ -73,7 +80,9 @@ public class MibTreeBuilderFactory
 		            	throw new CannotCreateBuilderException(cause);
 		            }
 		            
-	            	return new MibTreeBuilderXml(schemaFile);
+		            MibTreeBuilder builder = new MibTreeBuilderXml(schemaFile);
+					builder.setFileFilter(new XmlFilenameFilter());
+	            	return builder;
 
 	            }
 	            catch (SAXException e)
@@ -84,6 +93,7 @@ public class MibTreeBuilderFactory
 	            {
 	            	throw new CannotCreateBuilderException("An error occurred configuring the XML parser.", e);
 	            }
+			}
 		}
 		
 		return null;

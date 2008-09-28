@@ -187,7 +187,7 @@ public class MibBrowser
         // Configure the MIB tree.
         try
         {
-            treeBuilder.addMIBDirectory(mibDirectory);
+            treeBuilder.addMibDirectory(mibDirectory);
         }
         catch (IllegalArgumentException e) // if the default directory doesn't exist
         {

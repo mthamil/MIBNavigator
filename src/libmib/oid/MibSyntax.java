@@ -106,7 +106,7 @@ public class MibSyntax
      * 
      * @param newValues a list of possible values
      */
-    public void setValues(List<MibNameValuePair> newValues)
+    public void setValuePairs(List<MibNameValuePair> newValues)
     {
         if (newValues == null)
             throw new IllegalArgumentException("Values list cannot be set to null.");
