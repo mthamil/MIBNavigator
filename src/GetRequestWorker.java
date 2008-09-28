@@ -214,7 +214,7 @@ public class GetRequestWorker extends SwingWorker
                     if (curNode != null && (snmpValue instanceof SNMPInteger))
                     {
                         MibObjectType curObj = (MibObjectType)curNode.getUserObject();
-                        if (curObj.hasValueList())
+                        if (curObj.hasNameValuePairs())
                         {
                             int intValue = ((BigInteger)snmpValue.getValue()).intValue();
                             

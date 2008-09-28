@@ -270,12 +270,12 @@ public class OidDataPanel implements TreeSelectionListener
 
         // Process the object's enumerated data type.
         DefaultComboBoxModel curModel = (DefaultComboBoxModel)oidValueBox.getModel();
-        if (mibObject.hasValueList())
+        if (mibObject.hasNameValuePairs())
         {
             oidValueBox.setEnabled(true);
             curModel.removeAllElements();
             
-            List<MibNameValuePair> valList = mibObject.getSyntax().getValues();
+            List<MibNameValuePair> valList = mibObject.getSyntax().getValuePairs();
             for (MibNameValuePair item : valList)
                 curModel.addElement(item.getName() + " (" + item.getValue() + ")");
         }

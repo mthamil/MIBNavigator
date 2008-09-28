@@ -502,7 +502,7 @@ public class MibToXmlConverter
         mibObject.setContactInfo(contact.toString());
         
         if (group != null)
-            mibObject.setObjectGroup(group);
+            mibObject.setGroupMembers(group);
         
         if (revisions != null)
             mibObject.setRevisions(revisions);

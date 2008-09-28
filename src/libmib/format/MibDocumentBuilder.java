@@ -225,12 +225,12 @@ public class MibDocumentBuilder
         }
         
         // GROUPS
-        if (newObject.hasObjectGroup())
+        if (newObject.hasGroupMembers())
         {
             Element groupElement = mibDocument.createElement(ElementNames.MEMBERS);
             typeElement.appendChild(groupElement);
             
-            List<String> grpMembers = newObject.getObjectGroup();
+            List<String> grpMembers = newObject.getGroupMembers();
             for (String member : grpMembers)
             {
                 Element memberElement = mibDocument.createElement(ElementNames.MEMBER);
@@ -382,7 +382,7 @@ public class MibDocumentBuilder
             Element pairsElement = mibDocument.createElement(ElementNames.PAIRS);
             syntaxElement.appendChild(pairsElement);
             
-            List<MibNameValuePair> pairs = newSyntax.getValues();
+            List<MibNameValuePair> pairs = newSyntax.getValuePairs();
             for (MibNameValuePair pair : pairs)
             {    
                 Element pairElement = mibDocument.createElement(ElementNames.PAIR);
