@@ -37,7 +37,7 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
-import libmib.MibNameValuePair;
+import libmib.NameValuePair;
 import libmib.MibObjectType;
 import libmib.MibSyntax;
 import libmib.MibObjectType.Access;
@@ -264,7 +264,7 @@ public class MibTreeBuilderXml extends AbstractMibTreeBuilder
         NodeList pairsNodes = syntaxElement.getElementsByTagName(ElementNames.PAIRS);
         if (pairsNodes.getLength() > 0)
         {
-            List<MibNameValuePair> pairs = new ArrayList<MibNameValuePair>(); 
+            List<NameValuePair> pairs = new ArrayList<NameValuePair>(); 
             
             Element pairsElement = (Element)pairsNodes.item(0);
             NodeList pairNodes = pairsElement.getElementsByTagName(ElementNames.PAIR);
@@ -290,7 +290,7 @@ public class MibTreeBuilderXml extends AbstractMibTreeBuilder
                 int value = Integer.parseInt(valueString);
 
                 // Add the value list entry.
-                MibNameValuePair valuePair = new MibNameValuePair(name, value);
+                NameValuePair valuePair = new NameValuePair(name, value);
                 pairs.add(valuePair);
             }
 

@@ -1,0 +1,470 @@
+/*
+ * SNMP Package
+ *
+ * Copyright (C) 2004, Jonathan Sevy <jsevy@mcs.drexel.edu>
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
+ */
+
+package snmp;
+
+import java.io.*;
+import java.util.Arrays;
+
+/**
+ *  Class representing ASN.1 object identifiers. These are unbounded sequences (arrays) of
+ *  natural numbers, written as dot-separated strings.
+ */
+public class SnmpObjectIdentifier extends SnmpObject
+{
+    private long[] digits;    // array of longs
+
+    protected SnmpBERType tag = SnmpBERType.SnmpObjectIdentifier;
+
+    /**
+     *  Creates a new empty object identifier (0-length array).
+     */
+    public SnmpObjectIdentifier()
+    {
+        digits = new long[0];
+    }
+
+    
+    /**
+     *  Creates a new object identifier from the supplied string of dot-separated nonegative
+     *  decimal integer values.
+     *  
+     *  @throws SnmpBadValueException Indicates incorrectly-formatted string supplied.
+     */
+    public SnmpObjectIdentifier(String digitString)
+        throws SnmpBadValueException
+    {
+        parseObjectIdentifier(digitString);
+    }
+
+
+    /**
+     *  Creates a new object identifier from the supplied array of non-negative
+     *  integer values.
+     *  
+     *  @throws SnmpBadValueException Negative value(s) supplied.
+     */
+    public SnmpObjectIdentifier(int[] digits)
+        throws SnmpBadValueException
+    {
+        long[] longDigits = new long[digits.length];
+
+        for (int i = 0; i < digits.length; i++)
+        {
+            if (digits[i] < 0)
+                throw new SnmpBadValueException("Negative value supplied for SNMPObjectIdentifier.");
+
+            longDigits[i] = digits[i];
+        }
+
+        this.digits = longDigits;
+    }
+
+    
+    /**
+     *  Creates a new object identifier from the supplied array of nonegative
+     *  long values.
+     *  
+     *  @throws SnmpBadValueException Negative value(s) supplied.
+     */
+    public SnmpObjectIdentifier(long[] digits)
+        throws SnmpBadValueException
+    {
+
+        //for (int i = 0; i < digits.length; i++)
+        for (long digit : digits)
+        {
+            if (digit < 0)
+                throw new SnmpBadValueException("Negative value supplied for SNMPObjectIdentifier.");
+        }
+
+        this.digits = digits;
+    }
+
+
+    /**
+     *  Initializes from the BER encoding, as received in a response from
+     *  an SNMP device responding to an SNMPGetRequest.
+     *  
+     *  @throws SnmpBadValueException Indicates an invalid BER encoding supplied. Shouldn't
+     *  occur in normal operation, i.e., when valid responses are received from devices.
+     */
+    protected SnmpObjectIdentifier(byte[] enc)
+        throws SnmpBadValueException
+    {
+        extractFromBEREncoding(enc);
+    }
+
+
+    /**
+     *  Returns array of integers corresponding to components of identifier.
+     */
+    public Object getValue()
+    {
+        return digits;
+    }
+
+
+    /**
+     *  Sets the value from an integer or long array containing the identifier components, or from
+     *  a String containing a dot-separated sequence of nonegative values.
+     *  
+     *  @throws SnmpBadValueException Indicates an incorrect object type supplied, or negative array
+     *  elements, or an incorrectly formatted String.
+     */
+    public void setValue(Object digits)
+        throws SnmpBadValueException
+    {
+        if (digits instanceof long[])
+        {
+            for (int i = 0; i < ((long[])digits).length; i++)
+            {
+                if (((long[])digits)[i] < 0)
+                    throw new SnmpBadValueException("Negative value supplied for SNMPObjectIdentifier.");
+            }
+
+            this.digits = (long[])digits;
+        }
+        else if (digits instanceof int[])
+        {
+            long[] longDigits = new long[((int[])digits).length];
+
+            for (int i = 0; i < ((int[])digits).length; i++)
+            {
+                if (((int[])digits)[i] < 0)
+                    throw new SnmpBadValueException("Negative value supplied for SNMPObjectIdentifier.");
+
+                longDigits[i] = ((int[])digits)[i];
+            }
+
+            this.digits = longDigits;
+        }
+        else if (digits instanceof String)
+            parseObjectIdentifier((String)digits);
+        else
+            throw new SnmpBadValueException(" Object Identifier: bad object supplied to set value ");
+    }
+
+
+    /**
+     *  Returns the BER encoding for this object identifier.
+     */
+    protected byte[] getBEREncoding()
+    {
+        ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
+
+        // write contents of array of values
+        byte[] data = encodeArray();
+
+        // calculate encoding for length of data
+        byte[] len = SnmpBERCodec.encodeLength(data.length);
+
+        // encode T,L,V info
+        outBytes.write(tag.getByte());
+        outBytes.write(len, 0, len.length);
+        outBytes.write(data, 0, data.length);
+
+        return outBytes.toByteArray();
+    }
+
+
+    private byte[] encodeArray()
+    {
+        ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
+
+        int numElements = digits.length;
+
+        // encode first two identifier digits as one byte, using the 40*x + y rule;
+        // of course, if only one element, just use 40*x; if none, do nothing
+        if (numElements >= 2)
+            outBytes.write((byte)(40*digits[0] + digits[1]));
+        else if (numElements ==1)
+            outBytes.write((byte)(40*digits[0]));
+
+
+        for (int i = 2; i < numElements; ++i)
+        {
+            byte[] nextBytes = encodeValue(digits[i]);
+            outBytes.write(nextBytes, 0, nextBytes.length);
+        }
+
+        return outBytes.toByteArray();
+    }
+
+
+    private byte[] encodeValue(long v)
+    {
+        // see how many bytes are needed: each value uses just
+        // 7 bits of each byte, with high-order bit functioning as
+        // a continuation marker
+        int numBytes = 0;
+        long temp = v;
+
+        do
+        {
+            ++numBytes;
+            temp = (long)Math.floor(temp / 128);
+        }
+        while (temp > 0);
+
+
+        byte[] enc = new byte[numBytes];
+        // encode lowest-order byte, without setting high bit
+        enc[numBytes - 1] = (byte)(v % 128);
+        v = (long)Math.floor(v / 128);
+
+        //.encode other bytes with high bit set
+        for (int i = numBytes - 2; i >= 0; --i)
+        {
+            enc[i] = (byte)((v % 128) + 128);
+            v = (long)Math.floor(v / 128);
+        }
+
+        return enc;
+    }
+
+
+    private void parseObjectIdentifier(String digitString)
+        throws SnmpBadValueException
+    {
+		try
+		{
+			// Matt Hamilton on 1/31/06:
+			// Rewritten to use String's split method instead of StringTokenizer.
+		    // However, I read that StringTokenizer is more efficient and uses less
+            // resources.  On the other hand, the current implementation uses two tokenizers, 
+            // so actual performance testing may be required to determine a real answer 
+            // on which to use.
+
+			String[] oidArray = digitString.split("\\.");
+
+			long[] returnDigits = new long[oidArray.length];
+
+			for (int i = 0; i < oidArray.length; i++)
+			{
+				returnDigits[i] = Long.parseLong(oidArray[i]);
+				if (returnDigits[i] < 0)
+					throw new SnmpBadValueException(" Object Identifier: values must greater than or equal to zero. ");
+			}
+
+			digits = returnDigits;
+
+		}
+		catch (NumberFormatException e)
+		{
+			throw new SnmpBadValueException(" Object Identifier: bad string supplied for object identifier value ");
+        }
+
+        /*try
+        {
+            StringTokenizer st = new StringTokenizer(digitString, " .");
+            int size = 0;
+
+            while (st.hasMoreTokens())
+            {
+                // figure out how many values are in string
+                size++;
+                st.nextToken();
+            }
+
+            long[] returnDigits = new long[size];
+
+            st = new StringTokenizer(digitString, " .");
+
+            for (int i = 0; i < size; i++)
+            {
+                returnDigits[i] = Long.parseLong(st.nextToken());
+                if (returnDigits[i] < 0)
+                    throw new SNMPBadValueException(" Object Identifier: bad string supplied to set value ");
+            }
+
+            digits = returnDigits;
+
+        }
+        catch (NumberFormatException e)
+        {
+            throw new SNMPBadValueException(" Object Identifier: bad string supplied for object identifier value ");
+        }*/
+
+    }
+
+
+    private void extractFromBEREncoding(byte[] enc)
+        throws SnmpBadValueException
+    {
+        // note: masks must be ints; byte internal representation issue(?)
+        int bitTest = 0x80;    // test for leading 1
+        int highBitMask = 0x7F;    // mask out high bit for value
+
+        // first, compute number of "digits";
+        // will just be number of bytes with leading 0's
+        int numInts = 0;
+        for (int i = 0; i < enc.length; i++)
+        {
+            if ((enc[i] & bitTest) == 0)        //high-order bit not set; count
+                numInts++;
+        }
+
+
+        if (numInts > 0)
+        {
+            // create new int array to hold digits; since first value is 40*x + y,
+            // need one extra entry in array to hold this.
+            digits = new long[numInts + 1];
+
+            int currentByte = -1;    // will be incremented to 0
+
+            long value = 0;
+
+            // read in values 'til get leading 0 in byte
+            do
+            {
+                currentByte++;
+                value = value * 128 + (enc[currentByte] & highBitMask);
+            }
+            while ((enc[currentByte] & bitTest) > 0);    // implies high bit set!
+
+            // now handle 40a + b
+            digits[0] = (long)Math.floor(value / 40);
+            digits[1] = value % 40;
+
+            // now read in rest!
+            for (int i = 2; i < numInts + 1; i++)
+            {
+                // read in values 'til get leading 0 in byte
+                value = 0;
+                do
+                {
+                    currentByte++;
+                    value = value*128 + (enc[currentByte] & highBitMask);
+                }
+                while ((enc[currentByte] & bitTest) > 0);
+
+                digits[i] = value;
+            }
+
+        }
+        else
+        {
+            // no digits; create empty digit array
+            digits = new long[0];
+        }
+
+    }
+
+
+    /*
+    public boolean equals(SNMPObjectIdentifier other)
+    {
+        long[] otherDigits = (long[])(other.getValue());
+
+        boolean areEqual = true;
+
+        if (digits.length != otherDigits.length)
+        {
+            areEqual = false;
+        }
+        else
+        {
+            for (int i = 0; i < digits.length; i++)
+            {
+                if (digits[i] != otherDigits[i])
+                {
+                    areEqual = false;
+                    break;
+                }
+            }
+        }
+
+        return areEqual;
+
+    }
+    */
+
+
+    /**
+     *  Checks the internal arrays for equality.
+     */
+    public boolean equals(Object other)
+    {
+        // false if other is null
+        if (other == null)
+            return false;
+
+        // check first to see that they're both of the same class
+        if (!this.getClass().equals(other.getClass()))
+            return false;
+
+        SnmpObjectIdentifier otherSNMPObject = (SnmpObjectIdentifier)other;
+
+        // see if their embedded arrays are equal
+        if (Arrays.equals((long[])this.getValue(), (long[])otherSNMPObject.getValue()))
+            return true;
+         
+        return false;
+    }
+
+
+    /**
+     *  Generates a hash value so SNMP Object Identifiers can be used in Hashtables.
+     */
+    public int hashCode()
+    {
+        int hash = 0;
+
+        // generate a hashcode from the embedded array
+        for (int i = 0; i < digits.length; i++)
+        {
+            hash += (int)(digits[i] ^ (digits[i] >> 32));
+            hash += (hash << 10);
+            hash ^= (hash >> 6);
+        }
+
+        hash += (hash << 3);
+        hash ^= (hash >> 11);
+        hash += (hash << 15);
+
+        return hash;
+    }
+
+
+    /**
+     *  Returns a dot-separated sequence of decimal values.
+     */
+    public String toString()
+    {
+        StringBuffer valueStringBuffer = new StringBuffer();
+        if (digits.length > 0)
+        {
+            valueStringBuffer.append(digits[0]);
+
+            for (int i = 1; i < digits.length; ++i)
+            {
+                valueStringBuffer.append(".");
+                valueStringBuffer.append(digits[i]);
+            }
+        }
+
+
+        return valueStringBuffer.toString();
+    }
+
+}

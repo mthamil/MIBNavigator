@@ -48,7 +48,7 @@ import org.xml.sax.InputSource;
 
 import libmib.MibImport;
 import libmib.MibModuleIdRevision;
-import libmib.MibNameValuePair;
+import libmib.NameValuePair;
 import libmib.MibObjectExtended;
 import libmib.MibSyntax;
 import libmib.mibtree.BasicXmlErrorHandler;
@@ -147,7 +147,7 @@ public class MibDocumentBuilder
         Element importElement = mibDocument.createElement(ElementNames.SOURCE);
         this.addSourceNameAttribute(importElement, newImport.getSource());
         
-        List<String> imports = newImport.getImportList();
+        List<String> imports = newImport.getImports();
         for (String importName : imports)
         {
             Element importItemElement = mibDocument.createElement(ElementNames.IMPORT);
@@ -382,8 +382,8 @@ public class MibDocumentBuilder
             Element pairsElement = mibDocument.createElement(ElementNames.PAIRS);
             syntaxElement.appendChild(pairsElement);
             
-            List<MibNameValuePair> pairs = newSyntax.getValuePairs();
-            for (MibNameValuePair pair : pairs)
+            List<NameValuePair> pairs = newSyntax.getValuePairs();
+            for (NameValuePair pair : pairs)
             {    
                 Element pairElement = mibDocument.createElement(ElementNames.PAIR);
                 pairsElement.appendChild(pairElement);

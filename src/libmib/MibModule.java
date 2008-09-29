@@ -9,59 +9,59 @@ import java.util.List;
  */
 public class MibModule 
 {
-    private String mibName;
+    private String name;
     
-    //lists that store the MIB elements
-    private List<MibImport> importList = null;
-    private List<MibObjectType> objectList = null;
+    // lists that store the MIB elements
+    private List<MibImport> imports = null;
+    private List<MibObjectType> objects = null;
     
     public MibModule()
     {
-       mibName = "";
-       initializeElementLists();
+       name = "";
+       initializeElements();
     }
     
-    public MibModule(String newMibName)
+    public MibModule(String newName)
     {
-        mibName = newMibName;
-        initializeElementLists();
+        name = newName;
+        initializeElements();
     }
     
-    private void initializeElementLists()
+    private void initializeElements()
     {
-        importList = new ArrayList<MibImport>();
-        objectList = new ArrayList<MibObjectType>();
+        imports = new ArrayList<MibImport>();
+        objects = new ArrayList<MibObjectType>();
     }
     
-    public void setMibName(String newMibName)
+    public void setName(String newName)
     {
-        mibName = newMibName;
+        name = newName;
     }
     
-    public String getMibName()
+    public String getName()
     {
-        return mibName;
+        return name;
     }
     
     
-    public void addMibImport(MibImport newImport)
+    public void addImport(MibImport newImport)
     {
-        importList.add(newImport);
+        imports.add(newImport);
     }
     
-    public void addMibObject(MibObjectType newObject)
+    public List<MibImport> getImports()
     {
-        objectList.add(newObject);
+        return imports;
     }
     
-   
-    public List<MibImport> getMibImports()
-    {
-        return importList;
-    }
     
-    public List<MibObjectType> getMibObjects()
+    public void addObject(MibObjectType newObject)
     {
-        return objectList;
+        objects.add(newObject);
+    }
+
+    public List<MibObjectType> getObjects()
+    {
+        return objects;
     }
 }

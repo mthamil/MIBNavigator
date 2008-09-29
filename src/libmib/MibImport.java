@@ -26,20 +26,20 @@ import java.util.List;
 
 /**
  *  This class represents a MIB definition import statement.
- *  It consists of a list of one or more general "items" that
+ *  It consists of a list of one or more general symbols that
  *  are imported from a source MIB.
  */
  public class MibImport extends Object
  {
- 	private List<String> importList = null; //use interface List for flexibility
+ 	private List<String> imports = null;
  	private String source;
     
  	/**
-     * Constructs a new default MibImport with an ArrayList of imported item names.
+     * Constructs a new default MibImport with an ArrayList of imported names.
      */
     public MibImport()
     {
-        importList = new ArrayList<String>();
+        imports = new ArrayList<String>();
     }
     
 	/**
@@ -50,31 +50,41 @@ import java.util.List;
 	 */
 	public MibImport(final String sourceName)
 	{
-		importList = new ArrayList<String>();
+		imports = new ArrayList<String>();
         source = sourceName;
 	}
+	
+    /**
+     * Adds an import item to the import list.
+     * 
+     * @param item the item to add to the list
+     */
+    public void addImport(String item)
+    {
+        imports.add(item);
+    }
 
 	/**
 	 * Gets the list of names of items being imported from the source.
      * 
 	 * @return the list of names of items being imported
 	 */
-	public List<String> getImportList()
+	public List<String> getImports()
 	{
-		return importList;
+		return imports;
 	}
     
     /**
      * Sets the list of names of items being imported from the source.
      * 
-     * @param newImportList the list of names of items being imported
+     * @param newImports the list of names of items being imported
      */
-    public void setImportList(List<String> newImportList)
+    public void setImports(List<String> newImports)
     {
-        if (newImportList == null)
+        if (newImports == null)
             throw new IllegalArgumentException("Import list cannot be set to null.");
         
-        importList = newImportList;
+        imports = newImports;
     }
 
     
@@ -96,15 +106,5 @@ import java.util.List;
     public void setSource(String newSource)
     {
         source = newSource;
-    }
-    
-    /**
-     * Adds an import item to the import list.
-     * 
-     * @param item the item to add to the list
-     */
-    public void addImportItem(String item)
-    {
-        importList.add(item);
     }
 }

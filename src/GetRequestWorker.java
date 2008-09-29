@@ -31,14 +31,14 @@ import javax.swing.event.EventListenerList;
 import libmib.MibObjectType;
 import libmib.mibtree.MibTreeNode;
 import libmib.mibtree.MibTreeNode.NodeSearchOption;
-import snmp.SNMPBadValueException;
-import snmp.SNMPGetException;
-import snmp.SNMPInteger;
-import snmp.SNMPObject;
-import snmp.SNMPObjectIdentifier;
-import snmp.SNMPSequence;
-import snmp.SNMPVarBindList;
-import snmp.SNMPv1Communicator;
+import snmp.SnmpBadValueException;
+import snmp.SnmpGetException;
+import snmp.SnmpInteger;
+import snmp.SnmpObject;
+import snmp.SnmpObjectIdentifier;
+import snmp.SnmpSequence;
+import snmp.SnmpVarBindList;
+import snmp.SnmpV1Communicator;
 
 /**
  *  This class retrieves OID values using SNMP GetNextRequests for a given host.  It executes in 
@@ -94,7 +94,7 @@ public class GetRequestWorker extends SwingWorker
         oidInputString = oidString;
         root = rootNode;
         
-        hostPort = SNMPv1Communicator.DEFAULT_SNMP_PORT;
+        hostPort = SnmpV1Communicator.DEFAULT_SNMP_PORT;
         hostTimeout = DEFAULT_TIMEOUT;
     }
     
@@ -160,14 +160,14 @@ public class GetRequestWorker extends SwingWorker
             this.fireAddressResolvedEvent(addressString, resolvedAddr);  //this will occur if the host address is valid
 
             //Establish a new SNMPv1 interface with the given data.
-            SNMPv1Communicator snmpInterface = new SNMPv1Communicator(SNMP_VERSION, address, communityString);
+            SnmpV1Communicator snmpInterface = new SnmpV1Communicator(SNMP_VERSION, address, communityString);
             snmpInterface.setTimeout(timeout);
             snmpInterface.setPort(port);
 
-            SNMPVarBindList newVarBinds;
-            SNMPObjectIdentifier receivedOid;
-            SNMPObject snmpValue;
-            SNMPSequence pair;
+            SnmpVarBindList newVarBinds;
+            SnmpObjectIdentifier receivedOid;
+            SnmpObject snmpValue;
+            SnmpSequence pair;
 
             String nextOid = baseOid;
 
@@ -183,9 +183,9 @@ public class GetRequestWorker extends SwingWorker
                 newVarBinds = snmpInterface.getNextMIBEntry(nextOid);
  
                 //Extract OID information from the VarBindList.
-                pair = (SNMPSequence)newVarBinds.getSNMPObjectAt(0);
+                pair = (SnmpSequence)newVarBinds.getSNMPObjectAt(0);
                 
-                receivedOid = (SNMPObjectIdentifier)pair.getSNMPObjectAt(0);
+                receivedOid = (SnmpObjectIdentifier)pair.getSNMPObjectAt(0);
                 nextOid = receivedOid.toString();
 
                 //This check stops the last OID, which will not start 
@@ -211,7 +211,7 @@ public class GetRequestWorker extends SwingWorker
                     //There is a potential problem here because the closest node is returned if the exact
                     //match is not found.  However, it seems inefficient to do another search with the
                     //option to return the exact node.
-                    if (curNode != null && (snmpValue instanceof SNMPInteger))
+                    if (curNode != null && (snmpValue instanceof SnmpInteger))
                     {
                         MibObjectType curObj = (MibObjectType)curNode.getUserObject();
                         if (curObj.hasNameValuePairs())
@@ -242,7 +242,7 @@ public class GetRequestWorker extends SwingWorker
         {
             return "";  
         }
-        catch (SNMPBadValueException e)
+        catch (SnmpBadValueException e)
         {
             return e.getMessage();
         }
@@ -258,7 +258,7 @@ public class GetRequestWorker extends SwingWorker
         {
             return "Unknown host: " + e.getMessage();
         }
-        catch (SNMPGetException e)
+        catch (SnmpGetException e)
         {
             return e.getMessage();
         }

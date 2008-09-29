@@ -29,7 +29,7 @@ import java.util.List;
 
 import libmib.MibImport;
 import libmib.MibModuleIdRevision;
-import libmib.MibNameValuePair;
+import libmib.NameValuePair;
 import libmib.MibObjectExtended;
 import libmib.MibSyntax;
 import libmib.MibObjectType.Access;
@@ -266,7 +266,7 @@ public class MibToXmlConverter
                     if (!source.startsWith(SmiTokens.SOURCE))
                     {
                         String item = source.substring(0, source.indexOf(SmiTokens.SOURCE)).trim();
-                        importItem.addImportItem(item);
+                        importItem.addImport(item);
                     }
                     
                     // don't include the ';' at the end
@@ -283,7 +283,7 @@ public class MibToXmlConverter
                 }
                 else
                 {
-                    importItem.addImportItem(curElement.trim());
+                    importItem.addImport(curElement.trim());
                 }
                 
                 if (!endOfImport)
@@ -313,7 +313,7 @@ public class MibToXmlConverter
         String organization = "";
         StringBuilder contact = new StringBuilder();
         
-        List<MibNameValuePair> pairs = null;  //synchronization not needed
+        List<NameValuePair> pairs = null;  //synchronization not needed
         List<String> indices = null;
         List<String> group = null;  
         List<MibModuleIdRevision> revisions = null;

@@ -28,7 +28,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-import libmib.MibNameValuePair;
+import libmib.NameValuePair;
 import libmib.MibObjectType;
 import libmib.MibSyntax;
 import libmib.MibObjectType.Access;
@@ -247,7 +247,7 @@ public class MibTreeBuilderSmi extends AbstractMibTreeBuilder
             String nodeStatus = "";
             
             StringBuilder nodeDesc = new StringBuilder();
-            List<MibNameValuePair> nodeValues = null;
+            List<NameValuePair> nodeValues = null;
     
             // read until the end of the object definition, retrieving relevant information
             line = in.readLine().trim();

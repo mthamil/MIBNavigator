@@ -40,7 +40,7 @@ import javax.swing.tree.TreePath;
 import contextmenu.TextContextMenu;
 import contextmenu.TextContextMenuListener;
 
-import libmib.MibNameValuePair;
+import libmib.NameValuePair;
 import libmib.MibObjectType;
 import libmib.MibSyntax;
 import libmib.MibObjectType.Access;
@@ -275,8 +275,8 @@ public class OidDataPanel implements TreeSelectionListener
             oidValueBox.setEnabled(true);
             curModel.removeAllElements();
             
-            List<MibNameValuePair> valList = mibObject.getSyntax().getValuePairs();
-            for (MibNameValuePair item : valList)
+            List<NameValuePair> valList = mibObject.getSyntax().getValuePairs();
+            for (NameValuePair item : valList)
                 curModel.addElement(item.getName() + " (" + item.getValue() + ")");
         }
         else

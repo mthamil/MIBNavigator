@@ -27,11 +27,11 @@ import java.util.List;
  * This class is a logical grouping of attributes that define the syntax of a
  * MIB Object. This includes a data type name and the optional default value and value list.
  */
-public class MibSyntax 
+public class MibSyntax
 {
     private String dataType;
     private String defaultValue;
-    private List<MibNameValuePair> pairs;
+    private List<NameValuePair> pairs;
     
     public MibSyntax()
     {
@@ -95,7 +95,7 @@ public class MibSyntax
      * 
      * @return a list of possible values
      */
-    public List<MibNameValuePair> getValuePairs()
+    public List<NameValuePair> getValuePairs()
     {
         return pairs;
     }
@@ -105,7 +105,7 @@ public class MibSyntax
      * 
      * @param newList a list of possible values
      */
-    public void setValuePairs(List<MibNameValuePair> newPairs)
+    public void setValuePairs(List<NameValuePair> newPairs)
     {
         if (newPairs == null)
             throw new IllegalArgumentException("Values cannot be set to null.");
@@ -124,7 +124,7 @@ public class MibSyntax
         if (pairs == null)
             return false;
         
-        //if not null
+        // if not null
         return true;
 
     }
@@ -152,11 +152,11 @@ public class MibSyntax
         
         while (i < pairs.size() && !found)
         {
-            MibNameValuePair pair = pairs.get(i);
+            NameValuePair pair = pairs.get(i);
             if (value == pair.getValue())
             {
                 name = pair.getName();
-                found = true; //value found, stop searching
+                found = true; 			// value found, stop searching
             }
             
             i++;
