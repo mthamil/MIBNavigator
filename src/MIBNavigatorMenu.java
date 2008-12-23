@@ -34,6 +34,8 @@ import javax.swing.JRootPane;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.tree.DefaultTreeModel;
 
+import utilities.Utilities;
+
 import libmib.format.InvalidMibFormatException;
 import libmib.mibtree.MibTreeBuilder;
 
@@ -175,7 +177,7 @@ public class MIBNavigatorMenu implements ActionListener
                     boolean proceedWithCopy = true;
                     if (destinationMib.exists())
                     {
-                        // ask the user if they want to overwrite the file if it already exists
+                        // Ask the user if they want to overwrite the file if it already exists.
                         String popupMsg = destinationMib.getName() + " already exists in the \"" 
                         	+ mibDirectory.getName()  + "\" directory." + "  Overwrite existing MIB file?";
                         
@@ -186,14 +188,16 @@ public class MIBNavigatorMenu implements ActionListener
                             proceedWithCopy = false;
                     }
 
-                    // if the destination file didn't already exist or the user approved an overwrite
+                    // If the destination file didn't already exist or the user approved an overwrite.
                     if (proceedWithCopy)
-                       Utilities.fileCopy(sourceMib, destinationMib);
+                    {
+                       boolean copySucceeded = Utilities.copyFile(sourceMib, destinationMib);
+                       
+                       if (!copySucceeded)
+                    	   JOptionPane.showMessageDialog(menuParentFrame, "An error occurred when importing the MIB file.",
+                    			   "Error Copying File", JOptionPane.ERROR_MESSAGE);
+                    }
                     
-                }
-                catch (IOException e)
-                {
-                    JOptionPane.showMessageDialog(menuParentFrame, e.getMessage(), "Error Copying File", JOptionPane.ERROR_MESSAGE);
                 }
                 catch (InvalidMibFormatException e)
                 {

@@ -27,13 +27,12 @@ package snmp;
  */
 public class SnmpBitString extends SnmpOctetString
 {
-    protected SnmpBERType tag = SnmpBERType.SnmpBitString;
-        
     /**
      *  Creates a zero-length bit string.
      */
     public SnmpBitString()
     {
+    	tag = SnmpBERType.SnmpBitString;
         this.data = new byte[0];
     }
     
@@ -43,6 +42,7 @@ public class SnmpBitString extends SnmpOctetString
      */
     public SnmpBitString(String dataString)
     {
+    	tag = SnmpBERType.SnmpBitString;
         this.data = dataString.getBytes();
     }
     
@@ -54,6 +54,7 @@ public class SnmpBitString extends SnmpOctetString
      */
     public SnmpBitString(byte[] enc)
     {
+    	tag = SnmpBERType.SnmpBitString;
         extractFromBEREncoding(enc);
     }
     

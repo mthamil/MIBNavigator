@@ -97,14 +97,11 @@ public class SnmpRequestException extends SnmpException
     }
     
     
-    public static void main(String[] args)
-    {
-        ErrorStatus test = ErrorStatus.Failed;
-        
-        int num = test.ordinal();
-        //RequestErrorStatus[] vals = RequestErrorStatus.values();
-        //RequestErrorStatus test2 = vals[5];
-        ErrorStatus test2 = ErrorStatus.getInstance(5);
-    }
+//    public static void main(String[] args)
+//    {
+//        ErrorStatus test = ErrorStatus.Failed;
+//        int num = test.ordinal();
+//        ErrorStatus test2 = ErrorStatus.getInstance(5);
+//    }
     
 }

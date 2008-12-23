@@ -30,6 +30,8 @@ import java.util.List;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
+import utilities.Utilities;
+
 import libmib.format.MibFormat;
 
 /**
@@ -145,17 +147,15 @@ public class UserSettings
 	 */
 	public void loadSettings()
     {
-        FileInputStream settingsIn = null;
         String hostAddresses = "";
         String addressNum = "";
         String formatString = "";
+        FileInputStream settingsIn = null;
         try
         {
             settingsIn = new FileInputStream(settingsFile);
             settings.loadFromXML(settingsIn);
-            if (settingsIn != null)
-                settingsIn.close();
-
+            
             addressNum    = settings.getProperty(SettingsProperties.MaximumAddresses.toString(), "15");
             hostAddresses = settings.getProperty(SettingsProperties.IPAddresses.toString(), "");
             formatString  = settings.getProperty(SettingsProperties.MibFileFormat.toString(), MibFormat.SMI.toString());
@@ -164,6 +164,11 @@ public class UserSettings
         {
             System.out.println("Error loading properties file.");
         }
+        finally
+		{
+			Utilities.closeQuietly(settingsIn);
+		}
+        
         
         // Parse the the max address property.
         maxAddresses = parseMaxAddresses(addressNum);
@@ -213,12 +218,14 @@ public class UserSettings
 			{
 				settingsOut = new FileOutputStream(settingsFile);
 				settings.storeToXML(settingsOut, null);
-				if (settingsOut != null)
-					settingsOut.close();
 			}
 			catch (IOException e)
 			{
 				System.out.println("Error saving properties file.");
+			}
+			finally
+			{
+				Utilities.closeQuietly(settingsOut);
 			}
 		}
 	}

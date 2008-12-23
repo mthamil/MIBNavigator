@@ -212,7 +212,7 @@ public class MIBNavigator
                 {
                     public void run()
                     {   
-                        MIBNavigator navApp = new MIBNavigator(treeBuilder, settings);
+                        new MIBNavigator(treeBuilder, settings);
                     }
                 };
                 

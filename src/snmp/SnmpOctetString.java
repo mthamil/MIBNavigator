@@ -30,7 +30,7 @@ import java.util.Arrays;
 public class SnmpOctetString extends SnmpObject
 {
     protected byte[] data;
-    protected SnmpBERType tag = SnmpBERType.SnmpOctetString;
+    protected SnmpBERType tag;
 
 
     /**
@@ -38,6 +38,7 @@ public class SnmpOctetString extends SnmpObject
      */
     public SnmpOctetString()
     {
+    	tag = SnmpBERType.SnmpOctetString;
         data = new byte[0];
     }
 
@@ -47,6 +48,7 @@ public class SnmpOctetString extends SnmpObject
      */
     public SnmpOctetString(String stringData)
     {
+    	tag = SnmpBERType.SnmpOctetString;
         this.data = stringData.getBytes();
     }
 
@@ -58,6 +60,7 @@ public class SnmpOctetString extends SnmpObject
      */
     public SnmpOctetString(byte[] enc)
     {
+    	tag = SnmpBERType.SnmpOctetString;
         extractFromBEREncoding(enc);
     }
 
@@ -215,10 +218,11 @@ public class SnmpOctetString extends SnmpObject
         int pos = b;
         if (pos < 0)
             pos += 256;
-        String returnString = new String();
-        returnString += Integer.toHexString(pos / 16);
-        returnString += Integer.toHexString(pos % 16);
-        return returnString;
+        
+        StringBuilder returnString = new StringBuilder();
+        returnString.append(Integer.toHexString(pos / 16));
+        returnString.append(Integer.toHexString(pos % 16));
+        return returnString.toString();
     }
 
 

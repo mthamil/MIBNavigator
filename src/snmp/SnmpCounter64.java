@@ -48,7 +48,7 @@ public class SnmpCounter64 extends SnmpInteger
     {
         tag = SnmpBERType.SnmpCounter64;
         
-        value = new BigInteger(new Long(newValue).toString());
+        value = new BigInteger(Long.valueOf(newValue).toString());
         
         // wrap if value > maxValue
         value = value.mod(maxValue);

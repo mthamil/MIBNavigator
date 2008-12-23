@@ -50,7 +50,7 @@ public class SnmpInteger extends SnmpObject
 
     public SnmpInteger(long value)
     {
-        this.value = new BigInteger(new Long(value).toString());
+        this.value = new BigInteger(Long.valueOf(value).toString());
     }
     
     

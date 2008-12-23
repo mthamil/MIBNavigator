@@ -26,55 +26,55 @@ package libmib.format;
  */
 public class ElementNames
 {
-	public static String NAME_ATTR = "name";
-	public static String ROOT = "mib";
-	public static String IMPORTS = "imports";
-		public static String SOURCE = "source";
-			public static String IMPORT = "import";
+	public static final String NAME_ATTR = "name";
+	public static final String ROOT = "mib";
+	public static final String IMPORTS = "imports";
+		public static final String SOURCE = "source";
+			public static final String IMPORT = "import";
 	
-	public static String DATATYPES = "dataTypes";
-		public static String DATATYPE = "dataType";
-			public static String DATA_NAME = "dataName";
-    	    	public static String MIN_SIZE_ATTR = "minSize";
-    	    	public static String MAX_SIZE_ATTR = "maxSize";
-				public static String BASE_TYPE ="base";
+	public static final String DATATYPES = "dataTypes";
+		public static final String DATATYPE = "dataType";
+			public static final String DATA_NAME = "dataName";
+    	    	public static final String MIN_SIZE_ATTR = "minSize";
+    	    	public static final String MAX_SIZE_ATTR = "maxSize";
+				public static final String BASE_TYPE ="base";
 	
-	public static String OBJECTS = "objects";
-		public static String OBJECT = "object";
-			public static String OBJECT_ID = "objectIdentifier";
-				public static String NAME = "objectName";
-				public static String ID = "objectId";
-				public static String PARENT = "parent";
+	public static final String OBJECTS = "objects";
+		public static final String OBJECT = "object";
+			public static final String OBJECT_ID = "objectIdentifier";
+				public static final String NAME = "objectName";
+				public static final String ID = "objectId";
+				public static final String PARENT = "parent";
 				
-			public static String OBJECT_TYPE = "objectType";
-    			public static String SYNTAX = "syntax";
-    				public static String TYPE = "type";
-    				public static String SEQUENCE = "sequence";
-    				public static String PAIRS = "nameValuePairs";
-    					public static String PAIR = "nameValuePair";
-    					public static String PAIR_NAME = "pairName";
-    					public static String PAIR_VALUE = "pairValue";
-    				public static String DEFAULT = "default";
+			public static final String OBJECT_TYPE = "objectType";
+    			public static final String SYNTAX = "syntax";
+    				public static final String TYPE = "type";
+    				public static final String SEQUENCE = "sequence";
+    				public static final String PAIRS = "nameValuePairs";
+    					public static final String PAIR = "nameValuePair";
+    					public static final String PAIR_NAME = "pairName";
+    					public static final String PAIR_VALUE = "pairValue";
+    				public static final String DEFAULT = "default";
     				
-    			public static String ACCESS = "access";
-    			public static String STATUS = "status";
-    			public static String DESCRIPTION = "description";
-    			public static String REF = "reference";
-    			public static String INDICES = "indices";
-    				public static String INDEX = "index";
+    			public static final String ACCESS = "access";
+    			public static final String STATUS = "status";
+    			public static final String DESCRIPTION = "description";
+    			public static final String REF = "reference";
+    			public static final String INDICES = "indices";
+    				public static final String INDEX = "index";
 			
-			public static String OBJECT_GROUP = "objectGroup";
-				public static String MEMBERS = "members";
-					public static String MEMBER = "member";
+			public static final String OBJECT_GROUP = "objectGroup";
+				public static final String MEMBERS = "members";
+					public static final String MEMBER = "member";
 
-			public static String MODULE_ID = "moduleIdentity";
-				public static String UPDATED = "lastUpdated";
-				public static String ORG = "organization";
-				public static String CONTACT = "contactInfo";
-				public static String REVISION = "revision";
-					public static String REV_ID_ATTR = "revisionId";
+			public static final String MODULE_ID = "moduleIdentity";
+				public static final String UPDATED = "lastUpdated";
+				public static final String ORG = "organization";
+				public static final String CONTACT = "contactInfo";
+				public static final String REVISION = "revision";
+					public static final String REV_ID_ATTR = "revisionId";
 			
-			public static String MODULE_COMPLIANCE = "moduleCompliance";
-			public static String NOTIFICATION = "notification";
-			public static String NOTIFICATION_GROUP = "notificationGroup";
+			public static final String MODULE_COMPLIANCE = "moduleCompliance";
+			public static final String NOTIFICATION = "notification";
+			public static final String NOTIFICATION_GROUP = "notificationGroup";
 }

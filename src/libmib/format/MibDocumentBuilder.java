@@ -424,7 +424,7 @@ public class MibDocumentBuilder
         try 
         {
             TransformerFactory tFactory = TransformerFactory.newInstance();
-            tFactory.setAttribute("indent-number", new Integer(4));
+            tFactory.setAttribute("indent-number", Integer.valueOf(4));
 
             Transformer transformer = tFactory.newTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT , "yes");

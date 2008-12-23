@@ -49,7 +49,7 @@ public class SnmpGauge32 extends SnmpInteger
     {
         tag = SnmpBERType.SnmpGauge32;
         
-        value = new BigInteger(new Long(newValue).toString());
+        value = new BigInteger(Long.valueOf(newValue).toString());
         
         // peg if value > maxValue
         value = value.min(maxValue);

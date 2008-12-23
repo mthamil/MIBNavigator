@@ -27,6 +27,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import utilities.Utilities;
+
 import libmib.MibImport;
 import libmib.MibModuleIdRevision;
 import libmib.NameValuePair;
@@ -61,20 +63,21 @@ import libmib.MibObjectType.Status;
 public class MibToXmlConverter 
 { 
     private SmiStructureHandler handler;
-    private ArrayList<String> introComments = null;
+    //private ArrayList<String> introComments = null;
     private MibDocumentBuilder mibDocFactory;
 
     public MibToXmlConverter()
     {
-        introComments = new ArrayList<String>();    
+        //introComments = new ArrayList<String>();    
         mibDocFactory = new MibDocumentBuilder();
     }
     
     public void readMIB(File inputMIBFile) throws InvalidSmiMibFormatException
     {   
+    	BufferedReader in = null;
 		try
 		{
-			BufferedReader in = new BufferedReader(new FileReader(inputMIBFile));
+			in = new BufferedReader(new FileReader(inputMIBFile));
             handler = new SmiStructureHandler(in);
 			String line;
 
@@ -209,12 +212,15 @@ public class MibToXmlConverter
 				}
 			}
 
-			in.close();  // close the input file before doing anything else
 		}
 		catch (IOException e)
 		{
 			System.out.println(e.getMessage() + " " + e.getCause());
             e.printStackTrace();
+		}
+		finally
+		{
+			Utilities.closeQuietly(in);
 		}
         
     }
@@ -319,9 +325,11 @@ public class MibToXmlConverter
         List<MibModuleIdRevision> revisions = null;
         
         // read until the end of the object definition, retrieving relevant information
-        line = in.readLine().trim();
-        while (line != null && !line.startsWith("::="))
+        line = in.readLine();
+        while (line != null && !line.trim().startsWith("::="))
         {
+        	line = line.trim();
+        	
             // strip comments
             if (line.contains("--"))
             {
@@ -329,24 +337,28 @@ public class MibToXmlConverter
                 line = line.substring(0, commentIndex).trim();
             }
             
-            if (!line.trim().equals(""))
+            if (!line.equals(""))
             {
                 // SYNTAX
                 if (line.contains(SmiTokens.SYNTAX) && !objectType.equals(SmiTokens.MODULE_COMP))
                 {
-                    if (line.trim().equals(SmiTokens.SYNTAX))
-                        line = in.readLine().trim();
+                    if (line.equals(SmiTokens.SYNTAX))
+                        line = in.readLine();
         
                     // if the OID has a list of specific integer values
-                    if (line.contains("{"))
+                    if (line != null)
                     {
-                        index = line.indexOf("{");
-                        dataType = line.substring(SmiTokens.SYNTAX.length(), index).trim();
-                        
-                        pairs = handler.readPairs(line, SmiTokens.SYNTAX);
+                    	line = line.trim();
+	                    if (line.contains("{"))
+	                    {
+	                        index = line.indexOf("{");
+	                        dataType = line.substring(SmiTokens.SYNTAX.length(), index).trim();
+	                        
+	                        pairs = handler.readPairs(line, SmiTokens.SYNTAX);
+	                    }
+	                    else
+	                        dataType = line.substring(SmiTokens.SYNTAX.length()).trim(); 
                     }
-                    else
-                        dataType = line.substring(SmiTokens.SYNTAX.length()).trim(); 
                 }
                 
                 // ACCESS
@@ -422,92 +434,102 @@ public class MibToXmlConverter
                     // As far as I've seen, a REVISION is always followed by a DESCRIPTION block, 
                     // but this may not always be true.  If it's not, there could be consequences 
                     // and repercussions.
-                    line = in.readLine().trim();
-                    
-                    String revDesc = "";
-                    if (line.contains(SmiTokens.DESCRIPTION))
-                        revDesc = handler.readQuotedSection(line, SmiTokens.DESCRIPTION);
-                    
-                    if (revisions == null)
-                        revisions = new ArrayList<MibModuleIdRevision>();
-                    
-                    MibModuleIdRevision revision = new MibModuleIdRevision(revisionId, revDesc);
-                    revisions.add(revision);
+                    line = in.readLine();
+                    if (line != null)
+                    {
+                    	line = line.trim();
+	                    String revDesc = "";
+	                    if (line.contains(SmiTokens.DESCRIPTION))
+	                        revDesc = handler.readQuotedSection(line, SmiTokens.DESCRIPTION);
+	                    
+	                    if (revisions == null)
+	                        revisions = new ArrayList<MibModuleIdRevision>();
+	                    
+	                    MibModuleIdRevision revision = new MibModuleIdRevision(revisionId, revDesc);
+	                    revisions.add(revision);
+                    }
                 }
                 
-                line = in.readLine().trim();
+                line = in.readLine();
             }
             else
-                line = in.readLine().trim();
+                line = in.readLine();
 
         }
 
-        // the line with ::= should be processed here
-        String objInfo = line.substring(line.indexOf("{") + 1, line.indexOf("}")).trim();
-        String parent = "";
-
-        if (objInfo.contains("(") && objInfo.contains(")"))
-        {   // these have the form :={test(1) test2(6) test3(2) 1}
-            
-            String parents = "";
-            parents = objInfo.substring(objInfo.indexOf(" "), objInfo.lastIndexOf(")"));
-            parents = parents.substring(parents.lastIndexOf(" "), parents.lastIndexOf("("));
-            parent = parents.trim();
+        if (line != null)
+        {
+	        // the line with ::= should be processed here
+	        String objInfo = line.substring(line.indexOf("{") + 1, line.indexOf("}")).trim();
+	        String parent = "";
+	
+	        if (objInfo.contains("(") && objInfo.contains(")"))
+	        {   // these have the form :={test(1) test2(6) test3(2) 1}
+	            
+	            String parents = "";
+	            parents = objInfo.substring(objInfo.indexOf(" "), objInfo.lastIndexOf(")"));
+	            parents = parents.substring(parents.lastIndexOf(" "), parents.lastIndexOf("("));
+	            parent = parents.trim();
+	        }
+	        else
+	        {   // these have the regular form :={test 1}
+	            index = objInfo.indexOf(" ");
+	            parent = objInfo.substring(0, index);
+	        }
+	        
+	        int index2 = objInfo.lastIndexOf(" ") + 1;
+	        String objIndex = "";
+	        objIndex = objInfo.substring(index2, objInfo.length());
+	
+	        //System.out.println(nodeParent + " " + nodeIndex);
+	
+	        // set basic properties
+	        MibObjectExtended mibObject = new MibObjectExtended(name, Integer.parseInt(objIndex));
+	        
+	        mibObject.setDescription(description.toString());
+	        
+	        if (!access.equals(""))
+	            mibObject.setAccess(Access.valueOf(access.toUpperCase().replaceAll("-", "_")));
+	
+	        if (!status.equals(""))
+	            mibObject.setStatus(Status.valueOf(status.toUpperCase()));
+	        
+	        mibObject.setReference(ref);
+	        
+	        // construct the syntax object
+	        // -the object's type is the only thing required for the existence of a syntax element
+	        if (!dataType.equals("")) 
+	        {
+	            MibSyntax syntax = new MibSyntax(dataType);
+	            syntax.setDefaultValue(defaultValue);
+	            if (pairs != null)
+	                syntax.setValuePairs(pairs);
+	            
+	            mibObject.setSyntax(syntax);
+	        }
+	        
+	        if (indices != null)
+	            mibObject.setIndices(indices);
+	        
+	        // set extended properties
+	        mibObject.setObjectType(objectType);
+	        mibObject.setParent(parent);
+	        mibObject.setLastUpdated(lastUpdated);
+	        mibObject.setOrganization(organization);
+	        mibObject.setContactInfo(contact.toString());
+	        
+	        if (group != null)
+	            mibObject.setGroupMembers(group);
+	        
+	        if (revisions != null)
+	            mibObject.setRevisions(revisions);
+	        
+	        return mibObject;
         }
         else
-        {   // these have the regular form :={test 1}
-            index = objInfo.indexOf(" ");
-            parent = objInfo.substring(0, index);
-        }
-        
-        int index2 = objInfo.lastIndexOf(" ") + 1;
-        String objIndex = "";
-        objIndex = objInfo.substring(index2, objInfo.length());
-
-        //System.out.println(nodeParent + " " + nodeIndex);
-
-        // set basic properties
-        MibObjectExtended mibObject = new MibObjectExtended(name, Integer.parseInt(objIndex));
-        
-        mibObject.setDescription(description.toString());
-        
-        if (!access.equals(""))
-            mibObject.setAccess(Access.valueOf(access.toUpperCase().replaceAll("-", "_")));
-
-        if (!status.equals(""))
-            mibObject.setStatus(Status.valueOf(status.toUpperCase()));
-        
-        mibObject.setReference(ref);
-        
-        // construct the syntax object
-        // -the object's type is the only thing required for the existence of a syntax element
-        if (!dataType.equals("")) 
         {
-            MibSyntax syntax = new MibSyntax(dataType);
-            syntax.setDefaultValue(defaultValue);
-            if (pairs != null)
-                syntax.setValuePairs(pairs);
-            
-            mibObject.setSyntax(syntax);
+        	return null;
         }
-        
-        if (indices != null)
-            mibObject.setIndices(indices);
-        
-        // set extended properties
-        mibObject.setObjectType(objectType);
-        mibObject.setParent(parent);
-        mibObject.setLastUpdated(lastUpdated);
-        mibObject.setOrganization(organization);
-        mibObject.setContactInfo(contact.toString());
-        
-        if (group != null)
-            mibObject.setGroupMembers(group);
-        
-        if (revisions != null)
-            mibObject.setRevisions(revisions);
-        
-        return mibObject;
     }
     
     

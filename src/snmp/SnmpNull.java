@@ -42,8 +42,7 @@ public class SnmpNull extends SnmpObject
     /**
      *  Always throws SNMPBadValueException (which null value did you want, anyway?)
      */
-    public void setValue(Object o)
-        throws SnmpBadValueException
+    public void setValue(Object o) throws SnmpBadValueException
     {
         throw new SnmpBadValueException(" Null: attempt to set value ");
     }
@@ -90,7 +89,7 @@ public class SnmpNull extends SnmpObject
      */
     public String toString()
     {
-        return new String("Null");
+        return "Null";
     }
     
 }

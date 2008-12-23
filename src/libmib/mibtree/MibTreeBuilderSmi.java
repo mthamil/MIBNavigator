@@ -28,6 +28,8 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
+import utilities.Utilities;
+
 import libmib.NameValuePair;
 import libmib.MibObjectType;
 import libmib.MibSyntax;
@@ -59,9 +61,10 @@ public class MibTreeBuilderSmi extends AbstractMibTreeBuilder
      */
     protected void addMibToTree(File mibFile) throws InvalidSmiMibFormatException
     { 
+    	BufferedReader in = null;
         try
         {
-            BufferedReader in = new BufferedReader(new FileReader(mibFile));
+            in = new BufferedReader(new FileReader(mibFile));
             handler = new SmiStructureHandler(in);
             String line;
 
@@ -208,11 +211,14 @@ public class MibTreeBuilderSmi extends AbstractMibTreeBuilder
                 
             } // loop until EOF or the END marker is reached
 
-            in.close();  // close the input file
         }
         catch (IOException e)
         {
             System.out.println(e.getMessage());
+        }
+        finally
+        {
+        	Utilities.closeQuietly(in);
         }
     }
     
@@ -250,9 +256,11 @@ public class MibTreeBuilderSmi extends AbstractMibTreeBuilder
             List<NameValuePair> nodeValues = null;
     
             // read until the end of the object definition, retrieving relevant information
-            line = in.readLine().trim();
-            while (!line.startsWith("::=") && line != null)
+            line = in.readLine();
+            while (line != null && !line.trim().startsWith("::="))
             {
+            	line = line.trim();
+            	
                 // strip comments
                 if (line.contains("--"))
                 {
@@ -260,24 +268,28 @@ public class MibTreeBuilderSmi extends AbstractMibTreeBuilder
                     line = line.substring(0, commentIndex).trim();
                 }
     
-                if (!line.trim().equals(""))
+                if (!line.equals(""))
                 {
                     // SYNTAX
                     if (line.contains(SmiTokens.SYNTAX) && !objectType.equals(SmiTokens.MODULE_COMP))
                     {
-                        if (line.trim().equals(SmiTokens.SYNTAX))
+                        if (line.equals(SmiTokens.SYNTAX))
                             line = in.readLine();
     
                         // if the OID has a list of specific integer values
-                        if (line.contains("{"))
+                        if (line != null)
                         {
-                            index = line.indexOf("{");
-                            nodeDataType = line.substring(SmiTokens.SYNTAX.length(), index).trim();
-                            
-                            nodeValues = handler.readPairs(line, SmiTokens.SYNTAX);
+                        	line = line.trim();
+	                        if (line.contains("{"))
+	                        {
+	                            index = line.indexOf("{");
+	                            nodeDataType = line.substring(SmiTokens.SYNTAX.length(), index).trim();
+	                            
+	                            nodeValues = handler.readPairs(line, SmiTokens.SYNTAX);
+	                        }
+	                        else
+	                            nodeDataType = line.substring(SmiTokens.SYNTAX.length()).trim();
                         }
-                        else
-                            nodeDataType = line.substring(SmiTokens.SYNTAX.length()).trim();
                     }
                     
                     // ACCESS
@@ -300,67 +312,70 @@ public class MibTreeBuilderSmi extends AbstractMibTreeBuilder
                         nodeDesc.append(handler.readQuotedSection(line, SmiTokens.DESCRIPTION));
                     }
 
-                    line = in.readLine().trim();
+                    line = in.readLine();
                 }
                 else
                 {
-                    line = in.readLine().trim();
+                    line = in.readLine();
                 }
             }
     
-            // the line with ::= should be processed here
-            String nodeInfo = line.substring(line.indexOf("{") + 1, line.indexOf("}")).trim();
-            String nodeParentName = "";
-            
-            if (nodeInfo.contains("(") && nodeInfo.contains(")"))
-            {   // these have the form ':= {test(1) test2(6) test3(2) 1}'
-                
-                String parents = "";
-                parents = nodeInfo.substring(nodeInfo.indexOf(" "), nodeInfo.lastIndexOf(")"));
-                parents = parents.substring(parents.lastIndexOf(" "), parents.lastIndexOf("("));
-                nodeParentName = parents.trim();
-            }
-            else
-            {   // these have the regular form ':= {test 1}'
-                index = nodeInfo.indexOf(" ");
-                nodeParentName = nodeInfo.substring(0, index);
-            }
-            
-            int index2 = nodeInfo.lastIndexOf(" ") + 1;
-            String nodeIndex = "";
-            nodeIndex = nodeInfo.substring(index2, nodeInfo.length());
-    
-            //System.out.println(nodeParent + " " + nodeIndex);
-
-            // set basic properties
-            mibObject.setName(nodeName);
-            mibObject.setId(Integer.parseInt(nodeIndex));
-            
-            mibObject.setDescription(nodeDesc.toString());
-            
-            if (!nodeAccess.equals(""))
-                mibObject.setAccess(Access.valueOf(nodeAccess.toUpperCase().replaceAll("-", "_")));
-            
-            if (!nodeStatus.equals(""))
-                mibObject.setStatus(Status.valueOf(nodeStatus.toUpperCase()));
-            
-            // construct the Syntax object
-            // -the object's type is the only thing required for the existence of a syntax element
-            if (!nodeDataType.equals("")) 
+            if (line != null)
             {
-                MibSyntax nodeSyntax = new MibSyntax(nodeDataType);
-                if (nodeValues != null)
-                    nodeSyntax.setValuePairs(Collections.synchronizedList(nodeValues)); //synchronize because there MAY be 
-                                                                                        //simultaneous access
-                mibObject.setSyntax(nodeSyntax);
+	            // the line with ::= should be processed here
+	            String nodeInfo = line.substring(line.indexOf("{") + 1, line.indexOf("}")).trim();
+	            String nodeParentName = "";
+	            
+	            if (nodeInfo.contains("(") && nodeInfo.contains(")"))
+	            {   // these have the form ':= {test(1) test2(6) test3(2) 1}'
+	                
+	                String parents = "";
+	                parents = nodeInfo.substring(nodeInfo.indexOf(" "), nodeInfo.lastIndexOf(")"));
+	                parents = parents.substring(parents.lastIndexOf(" "), parents.lastIndexOf("("));
+	                nodeParentName = parents.trim();
+	            }
+	            else
+	            {   // these have the regular form ':= {test 1}'
+	                index = nodeInfo.indexOf(" ");
+	                nodeParentName = nodeInfo.substring(0, index);
+	            }
+	            
+	            int index2 = nodeInfo.lastIndexOf(" ") + 1;
+	            String nodeIndex = "";
+	            nodeIndex = nodeInfo.substring(index2, nodeInfo.length());
+	    
+	            //System.out.println(nodeParent + " " + nodeIndex);
+	
+	            // set basic properties
+	            mibObject.setName(nodeName);
+	            mibObject.setId(Integer.parseInt(nodeIndex));
+	            
+	            mibObject.setDescription(nodeDesc.toString());
+	            
+	            if (!nodeAccess.equals(""))
+	                mibObject.setAccess(Access.valueOf(nodeAccess.toUpperCase().replaceAll("-", "_")));
+	            
+	            if (!nodeStatus.equals(""))
+	                mibObject.setStatus(Status.valueOf(nodeStatus.toUpperCase()));
+	            
+	            // construct the Syntax object
+	            // -the object's type is the only thing required for the existence of a syntax element
+	            if (!nodeDataType.equals("")) 
+	            {
+	                MibSyntax nodeSyntax = new MibSyntax(nodeDataType);
+	                if (nodeValues != null)
+	                    nodeSyntax.setValuePairs(Collections.synchronizedList(nodeValues)); //synchronize because there MAY be 
+	                                                                                        //simultaneous access
+	                mibObject.setSyntax(nodeSyntax);
+	            }
+	            
+	            this.addMibObject(mibObject, nodeParentName);
             }
-            
-            this.addMibObject(mibObject, nodeParentName);
             
         }
         else // if it already exists, read past it's data
         { 
-            while (!line.contains("::=") && (line != null))
+            while (line != null && !line.contains("::="))
                 line = in.readLine();
         }
 

@@ -29,6 +29,8 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.tree.*;
 
+import utilities.Utilities;
+
 import libmib.MibObjectType;
 import libmib.mibtree.MibTreeBuilder;
 import libmib.mibtree.MibTreeNode;
@@ -614,7 +616,7 @@ public class MibBrowser
                         int timeout = Integer.parseInt(timeoutField.getText().trim());
     
                         // Try to scroll to the correct OID.
-                        String oidInputString = Utilities.trimCharacter(oidInputField.getText().trim(), '.');
+                        String oidInputString = Utilities.trim(oidInputField.getText().trim(), '.');
                         String oidTreeNumberString = oidNumberField.getText();
                         
                         if (!oidInputString.equals(oidTreeNumberString))
