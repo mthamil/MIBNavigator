@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mib definition="S5-ETHERNET-TRAP-MIB">
+    <imports>
+        <mibImport>
+            <sourceMib>RFC-1215</sourceMib>
+            <import>TRAP-TYPE</import>
+        </mibImport>
+        <mibImport>
+            <sourceMib>S5-ETHERNET-COMMON-MIB</sourceMib>
+            <import>s5EnPortPartStatus</import>
+            <import>s5EnPortJabberStatus</import>
+            <import>s5EnPortLinkStatus</import>
+        </mibImport>
+        <mibImport>
+            <sourceMib>S5-ETH-REDUNDANT-LINKS-MIB</sourceMib>
+            <import>s5EnRedPortCompanionBrdNum</import>
+            <import>s5EnRedPortCompanionPortNum</import>
+            <import>s5EnRedPortRemoteOperStatus</import>
+            <import>s5EnRedPortRedundMode</import>
+            <import>s5EnRedPortOperStatus</import>
+        </mibImport>
+        <mibImport>
+            <sourceMib>S5-ROOT-MIB</sourceMib>
+            <import>s5EthTrap</import>
+        </mibImport>
+        <mibImport>
+            <sourceMib>S5-SWITCH-BAYSECURE-MIB</sourceMib>
+            <import>s5SbsViolationStatusBrdIndx</import>
+            <import>s5SbsViolationStatusPortIndx</import>
+            <import>s5SbsViolationStatusMACAddress</import>
+            <import>s5SbsMgmViolationType</import>
+            <import>s5SbsMgmViolationIpAddress</import>
+        </mibImport>
+    </imports>
+</mib>

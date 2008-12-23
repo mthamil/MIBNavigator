@@ -1,0 +1,1187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mib definition="S5-CHASSIS-MIB">
+    <imports>
+        <mibImport>
+            <sourceMib>RFC1155-SMI</sourceMib>
+            <import>Counter</import>
+            <import>TimeTicks</import>
+        </mibImport>
+        <mibImport>
+            <sourceMib>RFC-1212</sourceMib>
+            <import>OBJECT-TYPE</import>
+        </mibImport>
+        <mibImport>
+            <sourceMib>RFC1213-MIB</sourceMib>
+            <import>DisplayString</import>
+        </mibImport>
+        <mibImport>
+            <sourceMib>S5-ROOT-MIB</sourceMib>
+            <import>s5Chassis</import>
+        </mibImport>
+        <mibImport>
+            <sourceMib>S5-TCS-MIB</sourceMib>
+            <import>AttId</import>
+            <import>LocChan</import>
+        </mibImport>
+    </imports>
+    <objects>
+        <mibObject>
+            <objectIdentifier>
+                <objectName>s5ChasGen</objectName>
+                <objectId>1</objectId>
+                <parent>s5Chassis</parent>
+            </objectIdentifier>
+        </mibObject>
+        <mibObject>
+            <objectIdentifier>
+                <objectName>s5ChasGrp</objectName>
+                <objectId>2</objectId>
+                <parent>s5Chassis</parent>
+            </objectIdentifier>
+        </mibObject>
+        <mibObject>
+            <objectIdentifier>
+                <objectName>s5ChasCom</objectName>
+                <objectId>3</objectId>
+                <parent>s5Chassis</parent>
+            </objectIdentifier>
+        </mibObject>
+        <mibObject>
+            <objectIdentifier>
+                <objectName>s5ChasBrd</objectName>
+                <objectId>4</objectId>
+                <parent>s5Chassis</parent>
+            </objectIdentifier>
+        </mibObject>
+        <mibObject>
+            <objectIdentifier>
+                <objectName>s5ChasStore</objectName>
+                <objectId>5</objectId>
+                <parent>s5Chassis</parent>
+            </objectIdentifier>
+        </mibObject>
+        <mibObject>
+            <objectIdentifier>
+                <objectName>s5ChasSm</objectName>
+                <objectId>6</objectId>
+                <parent>s5Chassis</parent>
+            </objectIdentifier>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasType</objectName>
+                <objectId>1</objectId>
+                <parent>s5ChasGen</parent>
+                <syntax>
+                    <type>OBJECT IDENTIFIER</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The chassis type. This is 'what kind of&lt;br&gt;box' is being managed. The values are&lt;br&gt;defined under s5ChasTypeVal in the&lt;br&gt;Registration MIB.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasDescr</objectName>
+                <objectId>2</objectId>
+                <parent>s5ChasGen</parent>
+                <syntax>
+                    <type>DisplayString (SIZE(0..64))</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>A description of the chassis.&lt;br&gt;The value is a zero length string&lt;br&gt;if no information is available.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasLocation</objectName>
+                <objectId>3</objectId>
+                <parent>s5ChasGen</parent>
+                <syntax>
+                    <type>DisplayString (SIZE(0..64))</type>
+                </syntax>
+                <access>read-write</access>
+                <status>mandatory</status>
+                <description>The physical location of the chassis&lt;br&gt;(e.g., 'fourth floor wiring closet in&lt;br&gt;building A'). The value is a zero&lt;br&gt;length string if no information&lt;br&gt;is available.  Note: this object is&lt;br&gt;different from sysLocation in MIB-II.&lt;br&gt;However, an agent may use this value for&lt;br&gt;sysLocation if none is configured in the&lt;br&gt;the agent.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasContact</objectName>
+                <objectId>4</objectId>
+                <parent>s5ChasGen</parent>
+                <syntax>
+                    <type>DisplayString (SIZE(0..64))</type>
+                </syntax>
+                <access>read-write</access>
+                <status>mandatory</status>
+                <description>The textual identification of the&lt;br&gt;contact person for the chassis, together&lt;br&gt;with information on how to contact&lt;br&gt;this person. The value is a zero length&lt;br&gt;string if no information is available.&lt;br&gt;Note: this object is different from sysContact&lt;br&gt;in MIB-II. However, an agent may use this value&lt;br&gt;for sysContact if none is configured in the&lt;br&gt;agent.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasVer</objectName>
+                <objectId>5</objectId>
+                <parent>s5ChasGen</parent>
+                <syntax>
+                    <type>DisplayString (SIZE(0..32))</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The version of the chassis in the form&lt;br&gt;'major.minor.maintenance[letters]'. If the&lt;br&gt;version is unknown or not available then&lt;br&gt;the value should be a zero length string.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasSerNum</objectName>
+                <objectId>6</objectId>
+                <parent>s5ChasGen</parent>
+                <syntax>
+                    <type>DisplayString (SIZE(0..32))</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The serial number of the chassis. If the&lt;br&gt;serial number is unknown or unavailable then&lt;br&gt;the value should be a zero length string.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasGblPhysChngs</objectName>
+                <objectId>7</objectId>
+                <parent>s5ChasGen</parent>
+                <syntax>
+                    <type>Counter</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The total number of physical changes (i.e.,&lt;br&gt;an addition or removal of a component or&lt;br&gt;sub-component) that have been detected in the&lt;br&gt;chassis since cold/warm start of the agent.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasGblPhysLstChng</objectName>
+                <objectId>8</objectId>
+                <parent>s5ChasGen</parent>
+                <syntax>
+                    <type>TimeTicks</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The value of sysUpTime when the last&lt;br&gt;physical change (i.e., addition or&lt;br&gt;removal of a module or sub-module) was&lt;br&gt;detected in the chassis. If none have&lt;br&gt;been detected since cold/warm start of&lt;br&gt;the agent, then the value is zero.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasGblAttChngs</objectName>
+                <objectId>9</objectId>
+                <parent>s5ChasGen</parent>
+                <syntax>
+                    <type>Counter</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The total number of attachment changes&lt;br&gt;across all boards in the chassis that have&lt;br&gt;been detected since cold/warm start of&lt;br&gt;the agent.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasGblAttLstChng</objectName>
+                <objectId>10</objectId>
+                <parent>s5ChasGen</parent>
+                <syntax>
+                    <type>TimeTicks</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The value of sysUpTime when the last&lt;br&gt;attachment change on any board in the chassis&lt;br&gt;was detected. If none have been detected&lt;br&gt;since cold/warm start of the agent, then the&lt;br&gt;value is zero.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasGblConfChngs</objectName>
+                <objectId>11</objectId>
+                <parent>s5ChasGen</parent>
+                <syntax>
+                    <type>Counter</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The total number of configuration changes&lt;br&gt;(other than attachment changes, or physical&lt;br&gt;additions or removals) across all boards in&lt;br&gt;the chassis that have been detected since&lt;br&gt;cold/warm start of the agent.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasGblConfLstChng</objectName>
+                <objectId>12</objectId>
+                <parent>s5ChasGen</parent>
+                <syntax>
+                    <type>TimeTicks</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The value of sysUpTime when the last&lt;br&gt;configuration change (other than attachment&lt;br&gt;changes, or physical additions or removals)&lt;br&gt;on any board in the chassis was detected.&lt;br&gt;If none have been detected since cold/warm&lt;br&gt;start of the agent, then the value is zero.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasGrpTable</objectName>
+                <objectId>1</objectId>
+                <parent>s5ChasGrp</parent>
+                <syntax>
+                    <sequence>S5ChasGrpEntry</sequence>
+                </syntax>
+                <access>not-accessible</access>
+                <status>mandatory</status>
+                <description>A table that contains information about&lt;br&gt;each group that can contain chassis&lt;br&gt;components.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasGrpEntry</objectName>
+                <objectId>1</objectId>
+                <parent>s5ChasGrpTable</parent>
+                <syntax>
+                    <type>S5ChasGrpEntry</type>
+                </syntax>
+                <access>not-accessible</access>
+                <status>mandatory</status>
+                <description>A row in the group table.&lt;br&gt;Rows can not be created or deleted via&lt;br&gt;SNMP requests. The number of entries&lt;br&gt;is determined by the physical construction&lt;br&gt;of the chassis.</description>
+                <indices>
+                    <index>s5ChasGrpIndx</index>
+                </indices>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasGrpIndx</objectName>
+                <objectId>1</objectId>
+                <parent>s5ChasGrpEntry</parent>
+                <syntax>
+                    <type>INTEGER (1..32767)</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The index of the group.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasGrpType</objectName>
+                <objectId>2</objectId>
+                <parent>s5ChasGrpEntry</parent>
+                <syntax>
+                    <type>OBJECT IDENTIFIER</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The type of the group. The group type&lt;br&gt;determines the types of items that can&lt;br&gt;be plugged into the positions in the&lt;br&gt;group. The groups are defined under&lt;br&gt;s5ChasGrpTypeVal in the Registration MIB.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasGrpDescr</objectName>
+                <objectId>3</objectId>
+                <parent>s5ChasGrpEntry</parent>
+                <syntax>
+                    <type>DisplayString (SIZE(0..32))</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The description of the group. If not&lt;br&gt;available, the value is a zero length&lt;br&gt;string.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasGrpMaxEnts</objectName>
+                <objectId>4</objectId>
+                <parent>s5ChasGrpEntry</parent>
+                <syntax>
+                    <type>INTEGER (-1..32767)</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The maximum number of entries&lt;br&gt;in the group. If not available, a&lt;br&gt;value of -1 is returned.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasGrpNumEnts</objectName>
+                <objectId>5</objectId>
+                <parent>s5ChasGrpEntry</parent>
+                <syntax>
+                    <type>INTEGER (-1..32767)</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The current number of entries&lt;br&gt;in the group. If not available,&lt;br&gt;a value of -1 is returned.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasGrpPhysChngs</objectName>
+                <objectId>6</objectId>
+                <parent>s5ChasGrpEntry</parent>
+                <syntax>
+                    <type>Counter</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The total number of physical changes (i.e.,&lt;br&gt;an addition or removal of a component or&lt;br&gt;sub-component) that have been detected in&lt;br&gt;the group since cold/warm start of the agent.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasGrpPhysLstChng</objectName>
+                <objectId>7</objectId>
+                <parent>s5ChasGrpEntry</parent>
+                <syntax>
+                    <type>TimeTicks</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The value of sysUpTime that the last&lt;br&gt;physical change (i.e., addition or&lt;br&gt;removal of a module or sub-module) was&lt;br&gt;detected in the group. If none have been&lt;br&gt;detected since cold/warm start of the&lt;br&gt;agent, then the value is zero.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasGrpEncodeFactor</objectName>
+                <objectId>8</objectId>
+                <parent>s5ChasGrpEntry</parent>
+                <syntax>
+                    <type>INTEGER</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The multiplication factor used in encoding&lt;br&gt;the component index of a component in the group.&lt;br&gt;The component index for any group should be&lt;br&gt;determined in conjunction with this object for&lt;br&gt;that group.  A value of 1 indicates 'no encoding'.&lt;br&gt;&lt;br&gt;Stackable platforms:&lt;br&gt;The component index is encoded using the&lt;br&gt;following formula:&lt;br&gt;Component Index =&lt;br&gt;(Unit# * s5ChasGrpEncodeFactor) + Module#&lt;br&gt;&lt;br&gt;Where:  Unit# is obtained from s5ChasComIndx&lt;br&gt;for the Unit Group, and Module# is the&lt;br&gt;module number in a unit starting from 1&lt;br&gt;and increases in a left-to-right and&lt;br&gt;bottom-to-top fashion.&lt;br&gt;&lt;br&gt;NonStackable platforms:&lt;br&gt;These NMMs like 5310, 5510 will always return a&lt;br&gt;value of 1 for this object.  Encoding/decoding&lt;br&gt;should not be performed in this case.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasComTable</objectName>
+                <objectId>1</objectId>
+                <parent>s5ChasCom</parent>
+                <syntax>
+                    <sequence>S5ChasComEntry</sequence>
+                </syntax>
+                <access>not-accessible</access>
+                <status>mandatory</status>
+                <description>A table that contains information&lt;br&gt;about each chassis level component&lt;br&gt;and sub-component.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasComEntry</objectName>
+                <objectId>1</objectId>
+                <parent>s5ChasComTable</parent>
+                <syntax>
+                    <type>S5ChasComEntry</type>
+                </syntax>
+                <access>not-accessible</access>
+                <status>mandatory</status>
+                <description>A row in the component/sub-component&lt;br&gt;table. Rows can not be created or&lt;br&gt;deleted via SNMP requests. Entries are&lt;br&gt;created and deleted when components or&lt;br&gt;sub-components are inserted or removed&lt;br&gt;from the chassis.</description>
+                <indices>
+                    <index>s5ChasComGrpIndx</index>
+                    <index>s5ChasComIndx</index>
+                    <index>s5ChasComSubIndx</index>
+                </indices>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasComGrpIndx</objectName>
+                <objectId>1</objectId>
+                <parent>s5ChasComEntry</parent>
+                <syntax>
+                    <type>INTEGER (1..32767)</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The index of the chassis level group which&lt;br&gt;contains this component.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasComIndx</objectName>
+                <objectId>2</objectId>
+                <parent>s5ChasComEntry</parent>
+                <syntax>
+                    <type>INTEGER (1..32767)</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The index of the component in the group.&lt;br&gt;For example, for modules in the 'board'&lt;br&gt;group, this is the slot number.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasComSubIndx</objectName>
+                <objectId>3</objectId>
+                <parent>s5ChasComEntry</parent>
+                <syntax>
+                    <type>INTEGER (0..32767)</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>If this table entry (i.e. table row)&lt;br&gt;describes a component, then the value is&lt;br&gt;zero. Otherwise, this table entry describes&lt;br&gt;a sub-component and this is the index of&lt;br&gt;the sub-component.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasComType</objectName>
+                <objectId>4</objectId>
+                <parent>s5ChasComEntry</parent>
+                <syntax>
+                    <type>OBJECT IDENTIFIER</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The type of component/sub-component. The&lt;br&gt;values are defined under s5ChasComTypeVal&lt;br&gt;in the Registration MIB.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasComDescr</objectName>
+                <objectId>5</objectId>
+                <parent>s5ChasComEntry</parent>
+                <syntax>
+                    <type>DisplayString (SIZE(0..64))</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>A description of the component/sub-component.&lt;br&gt;If not available, the value is a zero length&lt;br&gt;string.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasComVer</objectName>
+                <objectId>6</objectId>
+                <parent>s5ChasComEntry</parent>
+                <syntax>
+                    <type>DisplayString (SIZE(0..32))</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The version number of the component/sub-component.&lt;br&gt;If not available, the value is a zero length&lt;br&gt;string.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasComSerNum</objectName>
+                <objectId>7</objectId>
+                <parent>s5ChasComEntry</parent>
+                <syntax>
+                    <type>DisplayString (SIZE(0..32))</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The serial number of the component/sub-component.&lt;br&gt;If not available, the value is a zero length&lt;br&gt;string.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasComLstChng</objectName>
+                <objectId>8</objectId>
+                <parent>s5ChasComEntry</parent>
+                <syntax>
+                    <type>TimeTicks</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The value of sysUpTime when it was&lt;br&gt;detected that the component/sub-component&lt;br&gt;was added to the chassis. If this has not&lt;br&gt;occurred since the cold/warm start of the&lt;br&gt;agent, then the value is zero.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasComAdminState</objectName>
+                <objectId>9</objectId>
+                <parent>s5ChasComEntry</parent>
+                <syntax>
+                    <type>INTEGER</type>
+                    <valueList>
+                        <valueItem>
+                            <label>other</label>
+                            <val>1</val>
+                        </valueItem>
+                        <valueItem>
+                            <label>notAvail</label>
+                            <val>2</val>
+                        </valueItem>
+                        <valueItem>
+                            <label>disable</label>
+                            <val>3</val>
+                        </valueItem>
+                        <valueItem>
+                            <label>enable</label>
+                            <val>4</val>
+                        </valueItem>
+                        <valueItem>
+                            <label>reset</label>
+                            <val>5</val>
+                        </valueItem>
+                        <valueItem>
+                            <label>test</label>
+                            <val>6</val>
+                        </valueItem>
+                    </valueList>
+                </syntax>
+                <access>read-write</access>
+                <status>mandatory</status>
+                <description>The desired state of the component/sub-component.&lt;br&gt;The values that are read-only are:&lt;br&gt;other(1)......currently in some other state&lt;br&gt;notAvail(2)...actual value is not available&lt;br&gt;&lt;br&gt;The possible values that can be read and&lt;br&gt;written are:&lt;br&gt;disable(3)...disable operation&lt;br&gt;enable(4)....enable operation&lt;br&gt;reset(5).....reset component&lt;br&gt;test(6)......start self test of component, with&lt;br&gt;the result to be normal(5),&lt;br&gt;warning(8), nonFatalErr(9),&lt;br&gt;or fatalErr(10) in object&lt;br&gt;s5ChasComOperState&lt;br&gt;The allowable (and meaningful) values&lt;br&gt;are determined by the component type.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasComOperState</objectName>
+                <objectId>10</objectId>
+                <parent>s5ChasComEntry</parent>
+                <syntax>
+                    <type>INTEGER</type>
+                    <valueList>
+                        <valueItem>
+                            <label>other</label>
+                            <val>1</val>
+                        </valueItem>
+                        <valueItem>
+                            <label>notAvail</label>
+                            <val>2</val>
+                        </valueItem>
+                        <valueItem>
+                            <label>removed</label>
+                            <val>3</val>
+                        </valueItem>
+                        <valueItem>
+                            <label>disabled</label>
+                            <val>4</val>
+                        </valueItem>
+                        <valueItem>
+                            <label>normal</label>
+                            <val>5</val>
+                        </valueItem>
+                        <valueItem>
+                            <label>resetInProg</label>
+                            <val>6</val>
+                        </valueItem>
+                        <valueItem>
+                            <label>testing</label>
+                            <val>7</val>
+                        </valueItem>
+                        <valueItem>
+                            <label>warning</label>
+                            <val>8</val>
+                        </valueItem>
+                        <valueItem>
+                            <label>nonFatalErr</label>
+                            <val>9</val>
+                        </valueItem>
+                        <valueItem>
+                            <label>fatalErr</label>
+                            <val>10</val>
+                        </valueItem>
+                    </valueList>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The current operational state of the&lt;br&gt;component. The possible values are:&lt;br&gt;other(1).........some other state&lt;br&gt;notAvail(2)......state not available&lt;br&gt;removed(3).......component removed&lt;br&gt;disabled(4)......operation disabled&lt;br&gt;normal(5)........normal operation&lt;br&gt;resetInProg(6)...reset in progress&lt;br&gt;testing(7).......doing a self test&lt;br&gt;warning(8).......operating at warning level&lt;br&gt;nonFatalErr(9)...operating at error level&lt;br&gt;fatalErr(10).....error stopped operation&lt;br&gt;The allowable (and meaningful) values&lt;br&gt;are determined by the component type.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasComMaxSubs</objectName>
+                <objectId>11</objectId>
+                <parent>s5ChasComEntry</parent>
+                <syntax>
+                    <type>INTEGER (-1..32767)</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The potential number of sub-components&lt;br&gt;that can be attached to the component.&lt;br&gt;A value of zero means none. A value of -1&lt;br&gt;indicates that no component information is&lt;br&gt;available. The actual number of&lt;br&gt;installed sub-components is found in&lt;br&gt;s5ChasComNumSubs.&lt;br&gt;If this entry is a sub-component, then&lt;br&gt;this object has a value of zero.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasComNumSubs</objectName>
+                <objectId>12</objectId>
+                <parent>s5ChasComEntry</parent>
+                <syntax>
+                    <type>INTEGER (-1..32767)</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The actual number of sub-components that&lt;br&gt;are attached to the component. A value of&lt;br&gt;zero means none. A value of -1 indicates&lt;br&gt;that no component information is available.&lt;br&gt;The potential number of sub-components&lt;br&gt;that can be installed is found in&lt;br&gt;s5ChasComMaxSubs.&lt;br&gt;If this entry is a sub-component, then&lt;br&gt;this object has the value of zero.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasComRelPos</objectName>
+                <objectId>13</objectId>
+                <parent>s5ChasComEntry</parent>
+                <syntax>
+                    <type>INTEGER (0..32767)</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>This object describes the position of&lt;br&gt;each component in the unit group relative&lt;br&gt;to each other.  Components in the unit group&lt;br&gt;are numbered in the ascending order with the&lt;br&gt;uppermost component being numbered one.  The&lt;br&gt;value of this object should never be greater&lt;br&gt;than the value of s5ChasGrpMaxEnts.  If not&lt;br&gt;available, a value of zero will be returned.&lt;br&gt;&lt;br&gt;Note:  This object is only implemented in&lt;br&gt;agents that support 'virtual' chassis.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasComLocation</objectName>
+                <objectId>14</objectId>
+                <parent>s5ChasComEntry</parent>
+                <syntax>
+                    <type>DisplayString (SIZE(0..32))</type>
+                </syntax>
+                <access>read-write</access>
+                <status>mandatory</status>
+                <description>This object provides geographic location&lt;br&gt;information of a component in a system&lt;br&gt;modeled as a chassis, but possibly physically&lt;br&gt;implemented with geographically separate devices&lt;br&gt;connected together to exchange managment information.&lt;br&gt;Chassis' modeled in this manner are sometimes refered&lt;br&gt;to as 'virtual chassis'.  An example value is:&lt;br&gt;'4th flr wiring closet in blg A'.&lt;br&gt;&lt;br&gt;Notes:  1.)  This object is applicable only to&lt;br&gt;components that can be found in either&lt;br&gt;the Board or Unit groups.  If the&lt;br&gt;information is unavailable (i.e., not&lt;br&gt;modeling a virtual chassis or component&lt;br&gt;is not in Board or Unit group), the value&lt;br&gt;is a zero length string.&lt;br&gt;2.)  If this object is applicable and is not&lt;br&gt;assigned a value via a SNMP SET PDU when&lt;br&gt;the row  is created, the value will default&lt;br&gt;to the value of the object s5ChasComSerNum.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasComGroupMap</objectName>
+                <objectId>15</objectId>
+                <parent>s5ChasComEntry</parent>
+                <syntax>
+                    <type>INTEGER (0..32767)</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>This object describes the group mapping of&lt;br&gt;each component in the chassis.  For the&lt;br&gt;components in the unit group, the value of this&lt;br&gt;object should be the backplane number to which the&lt;br&gt;unit is connected.  The value of this object should&lt;br&gt;never be greater than the value of s5ChasGrpMaxEnts.&lt;br&gt;If not available, a value of zero should be returned.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasBrdTable</objectName>
+                <objectId>1</objectId>
+                <parent>s5ChasBrd</parent>
+                <syntax>
+                    <sequence>S5ChasBrdEntry</sequence>
+                </syntax>
+                <access>not-accessible</access>
+                <status>mandatory</status>
+                <description>A table containing information about each&lt;br&gt;board that can be inserted into a slot.&lt;br&gt;These include boards such as Repeater Modules&lt;br&gt;and Network Management Modules.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasBrdEntry</objectName>
+                <objectId>1</objectId>
+                <parent>s5ChasBrdTable</parent>
+                <syntax>
+                    <type>S5ChasBrdEntry</type>
+                </syntax>
+                <access>not-accessible</access>
+                <status>mandatory</status>
+                <description>A row in the board table. Entries can not&lt;br&gt;be created or deleted via SNMP. Entries are&lt;br&gt;created and deleted when boards are inserted&lt;br&gt;or removed from slots in the chassis.</description>
+                <indices>
+                    <index>s5ChasBrdIndx</index>
+                </indices>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasBrdIndx</objectName>
+                <objectId>1</objectId>
+                <parent>s5ChasBrdEntry</parent>
+                <syntax>
+                    <type>INTEGER (1..255)</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The index of the board. This corresponds to&lt;br&gt;the index of the slot containing the board.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasBrdLeds</objectName>
+                <objectId>2</objectId>
+                <parent>s5ChasBrdEntry</parent>
+                <syntax>
+                    <type>OCTET STRING</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>A bit array that contains the value of the&lt;br&gt;front panel LEDs and the annunciator. This is&lt;br&gt;a packed bit string; each LED is encoded into&lt;br&gt;4 bits (a nibble). The first nibble is stored&lt;br&gt;in the high order bits of the first octet. The&lt;br&gt;second nibble is stored in the low order bits&lt;br&gt;the first octet, etc. However, the current&lt;br&gt;mapping is that the first three nibbles are&lt;br&gt;reserved, the fourth nibble has the value of&lt;br&gt;the 'annunciator', and the 'normal' LEDs start&lt;br&gt;with the fifth nibble. If the LED values are not&lt;br&gt;available, a zero length string is returned. The&lt;br&gt;following shows the meaning of each bit (bit 0 is&lt;br&gt;the least significant bit) when it has a value&lt;br&gt;of one:&lt;br&gt;&lt;br&gt;bit  meaning&lt;br&gt;0   green light&lt;br&gt;1   yellow light&lt;br&gt;2   blinking&lt;br&gt;3   reserved</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasBrdNumAtt</objectName>
+                <objectId>3</objectId>
+                <parent>s5ChasBrdEntry</parent>
+                <syntax>
+                    <type>INTEGER (0..255)</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The total number of backplane network&lt;br&gt;attachment points on the board.&lt;br&gt;This may vary based on the mode of the&lt;br&gt;board for FDDI.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasBrdAttChngs</objectName>
+                <objectId>4</objectId>
+                <parent>s5ChasBrdEntry</parent>
+                <syntax>
+                    <type>Counter</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The total number of attachment changes&lt;br&gt;for the board that have been detected since&lt;br&gt;cold/warm start of the agent or since&lt;br&gt;the board was inserted.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasBrdAttLstChng</objectName>
+                <objectId>5</objectId>
+                <parent>s5ChasBrdEntry</parent>
+                <syntax>
+                    <type>TimeTicks</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The value of sysUpTime when the last&lt;br&gt;attachment change on the board&lt;br&gt;has detected. If none have been detected&lt;br&gt;since cold/warm start of the agent, then&lt;br&gt;the value is zero.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasBrdStatusDsply</objectName>
+                <objectId>6</objectId>
+                <parent>s5ChasBrdEntry</parent>
+                <syntax>
+                    <type>DisplayString (SIZE(0..48))</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The current ASCII character display of&lt;br&gt;the board. The length returned should&lt;br&gt;match the length of the display.&lt;br&gt;Boards with multiple displays should&lt;br&gt;return the values concatenated together.&lt;br&gt;Boards with no display hardware should&lt;br&gt;return a zero length string.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasBrdDateCode</objectName>
+                <objectId>7</objectId>
+                <parent>s5ChasBrdEntry</parent>
+                <syntax>
+                    <type>DisplayString (SIZE(0..8))</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The date of manufacture of the board&lt;br&gt;in ASCII in the format: YYYYmmdd. For&lt;br&gt;example, the value for April 13, 1993&lt;br&gt;is 19930413. If not available, the&lt;br&gt;value is a zero-length string.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasBrdCfgSrc</objectName>
+                <objectId>8</objectId>
+                <parent>s5ChasBrdEntry</parent>
+                <syntax>
+                    <type>INTEGER</type>
+                    <valueList>
+                        <valueItem>
+                            <label>other</label>
+                            <val>1</val>
+                        </valueItem>
+                        <valueItem>
+                            <label>dfltJmpr</label>
+                            <val>2</val>
+                        </valueItem>
+                        <valueItem>
+                            <label>prmMem</label>
+                            <val>3</val>
+                        </valueItem>
+                        <valueItem>
+                            <label>brdCfg</label>
+                            <val>4</val>
+                        </valueItem>
+                        <valueItem>
+                            <label>sm</label>
+                            <val>5</val>
+                        </valueItem>
+                        <valueItem>
+                            <label>smDfltJmpr</label>
+                            <val>6</val>
+                        </valueItem>
+                        <valueItem>
+                            <label>smPrmMem</label>
+                            <val>7</val>
+                        </valueItem>
+                        <valueItem>
+                            <label>smBrdCfg</label>
+                            <val>8</val>
+                        </valueItem>
+                    </valueList>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The source of the configuration&lt;br&gt;at the last board reset. The values&lt;br&gt;are:&lt;br&gt;other(1)........unknown or some other value&lt;br&gt;dfltJmpr(2).....default jumpers&lt;br&gt;prmMem(3).......permanent memory on board&lt;br&gt;brdCfg(4).......saved configuration on board&lt;br&gt;sm(5)...........supervisor&lt;br&gt;smDfltJmpr(6)...SM and default jumpers&lt;br&gt;smPrmMem(7).....SM and permanent memory on board&lt;br&gt;smBrdCfg(8).....SM and saved configuration on board</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasBrdCfgChngs</objectName>
+                <objectId>9</objectId>
+                <parent>s5ChasBrdEntry</parent>
+                <syntax>
+                    <type>Counter</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The total number of configuration&lt;br&gt;changes for the board that have been&lt;br&gt;detected since cold/warm start of the&lt;br&gt;agent or since the board was inserted.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasAttTable</objectName>
+                <objectId>2</objectId>
+                <parent>s5ChasBrd</parent>
+                <syntax>
+                    <sequence>S5ChasAttEntry</sequence>
+                </syntax>
+                <access>not-accessible</access>
+                <status>mandatory</status>
+                <description>A table containing information about each&lt;br&gt;backplane attachment point on a board.&lt;br&gt;The number of entries for a board is the&lt;br&gt;value of s5ChasBrdNumAtt.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasAttEntry</objectName>
+                <objectId>1</objectId>
+                <parent>s5ChasAttTable</parent>
+                <syntax>
+                    <type>S5ChasAttEntry</type>
+                </syntax>
+                <access>not-accessible</access>
+                <status>mandatory</status>
+                <description>A row in the attachment point table.&lt;br&gt;Entries can not be created or deleted&lt;br&gt;via SNMP. Entries are created and deleted&lt;br&gt;when boards are inserted or removed from&lt;br&gt;slots in the chassis, or the number of&lt;br&gt;attachment points is changed.</description>
+                <indices>
+                    <index>s5ChasAttBrdIndx</index>
+                    <index>s5ChasAttIndx</index>
+                </indices>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasAttBrdIndx</objectName>
+                <objectId>1</objectId>
+                <parent>s5ChasAttEntry</parent>
+                <syntax>
+                    <type>INTEGER (1..255)</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The index of the board. This corresponds to&lt;br&gt;the index of the slot containing the board.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasAttIndx</objectName>
+                <objectId>2</objectId>
+                <parent>s5ChasAttEntry</parent>
+                <syntax>
+                    <type>INTEGER (1..255)</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The index of the attachment point on&lt;br&gt;the board.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasAttDfltAtt</objectName>
+                <objectId>3</objectId>
+                <parent>s5ChasAttEntry</parent>
+                <syntax>
+                    <type>AttId</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The default setting for the attachment&lt;br&gt;point. An attachment point may be attached&lt;br&gt;to a local channel, not attached to any&lt;br&gt;backplane network, or attached to a media&lt;br&gt;specific backplane network. (The valid choices&lt;br&gt;depend on each specific attachment point.)&lt;br&gt;NOTE: This value will always be valid&lt;br&gt;and may change when the backplane divider&lt;br&gt;switch setting is changed.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasAttCurAtt</objectName>
+                <objectId>4</objectId>
+                <parent>s5ChasAttEntry</parent>
+                <syntax>
+                    <type>AttId</type>
+                </syntax>
+                <access>read-write</access>
+                <status>mandatory</status>
+                <description>The current setting for the attachment&lt;br&gt;point. The slot position of the board,&lt;br&gt;the setting of the backplane divider switch(es),&lt;br&gt;and the mode setting affect which backplane&lt;br&gt;networks are valid values. Also, some boards&lt;br&gt;may put limitations on which backplane&lt;br&gt;network(s) or local channel(s) may be used.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasAttChngs</objectName>
+                <objectId>5</objectId>
+                <parent>s5ChasAttEntry</parent>
+                <syntax>
+                    <type>Counter</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The total number of attachment changes&lt;br&gt;for the attachment point that have been&lt;br&gt;detected since cold/warm start of the agent.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasAttLstChng</objectName>
+                <objectId>6</objectId>
+                <parent>s5ChasAttEntry</parent>
+                <syntax>
+                    <type>TimeTicks</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The value of sysUpTime when the last&lt;br&gt;attachment change for the attachment&lt;br&gt;point was detected. If none have been&lt;br&gt;detected since cold/warm start of the&lt;br&gt;agent, then the value is zero.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasAttClusterConnCapability</objectName>
+                <objectId>7</objectId>
+                <parent>s5ChasAttEntry</parent>
+                <syntax>
+                    <type>OCTET STRING (SIZE(8))</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>A bit array that contains the bit map&lt;br&gt;representing all available backplane&lt;br&gt;segment and local segment connections for&lt;br&gt;the cluster.  One bit is also reserved to&lt;br&gt;indicate if the cluster has an isolate&lt;br&gt;capability.&lt;br&gt;&lt;br&gt;The first 31 bits of the array represent&lt;br&gt;the backplane numbers, starting from the&lt;br&gt;lower order bit. Bit 32 indicates whether&lt;br&gt;the Cluster has a null connection capability.&lt;br&gt;The bits in the fifth and sixth octets,&lt;br&gt;starting with bits in the lower order octet,&lt;br&gt;represent local segments that the cluster&lt;br&gt;can connect to.&lt;br&gt;&lt;br&gt;A bit with a value of 1 means that the&lt;br&gt;cluster is capable of  connecting to the&lt;br&gt;corresponding backplane segment, local segment&lt;br&gt;or null segment.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasLocChanTable</objectName>
+                <objectId>3</objectId>
+                <parent>s5ChasBrd</parent>
+                <syntax>
+                    <sequence>S5ChasLocChanEntry</sequence>
+                </syntax>
+                <access>not-accessible</access>
+                <status>mandatory</status>
+                <description>A table containing information about each&lt;br&gt;'dual mode' local channel on a board.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasLocChanEntry</objectName>
+                <objectId>1</objectId>
+                <parent>s5ChasLocChanTable</parent>
+                <syntax>
+                    <type>S5ChasLocChanEntry</type>
+                </syntax>
+                <access>not-accessible</access>
+                <status>mandatory</status>
+                <description>A row in the local channel table.&lt;br&gt;Entries can not be created or deleted&lt;br&gt;via SNMP. Entries are added or removed&lt;br&gt;by adding or removing a board that has&lt;br&gt;a 'dual mode' local channel from a slot&lt;br&gt;in the chassis.</description>
+                <indices>
+                    <index>s5ChasLocChanBrdIndx</index>
+                    <index>s5ChasLocChanIndx</index>
+                </indices>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasLocChanBrdIndx</objectName>
+                <objectId>1</objectId>
+                <parent>s5ChasLocChanEntry</parent>
+                <syntax>
+                    <type>INTEGER (1..255)</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The index of the board. This corresponds to&lt;br&gt;the index of the slot containing the board.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasLocChanIndx</objectName>
+                <objectId>2</objectId>
+                <parent>s5ChasLocChanEntry</parent>
+                <syntax>
+                    <type>LocChan</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The index of the local channel.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasLocChanBkplMode</objectName>
+                <objectId>3</objectId>
+                <parent>s5ChasLocChanEntry</parent>
+                <syntax>
+                    <type>INTEGER</type>
+                    <valueList>
+                        <valueItem>
+                            <label>other</label>
+                            <val>1</val>
+                        </valueItem>
+                        <valueItem>
+                            <label>connected</label>
+                            <val>2</val>
+                        </valueItem>
+                        <valueItem>
+                            <label>notConnected</label>
+                            <val>3</val>
+                        </valueItem>
+                    </valueList>
+                </syntax>
+                <access>read-write</access>
+                <status>mandatory</status>
+                <description>Indicates the attachment/isolation&lt;br&gt;mode of a local channel to a backplane&lt;br&gt;channel. The values that are read/write are:&lt;br&gt;connected(2)......connect local chan N to bkpl N&lt;br&gt;notConnected(3)...disconnect local chan N from bkpl&lt;br&gt;&lt;br&gt;The possible values that can be read are:&lt;br&gt;other(1)..........unknown&lt;br&gt;connected(2)......local chan N connected to bkpl N&lt;br&gt;notConnected(3)...local chan N isolated from bkpl N</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasStoreTable</objectName>
+                <objectId>1</objectId>
+                <parent>s5ChasStore</parent>
+                <syntax>
+                    <sequence>S5ChasStoreEntry</sequence>
+                </syntax>
+                <access>not-accessible</access>
+                <status>mandatory</status>
+                <description>A table listing the storage areas&lt;br&gt;on each component/sub-component in&lt;br&gt;the chassis. The number is determined&lt;br&gt;by the components in the chassis&lt;br&gt;which have manageable storage areas.&lt;br&gt;Examples of storage areas include&lt;br&gt;RAM(main memory), FLASH, ROM,&lt;br&gt;EEPROM, etc. This does not include&lt;br&gt;disk drives.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasStoreEntry</objectName>
+                <objectId>1</objectId>
+                <parent>s5ChasStoreTable</parent>
+                <syntax>
+                    <type>S5ChasStoreEntry</type>
+                </syntax>
+                <access>not-accessible</access>
+                <status>mandatory</status>
+                <description>A row in the table of storage areas.&lt;br&gt;The entries can not be created or&lt;br&gt;deleted via SNMP requests. Only those&lt;br&gt;components/sub-components that have&lt;br&gt;storage areas that are installed are&lt;br&gt;present. Storage areas that are on&lt;br&gt;components have a sub-component&lt;br&gt;index value of zero. Storage areas that&lt;br&gt;are on sub-components have a non-zero&lt;br&gt;sub-component index value.</description>
+                <indices>
+                    <index>s5ChasStoreGrpIndx</index>
+                    <index>s5ChasStoreComIndx</index>
+                    <index>s5ChasStoreSubIndx</index>
+                    <index>s5ChasStoreIndx</index>
+                </indices>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasStoreGrpIndx</objectName>
+                <objectId>1</objectId>
+                <parent>s5ChasStoreEntry</parent>
+                <syntax>
+                    <type>INTEGER (1..32767)</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The index of the chassis level group&lt;br&gt;which contains the component or&lt;br&gt;sub-component containing the storage&lt;br&gt;area.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasStoreComIndx</objectName>
+                <objectId>2</objectId>
+                <parent>s5ChasStoreEntry</parent>
+                <syntax>
+                    <type>INTEGER (1..32767)</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The index of the component or&lt;br&gt;the component which contains the&lt;br&gt;sub-component containing the&lt;br&gt;storage area.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasStoreSubIndx</objectName>
+                <objectId>3</objectId>
+                <parent>s5ChasStoreEntry</parent>
+                <syntax>
+                    <type>INTEGER (0..32767)</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>If the storage area is on a component,&lt;br&gt;then the value zero. Otherwise, the&lt;br&gt;storage area is on a sub-component and&lt;br&gt;this is the index of the sub-component.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasStoreIndx</objectName>
+                <objectId>4</objectId>
+                <parent>s5ChasStoreEntry</parent>
+                <syntax>
+                    <type>INTEGER (1..255)</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The index of the storage area on the&lt;br&gt;component or sub-component.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasStoreType</objectName>
+                <objectId>5</objectId>
+                <parent>s5ChasStoreEntry</parent>
+                <syntax>
+                    <type>OBJECT IDENTIFIER</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The storage area type on the containing&lt;br&gt;component/sub-component. The values&lt;br&gt;are defined under the .0 branch of the&lt;br&gt;value of s5ChasComType for the&lt;br&gt;component/sub-component containing the&lt;br&gt;storage area in the Registration MIB.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasStoreCurSize</objectName>
+                <objectId>6</objectId>
+                <parent>s5ChasStoreEntry</parent>
+                <syntax>
+                    <type>INTEGER (-1..2147483647)</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The current size of the storage&lt;br&gt;area in bytes. A value of zero&lt;br&gt;means the storage area is not installed&lt;br&gt;or not usable. A value of -1 indicates&lt;br&gt;that the size is unknown (or unavailable).</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasStoreCntntVer</objectName>
+                <objectId>7</objectId>
+                <parent>s5ChasStoreEntry</parent>
+                <syntax>
+                    <type>DisplayString (SIZE (0..255))</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The version of the contents (i.e., the&lt;br&gt;code or data) of the storage area in the&lt;br&gt;form 'major.minor.maintenance[letters]'.&lt;br&gt;If not known or not available, then the value&lt;br&gt;is a zero length string. If multiple&lt;br&gt;contents are stored in this container, the&lt;br&gt;the value will contain multiple sub-versions,&lt;br&gt;each separated by a semicolon (;).</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasSmLeds</objectName>
+                <objectId>1</objectId>
+                <parent>s5ChasSm</parent>
+                <syntax>
+                    <type>OCTET STRING</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>A bit array that contains the value of the&lt;br&gt;supervisor LEDs. (The format of these are the&lt;br&gt;same as the format for object s5ChasBrdLeds.)&lt;br&gt;If not available, a zero length string is&lt;br&gt;returned.</description>
+            </objectType>
+        </mibObject>
+        <mibObject>
+            <objectType>
+                <objectName>s5ChasSmDateCode</objectName>
+                <objectId>2</objectId>
+                <parent>s5ChasSm</parent>
+                <syntax>
+                    <type>DisplayString (SIZE(0..8))</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The date of manufacture of the SM module&lt;br&gt;in ASCII in the format: YYYYmmdd. For&lt;br&gt;example, the value for April 13, 1993&lt;br&gt;is 19930413. If not available, a zero&lt;br&gt;length string is returned</description>
+            </objectType>
+        </mibObject>
+    </objects>
+</mib>
