@@ -83,6 +83,17 @@ public class SnmpNull extends SnmpObject
         return false;
     }
     
+    /**
+     * Returns the hash code for a null SNMP object.
+     */
+    public int hashCode()
+    {
+    	int hash = 7;
+    	hash = 31 * hash + tag.getByte();
+    	hash = 31 * hash + this.toString().hashCode();
+    	return hash;
+    }
+    
 
     /**
      *  Returns String "Null".

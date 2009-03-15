@@ -21,6 +21,8 @@
 
 package snmp;
 
+import java.util.Arrays;
+
 
 /** 
  *  Class to hold IP addresses; special case of SNMP Octet String.
@@ -63,13 +65,13 @@ public class SnmpIpAddress extends SnmpOctetString
      *  
      *  @throws SnmpBadValueException Indicates an invalid array supplied: must have length 4.
      */
-    public SnmpIpAddress(byte[] enc)
+    public SnmpIpAddress(byte[] encoding)
         throws SnmpBadValueException
     {
         tag = SnmpBERType.SnmpIpAddress;
         
-        if (enc.length == 4)
-            data = enc;
+        if (encoding.length == 4)
+            data = Arrays.copyOf(encoding, encoding.length);
         else        // wrong size
             throw new SnmpBadValueException(" IPAddress: bad BER encoding supplied to set value ");
     }
@@ -84,12 +86,20 @@ public class SnmpIpAddress extends SnmpOctetString
     public void setValue(Object newAddress)
         throws SnmpBadValueException
     {
-        if (newAddress instanceof byte[] && ((byte[])newAddress).length == 4)
-            data = (byte[])newAddress;
+        if (newAddress instanceof byte[])
+    	{
+        	byte[] addressBytes = (byte[])newAddress;
+        	if (addressBytes.length == 4)
+        		data = Arrays.copyOf(addressBytes, addressBytes.length);
+    	}
         else if (newAddress instanceof String)
+        {
             data = parseIPAddress((String)newAddress);
+        }
         else
+        {
             throw new SnmpBadValueException(" IPAddress: bad data supplied to set value ");
+        }
     }
     
     

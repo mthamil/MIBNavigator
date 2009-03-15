@@ -23,7 +23,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.io.IOException;
 
 import javax.swing.JFileChooser;
 import javax.swing.JMenu;
@@ -46,7 +45,7 @@ import libmib.mibtree.MibTreeBuilder;
  */
 public class MIBNavigatorMenu implements ActionListener
 {
-    private JMenuBar theMenubar;
+    private JMenuBar menuBar;
     private JMenu optionMenu;
     private JMenuItem addMIBItem, importItem, closeItem;
     
@@ -65,7 +64,7 @@ public class MIBNavigatorMenu implements ActionListener
         navigator = newNav;
         
         // Create menubar.
-        theMenubar = new JMenuBar();
+        menuBar = new JMenuBar();
         optionMenu = new JMenu("Options");
         optionMenu.setMnemonic(KeyEvent.VK_O);
 
@@ -86,7 +85,7 @@ public class MIBNavigatorMenu implements ActionListener
         closeItem.addActionListener(this);
         optionMenu.add(closeItem);
         
-        theMenubar.add(optionMenu);
+        menuBar.add(optionMenu);
     }
     
     
@@ -106,7 +105,7 @@ public class MIBNavigatorMenu implements ActionListener
      */
     public JMenuBar getMenuBar()
     {
-        return theMenubar;
+        return menuBar;
     }
     
 
@@ -128,7 +127,7 @@ public class MIBNavigatorMenu implements ActionListener
             JFileChooser chooser = new JFileChooser(new File("."));
             chooser.setFileFilter(mibFilter);
             
-            JRootPane menuParentFrame = theMenubar.getRootPane();  // use the root pane's parent frame to launch dialogs
+            JRootPane menuParentFrame = menuBar.getRootPane();  // use the root pane's parent frame to launch dialogs
             int returnValue = chooser.showOpenDialog(menuParentFrame);
 
             if (returnValue == JFileChooser.APPROVE_OPTION)
@@ -156,7 +155,7 @@ public class MIBNavigatorMenu implements ActionListener
             JFileChooser chooser = new JFileChooser(new File("."));
             chooser.setFileFilter(mibFilter);
             
-            JRootPane menuParentFrame = theMenubar.getRootPane();  // Use the root pane's parent frame to launch dialogs
+            JRootPane menuParentFrame = menuBar.getRootPane();  // Use the root pane's parent frame to launch dialogs
             int returnValue = chooser.showOpenDialog(menuParentFrame);
 
             if (returnValue == JFileChooser.APPROVE_OPTION)

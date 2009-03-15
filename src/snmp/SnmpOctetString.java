@@ -58,10 +58,10 @@ public class SnmpOctetString extends SnmpObject
      *  user-supplied, or part of a retrieved BER encoding. Note that the BER encoding
      *  of the data of an octet string is just the raw bytes.
      */
-    public SnmpOctetString(byte[] enc)
+    public SnmpOctetString(byte[] encoding)
     {
     	tag = SnmpBERType.SnmpOctetString;
-        extractFromBEREncoding(enc);
+        extractFromBEREncoding(encoding);
     }
 
 
@@ -83,7 +83,7 @@ public class SnmpOctetString extends SnmpObject
         throws SnmpBadValueException
     {
         if (data instanceof byte[])
-            this.data = (byte[])data;
+            this.data = Arrays.copyOf((byte[])data, ((byte[])data).length);
         else if (data instanceof String)
             this.data = ((String)data).getBytes();
         else

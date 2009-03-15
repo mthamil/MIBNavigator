@@ -46,6 +46,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 import org.xml.sax.InputSource;
 
+import utilities.Utilities;
+
 import libmib.MibImport;
 import libmib.MibModuleIdRevision;
 import libmib.NameValuePair;
@@ -76,13 +78,16 @@ public class MibDocumentBuilder
      */
     public MibDocumentBuilder()
     {
+    	FileInputStream schemaStream = null;
         try 
         {
             DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
             docBuilderFactory.setValidating(true);
             docBuilderFactory.setNamespaceAware(true);
             docBuilderFactory.setAttribute(SCHEMA_LANGUAGE_ATTRIBUTE, SCHEMA_LANGUAGE);
-            docBuilderFactory.setAttribute(SCHEMA_SOURCE_ATTRIBUTE, new InputSource(new FileInputStream(MIB_SCHEMA)));
+            
+            schemaStream = new FileInputStream(MIB_SCHEMA);
+            docBuilderFactory.setAttribute( SCHEMA_SOURCE_ATTRIBUTE, new InputSource(schemaStream) );
 
             DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
             docBuilder.setErrorHandler(new BasicXmlErrorHandler());
@@ -101,6 +106,10 @@ public class MibDocumentBuilder
         catch (ParserConfigurationException e) 
         {
             e.printStackTrace();
+        }
+        finally
+        {
+        	Utilities.closeQuietly(schemaStream);
         }
     }
     

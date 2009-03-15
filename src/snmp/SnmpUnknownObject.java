@@ -22,6 +22,7 @@
 package snmp;
 
 import java.io.*;
+import java.util.Arrays;
 
 
 /**
@@ -37,9 +38,9 @@ public class SnmpUnknownObject extends SnmpObject
     /**
      *  Takes a byte array and uses it as raw bytes.
      */
-    public SnmpUnknownObject(byte[] enc)
+    public SnmpUnknownObject(byte[] encoding)
     {
-        data = enc;
+        data = Arrays.copyOf(encoding, encoding.length);
     }
     
     
@@ -59,7 +60,7 @@ public class SnmpUnknownObject extends SnmpObject
         throws SnmpBadValueException
     {
         if (data instanceof byte[])
-            this.data = (byte[])data;
+            this.data = Arrays.copyOf((byte[])data, ((byte[])data).length);
         else
             throw new SnmpBadValueException(" Unknown Object: bad object supplied to set value ");
     }

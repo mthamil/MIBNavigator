@@ -75,8 +75,6 @@ public enum SnmpBERType
         return byteValue;
     }
     
-    
-    
     /**
      * Gets the SNMPBERType instance corresponding to the given byte value.
      * If no such instance exists, an exception is thrown.
@@ -141,11 +139,4 @@ public enum SnmpBERType
         }
     }
     
-    
-    
-    public static void main(String[] args)
-    {
-        byte test = SnmpBERType.SnmpGauge32.getByte();
-        SnmpBERType test2 = SnmpBERType.getInstance((byte)0xA7);
-    }
 }

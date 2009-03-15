@@ -526,10 +526,8 @@ public class MibToXmlConverter
 	        
 	        return mibObject;
         }
-        else
-        {
-        	return null;
-        }
+
+    	return null;
     }
     
     

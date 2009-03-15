@@ -21,6 +21,8 @@
 
 package snmp;
 
+import java.util.Arrays;
+
 
 /**
  *  Defines class for holding physical 6-byte addresses.
@@ -59,13 +61,12 @@ public class SnmpNSAPAddress extends SnmpOctetString
      *  
      *  @throws SnmpBadValueException Indicates an invalid array supplied: must have length 6.
      */
-    public SnmpNSAPAddress(byte[] enc)
-        throws SnmpBadValueException
+    public SnmpNSAPAddress(byte[] encoding)  throws SnmpBadValueException
     {
         tag = SnmpBERType.SnmpNsapAddress;
         
-        if (enc.length == 6)
-            data = enc;
+        if (encoding.length == 6)
+            data = Arrays.copyOf(encoding, encoding.length);
         else        // wrong size
             throw new SnmpBadValueException(" NSAPAddress: bad BER encoding supplied to set value ");
     }
@@ -77,15 +78,22 @@ public class SnmpNSAPAddress extends SnmpOctetString
      *  @throws SnmpBadValueException Indicates an incorrect object type supplied, or array of
      *  incorrect size.
      */
-    public void setValue(Object newAddress)
-        throws SnmpBadValueException
+    public void setValue(Object newAddress) throws SnmpBadValueException
     {
-        if ((newAddress instanceof byte[]) && (((byte[])newAddress).length == 6))
-            data = (byte[])newAddress;
+        if (newAddress instanceof byte[])
+		{
+        	byte[] addressBytes = (byte[])newAddress;
+        	if (addressBytes.length == 6)
+        		data = Arrays.copyOf(addressBytes, addressBytes.length);
+		}
         else if (newAddress instanceof String)
+        {
             data = parseNSAPAddress((String)newAddress);
+        }
         else
+        {
             throw new SnmpBadValueException(" NSAPAddress: bad length byte string supplied to set value ");
+        }
     }
     
 

@@ -85,18 +85,17 @@ public class SnmpObjectIdentifier extends SnmpObject
      *  
      *  @throws SnmpBadValueException Negative value(s) supplied.
      */
-    public SnmpObjectIdentifier(long[] digits)
+    public SnmpObjectIdentifier(long[] newDigits)
         throws SnmpBadValueException
     {
-
-        //for (int i = 0; i < digits.length; i++)
-        for (long digit : digits)
+    	this.digits = new long[newDigits.length];
+        for (int i = 0; i < newDigits.length; i++)
         {
-            if (digit < 0)
+            if (newDigits[i] < 0)
                 throw new SnmpBadValueException("Negative value supplied for SNMPObjectIdentifier.");
+            
+            this.digits[i] = newDigits[i];
         }
-
-        this.digits = digits;
     }
 
 
@@ -107,10 +106,10 @@ public class SnmpObjectIdentifier extends SnmpObject
      *  @throws SnmpBadValueException Indicates an invalid BER encoding supplied. Shouldn't
      *  occur in normal operation, i.e., when valid responses are received from devices.
      */
-    protected SnmpObjectIdentifier(byte[] enc)
+    protected SnmpObjectIdentifier(byte[] encoding)
         throws SnmpBadValueException
     {
-        extractFromBEREncoding(enc);
+        extractFromBEREncoding(encoding);
     }
 
 
@@ -130,37 +129,43 @@ public class SnmpObjectIdentifier extends SnmpObject
      *  @throws SnmpBadValueException Indicates an incorrect object type supplied, or negative array
      *  elements, or an incorrectly formatted String.
      */
-    public void setValue(Object digits)
+    public void setValue(Object newDigits)
         throws SnmpBadValueException
     {
-        if (digits instanceof long[])
+        if (newDigits instanceof long[])
         {
-            for (int i = 0; i < ((long[])digits).length; i++)
+        	long[] longDigits = (long[])newDigits;
+        	
+        	this.digits = new long[longDigits.length];
+            for (int i = 0; i < longDigits.length; i++)
             {
-                if (((long[])digits)[i] < 0)
+                if (longDigits[i] < 0)
                     throw new SnmpBadValueException("Negative value supplied for SNMPObjectIdentifier.");
+                
+                this.digits[i] = longDigits[i];
             }
-
-            this.digits = (long[])digits;
         }
-        else if (digits instanceof int[])
+        else if (newDigits instanceof int[])
         {
-            long[] longDigits = new long[((int[])digits).length];
-
-            for (int i = 0; i < ((int[])digits).length; i++)
+        	int[] intDigits = (int[])newDigits;
+        	
+        	this.digits = new long[intDigits.length];
+            for (int i = 0; i < intDigits.length; i++)
             {
-                if (((int[])digits)[i] < 0)
+                if (intDigits[i] < 0)
                     throw new SnmpBadValueException("Negative value supplied for SNMPObjectIdentifier.");
 
-                longDigits[i] = ((int[])digits)[i];
+                this.digits[i] = intDigits[i];
             }
-
-            this.digits = longDigits;
         }
-        else if (digits instanceof String)
-            parseObjectIdentifier((String)digits);
+        else if (newDigits instanceof String)
+        {
+            parseObjectIdentifier((String)newDigits);
+        }
         else
+        {
             throw new SnmpBadValueException(" Object Identifier: bad object supplied to set value ");
+        }
     }
 
 
@@ -249,10 +254,6 @@ public class SnmpObjectIdentifier extends SnmpObject
 		{
 			// Matt Hamilton on 1/31/06:
 			// Rewritten to use String's split method instead of StringTokenizer.
-		    // However, I read that StringTokenizer is more efficient and uses less
-            // resources.  On the other hand, the current implementation uses two tokenizers, 
-            // so actual performance testing may be required to determine a real answer 
-            // on which to use.
 
 			String[] oidArray = digitString.split("\\.");
 
@@ -273,41 +274,10 @@ public class SnmpObjectIdentifier extends SnmpObject
 			throw new SnmpBadValueException(" Object Identifier: bad string supplied for object identifier value ");
         }
 
-        /*try
-        {
-            StringTokenizer st = new StringTokenizer(digitString, " .");
-            int size = 0;
-
-            while (st.hasMoreTokens())
-            {
-                // figure out how many values are in string
-                size++;
-                st.nextToken();
-            }
-
-            long[] returnDigits = new long[size];
-
-            st = new StringTokenizer(digitString, " .");
-
-            for (int i = 0; i < size; i++)
-            {
-                returnDigits[i] = Long.parseLong(st.nextToken());
-                if (returnDigits[i] < 0)
-                    throw new SNMPBadValueException(" Object Identifier: bad string supplied to set value ");
-            }
-
-            digits = returnDigits;
-
-        }
-        catch (NumberFormatException e)
-        {
-            throw new SNMPBadValueException(" Object Identifier: bad string supplied for object identifier value ");
-        }*/
-
     }
 
 
-    private void extractFromBEREncoding(byte[] enc)
+    private void extractFromBEREncoding(byte[] encoding)
         throws SnmpBadValueException
     {
         // note: masks must be ints; byte internal representation issue(?)
@@ -317,9 +287,9 @@ public class SnmpObjectIdentifier extends SnmpObject
         // first, compute number of "digits";
         // will just be number of bytes with leading 0's
         int numInts = 0;
-        for (int i = 0; i < enc.length; i++)
+        for (int i = 0; i < encoding.length; i++)
         {
-            if ((enc[i] & bitTest) == 0)        //high-order bit not set; count
+            if ((encoding[i] & bitTest) == 0)        //high-order bit not set; count
                 numInts++;
         }
 
@@ -338,9 +308,9 @@ public class SnmpObjectIdentifier extends SnmpObject
             do
             {
                 currentByte++;
-                value = value * 128 + (enc[currentByte] & highBitMask);
+                value = value * 128 + (encoding[currentByte] & highBitMask);
             }
-            while ((enc[currentByte] & bitTest) > 0);    // implies high bit set!
+            while ((encoding[currentByte] & bitTest) > 0);    // implies high bit set!
 
             // now handle 40a + b
             digits[0] = (long)Math.floor(value / 40);
@@ -354,9 +324,9 @@ public class SnmpObjectIdentifier extends SnmpObject
                 do
                 {
                     currentByte++;
-                    value = value*128 + (enc[currentByte] & highBitMask);
+                    value = value*128 + (encoding[currentByte] & highBitMask);
                 }
-                while ((enc[currentByte] & bitTest) > 0);
+                while ((encoding[currentByte] & bitTest) > 0);
 
                 digits[i] = value;
             }

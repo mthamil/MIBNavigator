@@ -134,7 +134,6 @@ public class MIBNavigator
     private void configureFrame(JPanel content)
     {
     	JFrame navFrame = new JFrame();
-        navFrame = new JFrame();
         navFrame.setTitle("MIB Navigator");
         
         MIBNavigatorMenu navMenu = new MIBNavigatorMenu(this);

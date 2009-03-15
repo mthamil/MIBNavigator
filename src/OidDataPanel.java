@@ -305,7 +305,6 @@ public class OidDataPanel implements TreeSelectionListener
 	public void valueChanged(TreeSelectionEvent event)
 	{	
 		TreePath treePath = event.getPath();
-		Object[] path = treePath.getPath();
 		MibTreeNode node;
 		MibObjectType mibObject;
 	
