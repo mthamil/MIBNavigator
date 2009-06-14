@@ -52,7 +52,7 @@ public class SnmpObjectIdentifier extends SnmpObject
     public SnmpObjectIdentifier(String digitString)
         throws SnmpBadValueException
     {
-        parseObjectIdentifier(digitString);
+        this.digits = SnmpObjectIdentifier.parseObjectIdentifier(digitString);
     }
 
 
@@ -160,7 +160,7 @@ public class SnmpObjectIdentifier extends SnmpObject
         }
         else if (newDigits instanceof String)
         {
-            parseObjectIdentifier((String)newDigits);
+        	this.digits = SnmpObjectIdentifier.parseObjectIdentifier((String)newDigits);
         }
         else
         {
@@ -247,7 +247,12 @@ public class SnmpObjectIdentifier extends SnmpObject
     }
 
 
-    private void parseObjectIdentifier(String digitString)
+    /**
+     * Attempts to parse an OID string into a long array.
+     * @param digitString
+     * @throws SnmpBadValueException
+     */
+    public static long[] parseObjectIdentifier(String digitString)
         throws SnmpBadValueException
     {
 		try
@@ -266,7 +271,7 @@ public class SnmpObjectIdentifier extends SnmpObject
 					throw new SnmpBadValueException(" Object Identifier: values must greater than or equal to zero. ");
 			}
 
-			digits = returnDigits;
+			return returnDigits;
 
 		}
 		catch (NumberFormatException e)

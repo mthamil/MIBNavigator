@@ -50,7 +50,7 @@ public class SnmpNSAPAddress extends SnmpOctetString
     {
         tag = SnmpBERType.SnmpNsapAddress;
         
-        data = parseNSAPAddress(string);
+        data = SnmpNSAPAddress.parseNSAPAddress(string);
     }
     
     
@@ -88,7 +88,7 @@ public class SnmpNSAPAddress extends SnmpOctetString
 		}
         else if (newAddress instanceof String)
         {
-            data = parseNSAPAddress((String)newAddress);
+            data = SnmpNSAPAddress.parseNSAPAddress((String)newAddress);
         }
         else
         {
@@ -124,8 +124,13 @@ public class SnmpNSAPAddress extends SnmpOctetString
         return returnStringBuffer.toString();
     }
     
-    
-    private byte[] parseNSAPAddress(String addressString)
+    /**
+     * Attempts to parse a String into a NSAP Address byte array.
+     * @param addressString
+     * @return
+     * @throws SnmpBadValueException
+     */
+    public static byte[] parseNSAPAddress(String addressString)
         throws SnmpBadValueException
     {
         try
@@ -155,42 +160,6 @@ public class SnmpNSAPAddress extends SnmpOctetString
         {
             throw new SnmpBadValueException(" NSAPAddress: invalid component supplied to set value ");
         }
-        
-        /*try
-        {
-            StringTokenizer st = new StringTokenizer(addressString, " .-"); // break on spaces, dots or dashes
-            int size = 0;
-            
-            while (st.hasMoreTokens())
-            {
-                // figure out how many values are in string
-                size++;
-                st.nextToken();
-            }
-            
-            if (size != 6)
-                throw new SNMPBadValueException(" NSAPAddress: wrong number of components supplied to set value ");
-            
-            byte[] returnBytes = new byte[size];
-            
-            st = new StringTokenizer(addressString, " .-");
-            
-            for (int i = 0; i < size; i++)
-            {
-                int addressComponent = (Integer.parseInt(st.nextToken(), 16));
-                if ((addressComponent < 0) || (addressComponent > 255))
-                    throw new SNMPBadValueException(" NSAPAddress: invalid component supplied to set value ");
-                returnBytes[i] = (byte)addressComponent;
-            }
-            
-            return returnBytes;
-            
-        }
-        catch (NumberFormatException e)
-        {
-            throw new SNMPBadValueException(" NSAPAddress: invalid component supplied to set value ");
-        }*/
-        
     }
     
     /*public static void main(String[] args)

@@ -54,7 +54,7 @@ public class SnmpIpAddress extends SnmpOctetString
         throws SnmpBadValueException
     {
         tag = SnmpBERType.SnmpIpAddress;
-        this.data = parseIPAddress(string);
+        this.data = SnmpIpAddress.parseIpAddress(string);
     }
     
     
@@ -94,7 +94,7 @@ public class SnmpIpAddress extends SnmpOctetString
     	}
         else if (newAddress instanceof String)
         {
-            data = parseIPAddress((String)newAddress);
+            data = SnmpIpAddress.parseIpAddress((String)newAddress);
         }
         else
         {
@@ -103,8 +103,13 @@ public class SnmpIpAddress extends SnmpOctetString
     }
     
     
-    
-    private byte[] parseIPAddress(String addressString)
+    /**
+     * Attempts to parse a String into an IP Address byte array.
+     * @param addressString
+     * @return
+     * @throws SnmpBadValueException
+     */
+    public static byte[] parseIpAddress(String addressString)
     	throws SnmpBadValueException
     {
         try
@@ -133,42 +138,6 @@ public class SnmpIpAddress extends SnmpOctetString
         {
             throw new SnmpBadValueException(" IPAddress: invalid component supplied to set value ");
         }
-        
-       /*try
-        {
-            StringTokenizer st = new StringTokenizer(addressString, " .");
-            int size = 0;
-            
-            while (st.hasMoreTokens())
-            {
-                // figure out how many values are in string
-                size++;
-                st.nextToken();
-            }
-            
-            if (size != 4)
-                throw new SNMPBadValueException(" IPAddress: wrong number of components supplied to set value ");
-            
-            byte[] returnBytes = new byte[size];
-            
-            st = new StringTokenizer(addressString, " .");
-            
-            for (int i = 0; i < size; i++)
-            {
-                int addressComponent = (Integer.parseInt(st.nextToken()));
-                if ((addressComponent < 0) || (addressComponent > 255))
-                    throw new SNMPBadValueException(" IPAddress: invalid component supplied to set value ");
-                returnBytes[i] = (byte)addressComponent;
-            }
-            
-            return returnBytes;
-            
-        }
-        catch (NumberFormatException e)
-        {
-            throw new SNMPBadValueException(" IPAddress: invalid component supplied to set value ");
-        }*/
-        
     }
 
 
