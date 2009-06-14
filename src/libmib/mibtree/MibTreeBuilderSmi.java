@@ -40,7 +40,7 @@ import libmib.format.SmiStructureHandler;
 import libmib.format.SmiTokens;
 
 /**
- * This class is a very simple reader and parser for ASN.1 specification SMI MIB module
+ * This class is a very crusty reader and parser for ASN.1 specification SMI MIB module
  * definition files. It reads the files, attempts to interpret the syntax of the structures 
  * within, extracts relevant data, and inserts it into nodes for use in a tree structure.  
  * Then, it compiles the SMI MIB modules into a DefaultTreeModel. It in no way attempts to 

@@ -22,13 +22,15 @@
 package contextmenu;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-import javax.swing.JMenuItem;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.JPopupMenu;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
+
+import contextmenu.ContextMenuResources.Keys;
 
 /**
  * This class represents a popup menu containing common context-relevant actions such
@@ -36,27 +38,44 @@ import javax.swing.text.JTextComponent;
  */
 public class TextContextMenu extends JPopupMenu
 {
-    private JMenuItem copyItem, pasteItem, selectAllItem;
+    private Action copyAction, pasteAction, selectAllAction;
     private JTextComponent menuSource;
     
     public TextContextMenu()
-    {
-        TextMenuItemHandler menuItemHandler = new TextMenuItemHandler();
-        
-        copyItem = new JMenuItem("Copy");
-        copyItem.setActionCommand("copy");
-        copyItem.addActionListener(menuItemHandler);
-        this.add(copyItem);
+    {       
+        copyAction = new AbstractAction(ContextMenuResources.getString(Keys.CopyLabel))
+        {
+			public void actionPerformed(ActionEvent e)
+			{
+				// Copy the text component's selected text to the clipboard.
+                menuSource.requestFocusInWindow();
+                menuSource.copy();
+			}
+        };
+        this.add(copyAction);
 
-        pasteItem = new JMenuItem("Paste");
-        pasteItem.setActionCommand("paste");
-        pasteItem.addActionListener(menuItemHandler);
-        this.add(pasteItem);
+        pasteAction = new AbstractAction(ContextMenuResources.getString(Keys.PasteLabel))
+        {
+			public void actionPerformed(ActionEvent e)
+			{
+				 // Paste from the clipboard into the text component.
+                menuSource.requestFocusInWindow();
+                menuSource.paste();
+			}
+        	
+        };
+        this.add(pasteAction);
 
-        selectAllItem = new JMenuItem("Select All");
-        selectAllItem.setActionCommand("select all");
-        selectAllItem.addActionListener(menuItemHandler);
-        this.add(selectAllItem);
+        selectAllAction = new AbstractAction(ContextMenuResources.getString(Keys.SelectAllLabel))
+        {
+			public void actionPerformed(ActionEvent e)
+			{
+                // Select the entire text component's contents.
+                menuSource.requestFocusInWindow();
+                menuSource.selectAll();
+			}
+        };
+    	this.add(selectAllAction);
     }
     
     
@@ -73,9 +92,9 @@ public class TextContextMenu extends JPopupMenu
 
         // Only show the paste option for editable fields.
         if (menuSource.isEditable())
-            pasteItem.setVisible(true);
+            pasteAction.setEnabled(true);
         else
-            pasteItem.setVisible(false);
+            pasteAction.setEnabled(false);
 
         //Disable select all if no visible text in the text component.
         //getText is not sufficient for styled text components, so the Document must be 
@@ -93,50 +112,18 @@ public class TextContextMenu extends JPopupMenu
         }
 
         if (plainText.equals(""))
-            selectAllItem.setEnabled(false);
+            selectAllAction.setEnabled(false);
         else
-            selectAllItem.setEnabled(true);
+            selectAllAction.setEnabled(true);
         
 
         //disable copy if no text is selected
         if (menuSource.getSelectedText() == null)
-            copyItem.setEnabled(false);
+            copyAction.setEnabled(false);
         else
-            copyItem.setEnabled(true);
+            copyAction.setEnabled(true);
 
         super.show(menuSource, x, y);
-    }
-
-
-    /**
-     * This ActionListener is notified when the user has selected one of the TextContextMenu options.
-     */
-    private class TextMenuItemHandler implements ActionListener
-    {
-        public void actionPerformed(ActionEvent event) 
-        {
-            String actionCommand = event.getActionCommand();
-            
-            if (actionCommand.equals("copy"))
-            {
-                // Copy the text component's selected text to the clipboard.
-                menuSource.requestFocusInWindow();
-                menuSource.copy();
-            }
-            else if (actionCommand.equals("paste"))
-            {           
-                // Paste from the clipboard into the text component.
-                menuSource.requestFocusInWindow();
-                menuSource.paste();
-            }
-            else if (actionCommand.equals("select all"))
-            {
-                // Select the entire text component's contents.
-                menuSource.requestFocusInWindow();
-                menuSource.selectAll();
-            }
-        }
-        
     }
 
 }

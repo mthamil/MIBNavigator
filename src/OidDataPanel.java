@@ -83,33 +83,33 @@ public class OidDataPanel implements TreeSelectionListener
 		TextContextMenuListener contextMenuListener = new TextContextMenuListener(contextMenu);
         
         // OID details
-        oidDataTypeLabel = new JLabel("Type:");
+        oidDataTypeLabel = new JLabel(Resources.getString("oidTypeLabel"));
         oidDataTypeField = new JTextField(18);
         oidDataTypeField.setEditable(false);
         oidDataTypeField.setBackground(uneditableBackColor);
         oidDataTypeField.addMouseListener(contextMenuListener);
 
         Dimension valuesSize = new Dimension(167, 20);
-        oidValueBoxLabel = new JLabel("Values:");
+        oidValueBoxLabel = new JLabel(Resources.getString("oidValuesLabel"));
         oidValueBox = new JComboBox();
         oidValueBox.setPreferredSize(valuesSize);
         oidValueBox.setMaximumSize(valuesSize);
         oidValueBox.setEditable(false);
         oidValueBox.setEnabled(false);
         
-        oidAccessLabel = new JLabel("Access:");
+        oidAccessLabel = new JLabel(Resources.getString("oidAccessLabel"));
         oidAccessField = new JTextField(12);
         oidAccessField.setEditable(false);
         oidAccessField.setBackground(uneditableBackColor);
         oidAccessField.addMouseListener(contextMenuListener);
         
-        oidStatusLabel = new JLabel("Status:");
+        oidStatusLabel = new JLabel(Resources.getString("oidStatusLabel"));
         oidStatusField = new JTextField(12);
         oidStatusField.setEditable(false);
         oidStatusField.setBackground(uneditableBackColor);
         oidStatusField.addMouseListener(contextMenuListener);
 
-        oidMIBNameLabel = new JLabel("Defined in:");
+        oidMIBNameLabel = new JLabel(Resources.getString("oidSourceLabel"));
         oidMIBNameField = new JTextField(18);
         oidMIBNameField.setEditable(false);
         oidMIBNameField.setBackground(uneditableBackColor);
@@ -124,7 +124,7 @@ public class OidDataPanel implements TreeSelectionListener
 
         oidDescScroll = new JScrollPane(oidDesc);
         oidDescScroll.setPreferredSize(new Dimension(75, 100));
-        oidDescLabel = new JLabel("Description:");
+        oidDescLabel = new JLabel(Resources.getString("oidDescriptionLabel"));
     }
     
     

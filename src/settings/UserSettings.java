@@ -43,16 +43,18 @@ public class UserSettings
 {
 	private enum SettingsProperties
 	{
-		IPAddresses, MaximumAddresses, MibFileFormat
+		MibDirectory, IPAddresses, MaximumAddresses, MibFileFormat
 	}
 
 	private static final String SETTINGS_FOLDERNAME = ".mibnavigator";
 	private static final int DEFAULT_MAX_ADDRESSES = 15;
+	private static final String DEFAULT_MIB_DIRECTORY = "." + File.separator + "mibs";
 	private File settingsFile;
 
 	private Properties settings;
 	private boolean settingsChanged;
 	
+	private File mibDirectory;
 	private int maxAddresses;
 	private List<String> addresses;
 	private MibFormat mibFormat;
@@ -141,24 +143,54 @@ public class UserSettings
 		}
 	}
 	
+	/**
+	 * Gets the directory where application startup MIBs are located.
+	 * @return
+	 */
+	public File getMibDirectory()
+	{
+		return mibDirectory;
+	}
+	
+	/**
+	 * Sets the directory where application startup MIBs are located.
+	 * @param mibDirectory
+	 */
+	public void setMibDirectory(File newMibDirectory)
+	{
+		if (newMibDirectory == null)
+			return;
+		
+		if (!newMibDirectory.equals(mibDirectory))
+		{
+			mibDirectory = newMibDirectory;
+			settingsChanged = true;
+		}
+	}
+	
 	
 	/**
 	 * Loads saved settings from a properties file.
 	 */
 	public void loadSettings()
     {
+		String mibPath = "";
         String hostAddresses = "";
         String addressNum = "";
         String formatString = "";
         FileInputStream settingsIn = null;
         try
         {
-            settingsIn = new FileInputStream(settingsFile);
-            settings.loadFromXML(settingsIn);
-            
-            addressNum    = settings.getProperty(SettingsProperties.MaximumAddresses.toString(), "15");
-            hostAddresses = settings.getProperty(SettingsProperties.IPAddresses.toString(), "");
-            formatString  = settings.getProperty(SettingsProperties.MibFileFormat.toString(), MibFormat.SMI.toString());
+        	if (settingsFile.exists())
+        	{
+	            settingsIn = new FileInputStream(settingsFile);
+	            settings.loadFromXML(settingsIn);
+	            
+	            mibPath		  = settings.getProperty(SettingsProperties.MibDirectory.toString(), DEFAULT_MIB_DIRECTORY);
+	            addressNum    = settings.getProperty(SettingsProperties.MaximumAddresses.toString(), Integer.toString(DEFAULT_MAX_ADDRESSES));
+	            hostAddresses = settings.getProperty(SettingsProperties.IPAddresses.toString(), "");
+	            formatString  = settings.getProperty(SettingsProperties.MibFileFormat.toString(), MibFormat.SMI.toString());
+        	}
         }
         catch (IOException e)
         {
@@ -169,6 +201,8 @@ public class UserSettings
 			Utilities.closeQuietly(settingsIn);
 		}
         
+        // Parse the mib directory property.
+        mibDirectory = parseMibDirectory(mibPath);        
         
         // Parse the the max address property.
         maxAddresses = parseMaxAddresses(addressNum);
@@ -177,7 +211,7 @@ public class UserSettings
         addresses = parseAddresses(hostAddresses);
         
         // Parse the MIB file format property.
-        mibFormat = MibFormat.valueOf(formatString);
+        mibFormat = parseMibFormat(formatString);
     }
 	
 	
@@ -188,6 +222,11 @@ public class UserSettings
 	{
 		if (settingsChanged)
 		{
+			if (mibDirectory != null && mibDirectory.isDirectory())
+			{
+				settings.setProperty(SettingsProperties.MibDirectory.toString(), mibDirectory.getPath());
+			}
+			
 			if (!addresses.isEmpty())
 			{
 				// Put IP addresses into a single, comma delimited string. The
@@ -228,6 +267,26 @@ public class UserSettings
 				Utilities.closeQuietly(settingsOut);
 			}
 		}
+	}
+	
+	private File parseMibDirectory(String mibPath)
+	{
+		// If this is a local relative path, try to convert
+		// the file path separators to the current OS.
+		if (mibPath.startsWith("."))
+		{
+			mibPath = mibPath.replace("/", File.separator);
+			mibPath = mibPath.replace("\\", File.separator);
+		}
+		
+		File mibDir = new File(mibPath);
+		if (!mibDir.isDirectory())
+		{
+			// If the path isn't a directory or doesn't exist, use the default.
+			mibDir = new File(DEFAULT_MIB_DIRECTORY);
+		}
+
+		return mibDir;
 	}
 	
 
@@ -279,6 +338,27 @@ public class UserSettings
         }
 		
 		return newAddresses;
+	}
+	
+	/**
+	 * Attempts to convert a string to a MibFormat enum value.
+	 * If this fails, the default will be used.
+	 * @param mibFormatString
+	 * @return
+	 */
+	private MibFormat parseMibFormat(String mibFormatString)
+	{
+		MibFormat format = null;
+		try
+		{
+			format = MibFormat.valueOf(mibFormatString);
+		}
+		catch (IllegalArgumentException exception)
+		{
+			format = MibFormat.SMI;
+		}
+		
+		return format;
 	}
 	
 }

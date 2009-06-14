@@ -248,15 +248,15 @@ public class GetRequestWorker extends SwingWorker
         }
         catch (SocketTimeoutException e)
         {
-            return "No response from host:  " + e.getMessage();
+            return Resources.getString("timeoutGetErrorMEssage") + e.getMessage();
         }
         catch (InterruptedIOException e)
         {
-            return "Interrupted during retrieval:  " + e.getMessage();
+            return Resources.getString("interruptedGetErrorMEssage") + e.getMessage();
         }
         catch (UnknownHostException e) 
         {
-            return "Unknown host: " + e.getMessage();
+            return Resources.getString("unknownHostErrorMEssage") + e.getMessage();
         }
         catch (SnmpGetException e)
         {
@@ -264,7 +264,7 @@ public class GetRequestWorker extends SwingWorker
         }
         catch (Exception e) //not recommended, but exceptional circumstances will likely always prevent successful execution of the GetRequest process
         {
-            return "Exception during retrieval:  " + e.getMessage();
+            return Resources.getString("generalGetErrorMEssage") + e.getMessage();
         }
     }
     

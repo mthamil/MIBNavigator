@@ -21,7 +21,39 @@
 
 package libmib.format;
 
+import java.io.FilenameFilter;
+
+import javax.swing.filechooser.FileFilter;
+
+import filefilters.*;
+
 /**
- * Defines accepted MIB formats.
+ * Defines accepted MIB file formats.
  */
-public enum MibFormat { XML, SMI }
+public enum MibFormat 
+{ 
+	SMI
+	{
+		public FileFilter getDialogFileFilter() { return new SmiFileFilter(); }
+		public FilenameFilter getFilenameFilter() { return new SmiFilenameFilter(); }
+	},
+	
+	XML
+	{
+		public FileFilter getDialogFileFilter() { return new XmlFileFilter(); }
+		public FilenameFilter getFilenameFilter() { return new XmlFilenameFilter(); }
+	};
+
+	
+	/**
+	 * Gets a file filter for a given MIB format that is usable in a file picker dialog.
+	 * @return a new file filter
+	 */
+	public abstract FileFilter getDialogFileFilter();
+	
+	/**
+	 * Gets a filename filter for a given MIB format that is usable for IO operations.
+	 * @return a new filename filter
+	 */
+	public abstract FilenameFilter getFilenameFilter();
+}

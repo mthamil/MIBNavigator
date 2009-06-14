@@ -24,78 +24,31 @@ package contextmenu;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.JList;
-import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+
+import contextmenu.ContextMenuResources.Keys;
 
 /**
  * This class represents a popup menu containing common context-relevant actions such
  * as copy and select all for JLists.
  */
 public class ListContextMenu extends JPopupMenu
-                         //implements ActionListener
 {
-    private JMenuItem copyItem, selectAllItem;
+    private Action copyAction, selectAllAction;
     private JList menuSource;
     
     public ListContextMenu()
-    {
-        ListMenuItemHandler menuItemHandler = new ListMenuItemHandler();
-        
-        copyItem = new JMenuItem("Copy");
-        copyItem.setActionCommand("copy");
-        copyItem.addActionListener(menuItemHandler);
-        this.add(copyItem);
-
-        selectAllItem = new JMenuItem("Select All");
-        selectAllItem.setActionCommand("select all");
-        selectAllItem.addActionListener(menuItemHandler);
-        this.add(selectAllItem);
-    }
-    
-    /**
-     * When this method is invoked, the ListContextMenu is displayed at the 
-     * coordinates of the source JList with context appropriate options.
-     * These actions are disabled/enabled/hidden depending on the list's
-     * status.
-     */
-    public void show(JList source, int x, int y)
-    {
-        source.requestFocusInWindow();
-        menuSource = source;
-        
-        //disable select all if there are no items in the list
-        if (menuSource.getModel().getSize() > 0)
-            selectAllItem.setEnabled(true);
-        else
-            selectAllItem.setEnabled(false);
-        
-        
-        //disable copy if no items are selected
-        if (!menuSource.isSelectionEmpty())    
-            copyItem.setEnabled(true);
-        else
-            copyItem.setEnabled(false);
-        
-        super.show(menuSource, x, y);
-    }
-
-
-    /**
-     * This ActionListener is notified when the user has selected one of the ListContextMenu options.
-     */
-    private class ListMenuItemHandler implements ActionListener
-    {
-        public void actionPerformed(ActionEvent event) 
+    {       
+        copyAction = new AbstractAction(ContextMenuResources.getString(Keys.CopyLabel))
         {
-            String actionCommand = event.getActionCommand();
-            
-            if (actionCommand.equals("copy"))
-            {
-                //Get the selected items and put the results of their toString() methods
-                //on the system clipboard.
+			public void actionPerformed(ActionEvent e)
+			{
+				// Get the selected items and put the results of their toString() methods
+                // on the system clipboard.
                 menuSource.requestFocusInWindow();
                 Object[] selectedItems = menuSource.getSelectedValues();
                 
@@ -109,17 +62,50 @@ public class ListContextMenu extends JPopupMenu
                     StringSelection ss = new StringSelection(selectString.toString());
                     Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, ss);
                 }
-            }
-            else if (actionCommand.equals("select all"))
-            {
-                //select all rows of the JList
+			}       	
+        };
+        this.add(copyAction);
+
+        selectAllAction = new AbstractAction(ContextMenuResources.getString(Keys.SelectAllLabel))
+        {
+			public void actionPerformed(ActionEvent e)
+			{
+				// Select all rows of the JList.
                 menuSource.requestFocusInWindow();
                 menuSource.clearSelection();
                 int listSize = menuSource.getModel().getSize();
                 menuSource.setSelectionInterval(0, listSize - 1);
-            }
-        }
+				
+			}
+        };
+        this.add(selectAllAction);
+    }
+    
+    /**
+     * When this method is invoked, the ListContextMenu is displayed at the 
+     * coordinates of the source JList with context appropriate options.
+     * These actions are disabled/enabled/hidden depending on the list's
+     * status.
+     */
+    public void show(JList source, int x, int y)
+    {
+        source.requestFocusInWindow();
+        menuSource = source;
         
+        // Disable select all if there are no items in the list
+        if (menuSource.getModel().getSize() > 0)
+            selectAllAction.setEnabled(true);
+        else
+        	selectAllAction.setEnabled(false);
+        
+        
+        // Disable copy if no items are selected
+        if (!menuSource.isSelectionEmpty())    
+            copyAction.setEnabled(true);
+        else
+            copyAction.setEnabled(false);
+        
+        super.show(menuSource, x, y);
     }
 
 }
