@@ -22,8 +22,15 @@
 package snmp;
 
 /**
- * Marker interface identifying classes that represent a PDU.
- * Since not all PDU types share functionality, no methods 
- * are required for implementation.
+ * Interface identifying classes that represent a PDU.
  */
-public interface SnmpPDUMarker {}
+public interface SnmpPDUMarker 
+{
+    /** 
+     *  Extracts the variable binding list from the PDU. Useful for retrieving
+     *  the set of (object identifier, value) pairs returned in response to a request to an SNMP
+     *  device. The variable binding list is just an SNMP sequence containing the identifier, value pairs.
+     *  @see snmp.SnmpVarBindList
+     */
+    public SnmpSequence getVarBindList();
+}

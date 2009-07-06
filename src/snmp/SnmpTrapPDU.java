@@ -26,7 +26,7 @@ package snmp;
 /**
  * Interface for recent version SNMP traps.
  */
-public interface SnmpTrapPDU extends SnmpPDUMarker
+public interface SnmpTrapPDU
 {
 	/** 
      *  Extracts the snmpTrapOID from the trap's variable bind 

@@ -200,10 +200,7 @@ public class SnmpV2BulkRequestPDU extends SnmpSequence
     
     
     /** 
-     *  Extracts the variable binding list from the PDU. Useful for retrieving
-     *  the set of (object identifier, value) pairs returned in response to a request to an SNMP
-     *  device. The variable binding list is just an SNMP sequence containing the identifier, value pairs.
-     *  @see snmp.SnmpVarBindList
+     *  @see snmp.SnmpPDUMarker#getVarBindList
      */
     public SnmpSequence getVarBindList()
     {

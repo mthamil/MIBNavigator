@@ -76,10 +76,10 @@ public enum SnmpBERType
     }
     
     /**
-     * Gets the SNMPBERType instance corresponding to the given byte value.
+     * Gets the SNMP BER Type instance corresponding to the given byte value.
      * If no such instance exists, an exception is thrown.
      * 
-     * @param byteVal the byte value of an SNMPBERType
+     * @param byteVal the byte value of an SNMP BER Type
      */
     public static SnmpBERType getInstance(byte byteVal)
     {
