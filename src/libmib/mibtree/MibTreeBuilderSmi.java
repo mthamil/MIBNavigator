@@ -26,11 +26,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.List;
+import java.util.Map;
 
 import utilities.Utilities;
 
-import libmib.NameValuePair;
 import libmib.MibObjectType;
 import libmib.MibSyntax;
 import libmib.MibObjectType.Access;
@@ -253,7 +252,7 @@ public class MibTreeBuilderSmi extends AbstractMibTreeBuilder
             String nodeStatus = "";
             
             StringBuilder nodeDesc = new StringBuilder();
-            List<NameValuePair> nodeValues = null;
+            Map<Integer, String> nodePairs = null;
     
             // read until the end of the object definition, retrieving relevant information
             line = in.readLine();
@@ -285,7 +284,7 @@ public class MibTreeBuilderSmi extends AbstractMibTreeBuilder
 	                            index = line.indexOf("{");
 	                            nodeDataType = line.substring(SmiTokens.SYNTAX.length(), index).trim();
 	                            
-	                            nodeValues = handler.readPairs(line, SmiTokens.SYNTAX);
+	                            nodePairs = handler.readPairs(line, SmiTokens.SYNTAX);
 	                        }
 	                        else
 	                            nodeDataType = line.substring(SmiTokens.SYNTAX.length()).trim();
@@ -363,9 +362,9 @@ public class MibTreeBuilderSmi extends AbstractMibTreeBuilder
 	            if (!nodeDataType.equals("")) 
 	            {
 	                MibSyntax nodeSyntax = new MibSyntax(nodeDataType);
-	                if (nodeValues != null)
-	                    nodeSyntax.setValuePairs(Collections.synchronizedList(nodeValues)); //synchronize because there MAY be 
-	                                                                                        //simultaneous access
+	                if (nodePairs != null)
+	                    nodeSyntax.setValuePairs(Collections.synchronizedMap(nodePairs)); // synchronize because there MAY be 
+	                                                                                      // simultaneous access
 	                mibObject.setSyntax(nodeSyntax);
 	            }
 	            

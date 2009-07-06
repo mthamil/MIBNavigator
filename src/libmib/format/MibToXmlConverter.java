@@ -26,12 +26,12 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import utilities.Utilities;
 
 import libmib.MibImport;
 import libmib.MibModuleIdRevision;
-import libmib.NameValuePair;
 import libmib.MibObjectExtended;
 import libmib.MibSyntax;
 import libmib.MibObjectType.Access;
@@ -319,7 +319,7 @@ public class MibToXmlConverter
         String organization = "";
         StringBuilder contact = new StringBuilder();
         
-        List<NameValuePair> pairs = null;  //synchronization not needed
+        Map<Integer, String> pairs = null;
         List<String> indices = null;
         List<String> group = null;  
         List<MibModuleIdRevision> revisions = null;

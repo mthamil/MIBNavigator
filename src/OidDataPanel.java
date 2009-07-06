@@ -24,7 +24,8 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
@@ -40,7 +41,6 @@ import javax.swing.tree.TreePath;
 import contextmenu.TextContextMenu;
 import contextmenu.TextContextMenuListener;
 
-import libmib.NameValuePair;
 import libmib.MibObjectType;
 import libmib.MibSyntax;
 import libmib.MibObjectType.Access;
@@ -238,7 +238,7 @@ public class OidDataPanel implements TreeSelectionListener
     }
     
     
-    private void setMIBObject(MibObjectType mibObject)
+	private void setMIBObject(MibObjectType mibObject)
     {
         // Display the OID's details in the panel.
         MibSyntax oidSyntax = mibObject.getSyntax();
@@ -275,9 +275,9 @@ public class OidDataPanel implements TreeSelectionListener
             oidValueBox.setEnabled(true);
             curModel.removeAllElements();
             
-            List<NameValuePair> valList = mibObject.getSyntax().getValuePairs();
-            for (NameValuePair item : valList)
-                curModel.addElement(item.getName() + " (" + item.getValue() + ")");
+            Map<Integer, String> pairs = mibObject.getSyntax().getValuePairs();
+            for (Entry<Integer, String> entry : pairs.entrySet())
+                curModel.addElement(entry.getValue() + " (" + entry.getKey() + ")");
         }
         else
         {

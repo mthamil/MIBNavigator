@@ -24,9 +24,9 @@ package libmib.format;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-
-import libmib.NameValuePair;
+import java.util.Map;
 
 /**
  * Class that handles various block structure parsing when reading SMI format MIB files.
@@ -245,17 +245,16 @@ public class SmiStructureHandler
     
     
     /**
-     * Read comma delimited lists of name-value pairs, essentially enumerations.
+     * Reads comma delimited lists of name-value pairs, essentially enumerations.
      * This method uses readList and further parses the returned List of Strings
      * to extract the names and values.
      * 
-     * @return a MibValueListItem ArrayList
+     * @return a mapping of integer values to string names
      */
-    public List<NameValuePair> readPairs(String line, String keyword) throws IOException
+    public Map<Integer, String> readPairs(String line, String keyword) throws IOException
     {
         List<String> valueLines = readList(line, keyword);
-        
-        List<NameValuePair> valueList = new ArrayList<NameValuePair>();
+        Map<Integer, String> pairs = new HashMap<Integer, String>();
         
         for (int i = 0; i < valueLines.size(); i++)
         {
@@ -267,17 +266,16 @@ public class SmiStructureHandler
                 if (commentPos > -1)
                     curLine = curLine.substring(0, commentPos).trim();
                 
-                //extract the integer value and its label/alias/name
+                // Extract the integer value and its label/alias/name.
                 String name = curLine.substring(0, curLine.indexOf("(")).trim();
                 String value = curLine.substring(curLine.indexOf("(") + 1, curLine.lastIndexOf(")")).trim();
-                
-                //add the value list entry
-                NameValuePair curValueItem = new NameValuePair(name, Integer.parseInt(value));
-                valueList.add(curValueItem);
+
+                // Add the name-value pair entry.
+                pairs.put(new Integer(value), name);
             }
         }
         
-        return valueList;
+        return pairs;
     }
 
 }

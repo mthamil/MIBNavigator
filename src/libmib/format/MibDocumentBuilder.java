@@ -28,6 +28,8 @@ import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -50,7 +52,6 @@ import utilities.Utilities;
 
 import libmib.MibImport;
 import libmib.MibModuleIdRevision;
-import libmib.NameValuePair;
 import libmib.MibObjectExtended;
 import libmib.MibSyntax;
 import libmib.mibtree.BasicXmlErrorHandler;
@@ -391,19 +392,19 @@ public class MibDocumentBuilder
             Element pairsElement = mibDocument.createElement(ElementNames.PAIRS);
             syntaxElement.appendChild(pairsElement);
             
-            List<NameValuePair> pairs = newSyntax.getValuePairs();
-            for (NameValuePair pair : pairs)
+            Map<Integer, String> pairs = newSyntax.getValuePairs();
+            for (Entry<Integer, String> entry : pairs.entrySet())
             {    
                 Element pairElement = mibDocument.createElement(ElementNames.PAIR);
                 pairsElement.appendChild(pairElement);
                 
                 Element nameElement = mibDocument.createElement(ElementNames.PAIR_NAME);
-                Text nameText = mibDocument.createTextNode(pair.getName());
+                Text nameText = mibDocument.createTextNode(entry.getValue());
                 nameElement.appendChild(nameText);
                 pairElement.appendChild(nameElement);
                 
                 Element valueElement = mibDocument.createElement(ElementNames.PAIR_VALUE);
-                Text valueText = mibDocument.createTextNode(String.valueOf(pair.getValue()));
+                Text valueText = mibDocument.createTextNode(String.valueOf(entry.getKey()));
                 valueElement.appendChild(valueText);
                 pairElement.appendChild(valueElement);
             }

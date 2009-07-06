@@ -23,8 +23,8 @@ package libmib.mibtree;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
@@ -37,7 +37,6 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
-import libmib.NameValuePair;
 import libmib.MibObjectType;
 import libmib.MibSyntax;
 import libmib.MibObjectType.Access;
@@ -200,7 +199,7 @@ public class MibTreeBuilderXml extends AbstractMibTreeBuilder
                 if (syntaxNodes.getLength() > 0)
                 {
                     Element syntaxElement = (Element)syntaxNodes.item(0);
-                    MibSyntax objSyntax = this.parseSyntaxElement(syntaxElement);
+                    MibSyntax objSyntax = parseSyntaxElement(syntaxElement);
                     if (objSyntax != null)
                         mibObject.setSyntax(objSyntax);
                 }
@@ -236,7 +235,7 @@ public class MibTreeBuilderXml extends AbstractMibTreeBuilder
     }
     
     
-    private MibSyntax parseSyntaxElement(Element syntaxElement)
+    private static MibSyntax parseSyntaxElement(Element syntaxElement)
     {
         MibSyntax syntax = null;
         
@@ -264,7 +263,7 @@ public class MibTreeBuilderXml extends AbstractMibTreeBuilder
         NodeList pairsNodes = syntaxElement.getElementsByTagName(ElementNames.PAIRS);
         if (pairsNodes.getLength() > 0)
         {
-            List<NameValuePair> pairs = new ArrayList<NameValuePair>(); 
+            Map<Integer, String> pairs = new HashMap<Integer, String>(); 
             
             Element pairsElement = (Element)pairsNodes.item(0);
             NodeList pairNodes = pairsElement.getElementsByTagName(ElementNames.PAIR);
@@ -286,12 +285,10 @@ public class MibTreeBuilderXml extends AbstractMibTreeBuilder
                 Element valueElement = (Element)valueNodes.item(0);
 
                 NodeList valueText = valueElement.getChildNodes();
-                String valueString = valueText.item(0).getNodeValue().trim();
-                int value = Integer.parseInt(valueString);
+                String valueString = valueText.item(0).getNodeValue().trim();;
 
-                // Add the value list entry.
-                NameValuePair valuePair = new NameValuePair(name, value);
-                pairs.add(valuePair);
+                // Add the name-value pair entry.
+                pairs.put(new Integer(valueString), name);
             }
 
             // Since the MIB file must have validated, objSyntax should always be non-null at this point,
@@ -318,7 +315,7 @@ public class MibTreeBuilderXml extends AbstractMibTreeBuilder
      * @return the String value of element's contents or an empty string if the content was
      *         not available
      */
-    private String getChildText(Element parentElement, String childName)
+    private static String getChildText(Element parentElement, String childName)
     {
         // Get the element specified by elementName.
         NodeList children = parentElement.getElementsByTagName(childName);

@@ -96,9 +96,9 @@ public class TextContextMenu extends JPopupMenu
         else
             pasteAction.setEnabled(false);
 
-        //Disable select all if no visible text in the text component.
-        //getText is not sufficient for styled text components, so the Document must be 
-        //accessed directly.
+        // Disable select all if no visible text in the text component.
+        // getText is not sufficient for styled text components, so the Document must be 
+        // accessed directly.
         Document doc = menuSource.getDocument();
         String plainText = "";
         try 
@@ -107,7 +107,7 @@ public class TextContextMenu extends JPopupMenu
         } 
         catch (BadLocationException e) 
         {
-            //What should I even do here?  Bad Location my ass.
+            // What should I even do here?  Bad Location my ass.
             System.out.println(e.getMessage() + ":" + e.offsetRequested());
         }
 

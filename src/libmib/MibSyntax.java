@@ -21,7 +21,7 @@
 
 package libmib;
 
-import java.util.List;
+import java.util.Map;
 
 /**
  * This class is a logical grouping of attributes that define the syntax of a
@@ -31,7 +31,7 @@ public class MibSyntax
 {
     private String dataType;
     private String defaultValue;
-    private List<NameValuePair> pairs;
+    private Map<Integer, String> pairs;
     
     public MibSyntax()
     {
@@ -95,7 +95,7 @@ public class MibSyntax
      * 
      * @return a list of possible values
      */
-    public List<NameValuePair> getValuePairs()
+    public Map<Integer, String> getValuePairs()
     {
         return pairs;
     }
@@ -103,9 +103,9 @@ public class MibSyntax
     /**
      * Sets the list of possible values for this MIB object.
      * 
-     * @param newList a list of possible values
+     * @param newPairs name-value pairs
      */
-    public void setValuePairs(List<NameValuePair> newPairs)
+    public void setValuePairs(Map<Integer, String> newPairs)
     {
         if (newPairs == null)
             throw new IllegalArgumentException("Values cannot be set to null.");
@@ -124,9 +124,7 @@ public class MibSyntax
         if (pairs == null)
             return false;
         
-        // if not null
         return true;
-
     }
     
     
@@ -140,29 +138,14 @@ public class MibSyntax
      * @return the String name associated with the integer value or an empty String if the 
      *         value wasn't found
      */
-    public String findValueName(int value)
+    @SuppressWarnings("boxing")
+	public String findValueName(int value)
     {
         if (pairs == null)
             throw new NullPointerException("This syntax has no name-value pairs.");
         
-        //Use a simple O(N) search since pair lists shouldn't be very long.
-        int i = 0;
-        boolean found = false;
-        String name = "";
-        
-        while (i < pairs.size() && !found)
-        {
-            NameValuePair pair = pairs.get(i);
-            if (value == pair.getValue())
-            {
-                name = pair.getName();
-                found = true; 			// value found, stop searching
-            }
-            
-            i++;
-        }
-        
-        return name;
+        String name = pairs.get(value);
+        return (name == null) ? "" : name;
     }
     
     
