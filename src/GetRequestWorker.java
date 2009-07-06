@@ -338,7 +338,7 @@ public class GetRequestWorker extends SwingWorker
                 {
                     public void run() 
                     {
-                        currentListener.requestResultReceived(result);
+                        //currentListener.requestResultReceived(result);
                     }
                 };
                 SwingUtilities.invokeLater(doFireResultReceived);

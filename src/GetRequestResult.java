@@ -20,7 +20,9 @@
  */
 
 
-
+/**
+ * The result of a single get request.
+ */
 public class GetRequestResult 
 {
     private String displayOID;
