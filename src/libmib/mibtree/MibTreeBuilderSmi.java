@@ -170,10 +170,10 @@ public class MibTreeBuilderSmi extends AbstractMibTreeBuilder
                             // make sure parent and index are not empty since some data type definitions can look like OIDs
                             if ( !nodeName.equals("") && !nodeParentName.equals("") && !nodeIndex.equals("") )
                             {
-                                MibObjectType curMIBObject = new MibObjectType(nodeName, Integer.parseInt(nodeIndex));
-                                curMIBObject.setMibName(mibName);
+                                MibObjectType mibObject = new MibObjectType(nodeName, Integer.parseInt(nodeIndex));
+                                mibObject.setMibName(mibName);
                                 
-                                this.addMibObject(curMIBObject, nodeParentName);
+                                this.addMibObject(mibObject, nodeParentName);
                                 
                             } 
                         }

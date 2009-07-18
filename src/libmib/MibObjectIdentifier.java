@@ -66,7 +66,7 @@ public class MibObjectIdentifier
     
     /**
      * Sets the MIB object identifier's numeric id. This value is only unique
-     * relative to its parent.
+     * relative to its parent and identifies the object's place in a hierarchy.
      * 
      * @param newId the MIB object identifier's numeric id
      */
@@ -81,7 +81,7 @@ public class MibObjectIdentifier
     
     /**
      * Gets the MIB object identifier's numeric id. This value is only unique
-     * relative to its parent.
+     * relative to its parent and identifies the object's place in a hierarchy.
      * 
      * @return the MIB object identifier's numeric id
      */

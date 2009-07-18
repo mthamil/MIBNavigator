@@ -29,11 +29,10 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 
 import libmib.MibObjectIdentifier;
-import libmib.MibObjectType;
 
 /**
  * This extension of DefaultMutableTreeNode includes some MIB specific methods for searching, 
- * as well as a more specific constructor for using a MibObjectType as the node's user object.
+ * as well as a more specific constructor for using a MibObjectIdentifier as the node's user object.
  */
 public class MibTreeNode extends DefaultMutableTreeNode 
 {
@@ -84,14 +83,14 @@ public class MibTreeNode extends DefaultMutableTreeNode
     
     
     /**
-     * Searches for a node by its OID number string path starting at this node.  The search goes 
+     * Searches for a node by its OID numeral string path starting at this node.  The search goes 
      * through the children at each successive node until the correct OID has been constructed.
      * <br><br>
      * NOTE: the OID will be constructed STARTING at this node, and thus this should usually 
      * be used with the root node of a tree since local searches aren't useful with whole OIDs.  
      * However, it could be useful with partial OIDs.
      * 
-     * @param oid the OID number path string of the node to search for
+     * @param oid the OID numeral path string of the node to search for
      * @param matchType indicates whether the nearest node should be returned even though 
      *        the exact node was not found.  For example, if 1.3.6.1.2.1.1.1.0 was searched for, 
      *        then 1.3.6.1.2.1.1.1 (system.sysDescr) will be returned.
@@ -104,13 +103,13 @@ public class MibTreeNode extends DefaultMutableTreeNode
     {    
         String[] oidArray = oid.trim().split("\\.");
 
-        int curElement = 0; // the current index in oidArray
+        int elementIndex = 0; // the current index in oidArray
         int treeDepth = 0;  // the number of levels the search has advanced into the tree
 
         StringBuilder constructedOID = new StringBuilder();
-        MibTreeNode curNode = null;
+        MibTreeNode node = null;
         MibTreeNode foundNode = null;
-        MibObjectType curOID = null;
+        MibObjectIdentifier mibObject = null;
 
         Enumeration children = this.children();
 
@@ -122,23 +121,23 @@ public class MibTreeNode extends DefaultMutableTreeNode
                 boolean indexFound = false;
                 while (children.hasMoreElements() && !indexFound)
                 {
-                    curNode = (MibTreeNode)children.nextElement();
-                    curOID = (MibObjectType)curNode.getUserObject();
+                    node = (MibTreeNode)children.nextElement();
+                    mibObject = (MibObjectIdentifier)node.getUserObject();
     
                     // Compare the current object's id to the desired next number in the OID.
-                    int curId = curOID.getId();
-                    if (curId == Integer.parseInt(oidArray[curElement]))
+                    int id = mibObject.getId();
+                    if (id == Integer.parseInt(oidArray[elementIndex]))
                     {
                         indexFound = true;
                         
-                        if (curElement != 0)
+                        if (elementIndex != 0)
                             constructedOID.append(".");
                         
-                        constructedOID.append(curId);
+                        constructedOID.append(id);
                         
-                        children = curNode.children();
-                        foundNode = curNode;
-                        curElement++;
+                        children = node.children();
+                        foundNode = node;
+                        elementIndex++;
                     }
                 }
                 
@@ -180,13 +179,13 @@ public class MibTreeNode extends DefaultMutableTreeNode
     {    
         String[] oidArray = oid.trim().split("\\.");
 
-        int curElement = 0;
+        int elementIndex = 0;
         int treeDepth = 0;
 
         StringBuilder constructedOID = new StringBuilder();
-        MibTreeNode curNode = null;
+        MibTreeNode node = null;
         MibTreeNode foundNode = null;
-        MibObjectType curOID = null;
+        MibObjectIdentifier mibObject = null;
 
         Enumeration children = this.children();
 
@@ -196,22 +195,22 @@ public class MibTreeNode extends DefaultMutableTreeNode
             boolean indexFound = false;
             while (children.hasMoreElements() && !indexFound)
             {
-                curNode = (MibTreeNode)children.nextElement();
-                curOID = (MibObjectType)curNode.getUserObject();
+                node = (MibTreeNode)children.nextElement();
+                mibObject = (MibObjectIdentifier)node.getUserObject();
 
                 // Compare the current object's name to the desired next name in the OID.
-                String curName = curOID.getName();
-                if (curName.equals(oidArray[curElement]))
+                String name = mibObject.getName();
+                if (name.equals(oidArray[elementIndex]))
                 {
                     indexFound = true;
                     
-                    if (curElement != 0)
+                    if (elementIndex != 0)
                         constructedOID.append(".");
                     
-                    constructedOID.append(curName);
+                    constructedOID.append(name);
                     
-                    foundNode = curNode;
-                    curElement++;
+                    foundNode = node;
+                    elementIndex++;
                 };
             }
 
@@ -223,7 +222,7 @@ public class MibTreeNode extends DefaultMutableTreeNode
             if (!indexFound)
                 break; 
             
-            children = curNode.children();
+            children = node.children();
 
             treeDepth++;
         }
@@ -258,48 +257,48 @@ public class MibTreeNode extends DefaultMutableTreeNode
     
     
     /**
-     * Returns the full path number from the root of the tree to this node as a String.
+     * Returns the full numeral path from the root of the tree to this node as a String.
      * 
      * @return a String such as "1.3.6.1.1" representing a node's path from the root.
      */
-    public String getOidNumberPath()
+    public String getOidNumeralPath()
     {
-        StringBuilder fullNumberPath = new StringBuilder();
+        StringBuilder fullNumeralPath = new StringBuilder();
         TreeNode[] pathFromRoot = this.getPath();
         
-        fullNumberPath.append(((MibObjectType)((MibTreeNode)pathFromRoot[1]).getUserObject()).getId());   // ignore first node (generic root)
+        fullNumeralPath.append(((MibObjectIdentifier)((MibTreeNode)pathFromRoot[1]).getUserObject()).getId());   // ignore first node (generic root)
         for (int i = 2; i < pathFromRoot.length; i++)
-            fullNumberPath.append("." + ((MibObjectType)((MibTreeNode)pathFromRoot[i]).getUserObject()).getId());
+            fullNumeralPath.append("." + ((MibObjectIdentifier)((MibTreeNode)pathFromRoot[i]).getUserObject()).getId());
 
-        return fullNumberPath.toString();
+        return fullNumeralPath.toString();
     }
     
     
     /**
-     * Returns both the OID name and number paths.  This returns what getOIDNamePath 
+     * Returns both the OID name and numeral paths.  This returns what getOIDNamePath 
      * and getOIDNumberPath do, but in a String array together.
      * 
-     * @return a String array with both the full OID name and number paths of this node.
+     * @return a String array with both the full OID name and numeral paths of this node.
      *         The first element is the number and the second element is the name.
      */
     public String[] getOidPaths()
     {
-        StringBuilder fullNumberPath = new StringBuilder();
+        StringBuilder fullNumeralPath = new StringBuilder();
         StringBuilder fullNamePath = new StringBuilder();
         
         TreeNode[] pathFromRoot = this.getPath();
         
-        fullNumberPath.append(((MibObjectType)((MibTreeNode)pathFromRoot[1]).getUserObject()).getId()); //ignore first node (generic root)
+        fullNumeralPath.append(((MibObjectIdentifier)((MibTreeNode)pathFromRoot[1]).getUserObject()).getId()); //ignore first node (generic root)
         fullNamePath.append(pathFromRoot[1]); //ignore first node (generic root)
         
         for (int i = 2; i < pathFromRoot.length; i++)
         {
-            fullNumberPath.append("." + ((MibObjectType)((MibTreeNode)pathFromRoot[i]).getUserObject()).getId());
+        	fullNumeralPath.append("." + ((MibObjectIdentifier)((MibTreeNode)pathFromRoot[i]).getUserObject()).getId());
             fullNamePath.append("." + pathFromRoot[i].toString());
         }
 
         String[] paths = new String[2];
-        paths[0] = fullNumberPath.toString();
+        paths[0] = fullNumeralPath.toString();
         paths[1] = fullNamePath.toString();
         
         return paths;

@@ -31,6 +31,7 @@ import java.util.List;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
 
+import libmib.MibObjectIdentifier;
 import libmib.MibObjectType;
 import libmib.format.InvalidMibFormatException;
 
@@ -46,7 +47,7 @@ public abstract class AbstractMibTreeBuilder implements MibTreeBuilder
     
     // Contains nodes that couldn't be added to the MIB tree at creation time and their parents
     // in pairs of (lost node, parent name).
-    protected List<Object[]> lostChildren;
+    protected List<LostChildNode> lostChildren;
     
     // This improves performance in searching for existing nodes with what seems to be 
     // relatively little memory cost.  According to JProfiler, the call to the very 
@@ -61,22 +62,24 @@ public abstract class AbstractMibTreeBuilder implements MibTreeBuilder
         nodeMap = new HashMap<String, MibTreeNode>(2000); 
                 
         // Tree Initialization
-        MibObjectType root = new MibObjectType("root", 0);
-        MibTreeNode rootNode = new MibTreeNode(root); 			//invisible root for structural purposes
+        
+        // Add an invisible root for structural purposes.
+        MibObjectIdentifier root = new MibObjectIdentifier("root", 0);
+        MibTreeNode rootNode = new MibTreeNode(root);
 
-        MibObjectType iso = new MibObjectType("iso", 1);
+        MibObjectIdentifier iso = new MibObjectIdentifier("iso", 1);
         MibTreeNode isoNode = new MibTreeNode(iso);
         nodeMap.put("iso", isoNode);
 
-        MibObjectType ccitt = new MibObjectType("ccitt", 0);
+        MibObjectIdentifier ccitt = new MibObjectIdentifier("ccitt", 0);
         MibTreeNode ccittNode = new MibTreeNode(ccitt);
         nodeMap.put("ccitt", ccittNode);
 
-        MibObjectType org = new MibObjectType("org", 3);
+        MibObjectIdentifier org = new MibObjectIdentifier("org", 3);
         MibTreeNode orgNode = new MibTreeNode(org);
         nodeMap.put("org", orgNode);
 
-        MibObjectType dod = new MibObjectType("dod", 6);
+        MibObjectIdentifier dod = new MibObjectIdentifier("dod", 6);
         MibTreeNode dodNode = new MibTreeNode(dod);
         nodeMap.put("dod", dodNode);
 
@@ -147,7 +150,7 @@ public abstract class AbstractMibTreeBuilder implements MibTreeBuilder
 
         // this uses the lost children list on a global level between files
         if (lostChildren == null)
-            lostChildren = new ArrayList<Object[]>();
+            lostChildren = new ArrayList<LostChildNode>();
         
         // loop through all files in the mib directory and add them to the tree
         for (File mibFile : mibDirList)
@@ -179,7 +182,7 @@ public abstract class AbstractMibTreeBuilder implements MibTreeBuilder
         // of the MIB adding process.  It uses the lost children list on a single file
         // instead of across files.
         if (lostChildren == null)
-            lostChildren = new ArrayList<Object[]>();
+            lostChildren = new ArrayList<LostChildNode>();
          
         this.addMibToTree(mibFile);
         
@@ -229,23 +232,23 @@ public abstract class AbstractMibTreeBuilder implements MibTreeBuilder
         if (lostChildren != null && lostChildren.size() > 1)
         {
             //System.out.println("\nLOST CHILDREN:");
-            for (Object[] lostChild : lostChildren)
+            for (LostChildNode lostChild : lostChildren)
             {
-                MibTreeNode curNode = (MibTreeNode)lostChild[0];
-                MibObjectType curMIBObject = (MibObjectType)curNode.getUserObject();
-                String parentName = (String)lostChild[1];
+                MibTreeNode lostNode = lostChild.getNode();
+                MibObjectIdentifier lostMibObject = (MibObjectIdentifier)lostNode.getUserObject();
+                String parentName = lostChild.getParentName();
 
-                //System.out.print("\n" + curMIBObject.getName() + " --> " + nodeParent);
+                //System.out.print("\n" + lostMibObject.getName() + " --> " + nodeParent);
 
                 // test to see if this node already exists in the tree, lost children may have been added later due to duplication
-                if (!nodeMap.containsKey(curMIBObject.getName())) //check the HashMap
+                if (!nodeMap.containsKey(lostMibObject.getName())) //check the HashMap
                 {
                     // check the HashMap for specified parent node
                     if (nodeMap.containsKey(parentName))
                     {
                         MibTreeNode parent = nodeMap.get(parentName); 
-                        parent.add(curNode);
-                        nodeMap.put(curMIBObject.getName(), curNode);
+                        parent.add(lostNode);
+                        nodeMap.put(lostMibObject.getName(), lostNode);
                         //System.out.print(":    Added");
                     }
                 }
@@ -280,7 +283,7 @@ public abstract class AbstractMibTreeBuilder implements MibTreeBuilder
         }
         else
         {
-            Object[] noParentNode = new Object[] {newNode, parentName};
+            LostChildNode noParentNode = new LostChildNode(newNode, parentName);
             lostChildren.add(noParentNode);
             //System.out.print("Error, " + nodeParent + " not found.");
         }
@@ -296,6 +299,41 @@ public abstract class AbstractMibTreeBuilder implements MibTreeBuilder
 	 * @see libmib.mibtree.MibTreeBuilder#setFileFilter(java.io.FilenameFilter)
 	 */
 	public void setFileFilter(FilenameFilter filter) { this.filter = filter; }
+	
+	
+	/**
+	 * Utility class used to represent a node that was created before its
+	 * parent node.
+	 */
+	private final class LostChildNode
+	{
+		private final MibTreeNode lostNode;
+		private final String nodeParentName;
+		
+		/**
+		 * Creates a new lost child.
+		 * 
+		 * @param newLostNode
+		 * @param newParentName
+		 */
+		public LostChildNode(MibTreeNode newLostNode, String newParentName)
+		{
+			this.lostNode = newLostNode;
+			this.nodeParentName = newParentName;
+		}
+		
+		/**
+		 * Gets the lost child's node object.
+		 * @return
+		 */
+		public MibTreeNode getNode() { return lostNode; }
+		
+		/**
+		 * Gets the lost child's parent name.
+		 * @return
+		 */
+		public String getParentName() { return nodeParentName; }
+	}
     
     
 }

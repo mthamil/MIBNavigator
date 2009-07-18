@@ -66,8 +66,7 @@ public class UserSettings
 	{
 		settings = new Properties();
 		settingsChanged = false;
-		String settingsDirPath = System.getProperty("user.home") + File.separator + SETTINGS_FOLDERNAME
-			+ File.separator;
+		String settingsDirPath = System.getProperty("user.home") + File.separator + SETTINGS_FOLDERNAME + File.separator;
 		settingsFile = new File(settingsDirPath + "properties.xml");
 	}
 

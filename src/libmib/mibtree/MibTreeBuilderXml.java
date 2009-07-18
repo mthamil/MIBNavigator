@@ -259,7 +259,7 @@ public class MibTreeBuilderXml extends AbstractMibTreeBuilder
             syntax = new MibSyntax("Sequence of " + sequenceText.item(0).getNodeValue().trim() );
         }
 
-        // Get the value list from the syntax element if one exists.
+        // Get the name-value pair list from the syntax element if one exists.
         NodeList pairsNodes = syntaxElement.getElementsByTagName(ElementNames.PAIRS);
         if (pairsNodes.getLength() > 0)
         {
@@ -268,19 +268,19 @@ public class MibTreeBuilderXml extends AbstractMibTreeBuilder
             Element pairsElement = (Element)pairsNodes.item(0);
             NodeList pairNodes = pairsElement.getElementsByTagName(ElementNames.PAIR);
 
-            // Loop through all of the value items in the list.
+            // Loop through all of the pairs in the list.
             for (int j = 0; j < pairNodes.getLength(); j++)
             {
                 Element pairElement = (Element)pairNodes.item(j);
 
-                // Get the value item's label.
+                // Get the pair's name.
                 NodeList nameNodes = pairElement.getElementsByTagName(ElementNames.PAIR_NAME);
                 Element nameElement = (Element)nameNodes.item(0);
 
                 NodeList nameText = nameElement.getChildNodes();
                 String name = nameText.item(0).getNodeValue().trim();
 
-                // get the value item's number
+                // Get the pair's value.
                 NodeList valueNodes = pairElement.getElementsByTagName(ElementNames.PAIR_VALUE);
                 Element valueElement = (Element)valueNodes.item(0);
 

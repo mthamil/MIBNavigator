@@ -51,16 +51,26 @@ public class MibObjectType extends MibObjectIdentifier
     private List<String> indices;
     private MibSyntax syntax;
     
-    public enum Access {NOT_ACCESSIBLE, READ_ONLY, READ_WRITE, ACCESSIBLE_FOR_NOTIFY, READ_CREATE;
-        //Return a more properly formatted String version of the constant.
+    public enum Access 
+    {
+    	NOT_ACCESSIBLE, READ_ONLY, READ_WRITE, ACCESSIBLE_FOR_NOTIFY, READ_CREATE;
+    
+        /**
+         * Returns a more properly formatted String version of the constant.
+         */
         public String toString()
         {
             return super.toString().toLowerCase().replaceAll("_", "-");
         }
     };
     
-    public enum Status {CURRENT, OPTIONAL, DEPRECATED, MANDATORY, OBSOLETE;
-        //Return a more properly formatted String version of the constant.
+    public enum Status 
+    {
+    	CURRENT, OPTIONAL, DEPRECATED, MANDATORY, OBSOLETE;
+    	
+        /**
+         * Returns a more properly formatted String version of the constant.
+         */
         public String toString()
         {
             return super.toString().toLowerCase();

@@ -177,11 +177,11 @@ public class MibToXmlConverter
                         if ( !objName.equals("") && !objParent.equals("") && !objIndex.equals("") )
                         {
 							//System.out.println(objParent + " " + objIndex);
-							MibObjectExtended curMIBObject = new MibObjectExtended(objName, Integer.parseInt(objIndex));
-                            curMIBObject.setObjectType(SmiTokens.OBJECT_ID);
-                            curMIBObject.setParent(objParent);
+							MibObjectExtended mibObject = new MibObjectExtended(objName, Integer.parseInt(objIndex));
+							mibObject.setObjectType(SmiTokens.OBJECT_ID);
+							mibObject.setParent(objParent);
 
-						    mibDocFactory.addObjectElement(curMIBObject);
+						    mibDocFactory.addObjectElement(mibObject);
                         }
                     }
 				}
@@ -248,25 +248,25 @@ public class MibToXmlConverter
             boolean endOfImport = false;
             while (!endOfImport && i < importLines.length)
             {
-                String curElement = importLines[i].trim();
+                String element = importLines[i].trim();
                 
                 // Strip comments.
-                if (curElement.contains("--"))
+                if (element.contains("--"))
                 {
-                    int commentIndex = curElement.indexOf("--");
-                    curElement = curElement.substring(0, commentIndex).trim();
+                    int commentIndex = element.indexOf("--");
+                    element = element.substring(0, commentIndex).trim();
                 }
                 
                 // Skip empty lines.
-                if (curElement.equals(""))
+                if (element.equals(""))
                 {
                     i++;
                     continue;
                 }
                 
-                if (curElement.contains(SmiTokens.SOURCE)) // identify source MIBS
+                if (element.contains(SmiTokens.SOURCE)) // identify source MIBS
                 {
-                    String source = curElement.trim();
+                    String source = element.trim();
                     
                     // take care of imports that get put in the same string as the FROM statement
                     if (!source.startsWith(SmiTokens.SOURCE))
@@ -289,7 +289,7 @@ public class MibToXmlConverter
                 }
                 else
                 {
-                    importItem.addImport(curElement.trim());
+                    importItem.addImport(element.trim());
                 }
                 
                 if (!endOfImport)
