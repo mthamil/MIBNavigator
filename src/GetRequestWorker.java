@@ -57,6 +57,7 @@ import snmp.SnmpV1Communicator;
  *  that they may seem to warrant 3 separate listener interfaces, but for simplicity a single listener 
  *  interface is used even though no single type of event is generated.
  */
+@Deprecated
 public class GetRequestWorker extends SwingWorker 
 {
     private EventListenerList requestListeners = new EventListenerList();
@@ -196,13 +197,13 @@ public class GetRequestWorker extends SwingWorker
                     //with data models, and none of them are updated.  From what I've read,
                     //the single thread rule applies to UPDATING Swing VISUAL components.
                     
-                    MibTreeNode curNode = root.getNodeByOid(nextOid, NodeSearchOption.MatchNearestPath);
+                    MibTreeNode node = root.getNodeByOid(nextOid, NodeSearchOption.MatchNearestPath);
                     
                     String displayOid = nextOid;
                     
                     //If the OID or the nearest OID was found in the tree, resolve and format the OID for display.
-                    if (curNode != null)
-                        displayOid = this.formatDisplayOid(curNode, nextOid);
+                    if (node != null)
+                        displayOid = this.formatDisplayOid(node, nextOid);
 
                     //Extract the returned value from the VarBindList and convert it to a String.
                     snmpValue = pair.getSNMPObjectAt(1);
@@ -211,24 +212,24 @@ public class GetRequestWorker extends SwingWorker
                     //There is a potential problem here because the closest node is returned if the exact
                     //match is not found.  However, it seems inefficient to do another search with the
                     //option to return the exact node.
-                    if (curNode != null && (snmpValue instanceof SnmpInteger))
+                    if (node != null && (snmpValue instanceof SnmpInteger))
                     {
-                        MibObjectType curObj = (MibObjectType)curNode.getUserObject();
-                        if (curObj.hasNameValuePairs())
+                        MibObjectType mibObject = (MibObjectType)node.getUserObject();
+                        if (mibObject.hasNameValuePairs())
                         {
-                            int intValue = ((BigInteger)snmpValue.getValue()).intValue();
+                            int value = ((BigInteger)snmpValue.getValue()).intValue();
                             
-                            String valueName = curObj.getSyntax().findValueName(intValue);
+                            String name = mibObject.getSyntax().findValueName(value);
                             
                             //valueName will be empty if either the value wasn't found or for some reason the name was "".
                             //Either way, the number is more informative than an empty String in this case.
-                            if (!valueName.equals(""))       
-                                snmpValueString = valueName; 
+                            if (!name.equals(""))       
+                                snmpValueString = name; 
                         }
                     }  
 
-                    GetRequestResult curItem = new GetRequestResult(displayOid, nextOid, snmpValueString);
-                    this.fireResultReceivedEvent(curItem);
+                    GetRequestResult result = new GetRequestResult(displayOid, nextOid, snmpValueString);
+                    this.fireResultReceivedEvent(result);
                 }
 
                 //attempt to slow this sucker down a bit so it doesn't swamp the agent device
@@ -248,15 +249,15 @@ public class GetRequestWorker extends SwingWorker
         }
         catch (SocketTimeoutException e)
         {
-            return Resources.getString("timeoutGetErrorMEssage") + e.getMessage();
+            return StringResources.getString("timeoutGetErrorMEssage") + e.getMessage();
         }
         catch (InterruptedIOException e)
         {
-            return Resources.getString("interruptedGetErrorMEssage") + e.getMessage();
+            return StringResources.getString("interruptedGetErrorMEssage") + e.getMessage();
         }
         catch (UnknownHostException e) 
         {
-            return Resources.getString("unknownHostErrorMEssage") + e.getMessage();
+            return StringResources.getString("unknownHostErrorMEssage") + e.getMessage();
         }
         catch (SnmpGetException e)
         {
@@ -264,7 +265,7 @@ public class GetRequestWorker extends SwingWorker
         }
         catch (Exception e) //not recommended, but exceptional circumstances will likely always prevent successful execution of the GetRequest process
         {
-            return Resources.getString("generalGetErrorMEssage") + e.getMessage();
+            return StringResources.getString("generalGetErrorMEssage") + e.getMessage();
         }
     }
     
@@ -278,14 +279,14 @@ public class GetRequestWorker extends SwingWorker
      */
     private String formatDisplayOid(MibTreeNode node, String oidString)
     {
-        // Get the full name and number paths of the node.
+        // Get the full name and numeral paths of the node.
         String[] paths = node.getOidPaths(); 
-        String oidNumberPath = paths[0];
+        String oidNumeralPath = paths[0];
         String oidNamePath = paths[1];
 
-        if (oidString.startsWith(oidNumberPath)) //make sure the OID number pattern isn't matched elsewhere in a really long OID
+        if (oidString.startsWith(oidNumeralPath)) //make sure the OID numeral pattern isn't matched elsewhere in a really long OID
         {
-            oidString = oidString.replaceFirst(oidNumberPath, oidNamePath);
+            oidString = oidString.replaceFirst(oidNumeralPath, oidNamePath);
 
             //This is a bit of a hack since I'm trying to replicate the way GetIf displays
             //OID names during a GET.
@@ -338,7 +339,7 @@ public class GetRequestWorker extends SwingWorker
                 {
                     public void run() 
                     {
-                        //currentListener.requestResultReceived(result);
+                        currentListener.requestResultReceived(result);
                     }
                 };
                 SwingUtilities.invokeLater(doFireResultReceived);

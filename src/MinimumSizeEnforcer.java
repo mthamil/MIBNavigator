@@ -34,27 +34,40 @@ import java.awt.event.ComponentEvent;
  */
 public class MinimumSizeEnforcer extends ComponentAdapter 
 {
-    // minimum width and height values
-    private long width;
-    private long height;
+    // Minimum width and height values
+    private final Dimension minDimension;
     
     /**
      * Creates a new MinimumSizeEnforcer with a minimum width and height.
      * 
-     * @param width the minimum width for a component.  This must be greater than 0.
-     * @param height the minimum height for a component.  This must be greater than 0.
+     * @param minWidth the minimum width for a component.  This must be greater than 0.
+     * @param minHeight the minimum height for a component.  This must be greater than 0.
      */
-    public MinimumSizeEnforcer(final long width, final long height)
+    public MinimumSizeEnforcer(final int minWidth, final int minHeight)
     {
-        if (width <= 0)
+        if (minWidth <= 0)
             throw new IllegalArgumentException("Width must be greater than zero.");
         
-        this.width = width;
-        
-        if (height <= 0)
+        if (minHeight <= 0)
             throw new IllegalArgumentException("Height must be greater than zero.");
         
-        this.height = height;
+        this.minDimension = new Dimension(minWidth, minHeight);
+    }
+    
+    /**
+     * Creates a new MinimumSizeEnforcer with a minimum width and height.
+     * 
+     * @param minDimension the minimum width and height for a component.  Bothproperties  must be greater than 0.
+     */
+    public MinimumSizeEnforcer(final Dimension minDimension)
+    {
+        if (minDimension.width <= 0)
+            throw new IllegalArgumentException("Width must be greater than zero."); 
+        
+        if (minDimension.height <= 0)
+            throw new IllegalArgumentException("Height must be greater than zero.");
+        
+        this.minDimension = new Dimension(minDimension.width, minDimension.height);
     }
     
     /**
@@ -66,27 +79,26 @@ public class MinimumSizeEnforcer extends ComponentAdapter
     public void componentResized(ComponentEvent e)
     {
         Component comp = e.getComponent();
-           
-        double curWidth;
-        double curHeight;
-        
         Dimension compSize = comp.getSize();
-        curWidth = compSize.getWidth();
-        curHeight = compSize.getHeight();
+        double width = compSize.getWidth();
+        double height = compSize.getHeight();
         
-        if (curWidth < this.width && curHeight < this.height)
+        double minWidth = this.minDimension.getWidth();
+        double minHeight = this.minDimension.getHeight();
+        
+        if (width < minWidth && height < minHeight)
         {
-            compSize.setSize(this.width, this.height);
+            compSize.setSize(minWidth, minHeight);
             comp.setSize(compSize);
         }
-        else if (curWidth < this.width)
+        else if (width < minWidth)
         {
-            compSize.setSize(this.width, curHeight);
+            compSize.setSize(minWidth, height);
             comp.setSize(compSize);
         }
-        else if (curHeight < this.height)
+        else if (height < minHeight)
         {
-            compSize.setSize(curWidth, this.height);
+            compSize.setSize(width, minHeight);
             comp.setSize(compSize);
         }
     }

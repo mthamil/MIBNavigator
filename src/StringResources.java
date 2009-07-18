@@ -2,16 +2,15 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 /**
- * Generated wrapper class around resource bundle.
- *
+ * Generated wrapper class around externalized string resource bundle.
  */
-public class Resources
+public class StringResources
 {
-	private static final String BUNDLE_NAME = "Resources";
+	private static final String BUNDLE_NAME = "StringResources";
 
 	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
 
-	private Resources() { }
+	private StringResources() { }
 
 	public static String getString(String key)
 	{

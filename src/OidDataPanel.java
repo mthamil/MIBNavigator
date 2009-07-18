@@ -41,6 +41,7 @@ import javax.swing.tree.TreePath;
 import contextmenu.TextContextMenu;
 import contextmenu.TextContextMenuListener;
 
+import libmib.MibObjectIdentifier;
 import libmib.MibObjectType;
 import libmib.MibSyntax;
 import libmib.MibObjectType.Access;
@@ -54,16 +55,17 @@ public class OidDataPanel implements TreeSelectionListener
     private JEditorPane oidDesc;
     private JScrollPane oidDescScroll;
     
-    private JLabel oidValueBoxLabel;
-    private JComboBox oidValueBox;
+    private JLabel oidValuePairsLabel;
+    private JComboBox oidValuePairsBox;
 
     private JLabel oidDataTypeLabel, oidAccessLabel, oidStatusLabel, oidMIBNameLabel;
     private JTextField oidDataTypeField, oidAccessField, oidStatusField, oidMIBNameField;
     
     private Color uneditableBackColor;
     
-    private static final String DESC_HTML_PREFIX = "<font face=\"SansSerif\" size=\"2\">";
-    private static final String DESC_HTML_SUFFIX = "</font>";
+    private static final String DESC_FORMAT = "<font face='SansSerif' size='%d'>%s</font>";
+    //private static final String DESC_HTML_PREFIX = "<font face=\"SansSerif\" size=\"4\">";
+    //private static final String DESC_HTML_SUFFIX = "</font>";
 
     
     public OidDataPanel() 
@@ -83,33 +85,33 @@ public class OidDataPanel implements TreeSelectionListener
 		TextContextMenuListener contextMenuListener = new TextContextMenuListener(contextMenu);
         
         // OID details
-        oidDataTypeLabel = new JLabel(Resources.getString("oidTypeLabel"));
+        oidDataTypeLabel = new JLabel(StringResources.getString("oidTypeLabel"));
         oidDataTypeField = new JTextField(18);
         oidDataTypeField.setEditable(false);
         oidDataTypeField.setBackground(uneditableBackColor);
         oidDataTypeField.addMouseListener(contextMenuListener);
 
-        Dimension valuesSize = new Dimension(167, 20);
-        oidValueBoxLabel = new JLabel(Resources.getString("oidValuesLabel"));
-        oidValueBox = new JComboBox();
-        oidValueBox.setPreferredSize(valuesSize);
-        oidValueBox.setMaximumSize(valuesSize);
-        oidValueBox.setEditable(false);
-        oidValueBox.setEnabled(false);
+        Dimension valuesSize = LookAndFeelResources.getDimension("oidValuePairsBox");
+        oidValuePairsLabel = new JLabel(StringResources.getString("oidValuePairsLabel"));
+        oidValuePairsBox = new JComboBox();
+        oidValuePairsBox.setPreferredSize(valuesSize);
+        oidValuePairsBox.setMaximumSize(valuesSize);
+        oidValuePairsBox.setEditable(false);
+        oidValuePairsBox.setEnabled(false);
         
-        oidAccessLabel = new JLabel(Resources.getString("oidAccessLabel"));
+        oidAccessLabel = new JLabel(StringResources.getString("oidAccessLabel"));
         oidAccessField = new JTextField(12);
         oidAccessField.setEditable(false);
         oidAccessField.setBackground(uneditableBackColor);
         oidAccessField.addMouseListener(contextMenuListener);
         
-        oidStatusLabel = new JLabel(Resources.getString("oidStatusLabel"));
+        oidStatusLabel = new JLabel(StringResources.getString("oidStatusLabel"));
         oidStatusField = new JTextField(12);
         oidStatusField.setEditable(false);
         oidStatusField.setBackground(uneditableBackColor);
         oidStatusField.addMouseListener(contextMenuListener);
 
-        oidMIBNameLabel = new JLabel(Resources.getString("oidSourceLabel"));
+        oidMIBNameLabel = new JLabel(StringResources.getString("oidSourceLabel"));
         oidMIBNameField = new JTextField(18);
         oidMIBNameField.setEditable(false);
         oidMIBNameField.setBackground(uneditableBackColor);
@@ -124,7 +126,7 @@ public class OidDataPanel implements TreeSelectionListener
 
         oidDescScroll = new JScrollPane(oidDesc);
         oidDescScroll.setPreferredSize(new Dimension(75, 100));
-        oidDescLabel = new JLabel(Resources.getString("oidDescriptionLabel"));
+        oidDescLabel = new JLabel(StringResources.getString("oidDescriptionLabel"));
     }
     
     
@@ -164,13 +166,13 @@ public class OidDataPanel implements TreeSelectionListener
 
         cons.gridx = 0;
         cons.gridy = 1;
-        layout.setConstraints(oidValueBoxLabel, cons);
-        detailPanel.add(oidValueBoxLabel);
+        layout.setConstraints(oidValuePairsLabel, cons);
+        detailPanel.add(oidValuePairsLabel);
 
         cons.gridx = 1;
         cons.gridy = 1;
-        layout.setConstraints(oidValueBox, cons);
-        detailPanel.add(oidValueBox);
+        layout.setConstraints(oidValuePairsBox, cons);
+        detailPanel.add(oidValuePairsBox);
 
         cons.gridx = 2;
         cons.gridy = 1;
@@ -237,7 +239,14 @@ public class OidDataPanel implements TreeSelectionListener
         oidInfoPanel.add(descPanel);
     }
     
+    private void setMIBObject(MibObjectIdentifier mibObject)
+    {
+    	oidMIBNameField.setText(mibObject.getMibName());
+        oidMIBNameField.setCaretPosition(0);
+    }
     
+    
+	@SuppressWarnings("boxing")
 	private void setMIBObject(MibObjectType mibObject)
     {
         // Display the OID's details in the panel.
@@ -263,29 +272,29 @@ public class OidDataPanel implements TreeSelectionListener
 
         // The oidDesc JEditorPane automatically converts escaped special characters
         // to the correct display characters, ie. "&amp" -> "&" and "&gt;" -> ">".
-        oidDesc.setText(DESC_HTML_PREFIX + mibObject.getDescription() + DESC_HTML_SUFFIX);
+        oidDesc.setText(String.format(DESC_FORMAT, LookAndFeelResources.getInteger("oidDescriptionFontSize"), mibObject.getDescription()));
         oidDesc.setCaretPosition(0);
+        
         oidMIBNameField.setText(mibObject.getMibName());
         oidMIBNameField.setCaretPosition(0);
 
         // Process the object's enumerated data type.
-        DefaultComboBoxModel curModel = (DefaultComboBoxModel)oidValueBox.getModel();
+        DefaultComboBoxModel comboModel = (DefaultComboBoxModel)oidValuePairsBox.getModel();
         if (mibObject.hasNameValuePairs())
         {
-            oidValueBox.setEnabled(true);
-            curModel.removeAllElements();
+            oidValuePairsBox.setEnabled(true);
+            comboModel.removeAllElements();
             
             Map<Integer, String> pairs = mibObject.getSyntax().getValuePairs();
             for (Entry<Integer, String> entry : pairs.entrySet())
-                curModel.addElement(entry.getValue() + " (" + entry.getKey() + ")");
+            	comboModel.addElement(String.format("%s (%d)", entry.getValue(), entry.getKey()));
         }
         else
         {
-            oidValueBox.setEnabled(false);
-            if (curModel.getSize() > 0)
-                curModel.removeAllElements();
+            oidValuePairsBox.setEnabled(false);
+            if (comboModel.getSize() > 0)
+                comboModel.removeAllElements();
         }
-
     }
     
     
@@ -305,14 +314,15 @@ public class OidDataPanel implements TreeSelectionListener
 	public void valueChanged(TreeSelectionEvent event)
 	{	
 		TreePath treePath = event.getPath();
-		MibTreeNode node;
-		MibObjectType mibObject;
 	
-		node = (MibTreeNode)treePath.getLastPathComponent();
-		mibObject = (MibObjectType)node.getUserObject();
+		MibTreeNode node = (MibTreeNode)treePath.getLastPathComponent();
+		MibObjectIdentifier mibObject = (MibObjectIdentifier)node.getUserObject();
 		
 		// Display the selected OID's details.
-        this.setMIBObject(mibObject);
+		if (mibObject instanceof MibObjectType)
+			this.setMIBObject((MibObjectType)mibObject);
+		else
+			this.setMIBObject(mibObject);
 	}
     
     

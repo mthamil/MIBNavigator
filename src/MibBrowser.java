@@ -33,7 +33,7 @@ import javax.swing.tree.*;
 
 import utilities.Utilities;
 
-import libmib.MibObjectType;
+import libmib.MibObjectIdentifier;
 import libmib.mibtree.MibTreeBuilder;
 import libmib.mibtree.MibTreeNode;
 import libmib.mibtree.MibTreeNode.NodeSearchOption;
@@ -55,8 +55,8 @@ public class MibBrowser
     
     private OidDataPanel oidViewer;
 
-    private JLabel oidNameLabel, oidNumberLabel, addressLabel, communityLabel, portLabel, timeoutLabel, oidInputLabel;
-    private JTextField oidNameField, oidNumberField, resolvedAddrField, communityField, portField, timeoutField, oidInputField; 
+    private JLabel oidNameLabel, oidNumeralLabel, addressLabel, communityLabel, portLabel, timeoutLabel, oidInputLabel;
+    private JTextField oidNameField, oidNumeralField, resolvedAddressField, communityField, portField, timeoutField, oidInputField; 
     private JComboBox addressBox;
     
     private JLabel resultsLabel;
@@ -68,7 +68,7 @@ public class MibBrowser
     private Color backgroundColor;
 
     private StringBuilder currentOidName;
-    private StringBuilder currentOidNumber;
+    private StringBuilder currentOidNumeral;
     
     private File mibDirectory;
 
@@ -87,7 +87,7 @@ public class MibBrowser
         treeBuilder = newBuilder;
         
         currentOidName = new StringBuilder();
-        currentOidNumber = new StringBuilder();
+        currentOidNumeral = new StringBuilder();
         
         mibDirectory = newMibDirectory;
 
@@ -109,27 +109,27 @@ public class MibBrowser
 		TextContextMenuListener contextMenuListener = new TextContextMenuListener(contextMenu);
         
 		// OID info
-        oidNameLabel = new JLabel(Resources.getString("oidNameLabel"));
+        oidNameLabel = new JLabel(StringResources.getString("oidNameLabel"));
         backgroundColor = oidNameLabel.getBackground(); //this is for look and feel purposes
-        oidNumberLabel = new JLabel(Resources.getString("oidNumberLabel"));
+        oidNumeralLabel = new JLabel(StringResources.getString("oidNumeralLabel"));
 
         oidNameField = new JTextField(37);
         oidNameField.setEditable(false);
         oidNameField.setBackground(backgroundColor);
         oidNameField.addMouseListener(contextMenuListener);
 
-        oidNumberField = new JTextField(37);
-        oidNumberField.setEditable(false);
-        oidNumberField.setBackground(backgroundColor);
-        oidNumberField.addMouseListener(contextMenuListener);
+        oidNumeralField = new JTextField(37);
+        oidNumeralField.setEditable(false);
+        oidNumeralField.setBackground(backgroundColor);
+        oidNumeralField.addMouseListener(contextMenuListener);
         
         
 		// Host info
-		addressLabel = new JLabel(Resources.getString("ipAddressLabel"));
+		addressLabel = new JLabel(StringResources.getString("ipAddressLabel"));
         addressBox = new JComboBox();
         addressBox.setMaximumRowCount(15);
         addressBox.setEditable(true);
-        Dimension addressSize = new Dimension(113, 20);
+        Dimension addressSize = LookAndFeelResources.getDimension("addressBox");
         addressBox.setPreferredSize(addressSize);
         addressBox.setMaximumSize(addressSize);
         
@@ -138,29 +138,29 @@ public class MibBrowser
         Component comp = editor.getEditorComponent();
         comp.addMouseListener(contextMenuListener);
 
-        resolvedAddrField = new JTextField(17);
-        resolvedAddrField.setEditable(false);
-        resolvedAddrField.setHorizontalAlignment(JTextField.CENTER);
-        resolvedAddrField.setBackground(backgroundColor);
-        resolvedAddrField.addMouseListener(contextMenuListener);
+        resolvedAddressField = new JTextField(17);
+        resolvedAddressField.setEditable(false);
+        resolvedAddressField.setHorizontalAlignment(JTextField.CENTER);
+        resolvedAddressField.setBackground(backgroundColor);
+        resolvedAddressField.addMouseListener(contextMenuListener);
 
-        communityLabel = new JLabel(Resources.getString("communityStringLabel"));
+        communityLabel = new JLabel(StringResources.getString("communityStringLabel"));
         communityField = new JTextField(12);
         communityField.setText("public");
         communityField.setEditable(true);
         communityField.addMouseListener(contextMenuListener);
         
-        portLabel = new JLabel(Resources.getString("portLabel"));
+        portLabel = new JLabel(StringResources.getString("portLabel"));
         portField = new JTextField(4);
         portField.setText("161");
         portField.addMouseListener(contextMenuListener);
         
-        timeoutLabel = new JLabel(Resources.getString("timeoutLabel"));
+        timeoutLabel = new JLabel(StringResources.getString("timeoutLabel"));
         timeoutField = new JTextField(4);
         timeoutField.setText("4000");
         timeoutField.addMouseListener(contextMenuListener);
 
-        oidInputLabel = new JLabel(Resources.getString("oidInputLabel"));
+        oidInputLabel = new JLabel(StringResources.getString("oidInputLabel"));
         oidInputField = new JTextField(21);
         oidInputField.setText("");
         oidInputField.setEditable(true);
@@ -171,17 +171,17 @@ public class MibBrowser
         ListContextMenu listContextMenu = new ListContextMenu();
         ListContextMenuListener listContextMenuListener = new ListContextMenuListener(listContextMenu);
         
-		resultsLabel = new JLabel(Resources.getString("resultsLabel")); 
+		resultsLabel = new JLabel(StringResources.getString("resultsLabel")); 
         resultsList = new JList(new DefaultListModel());
         resultsList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         resultsList.addMouseListener(listContextMenuListener);
         resultsList.addListSelectionListener(new ResultsListListener(this));
         
         resultsScroll = new JScrollPane(resultsList);
-		resultsScroll.setPreferredSize(new Dimension(50, 75));
+		resultsScroll.setPreferredSize(LookAndFeelResources.getDimension("resultsScroll"));
 
         getButton = new JButton();
-        getButton.setPreferredSize(new Dimension(80, 25));
+        getButton.setPreferredSize(LookAndFeelResources.getDimension("getButton"));
         getButton.setAction(new GetRequestAction());
         getButton.setMnemonic(KeyEvent.VK_G);
 
@@ -252,7 +252,7 @@ public class MibBrowser
 		treePanel.add(mibTreeScroll);
 
 
-		// TREE AND OID DETAILS CONTAINING PANEL
+		// TREE AND OID DETAILS PANEL
 		JPanel topPanel = new JPanel();
 		topPanel.setLayout(layout);
 
@@ -296,14 +296,14 @@ public class MibBrowser
 		cons.fill = GridBagConstraints.NONE;
 		cons.gridx = 0;
 		cons.gridy = 1;
-		layout.setConstraints(oidNumberLabel, cons);
-		oidPanel.add(oidNumberLabel);
+		layout.setConstraints(oidNumeralLabel, cons);
+		oidPanel.add(oidNumeralLabel);
 
 		cons.fill = GridBagConstraints.HORIZONTAL;
 		cons.gridx = 1;
 		cons.gridy = 1;
-		layout.setConstraints(oidNumberField, cons);
-		oidPanel.add(oidNumberField);
+		layout.setConstraints(oidNumeralField, cons);
+		oidPanel.add(oidNumeralField);
         
         
 		// TIMEOUT/PORT PANEL
@@ -353,8 +353,8 @@ public class MibBrowser
 
         cons.gridx = 2;
         cons.gridy = 0;
-        layout.setConstraints(resolvedAddrField, cons);
-        hostPanel.add(resolvedAddrField);
+        layout.setConstraints(resolvedAddressField, cons);
+        hostPanel.add(resolvedAddressField);
 
 		cons.gridx = 0;
 		cons.gridy = 1;
@@ -409,7 +409,7 @@ public class MibBrowser
 		layout.setConstraints(oidInputField, cons);
 		oidSearchPanel.add(oidInputField);
 
-		// BUTTON AND SEARCH/SELECTION CONTAINING PANEL
+		// BUTTON AND SEARCH/SELECTION CONTAINER PANEL
 		JPanel bottomMidPanel = new JPanel();
 		bottomMidPanel.setLayout(layout);
 
@@ -491,7 +491,7 @@ public class MibBrowser
     // *** Start of MibBrowser data access methods. ***
     
     /**
-     * Gets the directory where MIB files are contained.
+     * Gets the default directory where MIB files are contained.
      */
     public File getMibDirectory()
     {
@@ -499,7 +499,7 @@ public class MibBrowser
     }
     
     /**
-     * Sets the directory where MIB files are contained.
+     * Sets the default directory where MIB files are contained.
      */
     public void setMibDirectory(File newMibDirectory)
     {
@@ -584,12 +584,11 @@ public class MibBrowser
 
     private class GetRequestAction extends AbstractAction
     {   	
-    	private boolean requestStarted;
-    	private GetRequestTask snmpGetWorker = null;
+    	private GetRequestTask snmpGetTask = null;
     	
     	public GetRequestAction()
     	{
-    		putValue(NAME, Resources.getString("getButton"));
+    		putValue(NAME, StringResources.getString("getButton"));
     	}
     	
 		/**
@@ -602,7 +601,7 @@ public class MibBrowser
 		{  
 		    // Spawn a new GetRequestWorker thread for retrieving data from a device running an SNMP agent.
             
-            if (getValue(NAME).equals(Resources.getString("getButton")))  //getButton.getText().equals(GET_START_LABEL))
+            if (getValue(NAME).equals(StringResources.getString("getButton")))
             {
                 // This check is just to avoid even attempting to use an empty OID or IP address field.
                 if (!oidInputField.getText().trim().equals("")
@@ -623,39 +622,39 @@ public class MibBrowser
     
                         // Try to scroll to the correct OID.
                         String oidInputString = Utilities.trim(oidInputField.getText().trim(), '.');
-                        String oidTreeNumberString = oidNumberField.getText();
+                        String oidTreeNumeralPathString = oidNumeralField.getText();
                         
-                        if (!oidInputString.equals(oidTreeNumberString))
+                        if (!oidInputString.equals(oidTreeNumeralPathString))
                             setVisibleNodeByOID(oidInputString, NodeSearchOption.MatchExactPath);
     
                         resultsListModel.removeAllElements();
-                        putValue(NAME, Resources.getString("stopButton"));
+                        putValue(NAME, StringResources.getString("stopButton"));
                         
                         // Initialize and start the GetRequest process in a different thread using a SwingWorker.
-//                        snmpGetWorker = new GetRequestWorker(communityString, oidInputString, addressString,
+//                        snmpGetTask = new GetRequestWorker(communityString, oidInputString, addressString,
 //                                (MibTreeNode)mibModel.getRoot());
-//                        snmpGetWorker.addGetRequestListener(new MibGetRequestListener());
-//                        snmpGetWorker.setPort(port);
-//                        snmpGetWorker.setTimeout(timeout);
+//                        snmpGetTask.addGetRequestListener(new MibGetRequestListener());
+//                        snmpGetTask.setPort(port);
+//                        snmpGetTask.setTimeout(timeout);
                         
-                        snmpGetWorker = new GetRequestTask(communityString, oidInputString, addressString,
+                        snmpGetTask = new GetRequestTask(communityString, oidInputString, addressString,
                               (MibTreeNode)mibModel.getRoot());
-						snmpGetWorker.addGetRequestListener(new MibGetRequestListener());
-						snmpGetWorker.setPort(port);
-						snmpGetWorker.setTimeout(timeout);
-						snmpGetWorker.addPropertyChangeListener(new PropertyChangeListener()
+						snmpGetTask.addGetRequestListener(new MibGetRequestListener());
+						snmpGetTask.setPort(port);
+						snmpGetTask.setTimeout(timeout);
+						snmpGetTask.addPropertyChangeListener(new PropertyChangeListener()
 						{
 							public void propertyChange(PropertyChangeEvent propertyEvent)
 							{
 								if ("state".equals(propertyEvent.getPropertyName()) && 
 									javax.swing.SwingWorker.StateValue.DONE == propertyEvent.getNewValue()) 
 								{
-									getButton.getAction().putValue(GetRequestAction.NAME, Resources.getString("getButton"));
+									getButton.getAction().putValue(GetRequestAction.NAME, StringResources.getString("getButton"));
 								}
 							}
 						});
 						
-						snmpGetWorker.setResultProcessor(new GetRequestResultProcessor()
+						snmpGetTask.setResultProcessor(new GetRequestResultProcessor()
 						{
 							@Override
 							public void processResult(GetRequestResult result)
@@ -672,20 +671,20 @@ public class MibBrowser
                         // while waiting for the timeout.
                         this.setEnabled(false);
                         
-                        //snmpGetWorker.start();
-                        snmpGetWorker.execute();
+                        //snmpGetTask.start();
+                        snmpGetTask.execute();
                     }
                     catch (NumberFormatException e)
                     {
                         resultsListModel.removeAllElements();
-                        resultsListModel.addElement(Resources.getString("badOidInputMessage") + e.getMessage() + "\n");
+                        resultsListModel.addElement(StringResources.getString("badOidInputMessage") + e.getMessage() + "\n");
                     } 
                 }
             }
             else
             {
-                if (snmpGetWorker != null)
-                    snmpGetWorker.cancel(true);  // stop the Get process
+                if (snmpGetTask != null)
+                    snmpGetTask.cancel(true);  // stop the Get process
             }
 		}
     }
@@ -708,36 +707,36 @@ public class MibBrowser
 			// Reset the string buffers; these buffers are continuously reused to avoid 
 	        // always creating new ones.
 			currentOidName.delete(0, currentOidName.length());
-			currentOidNumber.delete(0, currentOidNumber.length());
+			currentOidNumeral.delete(0, currentOidNumeral.length());
 
 			Object[] path = event.getPath().getPath();
 			MibTreeNode node;
-			MibObjectType mibObject;
+			MibObjectIdentifier mibObject;
 			
 			// Construct the MIB object name and OID path strings from the object path 
 	        // array; start at 1 to exclude the root.
 			for (int i = 1; i < path.length; i++)
 			{
 				node = (MibTreeNode)path[i];
-				mibObject = (MibObjectType)node.getUserObject();
+				mibObject = (MibObjectIdentifier)node.getUserObject();
 	
 				// Don't put a '.' at the beginning.
 				if (i > 1)
 				{
 					currentOidName.append(".");
-					currentOidNumber.append(".");
+					currentOidNumeral.append(".");
 				}
 	
 				currentOidName.append(mibObject.getName());
-				currentOidNumber.append(String.valueOf(mibObject.getId()));
+				currentOidNumeral.append(String.valueOf(mibObject.getId()));
 			}
 	
-			// Set the OID name and number strings.
+			// Set the OID name and numeral path strings.
 			oidNameField.setText(currentOidName.toString());
-			oidNumberField.setText(currentOidNumber.toString());
+			oidNumeralField.setText(currentOidNumeral.toString());
 	
-	        if (!oidInputField.getText().trim().equals(oidNumberField.getText().trim()))
-			    oidInputField.setText(currentOidNumber.toString()); // synch the input field with the tree display
+	        if (!oidInputField.getText().trim().equals(oidNumeralField.getText().trim()))
+			    oidInputField.setText(currentOidNumeral.toString()); // sync the input field with the tree display
 		}
 	}
 	
@@ -754,8 +753,8 @@ public class MibBrowser
 	    public void hostAddressResolved(String validAddress, String resolvedAddress) 
 	    {
 	        // Display the resolved address.
-	        resolvedAddrField.setText(resolvedAddress);
-	        resolvedAddrField.setCaretPosition(0);
+	        resolvedAddressField.setText(resolvedAddress);
+	        resolvedAddressField.setCaretPosition(0);
 	        
 	        int listLength = addressBox.getItemCount();
 	        
@@ -780,16 +779,17 @@ public class MibBrowser
 	    /**
 	     * Adds a new GetRequestResult to the resultsList.
 	     * A GetRequestResult encapsulates data about a single OID and its
-	     * returned value. Both the partial OID name and full OID number are stored in it.
+	     * returned value. Both the partial OID name and full OID numeral path are stored in it.
 	     * @see GetRequestResult
 	     */
-	    public void requestResultReceived(GetRequestResult dataResultItem) 
+	    public void requestResultReceived(GetRequestResult result) 
 	    {
-	    	Action getAction = getButton.getAction();
-	    	if (!getAction.isEnabled())
-	    		getAction.setEnabled(true);
-	    	
-	        ((DefaultListModel)resultsList.getModel()).addElement(dataResultItem);
+	    	throw new UnsupportedOperationException();
+//	    	Action getAction = getButton.getAction();
+//	    	if (!getAction.isEnabled())
+//	    		getAction.setEnabled(true);
+//	    	
+//	        ((DefaultListModel)resultsList.getModel()).addElement(result);
 	    }
 	    
 	    

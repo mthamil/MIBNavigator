@@ -143,7 +143,7 @@ public class MIBNavigator
     private void configureFrame(JPanel content)
     {
     	JFrame navFrame = new JFrame();
-        navFrame.setTitle(Resources.getString("appName"));
+        navFrame.setTitle(StringResources.getString("appName"));
         
         addMenuBar(navFrame);
         
@@ -155,7 +155,7 @@ public class MIBNavigator
         // This is necessary because certain interface components do not scale when the frame is resized below a set
         // initial width and/or height.  This simply uses the initial, packed size as the minimum.
         Dimension frameSize = navFrame.getSize();
-        navFrame.addComponentListener(new MinimumSizeEnforcer((long)frameSize.getWidth(), (long)frameSize.getHeight()));
+        navFrame.addComponentListener(new MinimumSizeEnforcer((int)frameSize.getWidth(), (int)frameSize.getHeight()));
              
         // Catch window closing events with an anonymous event handler so that the browser's state can be saved.
         navFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -173,13 +173,13 @@ public class MIBNavigator
     {
     	// Create menubar.
     	JMenuBar menuBar = new JMenuBar();
-    	JMenu optionMenu = new JMenu(Resources.getString("optionsMenuLabel"));
+    	JMenu optionMenu = new JMenu(StringResources.getString("optionsMenuLabel"));
         optionMenu.setMnemonic(KeyEvent.VK_O);
         
         final FileFilter dialogFilter = appSettings.getMibFormat().getDialogFileFilter();
 
         // Set the Add menu item.
-        Action addAction = new AbstractAction(Resources.getString("addMibItemLabel"))
+        Action addAction = new AbstractAction(StringResources.getString("addMibItemLabel"))
         {
 			public void actionPerformed(ActionEvent e)
 			{
@@ -205,17 +205,17 @@ public class MIBNavigator
 	                }
 	                catch (InvalidMibFormatException exception)
 	                {
-	                    JOptionPane.showMessageDialog(menuParentFrame, exception.getMessage(), Resources.getString("mibGeneralErrorTitle"), JOptionPane.ERROR_MESSAGE);
+	                    JOptionPane.showMessageDialog(menuParentFrame, exception.getMessage(), StringResources.getString("mibGeneralErrorTitle"), JOptionPane.ERROR_MESSAGE);
 	                }
 	            }
 			}
         };
-        addAction.putValue(Action.SHORT_DESCRIPTION, Resources.getString("addMibItemTip"));
+        addAction.putValue(Action.SHORT_DESCRIPTION, StringResources.getString("addMibItemTip"));
         optionMenu.add(addAction);
         
         
         // Set the Import menu item.
-        Action importAction = new AbstractAction(Resources.getString("importMibItemLabel"))
+        Action importAction = new AbstractAction(StringResources.getString("importMibItemLabel"))
         {
 			public void actionPerformed(ActionEvent e)
 			{
@@ -248,9 +248,11 @@ public class MIBNavigator
 	                    {
 	                        // Ask the user if they want to overwrite the file if it already exists.
 	                        String popupMsg = 
-	                        	String.format(Resources.getString("mibAlreadyExistsMessage"), destinationMib.getName(), mibDirectory.getName());
+	                        	String.format(StringResources.getString("mibAlreadyExistsMessage"), destinationMib.getName(), mibDirectory.getName());
 	                        
-	                        int confirmValue = JOptionPane.showConfirmDialog(menuParentFrame, popupMsg, Resources.getString("mibAlreadyExistsTitle"), JOptionPane.YES_NO_OPTION);
+	                        int confirmValue = JOptionPane.showConfirmDialog(menuParentFrame, popupMsg, 
+	                        		StringResources.getString("mibAlreadyExistsTitle"), JOptionPane.YES_NO_OPTION);
+	                        
 	                        if (confirmValue == JOptionPane.NO_OPTION)
 	                            proceedWithCopy = false;
 	                    }
@@ -261,26 +263,29 @@ public class MIBNavigator
 	                       boolean copySucceeded = Utilities.copyFile(sourceMib, destinationMib);
 	                       
 	                       if (!copySucceeded)
-	                    	   JOptionPane.showMessageDialog(menuParentFrame, Resources.getString("mibCopyErrorMessage"),
-	                    			   Resources.getString("mibCopyErrorTitle"), JOptionPane.ERROR_MESSAGE);
+	                       {
+	                    	   JOptionPane.showMessageDialog(menuParentFrame, StringResources.getString("mibCopyErrorMessage"),
+	                    			   StringResources.getString("mibCopyErrorTitle"), JOptionPane.ERROR_MESSAGE);
+	                       }
 	                    }
 	                    
 	                }
 	                catch (InvalidMibFormatException exception)
 	                {
-	                    JOptionPane.showMessageDialog(menuParentFrame, exception.getMessage(), Resources.getString("mibGeneralErrorTitle"), JOptionPane.ERROR_MESSAGE);
+	                    JOptionPane.showMessageDialog(menuParentFrame, exception.getMessage(), 
+	                    		StringResources.getString("mibGeneralErrorTitle"), JOptionPane.ERROR_MESSAGE);
 	                }
 	            }
 			}
 		};
-		importAction.putValue(Action.SHORT_DESCRIPTION, Resources.getString("importMibItemTip"));
+		importAction.putValue(Action.SHORT_DESCRIPTION, StringResources.getString("importMibItemTip"));
 		optionMenu.add(importAction);
         
 		
         optionMenu.addSeparator();
 
         // Set the close menu item.
-        Action closeAction = new AbstractAction(Resources.getString("closeItemLabel"))
+        Action closeAction = new AbstractAction(StringResources.getString("closeItemLabel"))
         {
 			public void actionPerformed(ActionEvent e)
 			{
@@ -289,7 +294,7 @@ public class MIBNavigator
 	            System.exit(0);
 			}
         };
-        closeAction.putValue(Action.SHORT_DESCRIPTION, Resources.getString("closeItemTip"));
+        closeAction.putValue(Action.SHORT_DESCRIPTION, StringResources.getString("closeItemTip"));
         optionMenu.add(closeAction);
         
         menuBar.add(optionMenu);
@@ -305,8 +310,8 @@ public class MIBNavigator
     {
         try
         {  
-            UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-            //UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            //UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         }
         catch (Exception e)
         {
@@ -341,7 +346,7 @@ public class MIBNavigator
         }
         catch(CannotCreateBuilderException e)
         {
-        	JOptionPane.showMessageDialog(null, e.getMessage(), Resources.getString("appGeneralErrorTitle"), JOptionPane.ERROR_MESSAGE);
+        	JOptionPane.showMessageDialog(null, e.getMessage(), StringResources.getString("appGeneralErrorTitle"), JOptionPane.ERROR_MESSAGE);
         }
 
     }
