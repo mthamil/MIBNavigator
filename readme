@@ -2,22 +2,38 @@ MIB Navigator is a Java-based GUI desktop application for browsing SNMP MIBs and
 Each "object" OID in an SNMP MIB is represented as a node in a tree, and when a node is selected, certain information about 
 that particular OID is displayed.  Functionality is provided for adding new MIB definition files to the tree.  
 
-This release of MIB Navigator reads XML MIB files that are defined by the schema file "mib.xsd".  MIB Navigator loads the MIB 
-files in the default 'mibs' directory when executed.  Extra XML MIBs can be found in the 'extra-xml-mibs' directory. These were converted 
-from the MIBs available for download here: http://www.wtcs.org/snmp4tpc/FILES/Tools/SNMP/getif/GETIF-MIBS.ZIP.
+This release of MIB Navigator reads SMI MIB files by default.
 
+XML MIB files can be used by changing the application properties.  Extra XML MIBs can be found in the 'extra-xml-mibs' directory. 
+These were converted from the MIBs available for download here: http://www.wtcs.org/snmp4tpc/FILES/Tools/SNMP/getif/GETIF-MIBS.ZIP.
 A converter between standard SMI MIB files and XML format is now available for download.
 
-USING THE PROPERTIES FILE
-When an IP address is successfully contacted by the application, it is added to a drop down list that is later saved to a 
-'properties.xml' file.  This file will be loaded on subsequent program executions.  To clear the list, delete the file or clear the IP 
-address list within the file.  The number of IP addresses MIB Navigator remembers is stored in this file as well.  The default number of
-addresses to store is 15, but this can be changed by modifying the properties file directly.  
-NOTE: If the number of addresses to save is changed to be less than the number of addresses saved in the list, a loss of addresses may occur 
-due to address list truncation.  Remember to back up the properties file after modifying the number of addresses.
+APPLICATION SETTINGS
+Certain aspects of the application can be changed using the configuration settings stored in 'proprties.xml', which is saved on a per-user
+basis (ie. on Linux, in /home/<username>/.mibnavigator). 
+
+The following list describes each setting:
+-MibDirectory: The default directory that MIB Navigator uses to load MIB files on startup.
+-MibFileFormat: The type of MIB files MIB Navigator should use.  By default, traditional ASN.1 SMI files are used, but the experimental
+ XML format can be used by changing this setting.
+-MaximumAddresses: The maximum number of IP addresses MIB Navigator remembers. The default number of addresses is 15.
+-IPAddresses: When an IP address is successfully contacted by the application, it is added to this list of addresses and displayed
+ in the address drop-down. 
+ NOTE: If the number of addresses to save is changed to be less than the number of addresses saved in the list, a loss of addresses may occur 
+ due to address list truncation.  Remember to back up the properties file after modifying the number of addresses.
 
 
 CHANGES IN THIS VERSION:
+v. 1.5
+-Updated compatibility for Java 6.  Now requires at least Java 6.
+-Added external resources for strings.
+-Added external resources for platform-specific UI settings such as text field and button sizes, font sizes, etc.
+-Added support for GTK look and feel.
+-Added configuration settings for the MIB file format to use and the default MIB directory location. SMI is now the default format.
+-Switched to Java 6's SwingWorker.
+-Added validation to port and timeout text fields.
+-Continued refactoring of application internals.
+
 
 v. 1.0.1
 -Fixed a bug in MibTreeBuilderSmi where the parser failed to properly ignore "MACRO" definitions. (Credit goes to JJMolini at SourceForge)
@@ -52,8 +68,7 @@ INSTRUCTIONS:
 -To start MIB Navigator, run the self-executing JAR file, "MIBNavigator.jar" by either double clicking it (if supported) or
  using the console command "java -jar MIBNavigator.jar".
  
--In order to ensure program execution, the "mib.xsd" file and "mibs" directory must be located in the same location
- as "MIBNavigator.jar".
+-In order to use XML MIB files, the "mib.xsd" file must be located in the same location as "MIBNavigator.jar".
 
 -In order to query an SNMP-enabled host, enter an IP address, community string, and an OID.  Then, press the "Get Data" button.
  This will walk the tree below this OID and display the results in the "Results" area.  The timeout amount and port used by the 
@@ -67,7 +82,7 @@ INSTRUCTIONS:
 -To add a MIB to the tree temporarily (meaning the MIB will not be re-added on next program start-up), select the "Add MIB"
  option from the "Options" menu on the menu bar.
  
--To add a MIB to the tree permanently (meaning the MIB will be copied to the "mibs" directory for loading on subsequent start-ups), 
+-To add a MIB to the tree permanently (meaning the MIB will be copied to the default MIB directory for loading on subsequent start-ups), 
  select the "Import MIB" option from the "Options" menu on the menu bar.  MIB files can also be added to the default directory 
  manually.
  
@@ -75,9 +90,9 @@ INSTRUCTIONS:
  loaded first.
  
  
-This version of MIB Navigator only supports versions of Java that are 5.0(1.5) or higher due to new language features.  
+This version of MIB Navigator only supports versions of Java that are 6.0(1.6) or higher due to new language features.  
 It has been tested on Windows and Linux.
 
 Acknowledgements: Jon Sevy, for creating and releasing Java SNMP: http://gicl.cs.drexel.edu/people/sevy/snmp/snmp.html
 
-Copyright (C) 2008 Matt Hamilton <mhamilton2383@comcast.net>
+Copyright (C) 2009 Matt Hamilton <matthamilton@live.com>
