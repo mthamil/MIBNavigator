@@ -52,8 +52,8 @@ public class OidDataPanel implements TreeSelectionListener
 {
     private JPanel oidInfoPanel;	// The main panel.
     private JLabel oidDescLabel;
-    private JEditorPane oidDesc;
-    private JScrollPane oidDescScroll;
+    private JEditorPane oidDescription;
+    private JScrollPane oidDescriptionScroll;
     
     private JLabel oidValuePairsLabel;
     private JComboBox oidValuePairsBox;
@@ -117,15 +117,15 @@ public class OidDataPanel implements TreeSelectionListener
         oidMIBNameField.setBackground(uneditableBackColor);
         oidMIBNameField.addMouseListener(contextMenuListener);
 
-        oidDesc = new JEditorPane();
-        oidDesc.setEditable(false);
-        oidDesc.setBackground(uneditableBackColor);
-        oidDesc.setBackground(oidStatusLabel.getBackground());
-        oidDesc.setContentType("text/html");
-        oidDesc.addMouseListener(contextMenuListener);
+        oidDescription = new JEditorPane();
+        oidDescription.setEditable(false);
+        oidDescription.setBackground(uneditableBackColor);
+        oidDescription.setBackground(oidStatusLabel.getBackground());
+        oidDescription.setContentType("text/html");
+        oidDescription.addMouseListener(contextMenuListener);
 
-        oidDescScroll = new JScrollPane(oidDesc);
-        oidDescScroll.setPreferredSize(new Dimension(75, 100));
+        oidDescriptionScroll = new JScrollPane(oidDescription);
+        oidDescriptionScroll.setPreferredSize(LookAndFeelResources.getDimension("oidDescription"));
         oidDescLabel = new JLabel(StringResources.getString("oidDescriptionLabel"));
     }
     
@@ -213,8 +213,8 @@ public class OidDataPanel implements TreeSelectionListener
         cons.weightx = 1;
         cons.weighty = 1;
         cons.fill = GridBagConstraints.BOTH;
-        layout.setConstraints(oidDescScroll, cons);
-        descPanel.add(oidDescScroll);
+        layout.setConstraints(oidDescriptionScroll, cons);
+        descPanel.add(oidDescriptionScroll);
 
         // OID DETAIL AND DESCRIPTION CONTAINER PANEL (the main panel)
         oidInfoPanel.setLayout(layout);
@@ -272,8 +272,8 @@ public class OidDataPanel implements TreeSelectionListener
 
         // The oidDesc JEditorPane automatically converts escaped special characters
         // to the correct display characters, ie. "&amp" -> "&" and "&gt;" -> ">".
-        oidDesc.setText(String.format(DESC_FORMAT, LookAndFeelResources.getInteger("oidDescriptionFontSize"), mibObject.getDescription()));
-        oidDesc.setCaretPosition(0);
+        oidDescription.setText(String.format(DESC_FORMAT, LookAndFeelResources.getInteger("oidDescriptionFontSize"), mibObject.getDescription()));
+        oidDescription.setCaretPosition(0);
         
         oidMIBNameField.setText(mibObject.getMibName());
         oidMIBNameField.setCaretPosition(0);

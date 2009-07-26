@@ -24,11 +24,15 @@ import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.math.RoundingMode;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.*;
 import javax.swing.event.*;
+import javax.swing.text.NumberFormatter;
 import javax.swing.tree.*;
 
 import utilities.Utilities;
@@ -56,7 +60,8 @@ public class MibBrowser
     private OidDataPanel oidViewer;
 
     private JLabel oidNameLabel, oidNumeralLabel, addressLabel, communityLabel, portLabel, timeoutLabel, oidInputLabel;
-    private JTextField oidNameField, oidNumeralField, resolvedAddressField, communityField, portField, timeoutField, oidInputField; 
+    private JTextField oidNameField, oidNumeralField, resolvedAddressField, communityField, oidInputField;
+    private JFormattedTextField portField, timeoutField;
     private JComboBox addressBox;
     
     private JLabel resultsLabel;
@@ -150,15 +155,32 @@ public class MibBrowser
         communityField.setEditable(true);
         communityField.addMouseListener(contextMenuListener);
         
+        // Configure formatter for integer fields.
+        NumberFormat integerFormat = NumberFormat.getIntegerInstance();
+        integerFormat.setGroupingUsed(false);
+        integerFormat.setRoundingMode(RoundingMode.DOWN);
+        NumberFormatter numberFormatter = new NumberFormatter(integerFormat);
+        numberFormatter.setMinimum(1);
+        
         portLabel = new JLabel(StringResources.getString("portLabel"));
-        portField = new JTextField(4);
+        portField = new JFormattedTextField(numberFormatter);
+        portField.setColumns(4);
         portField.setText("161");
         portField.addMouseListener(contextMenuListener);
         
         timeoutLabel = new JLabel(StringResources.getString("timeoutLabel"));
-        timeoutField = new JTextField(4);
+        timeoutField = new JFormattedTextField(numberFormatter);
+        timeoutField.setColumns(4);
         timeoutField.setText("4000");
         timeoutField.addMouseListener(contextMenuListener);
+        
+        // Commit the initial values.
+        try
+		{
+			portField.commitEdit();
+			timeoutField.commitEdit();
+		}
+		catch (ParseException parseEx) { }	// The default values are guaranteed to pass.
 
         oidInputLabel = new JLabel(StringResources.getString("oidInputLabel"));
         oidInputField = new JTextField(21);

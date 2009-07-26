@@ -321,7 +321,7 @@ public class GetRequestTask extends SwingWorker<String, GetRequestResult>
         }
         catch (Exception e) // not recommended, but exceptional circumstances will likely always prevent successful execution of the GetRequest process
         {
-            return StringResources.getString("generalGetErrorMEssage") + e.getMessage();
+            return StringResources.getString("generalGetErrorMessage") + e.getMessage();
         }
     }
     
