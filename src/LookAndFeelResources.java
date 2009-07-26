@@ -42,7 +42,6 @@ public class LookAndFeelResources
 		try
 		{
 			RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
-			
 		}
 		catch (MissingResourceException missingBundleEx)
 		{
