@@ -1,7 +1,7 @@
 /**
  * SNMP Package
  *
- * Copyright (C) 2006, Matt Hamilton <mhamilton2383@comcast.net>
+ * Copyright (C) 2006, Matt Hamilton <matthamilton@live.com>
  * Copyright (C) 2004, Jonathan Sevy <jsevy@mcs.drexel.edu>
  *
  * This program is free software; you can redistribute it and/or modify
