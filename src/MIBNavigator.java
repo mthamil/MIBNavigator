@@ -30,6 +30,7 @@ import java.util.Enumeration;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.BorderFactory;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -176,6 +177,12 @@ public class MIBNavigator
     	JMenu optionMenu = new JMenu(StringResources.getString("optionsMenuLabel"));
         optionMenu.setMnemonic(KeyEvent.VK_O);
         
+        // Hopefully temporary hack for GTK borders.
+        if (UIManager.getLookAndFeel().getID().equals("GTK"))
+        {
+        	optionMenu.getPopupMenu().setBorder(BorderFactory.createRaisedBevelBorder());
+        }
+
         final FileFilter dialogFilter = appSettings.getMibFormat().getDialogFileFilter();
 
         // Set the Add menu item.
@@ -265,7 +272,7 @@ public class MIBNavigator
 	                       if (!copySucceeded)
 	                       {
 	                    	   JOptionPane.showMessageDialog(menuParentFrame, StringResources.getString("mibCopyErrorMessage"),
-	                    			   StringResources.getString("mibCopyErrorTitle"), JOptionPane.ERROR_MESSAGE);
+                    			   StringResources.getString("mibCopyErrorTitle"), JOptionPane.ERROR_MESSAGE);
 	                       }
 	                    }
 	                    
