@@ -1,7 +1,7 @@
 /**
  * MIB Navigator
  *
- * Copyright (C) 2008, Matt Hamilton <mhamilton2383@comcast.net>
+ * Copyright (C) 2009, Matt Hamilton <matthamilton@live.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,10 +31,25 @@ import javax.swing.UIManager;
 public class LookAndFeelResources
 {
 	private static final String BUNDLE_NAME = UIManager.getLookAndFeel().getID() + "Resources";
-	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
+	private static ResourceBundle RESOURCE_BUNDLE;
 	
 	private static final String DEFAULT_BUNDLE_NAME = "MetalResources";
 	private static final ResourceBundle DEFAULT_BUNDLE = ResourceBundle.getBundle(DEFAULT_BUNDLE_NAME);
+	
+	static
+	{
+		// Find and load platform specific resource bundle.
+		try
+		{
+			RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
+			
+		}
+		catch (MissingResourceException missingBundleEx)
+		{
+			// If no bundle exists for this platform, use the default.
+			RESOURCE_BUNDLE = DEFAULT_BUNDLE;
+		}
+	}
 
 	private LookAndFeelResources() { }
 	

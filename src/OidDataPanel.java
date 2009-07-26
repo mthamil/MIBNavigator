@@ -1,7 +1,7 @@
 /**
  * MIB Navigator
  *
- * Copyright (C) 2008, Matt Hamilton <mhamilton2383@comcast.net>
+ * Copyright (C) 2009, Matt Hamilton <matthamilton@live.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,9 +64,6 @@ public class OidDataPanel implements TreeSelectionListener
     private Color uneditableBackColor;
     
     private static final String DESC_FORMAT = "<font face='SansSerif' size='%d'>%s</font>";
-    //private static final String DESC_HTML_PREFIX = "<font face=\"SansSerif\" size=\"4\">";
-    //private static final String DESC_HTML_SUFFIX = "</font>";
-
     
     public OidDataPanel() 
     {
