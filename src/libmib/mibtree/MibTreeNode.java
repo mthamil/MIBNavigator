@@ -211,7 +211,7 @@ public class MibTreeNode extends DefaultMutableTreeNode
                     
                     foundNode = node;
                     elementIndex++;
-                };
+                }
             }
 
             if (constructedOID.toString().equals(oid))

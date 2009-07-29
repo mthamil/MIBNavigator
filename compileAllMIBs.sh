@@ -2,5 +2,5 @@
 
 for mib in ./extra-smi-mibs/*
 do
-    java -classpath "./bin" MibToXmlConverter $mib
+    java -classpath "./bin" MibConverter $mib
 done

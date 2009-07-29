@@ -144,7 +144,7 @@ public class MibTreeBuilderSmi extends AbstractMibTreeBuilder
                             // initializations
                             String nodeInfo = "";
                             String nodeParentName = "";
-                            String nodeIndex = "";;  
+                            String nodeIndex = "";
                             
                             nodeInfo = oidString.substring(index + SmiTokens.OBJECT_ID.length());
                             nodeInfo = nodeInfo.substring(nodeInfo.indexOf("{") + 1, nodeInfo.indexOf("}")).trim();

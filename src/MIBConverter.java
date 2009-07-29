@@ -52,11 +52,13 @@ public class MIBConverter
             int retVal = fc.showOpenDialog(null);
     
             if (retVal == JFileChooser.APPROVE_OPTION)
+            {
                 inFile = fc.getSelectedFile();
             
-            retVal = fc.showSaveDialog(null);
-            if (retVal == JFileChooser.APPROVE_OPTION)
-                outFile = fc.getSelectedFile();
+	            retVal = fc.showSaveDialog(null);
+	            if (retVal == JFileChooser.APPROVE_OPTION)
+	                outFile = fc.getSelectedFile();
+            }
         }
         
         if (inFile != null && inFile.exists())

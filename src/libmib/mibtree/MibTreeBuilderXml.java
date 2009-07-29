@@ -285,7 +285,7 @@ public class MibTreeBuilderXml extends AbstractMibTreeBuilder
                 Element valueElement = (Element)valueNodes.item(0);
 
                 NodeList valueText = valueElement.getChildNodes();
-                String valueString = valueText.item(0).getNodeValue().trim();;
+                String valueString = valueText.item(0).getNodeValue().trim();
 
                 // Add the name-value pair entry.
                 pairs.put(new Integer(valueString), name);

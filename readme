@@ -23,6 +23,35 @@ The following list describes each setting:
  due to address list truncation.  Remember to back up the properties file after modifying the number of addresses.
 
 
+INSTALLATION:
+-To install, simply unzip "mib-navigator.zip" to a location and the "mib-navigator" directory containing all needed files will be
+ created.
+
+
+INSTRUCTIONS:
+-To start MIB Navigator, run the self-executing JAR file, "MIBNavigator.jar" by either double clicking it (if supported) or
+ using the console command "java -jar MIBNavigator.jar".
+
+-In order to query an SNMP-enabled host, enter an IP address, community string, and an OID.  Then, press the "Get Data" button.
+ This will walk the tree below this OID and display the results in the "Results" area.  The timeout amount and port used by the 
+ request can be entered as well, but most users should leave the default values.
+
+-OIDs can be selected from the MIB tree or entered manually.
+
+-A numerical OID can be searched for in the MIB tree by entering the OID in the "OID" input box and pressing enter.  If it is found, 
+ the appropriate node will be selected in the tree.
+
+-To add a MIB to the tree temporarily (meaning the MIB will not be re-added on next program start-up), select the "Add MIB"
+ option from the "Options" menu on the menu bar.
+ 
+-To add a MIB to the tree permanently (meaning the MIB will be copied to the default MIB directory for loading on subsequent start-ups), 
+ select the "Import MIB" option from the "Options" menu on the menu bar.  MIB files can also be added to the default directory 
+ manually.
+ 
+ -If a given MIB is added to the tree but does not appear, check the dependencies of the MIBs, since another module may need to be 
+ loaded first.
+ 
+
 CHANGES IN THIS VERSION:
 v. 1.5
 -Updated compatibility for Java 6.  Now requires at least Java 6.
@@ -57,37 +86,6 @@ v. 0.9.1
  have both max-access and access.
 -Began using Java 5.0 enumerations for access and status oid attributes.
 -Miscellaneous code refactoring.
-
-
-INSTALLATION:
--To install, simply unzip "mib-navigator.zip" to a location and the "mib-navigator" directory containing all needed files will be
- created.
-
-
-INSTRUCTIONS:
--To start MIB Navigator, run the self-executing JAR file, "MIBNavigator.jar" by either double clicking it (if supported) or
- using the console command "java -jar MIBNavigator.jar".
- 
--In order to use XML MIB files, the "mib.xsd" file must be located in the same location as "MIBNavigator.jar".
-
--In order to query an SNMP-enabled host, enter an IP address, community string, and an OID.  Then, press the "Get Data" button.
- This will walk the tree below this OID and display the results in the "Results" area.  The timeout amount and port used by the 
- request can be entered as well, but most users should leave the default values.
-
--OIDs can be selected from the MIB tree or entered manually.
-
--A numerical OID can be searched for in the MIB tree by entering the OID in the "OID" input box and pressing enter.  If it is found, 
- the appropriate node will be selected in the tree.
-
--To add a MIB to the tree temporarily (meaning the MIB will not be re-added on next program start-up), select the "Add MIB"
- option from the "Options" menu on the menu bar.
- 
--To add a MIB to the tree permanently (meaning the MIB will be copied to the default MIB directory for loading on subsequent start-ups), 
- select the "Import MIB" option from the "Options" menu on the menu bar.  MIB files can also be added to the default directory 
- manually.
- 
- -If a given MIB is added to the tree but does not appear, check the dependencies of the MIBs, since another module may need to be 
- loaded first.
  
  
 This version of MIB Navigator only supports versions of Java that are 6.0(1.6) or higher due to new language features.  

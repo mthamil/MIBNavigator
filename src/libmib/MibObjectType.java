@@ -62,7 +62,7 @@ public class MibObjectType extends MibObjectIdentifier
         {
             return super.toString().toLowerCase().replaceAll("_", "-");
         }
-    };
+    }
     
     public enum Status 
     {
@@ -75,7 +75,7 @@ public class MibObjectType extends MibObjectIdentifier
         {
             return super.toString().toLowerCase();
         }
-    };
+    }
     
     
     /**

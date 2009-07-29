@@ -11,8 +11,12 @@
 	<property name="appName" value="MIBNavigator"/>
     <!-- Create the build directory -->
     <mkdir dir="${buildDir}"/>
-    <!-- Compile the java code from src into build -->
+  	<!-- Compile the java code from src into build -->
     <javac srcdir="src" destdir="${buildDir}" includes="${mainClass}.java"/>
+  	<!-- Copy resource files into build -->
+  	<copy todir="${buildDir}">
+      <fileset dir="./src" includes="*.properties contextmenu/*.properties"/>
+    </copy>
     <!-- Put everything in build into the ${appName}.jar file -->
     <jar jarfile="${appName}.jar" basedir="${buildDir}" manifest="${appName}.mf"/>
     <!-- Delete the build directory tree -->
@@ -44,9 +48,8 @@
 	<property name="packageDir" value="mib-navigator"/>
 	<mkdir dir="${packageDir}"/>
 	<copy todir="${packageDir}">
-      <fileset dir="." includes="MIBNavigator.jar license readme authors mib.xsd extra-xml-mibs/** mibs/*xml"/>
+      <fileset dir="." includes="MIBNavigator.jar license readme authors schema/mib.xsd extra-xml-mibs/** mibs/smi/* mibs/xml/*xml"/>
     </copy>
-	<move file="mibnav-source.zip" todir="${packageDir}"/>
 	<!-- Zip up everything -->
     <zip destfile="mib-navigator.zip">
 	  <fileset dir="." includes="${packageDir}/**"/>
