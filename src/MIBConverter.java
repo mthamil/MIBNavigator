@@ -32,7 +32,7 @@ import libmib.format.MibToXmlConverter;
  */
 public class MIBConverter
 {
-	public static void main(String args[])
+	public static void main(String ... args)
 	{   
         // some basic code to execute the converter
         File inFile = null;
