@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<mib name="IBM-FRAMERELAY-MIB">
+    <imports>
+        <source name="SNMPv2-SMI-v1">
+            <import>Counter32</import>
+            <import>Integer32</import>
+            <import>IpAddress</import>
+            <import>Gauge32</import>
+        </source>
+        <source name="RFC-1212">
+            <import>OBJECT-TYPE</import>
+        </source>
+        <source name="SNMPv2-TC-v1">
+            <import>DisplayString</import>
+        </source>
+        <source name="RFC1155-SMI">
+            <import>enterprises</import>
+        </source>
+        <source name="RFC1213-MIB">
+            <import>ifIndex</import>
+        </source>
+        <source name="RFC1315-MIB">
+            <import>frCircuitIfIndex</import>
+            <import>frCircuitDlci</import>
+        </source>
+    </imports>
+    <objects>
+        <object>
+            <objectIdentifier>
+                <objectName>ibmIROCfrcircuit</objectName>
+                <objectId>5</objectId>
+                <parent>ibmIROCroutingfr</parent>
+            </objectIdentifier>
+        </object>
+        <object>
+            <objectType>
+                <objectName>ibmframerelayPVCTable</objectName>
+                <objectId>1</objectId>
+                <parent>ibmIROCfrcircuit</parent>
+                <syntax>
+                    <sequence>IbmframerelayPVCEntry</sequence>
+                </syntax>
+                <access>not-accessible</access>
+                <status>mandatory</status>
+                <description>A table providing PVC information and the capabiilty&lt;br&gt;to clear counters.</description>
+            </objectType>
+        </object>
+        <object>
+            <objectType>
+                <objectName>ibmframerelayPVCEntry</objectName>
+                <objectId>1</objectId>
+                <parent>ibmframerelayPVCTable</parent>
+                <syntax>
+                    <type>IbmframerelayPVCEntry</type>
+                </syntax>
+                <access>not-accessible</access>
+                <status>mandatory</status>
+                <description>Entry identifying a particular permanent virtual circuit.</description>
+                <indices>
+                    <index>frCircuitIfIndex</index>
+                    <index>frCircuitDlci</index>
+                </indices>
+            </objectType>
+        </object>
+        <object>
+            <objectType>
+                <objectName>ibmframerelayPVCCircName</objectName>
+                <objectId>1</objectId>
+                <parent>ibmframerelayPVCEntry</parent>
+                <syntax>
+                    <type>DisplayString</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The name string assigned to this PVC.</description>
+            </objectType>
+        </object>
+        <object>
+            <objectType>
+                <objectName>ibmframerelayPVCTimesActive</objectName>
+                <objectId>2</objectId>
+                <parent>ibmframerelayPVCEntry</parent>
+                <syntax>
+                    <type>Counter32</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The times this PVC entered active state as&lt;br&gt;reported by frCircuitState.</description>
+            </objectType>
+        </object>
+        <object>
+            <objectType>
+                <objectName>ibmframerelayPVCTimesInactive</objectName>
+                <objectId>3</objectId>
+                <parent>ibmframerelayPVCEntry</parent>
+                <syntax>
+                    <type>Counter32</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The times this PVC entered inactive state as&lt;br&gt;reported by frCircuitState.</description>
+            </objectType>
+        </object>
+        <object>
+            <objectType>
+                <objectName>ibmframerelayPVCTimesCongested</objectName>
+                <objectId>4</objectId>
+                <parent>ibmframerelayPVCEntry</parent>
+                <syntax>
+                    <type>Counter32</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The times this PVC has become congested.</description>
+            </objectType>
+        </object>
+        <object>
+            <objectType>
+                <objectName>ibmframerelayPVCTxQueued</objectName>
+                <objectId>5</objectId>
+                <parent>ibmframerelayPVCEntry</parent>
+                <syntax>
+                    <type>Gauge32</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The current number of frames queued for transmission&lt;br&gt;and waiting for space on the device transmit queue.</description>
+            </objectType>
+        </object>
+        <object>
+            <objectType>
+                <objectName>ibmframerelayPVCTxDropped</objectName>
+                <objectId>6</objectId>
+                <parent>ibmframerelayPVCEntry</parent>
+                <syntax>
+                    <type>Counter32</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The number of frames discarded because they could&lt;br&gt;not be transmitted due to output queue overflow.</description>
+            </objectType>
+        </object>
+        <object>
+            <objectType>
+                <objectName>ibmframerelayPVCClearAll</objectName>
+                <objectId>7</objectId>
+                <parent>ibmframerelayPVCEntry</parent>
+                <syntax>
+                    <type>Integer32</type>
+                </syntax>
+                <access>read-write</access>
+                <status>mandatory</status>
+                <description>When SET to a value of 0, all the frame relay&lt;br&gt;counters for this PVC are cleared.&lt;br&gt;&lt;br&gt;When READ, this object always returns a value of 0,&lt;br&gt;since this object is intended as a trigger, rather than&lt;br&gt;providing information.</description>
+            </objectType>
+        </object>
+    </objects>
+</mib>

@@ -1,0 +1,430 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<mib name="CPQUPS-MIB">
+    <imports>
+        <source name="CPQHOST-MIB">
+            <import>compaq</import>
+        </source>
+        <source name="RFC1155-SMI">
+            <import>enterprises</import>
+        </source>
+        <source name="RFC1155-SMI">
+            <import>Counter</import>
+        </source>
+        <source name="RFC1213-MIB">
+            <import>DisplayString</import>
+        </source>
+        <source name="RFC-1212">
+            <import>OBJECT-TYPE</import>
+        </source>
+        <source name="RFC-1215">
+            <import>TRAP-TYPE</import>
+        </source>
+        <source name="RFC1213-MIB">
+            <import>sysName</import>
+        </source>
+        <source name="CPQHOST-MIB">
+            <import>cpqHoTrapFlags</import>
+        </source>
+    </imports>
+    <objects>
+        <object>
+            <objectIdentifier>
+                <objectName>cpqUps</objectName>
+                <objectId>12</objectId>
+                <parent>compaq</parent>
+            </objectIdentifier>
+        </object>
+        <object>
+            <objectIdentifier>
+                <objectName>cpqUpsMibRev</objectName>
+                <objectId>1</objectId>
+                <parent>cpqUps</parent>
+            </objectIdentifier>
+        </object>
+        <object>
+            <objectIdentifier>
+                <objectName>cpqUpsComponent</objectName>
+                <objectId>2</objectId>
+                <parent>cpqUps</parent>
+            </objectIdentifier>
+        </object>
+        <object>
+            <objectIdentifier>
+                <objectName>cpqUpsInterface</objectName>
+                <objectId>1</objectId>
+                <parent>cpqUpsComponent</parent>
+            </objectIdentifier>
+        </object>
+        <object>
+            <objectIdentifier>
+                <objectName>cpqUpsBasic</objectName>
+                <objectId>2</objectId>
+                <parent>cpqUpsComponent</parent>
+            </objectIdentifier>
+        </object>
+        <object>
+            <objectIdentifier>
+                <objectName>cpqUpsFamily</objectName>
+                <objectId>3</objectId>
+                <parent>cpqUpsComponent</parent>
+            </objectIdentifier>
+        </object>
+        <object>
+            <objectIdentifier>
+                <objectName>cpqUpsOsCommon</objectName>
+                <objectId>4</objectId>
+                <parent>cpqUpsInterface</parent>
+            </objectIdentifier>
+        </object>
+        <object>
+            <objectType>
+                <objectName>cpqUpsMibRevMajor</objectName>
+                <objectId>1</objectId>
+                <parent>cpqUpsMibRev</parent>
+                <syntax>
+                    <type>INTEGER (1..65535)</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The Major Revision level of the MIB.&lt;br&gt;&lt;br&gt;A change in the major revision level represents a major change in&lt;br&gt;the architecture of the MIB.  A change in the major revision&lt;br&gt;level may indicate a significant change in the information&lt;br&gt;supported and/or the meaning of the supported information,&lt;br&gt;correct interpretation of data may require a MIB document with&lt;br&gt;the same major revision level.</description>
+            </objectType>
+        </object>
+        <object>
+            <objectType>
+                <objectName>cpqUpsMibRevMinor</objectName>
+                <objectId>2</objectId>
+                <parent>cpqUpsMibRev</parent>
+                <syntax>
+                    <type>INTEGER (0..65535)</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The Minor Revision level of the MIB.&lt;br&gt;&lt;br&gt;A change in the minor revision level may represent some minor&lt;br&gt;additional support, no changes to any pre-existing information&lt;br&gt;has occurred.</description>
+            </objectType>
+        </object>
+        <object>
+            <objectType>
+                <objectName>cpqUpsMibCondition</objectName>
+                <objectId>3</objectId>
+                <parent>cpqUpsMibRev</parent>
+                <syntax>
+                    <type>INTEGER</type>
+                    <nameValuePairs>
+                        <nameValuePair>
+                            <pairName>other</pairName>
+                            <pairValue>1</pairValue>
+                        </nameValuePair>
+                        <nameValuePair>
+                            <pairName>ok</pairName>
+                            <pairValue>2</pairValue>
+                        </nameValuePair>
+                        <nameValuePair>
+                            <pairName>degraded</pairName>
+                            <pairValue>3</pairValue>
+                        </nameValuePair>
+                        <nameValuePair>
+                            <pairName>failed</pairName>
+                            <pairValue>4</pairValue>
+                        </nameValuePair>
+                    </nameValuePairs>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The overall condition.&lt;br&gt;&lt;br&gt;This object represents the overall status of the UPS system&lt;br&gt;represented by this MIB.</description>
+            </objectType>
+        </object>
+        <object>
+            <objectType>
+                <objectName>cpqUpsOsCommonPollFreq</objectName>
+                <objectId>1</objectId>
+                <parent>cpqUpsOsCommon</parent>
+                <syntax>
+                    <type>INTEGER (0..65535)</type>
+                </syntax>
+                <access>read-write</access>
+                <status>mandatory</status>
+                <description>The Insight Agent's polling frequency.&lt;br&gt;&lt;br&gt;The frequency, in seconds, at which the Insight Agent requests&lt;br&gt;information from the device driver.  A frequency of zero (0)&lt;br&gt;indicates that the Insight Agent retrieves the information upon&lt;br&gt;request of a management station, it does not poll the device&lt;br&gt;driver at a specific interval.&lt;br&gt;&lt;br&gt;If the poll frequency is zero (0) all attempts to write to this&lt;br&gt;object will fail.  If the poll frequency is non-zero,&lt;br&gt;setting this value will change the polling frequency of the&lt;br&gt;Insight Agent.  Setting the poll frequency to zero (0) will&lt;br&gt;always fail, an agent may also choose to fail any request to&lt;br&gt;change the poll frequency to a value that would severely impact&lt;br&gt;system performance.</description>
+            </objectType>
+        </object>
+        <object>
+            <objectType>
+                <objectName>cpqUpsOsCommonModuleTable</objectName>
+                <objectId>2</objectId>
+                <parent>cpqUpsOsCommon</parent>
+                <syntax>
+                    <sequence>CpqUpsOsCommonModuleEntry</sequence>
+                </syntax>
+                <access>not-accessible</access>
+                <status>mandatory</status>
+                <description>A table of software modules/ that provide an interface to the&lt;br&gt;device this MIB describes.</description>
+            </objectType>
+        </object>
+        <object>
+            <objectType>
+                <objectName>cpqUpsOsCommonModuleEntry</objectName>
+                <objectId>1</objectId>
+                <parent>cpqUpsOsCommonModuleTable</parent>
+                <syntax>
+                    <type>CpqUpsOsCommonModuleEntry</type>
+                </syntax>
+                <access>not-accessible</access>
+                <status>mandatory</status>
+                <description>A description of a software module that provides an interface&lt;br&gt;to the device this MIB describes.</description>
+                <indices>
+                    <index>cpqUpsOsCommonModuleIndex</index>
+                </indices>
+            </objectType>
+        </object>
+        <object>
+            <objectType>
+                <objectName>cpqUpsOsCommonModuleIndex</objectName>
+                <objectId>1</objectId>
+                <parent>cpqUpsOsCommonModuleEntry</parent>
+                <syntax>
+                    <type>INTEGER (0..255)</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>A unique index for this module description.</description>
+            </objectType>
+        </object>
+        <object>
+            <objectType>
+                <objectName>cpqUpsOsCommonModuleName</objectName>
+                <objectId>2</objectId>
+                <parent>cpqUpsOsCommonModuleEntry</parent>
+                <syntax>
+                    <type>DisplayString (SIZE (0..255))</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The module name.</description>
+            </objectType>
+        </object>
+        <object>
+            <objectType>
+                <objectName>cpqUpsOsCommonModuleVersion</objectName>
+                <objectId>3</objectId>
+                <parent>cpqUpsOsCommonModuleEntry</parent>
+                <syntax>
+                    <type>DisplayString (SIZE (0..5))</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The module version in XX.YY format.&lt;br&gt;&lt;br&gt;Where XX is the major version number and YY is the minor verion&lt;br&gt;number.  This field will be a null (size 0) string if the agent&lt;br&gt;cannot provide the module version.</description>
+            </objectType>
+        </object>
+        <object>
+            <objectType>
+                <objectName>cpqUpsOsCommonModuleDate</objectName>
+                <objectId>4</objectId>
+                <parent>cpqUpsOsCommonModuleEntry</parent>
+                <syntax>
+                    <type>OCTET STRING (SIZE (7))</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The module date.&lt;br&gt;&lt;br&gt;field  octets  contents                  range&lt;br&gt;=====  ======  =======                  =====&lt;br&gt;1      1-2   year                      0..65536&lt;br&gt;2       3    month                     1..12&lt;br&gt;3       4    day                       1..31&lt;br&gt;4       5    hour                      0..23&lt;br&gt;5       6    minute                    0..59&lt;br&gt;6       7    second                    0..60&lt;br&gt;(use 60 for leap-second)&lt;br&gt;&lt;br&gt;&lt;br&gt;This field will be set to year = 0 if the agent cannot provide&lt;br&gt;the module date.  The hour, minute, and second field will be set&lt;br&gt;to zero (0) if they are not relevant.  The year field is set&lt;br&gt;with the most significant octect first.</description>
+            </objectType>
+        </object>
+        <object>
+            <objectType>
+                <objectName>cpqUpsOsCommonModulePurpose</objectName>
+                <objectId>5</objectId>
+                <parent>cpqUpsOsCommonModuleEntry</parent>
+                <syntax>
+                    <type>DisplayString (SIZE (0..255))</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The purpose of the module described in this entry.</description>
+            </objectType>
+        </object>
+        <object>
+            <objectType>
+                <objectName>cpqUpsLineStatus</objectName>
+                <objectId>1</objectId>
+                <parent>cpqUpsBasic</parent>
+                <syntax>
+                    <type>INTEGER</type>
+                    <nameValuePairs>
+                        <nameValuePair>
+                            <pairName>other</pairName>
+                            <pairValue>1</pairValue>
+                        </nameValuePair>
+                        <nameValuePair>
+                            <pairName>ok</pairName>
+                            <pairValue>2</pairValue>
+                        </nameValuePair>
+                        <nameValuePair>
+                            <pairName>failed</pairName>
+                            <pairValue>4</pairValue>
+                        </nameValuePair>
+                    </nameValuePairs>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The status of the AC line input to the UPS.</description>
+            </objectType>
+        </object>
+        <object>
+            <objectType>
+                <objectName>cpqUpsName</objectName>
+                <objectId>2</objectId>
+                <parent>cpqUpsBasic</parent>
+                <syntax>
+                    <type>DisplayString (SIZE (0..20))</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The UPS name (type).</description>
+            </objectType>
+        </object>
+        <object>
+            <objectType>
+                <objectName>cpqUpsEstimatedBatteryLife</objectName>
+                <objectId>3</objectId>
+                <parent>cpqUpsBasic</parent>
+                <syntax>
+                    <type>INTEGER</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The estimated time, in minutes, of battery power available.&lt;br&gt;The value will be negative one (-1) if the agent is unable to&lt;br&gt;determine this information.  A UPS may not provide this&lt;br&gt;information when AC power is available.</description>
+            </objectType>
+        </object>
+        <object>
+            <objectType>
+                <objectName>cpqUpsAutoShutdownDelay</objectName>
+                <objectId>4</objectId>
+                <parent>cpqUpsBasic</parent>
+                <syntax>
+                    <type>INTEGER</type>
+                </syntax>
+                <access>read-write</access>
+                <status>mandatory</status>
+                <description>The number of minutes of battery power remaining before the UPS&lt;br&gt;driver will begin a graceful shutdown of the OS.&lt;br&gt;&lt;br&gt;A value of -1 indicates that no automatic shutdown will occur.</description>
+            </objectType>
+        </object>
+        <object>
+            <objectType>
+                <objectName>cpqUpsLaunchCommand</objectName>
+                <objectId>5</objectId>
+                <parent>cpqUpsBasic</parent>
+                <syntax>
+                    <type>OCTET STRING (SIZE (0..250))</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>Application to launch for UPS support.</description>
+            </objectType>
+        </object>
+        <object>
+            <objectType>
+                <objectName>cpqUpsAlarm</objectName>
+                <objectId>6</objectId>
+                <parent>cpqUpsBasic</parent>
+                <syntax>
+                    <type>DisplayString (SIZE (0..250))</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>This variable contains the UPS alarm text.</description>
+            </objectType>
+        </object>
+        <object>
+            <objectType>
+                <objectName>cpqUpsMemberTable</objectName>
+                <objectId>1</objectId>
+                <parent>cpqUpsFamily</parent>
+                <syntax>
+                    <sequence>CpqUpsMemberEntry</sequence>
+                </syntax>
+                <access>not-accessible</access>
+                <status>mandatory</status>
+                <description>A table of entries that describes the family of rack-mounted&lt;br&gt;servers that a single UPS supports.</description>
+            </objectType>
+        </object>
+        <object>
+            <objectType>
+                <objectName>cpqUpsMemberEntry</objectName>
+                <objectId>1</objectId>
+                <parent>cpqUpsMemberTable</parent>
+                <syntax>
+                    <type>CpqUpsMemberEntry</type>
+                </syntax>
+                <access>not-accessible</access>
+                <status>mandatory</status>
+                <description>A table of entries that describes the family of rack-mounted&lt;br&gt;servers that a single UPS supports.</description>
+                <indices>
+                    <index>cpqUpsMemberIndex</index>
+                </indices>
+            </objectType>
+        </object>
+        <object>
+            <objectType>
+                <objectName>cpqUpsMemberIndex</objectName>
+                <objectId>1</objectId>
+                <parent>cpqUpsMemberEntry</parent>
+                <syntax>
+                    <type>INTEGER (1..255)</type>
+                </syntax>
+                <access>read-write</access>
+                <status>mandatory</status>
+                <description>A unique index for this module description.</description>
+            </objectType>
+        </object>
+        <object>
+            <objectType>
+                <objectName>cpqUpsMemberName</objectName>
+                <objectId>2</objectId>
+                <parent>cpqUpsMemberEntry</parent>
+                <syntax>
+                    <type>DisplayString (SIZE (0..255))</type>
+                </syntax>
+                <access>read-write</access>
+                <status>mandatory</status>
+                <description>The name or address of one of the individual servers&lt;br&gt;that is served by the rack-mounted UPS. Set cpqUpsMemberName&lt;br&gt;to 0 to delete this row.</description>
+            </objectType>
+        </object>
+        <object>
+            <objectType>
+                <objectName>cpqUpsMemberCommunityStr</objectName>
+                <objectId>3</objectId>
+                <parent>cpqUpsMemberEntry</parent>
+                <syntax>
+                    <type>DisplayString (SIZE (0..255))</type>
+                </syntax>
+                <access>read-write</access>
+                <status>mandatory</status>
+                <description>The Community string for this individual server.</description>
+            </objectType>
+        </object>
+        <object>
+            <objectType>
+                <objectName>cpqUpsAddMemberName</objectName>
+                <objectId>2</objectId>
+                <parent>cpqUpsFamily</parent>
+                <syntax>
+                    <type>DisplayString (SIZE (0..255))</type>
+                </syntax>
+                <access>read-write</access>
+                <status>mandatory</status>
+                <description>To add a row to the cpqUpsMemberTable, this variable must&lt;br&gt;be set, followed immediately by the set of the&lt;br&gt;cpqUpsAddMemberCommunityStr.  Sets must occur in this order,&lt;br&gt;or else a new row will not be added to the table.</description>
+            </objectType>
+        </object>
+        <object>
+            <objectType>
+                <objectName>cpqUpsAddMemberCommunityStr</objectName>
+                <objectId>3</objectId>
+                <parent>cpqUpsFamily</parent>
+                <syntax>
+                    <type>DisplayString (SIZE (0..255))</type>
+                </syntax>
+                <access>read-write</access>
+                <status>mandatory</status>
+                <description>To add a row to the cpqUpsMemberTable, the cpqUpsAddMemberName&lt;br&gt;must be set, followed immediately by a set of this variable.&lt;br&gt;Sets must occur in this order, or else a new row will not be&lt;br&gt;added to the cpqUpsMemberTable.</description>
+            </objectType>
+        </object>
+    </objects>
+</mib>

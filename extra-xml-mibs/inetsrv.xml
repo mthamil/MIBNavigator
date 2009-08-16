@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<mib name="INTERNETSERVER-MIB">
+    <imports>
+        <source name="RFC1155-SMI">
+            <import>enterprises</import>
+            <import>OBJECT-TYPE</import>
+            <import>Counter</import>
+        </source>
+        <source name="MSFT-MIB">
+            <import>microsoft</import>
+            <import>software</import>
+        </source>
+    </imports>
+    <objects>
+        <object>
+            <objectIdentifier>
+                <objectName>internetServer</objectName>
+                <objectId>7</objectId>
+                <parent>software</parent>
+            </objectIdentifier>
+        </object>
+        <object>
+            <objectIdentifier>
+                <objectName>inetSrvCommon</objectName>
+                <objectId>1</objectId>
+                <parent>internetServer</parent>
+            </objectIdentifier>
+        </object>
+        <object>
+            <objectIdentifier>
+                <objectName>inetSrvStats</objectName>
+                <objectId>1</objectId>
+                <parent>inetSrvCommon</parent>
+            </objectIdentifier>
+        </object>
+    </objects>
+</mib>

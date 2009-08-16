@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<mib name="DPI20-MIB">
+    <imports>
+        <source name="SNMPv2-SMI">
+            <import>MODULE-IDENTITY</import>
+            <import>OBJECT-TYPE</import>
+            <import>enterprises</import>
+        </source>
+        <source name="SNMPv2-TC">
+            <import>DisplayString</import>
+        </source>
+        <source name="SNMPv2-CONF">
+            <import>MODULE-COMPLIANCE</import>
+            <import>OBJECT-GROUP</import>
+        </source>
+    </imports>
+    <objects>
+        <object>
+            <objectIdentifier>
+                <objectName>ibm</objectName>
+                <objectId>2</objectId>
+                <parent>enterprises</parent>
+            </objectIdentifier>
+        </object>
+        <object>
+            <objectIdentifier>
+                <objectName>ibmDPI</objectName>
+                <objectId>2</objectId>
+                <parent>ibm</parent>
+            </objectIdentifier>
+        </object>
+        <object>
+            <moduleIdentity>
+                <objectName>dpi20MIB</objectName>
+                <objectId>1</objectId>
+                <parent>ibmDPI</parent>
+                <lastUpdated>9609300000Z</lastUpdated>
+                <organization>IBM Research - T.J. Watson Research Center</organization>
+                <contactInfo>Bert Wijnen&lt;br&gt;&lt;br&gt;Postal:    IBM International Operations&lt;br&gt;Watsonweg 2&lt;br&gt;1423 ND Uithoorn&lt;br&gt;The Netherlands&lt;br&gt;&lt;br&gt;Tel:       +31 79-322-8316&lt;br&gt;&lt;br&gt;E-mail:    wijnen@vnet.ibm.com&lt;br&gt;(IBM internal: wijnen at uitvm1)</contactInfo>
+                <description>The MIB module describing DPI objects.</description>
+                <revision revisionId="9609300000Z">
+                    <description>Changes in this revision&lt;br&gt;- Added dpiPathNameForUnixStream</description>
+                </revision>
+                <revision revisionId="9605010000Z">
+                    <description>Changes in this revision&lt;br&gt;- Change telephone number</description>
+                </revision>
+                <revision revisionId="9505260000Z">
+                    <description>Changes in this revision&lt;br&gt;- Enable SNMPv2 items&lt;br&gt;- import from SNMPv2 documents&lt;br&gt;- Add conformance statements</description>
+                </revision>
+            </moduleIdentity>
+        </object>
+        <object>
+            <objectIdentifier>
+                <objectName>dpiPort</objectName>
+                <objectId>1</objectId>
+                <parent>dpi20MIB</parent>
+            </objectIdentifier>
+        </object>
+        <object>
+            <objectType>
+                <objectName>dpiPortForTCP</objectName>
+                <objectId>1</objectId>
+                <parent>dpiPort</parent>
+                <syntax>
+                    <type>INTEGER (0..65535)</type>
+                </syntax>
+                <access>read-only</access>
+                <status>current</status>
+                <description>The TCP port number on which the agent listens for&lt;br&gt;DPI connections.&lt;br&gt;If the value is zero, it means that the agent is&lt;br&gt;not listening for TCP DPI connections.</description>
+            </objectType>
+        </object>
+        <object>
+            <objectType>
+                <objectName>dpiPortForUDP</objectName>
+                <objectId>2</objectId>
+                <parent>dpiPort</parent>
+                <syntax>
+                    <type>INTEGER (0..65535)</type>
+                </syntax>
+                <access>read-only</access>
+                <status>current</status>
+                <description>The UDP port number on which the agent listens for&lt;br&gt;DPI packets.&lt;br&gt;If the value is zero, it means that the agent is&lt;br&gt;not listening for UDP DPI packets.</description>
+            </objectType>
+        </object>
+        <object>
+            <objectType>
+                <objectName>dpiPathNameForUnixStream</objectName>
+                <objectId>3</objectId>
+                <parent>dpiPort</parent>
+                <syntax>
+                    <type>DisplayString</type>
+                </syntax>
+                <access>read-only</access>
+                <status>current</status>
+                <description>The full path name for a connection via an&lt;br&gt;AF_UNIX stream connection. The empty value&lt;br&gt;means the agent has no DPI AF_UNIX support.</description>
+            </objectType>
+        </object>
+        <object>
+            <objectIdentifier>
+                <objectName>dpiMIBConformance</objectName>
+                <objectId>2</objectId>
+                <parent>dpi20MIB</parent>
+            </objectIdentifier>
+        </object>
+        <object>
+            <objectIdentifier>
+                <objectName>dpiMIBCompliances</objectName>
+                <objectId>1</objectId>
+                <parent>dpiMIBConformance</parent>
+            </objectIdentifier>
+        </object>
+        <object>
+            <objectIdentifier>
+                <objectName>dpiMIBGroups</objectName>
+                <objectId>2</objectId>
+                <parent>dpiMIBConformance</parent>
+            </objectIdentifier>
+        </object>
+        <object>
+            <moduleCompliance>
+                <objectName>dpiMIBCompliance</objectName>
+                <objectId>1</objectId>
+                <parent>dpiMIBCompliances</parent>
+                <status>current</status>
+                <description>The compliance statement for SNMPv2 entities&lt;br&gt;which implement the dpiMIB (DPI MIB).</description>
+            </moduleCompliance>
+        </object>
+        <object>
+            <moduleCompliance>
+                <objectName>dpiMIBComplianceUnix</objectName>
+                <objectId>2</objectId>
+                <parent>dpiMIBCompliances</parent>
+                <status>current</status>
+                <description>The compliance statement for SNMPv2 entities&lt;br&gt;which implement the dpiMIB (DPI MIB), including&lt;br&gt;the new dpiGroupUnix group.</description>
+            </moduleCompliance>
+        </object>
+        <object>
+            <objectGroup>
+                <objectName>dpiGroup</objectName>
+                <objectId>1</objectId>
+                <parent>dpiMIBGroups</parent>
+                <members>
+                    <member>dpiPortForTCP</member>
+                    <member>dpiPortForUDP</member>
+                </members>
+                <status>current</status>
+                <description>The dpiGroup defines the objects that are&lt;br&gt;used to figure out the DPI ports supported by&lt;br&gt;a DPI 2.0 capable SNMP agent.</description>
+            </objectGroup>
+        </object>
+        <object>
+            <objectGroup>
+                <objectName>dpiGroupUnix</objectName>
+                <objectId>2</objectId>
+                <parent>dpiMIBGroups</parent>
+                <members>
+                    <member>dpiPathNameForUnixStream</member>
+                </members>
+                <status>current</status>
+                <description>The dpiGroup defines the objects that are&lt;br&gt;used to figure out the DPI ports supported by&lt;br&gt;a DPI 2.0 capable SNMP agent.</description>
+            </objectGroup>
+        </object>
+    </objects>
+</mib>

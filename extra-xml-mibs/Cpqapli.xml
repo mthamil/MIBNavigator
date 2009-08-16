@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<mib name="CPQAPPLIANCE-MIB">
+    <imports>
+        <source name="CPQHOST-MIB">
+            <import>compaq</import>
+        </source>
+        <source name="RFC1155-SMI">
+            <import>enterprises</import>
+        </source>
+        <source name="RFC1155-SMI">
+            <import>Counter</import>
+        </source>
+        <source name="RFC1213-MIB">
+            <import>DisplayString</import>
+        </source>
+        <source name="RFC-1212">
+            <import>OBJECT-TYPE</import>
+        </source>
+        <source name="RFC-1215">
+            <import>TRAP-TYPE</import>
+        </source>
+        <source name="RFC1213-MIB">
+            <import>sysName</import>
+        </source>
+        <source name="CPQHOST-MIB">
+            <import>cpqHoTrapFlags</import>
+        </source>
+    </imports>
+    <objects>
+        <object>
+            <objectIdentifier>
+                <objectName>cpqApplianceMgmt</objectName>
+                <objectId>21</objectId>
+                <parent>compaq</parent>
+            </objectIdentifier>
+        </object>
+        <object>
+            <objectIdentifier>
+                <objectName>cpqApMibRev</objectName>
+                <objectId>1</objectId>
+                <parent>cpqApplianceMgmt</parent>
+            </objectIdentifier>
+        </object>
+        <object>
+            <objectIdentifier>
+                <objectName>cpqApComponent</objectName>
+                <objectId>2</objectId>
+                <parent>cpqApplianceMgmt</parent>
+            </objectIdentifier>
+        </object>
+        <object>
+            <objectIdentifier>
+                <objectName>cpqApInterface</objectName>
+                <objectId>1</objectId>
+                <parent>cpqApComponent</parent>
+            </objectIdentifier>
+        </object>
+        <object>
+            <objectIdentifier>
+                <objectName>cpqApConfig</objectName>
+                <objectId>2</objectId>
+                <parent>cpqApComponent</parent>
+            </objectIdentifier>
+        </object>
+        <object>
+            <objectIdentifier>
+                <objectName>cpqApOsCommon</objectName>
+                <objectId>4</objectId>
+                <parent>cpqApInterface</parent>
+            </objectIdentifier>
+        </object>
+        <object>
+            <objectType>
+                <objectName>cpqApMibRevMajor</objectName>
+                <objectId>1</objectId>
+                <parent>cpqApMibRev</parent>
+                <syntax>
+                    <type>INTEGER (1..65535)</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The Major Revision level of the MIB.&lt;br&gt;&lt;br&gt;A change in the major revision level represents a major change&lt;br&gt;in the architecture of the MIB.  A change in the major revision&lt;br&gt;level may indicate a significant change in the information&lt;br&gt;supported and/or the meaning of the supported information,&lt;br&gt;correct interpretation of data may require a MIB document with&lt;br&gt;the same major revision level.</description>
+            </objectType>
+        </object>
+        <object>
+            <objectType>
+                <objectName>cpqApMibRevMinor</objectName>
+                <objectId>2</objectId>
+                <parent>cpqApMibRev</parent>
+                <syntax>
+                    <type>INTEGER (0..65535)</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The Minor Revision level of the MIB.&lt;br&gt;&lt;br&gt;A change in the minor revision level may represent some minor&lt;br&gt;additional support, no changes to any pre-existing information&lt;br&gt;has occurred.</description>
+            </objectType>
+        </object>
+        <object>
+            <objectType>
+                <objectName>cpqApMibCondition</objectName>
+                <objectId>3</objectId>
+                <parent>cpqApMibRev</parent>
+                <syntax>
+                    <type>INTEGER</type>
+                    <nameValuePairs>
+                        <nameValuePair>
+                            <pairName>other</pairName>
+                            <pairValue>1</pairValue>
+                        </nameValuePair>
+                        <nameValuePair>
+                            <pairName>ok</pairName>
+                            <pairValue>2</pairValue>
+                        </nameValuePair>
+                        <nameValuePair>
+                            <pairName>degraded</pairName>
+                            <pairValue>3</pairValue>
+                        </nameValuePair>
+                        <nameValuePair>
+                            <pairName>failed</pairName>
+                            <pairValue>4</pairValue>
+                        </nameValuePair>
+                    </nameValuePairs>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The overall condition of the Appliance MIB.&lt;br&gt;&lt;br&gt;This object represents the overal status of the Compaq&lt;br&gt;Appliance MIB management system represented by this MIB.</description>
+            </objectType>
+        </object>
+        <object>
+            <objectType>
+                <objectName>cpqApOsCommonPollFreq</objectName>
+                <objectId>1</objectId>
+                <parent>cpqApOsCommon</parent>
+                <syntax>
+                    <type>INTEGER (0..2147483647)</type>
+                </syntax>
+                <access>read-write</access>
+                <status>mandatory</status>
+                <description>The Agent's polling frequency.&lt;br&gt;&lt;br&gt;The frequency, in seconds, at which the Agent requests&lt;br&gt;information from.  A frequency of zero indicates that the&lt;br&gt;Agent retrieves the information upon request of a&lt;br&gt;management station, it does not poll at a specific interval.&lt;br&gt;&lt;br&gt;If the poll frequency is zero (0) all attempts to write to this&lt;br&gt;object will fail.  If the poll frequency is non-zero,&lt;br&gt;setting this value will change the polling frequency of the&lt;br&gt;Agent.  Setting the poll frequency to zero will always&lt;br&gt;fail, an agent may also choose to fail any request to change&lt;br&gt;the poll frequency to a value that would severely impact system&lt;br&gt;performance.</description>
+            </objectType>
+        </object>
+        <object>
+            <objectType>
+                <objectName>cpqApApplianceId</objectName>
+                <objectId>1</objectId>
+                <parent>cpqApConfig</parent>
+                <syntax>
+                    <type>INTEGER</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>A unique identifier of the Compaq Appliance.&lt;br&gt;&lt;br&gt;This can be used by management consoles to allow specific logic&lt;br&gt;which pertains to the particular appliance.  For example, this&lt;br&gt;might be used to provide custom graphics for a particular&lt;br&gt;appliance.  Each Compaq appliance that needs differentiation&lt;br&gt;will be give a different appliance ID.</description>
+            </objectType>
+        </object>
+        <object>
+            <objectType>
+                <objectName>cpqApApplianceDescription</objectName>
+                <objectId>2</objectId>
+                <parent>cpqApConfig</parent>
+                <syntax>
+                    <type>DisplayString (SIZE (0..80))</type>
+                </syntax>
+                <access>read-only</access>
+                <status>mandatory</status>
+                <description>The text description of this Compaq Appliance.</description>
+            </objectType>
+        </object>
+    </objects>
+</mib>
