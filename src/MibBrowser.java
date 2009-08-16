@@ -641,6 +641,7 @@ public class MibBrowser
                         String addressString = ((String)addressBox.getSelectedItem()).trim();
                         int port = Integer.parseInt(portField.getText().trim());
                         int timeout = Integer.parseInt(timeoutField.getText().trim());
+                        SnmpHost host = new SnmpHost(communityString, addressString, port, timeout);
     
                         // Try to scroll to the correct OID.
                         String oidInputString = Utilities.trim(oidInputField.getText().trim(), '.');
@@ -653,17 +654,11 @@ public class MibBrowser
                         putValue(NAME, StringResources.getString("stopButton"));
                         
                         // Initialize and start the GetRequest process in a different thread using a SwingWorker.
-//                        snmpGetTask = new GetRequestWorker(communityString, oidInputString, addressString,
-//                                (MibTreeNode)mibModel.getRoot());
+//                        snmpGetTask = new GetRequestWorker(host, oidInputString, (MibTreeNode)mibModel.getRoot());
 //                        snmpGetTask.addGetRequestListener(new MibGetRequestListener());
-//                        snmpGetTask.setPort(port);
-//                        snmpGetTask.setTimeout(timeout);
                         
-                        snmpGetTask = new GetRequestTask(communityString, oidInputString, addressString,
-                              (MibTreeNode)mibModel.getRoot());
+                        snmpGetTask = new GetRequestTask(host, oidInputString, (MibTreeNode)mibModel.getRoot());
 						snmpGetTask.addGetRequestListener(new MibGetRequestListener());
-						snmpGetTask.setPort(port);
-						snmpGetTask.setTimeout(timeout);
 						snmpGetTask.addPropertyChangeListener(new PropertyChangeListener()
 						{
 							public void propertyChange(PropertyChangeEvent propertyEvent)

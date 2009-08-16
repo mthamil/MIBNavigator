@@ -66,58 +66,32 @@ public class GetRequestTask extends SwingWorker<String, GetRequestResult>
 	private EventListenerList requestListeners = new EventListenerList();
     private GetRequestResultProcessor resultProcessor;
 	
-    private final String communityString;
+    private final SnmpHost host;
     private final String oidInputString;
-    private final String addressString;
-    private int hostPort;
-    private int hostTimeout;
-    
     private final MibTreeNode root;
     
     private static final int SNMP_VERSION = 0;
-    private static final int DEFAULT_TIMEOUT = 4000;
     private static final String STD_PREFIX = "iso.org.dod.internet.mgmt.mib-2.";
     private static final String ENT_PREFIX = "iso.org.dod.internet.private.enterprises.";
     
     /**
      * Initializes the get request task with all necessary values.
      * 
-     * @param commString the SNMP community string for the target host device
+     * @param host parameters for communicating with an SNMP host device
      * @param oidString the starting OID for the GetRequest
-     * @param address the <code>String</code> representation of the target host device's IP address
      * @param rootNode the <code>MibTreeNode</code> root of the MIB tree
      */
-    public GetRequestTask(final String commString, final String oidString, 
-            final String address, final MibTreeNode rootNode)
+    public GetRequestTask(final SnmpHost host, final String oidString, final MibTreeNode rootNode)
     {
+        if (host == null)
+        	throw new IllegalArgumentException("Host cannot be null");
+    	
         if (rootNode == null)
             throw new IllegalArgumentException("Root node cannot be null.");
         
-        addressString = address;
-        communityString = commString;
-        oidInputString = oidString;
-        root = rootNode;
-        
-        hostPort = SnmpV1Communicator.DEFAULT_SNMP_PORT;
-        hostTimeout = DEFAULT_TIMEOUT;
-    }
-    
-    /**
-     * Sets the port number used for get requests.
-     * @param newPort
-     */
-    public void setPort(int newPort)
-    {
-        hostPort = newPort;
-    }
-    
-    /**
-     * Sets the timeout in milliseconds for get requests.
-     * @param newTimeout
-     */
-    public void setTimeout(int newTimeout)
-    {
-        hostTimeout = newTimeout;
+        this.host = host;
+        this.oidInputString = oidString;
+        this.root = rootNode;
     }
     
     /**
@@ -202,8 +176,8 @@ public class GetRequestTask extends SwingWorker<String, GetRequestResult>
         String baseOid = oidInputString;
 
         // Create local copies for data integrity during the GetRequest process since these fields can be set after construction.
-        int port = hostPort;
-        int timeout = hostTimeout;
+        int port = host.getPort();
+        int timeout = host.getTimeout();
         
         try
         {
@@ -211,12 +185,12 @@ public class GetRequestTask extends SwingWorker<String, GetRequestResult>
             // Unfortunately, pressing the Stop button during address resolution/lookup will have no immediate
             // effect since these calls cannot be interrupted. However, they also cannot be done outside of this thread
             // because an exception in address resolution that indicates an invalid address should stop the GET process.
-            InetAddress address = InetAddress.getByName(addressString);
+            InetAddress address = InetAddress.getByName(host.getAddress());
             String resolvedAddr = address.getCanonicalHostName();
-            this.fireAddressResolvedEvent(addressString, resolvedAddr);  // this will occur if the host address is valid
+            this.fireAddressResolvedEvent(host.getAddress(), resolvedAddr);  // this will occur if the host address is valid
 
             // Establish a new SNMPv1 interface with the given data.
-            SnmpV1Communicator snmpInterface = new SnmpV1Communicator(SNMP_VERSION, address, communityString);
+            SnmpV1Communicator snmpInterface = new SnmpV1Communicator(SNMP_VERSION, address, host.getCommunityString());
             snmpInterface.setTimeout(timeout);
             snmpInterface.setPort(port);
 
