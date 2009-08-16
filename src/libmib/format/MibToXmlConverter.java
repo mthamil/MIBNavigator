@@ -152,7 +152,7 @@ public class MibToXmlConverter
                         // initializations
                         String objInfo = "";
                         String objParent = "";
-                        String objIndex = "";;  
+                        String objIndex = ""; 
                         
 					    objInfo = oidString.substring(index + SmiTokens.OBJECT_ID.length());
                         objInfo = objInfo.substring(objInfo.indexOf("{") + 1, objInfo.indexOf("}")).trim();
