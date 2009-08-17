@@ -196,7 +196,6 @@ public class SnmpOctetString extends SnmpObject
         if (data.length > 0 && data[data.length - 1] == 0)
             maxLength = maxLength - 1; 
 
-        
         // Valid, printable, 8-bit Unicode characters should be detected properly.  However,
         // characters with codes greater than those supported by Unicode Basic Latin and Latin-1 
         // (up to 0x00FF) will not display properly since bytes are individually checked. Thus each character

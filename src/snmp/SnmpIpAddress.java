@@ -21,6 +21,7 @@
 
 package snmp;
 
+import java.net.Inet4Address;
 import java.util.Arrays;
 
 
@@ -39,10 +40,8 @@ public class SnmpIpAddress extends SnmpOctetString
         // initialize to 0.0.0.0
         tag = SnmpBERType.SnmpIpAddress;
         data = new byte[4];
-        for (int i = 0; i < 4; i++)
-            data[i] = 0;
+        Arrays.fill(data, (byte)0);
     }
-    
     
     /** 
      *  Initializes from a string containing a standard "dotted" IP address.
@@ -50,12 +49,25 @@ public class SnmpIpAddress extends SnmpOctetString
      *  @throws SnmpBadValueException Indicates an invalid string supplied: more than 4 components,
      *  component values not between 0 and 255, etc.
      */
-    public SnmpIpAddress(String string)
+    public SnmpIpAddress(String addressString)
         throws SnmpBadValueException
     {
         tag = SnmpBERType.SnmpIpAddress;
-        this.data = SnmpIpAddress.parseIpAddress(string);
+        this.data = SnmpIpAddress.parseIpAddress(addressString);
     }
+    
+    /**
+     * Creates an SNMP IP address from a IPv4 Internet address.
+     * @param address
+     * @throws SnmpBadValueException
+     */
+    public SnmpIpAddress(Inet4Address address)
+	{
+	    tag = SnmpBERType.SnmpIpAddress;
+	    
+	    byte[] rawAddress = address.getAddress();
+	    this.data = Arrays.copyOf(rawAddress, rawAddress.length);   	
+	}
     
     
     /** 
@@ -95,6 +107,11 @@ public class SnmpIpAddress extends SnmpOctetString
         else if (newAddress instanceof String)
         {
             data = SnmpIpAddress.parseIpAddress((String)newAddress);
+        }
+        else if (newAddress instanceof Inet4Address)
+        {
+    	    byte[] rawAddress = ((Inet4Address)newAddress).getAddress();
+    	    this.data = Arrays.copyOf(rawAddress, rawAddress.length);  
         }
         else
         {
@@ -152,8 +169,9 @@ public class SnmpIpAddress extends SnmpOctetString
 	    {
 	        int convert = data[0];
 	        if (convert < 0)
-	                convert += 256;
-	            returnStringBuffer.append(convert);
+                convert += 256;
+            
+	        returnStringBuffer.append(convert);
 	                
 	        for (int i = 1; i < data.length; i++)
 	        {
@@ -168,16 +186,19 @@ public class SnmpIpAddress extends SnmpOctetString
 	    return returnStringBuffer.toString();
 	}
     
-    /*public static void main(String[] args)
-    {
-        try
-        {
-            SNMPIPAddress test = new SNMPIPAddress("138.230.106.63");
-            String testStr = test.toString();
-        }
-        catch (Exception e)
-        {
-        } 
-    }*/
+//    public static void main(String[] args)
+//    {
+//        try
+//        {
+//            SnmpIpAddress test = new SnmpIpAddress("138.230.106.63");
+//            System.out.println(test.toString());
+//            
+//            InetAddress address = InetAddress.getByName("138.230.106.63");
+//            System.out.println(Arrays.toString(address.getAddress()));
+//        }
+//        catch (Exception e)
+//        {
+//        } 
+//    }
 
 }
