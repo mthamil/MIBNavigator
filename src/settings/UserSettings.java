@@ -47,6 +47,9 @@ public class UserSettings
 	}
 
 	private static final String SETTINGS_FOLDERNAME = ".mibnavigator";
+	private static final File SETTINGS_PATH = 
+		new File(System.getProperty("user.home") + File.separator + SETTINGS_FOLDERNAME);
+	
 	private static final int DEFAULT_MAX_ADDRESSES = 15;
 	private static final String DEFAULT_MIB_DIRECTORY = "." + File.separator + "mibs";
 	private File settingsFile;
@@ -66,8 +69,7 @@ public class UserSettings
 	{
 		settings = new Properties();
 		settingsChanged = false;
-		String settingsDirPath = System.getProperty("user.home") + File.separator + SETTINGS_FOLDERNAME + File.separator;
-		settingsFile = new File(settingsDirPath + "properties.xml");
+		settingsFile = new File(SETTINGS_PATH  + File.separator + "properties.xml");
 	}
 
 	/**
@@ -200,7 +202,7 @@ public class UserSettings
 			Utilities.closeQuietly(settingsIn);
 		}
         
-        // Parse the mib directory property.
+        // Parse the MIB directory property.
         mibDirectory = parseMibDirectory(mibPath);        
         
         // Parse the the max address property.
@@ -219,7 +221,8 @@ public class UserSettings
 	 */
 	public void saveSettings()
 	{
-		if (settingsChanged)
+		// Write the file is either the settings changed or no settings file exists.
+		if (settingsChanged || !settingsFile.exists())
 		{
 			if (mibDirectory != null && mibDirectory.isDirectory())
 			{
@@ -254,6 +257,13 @@ public class UserSettings
 			FileOutputStream settingsOut = null;
 			try
 			{
+				// Create the settings directory if necessary.
+				if (!SETTINGS_PATH.exists())
+					SETTINGS_PATH.mkdir();
+				
+				// Create a new settings file if necessary.
+				settingsFile.createNewFile();
+					
 				settingsOut = new FileOutputStream(settingsFile);
 				settings.storeToXML(settingsOut, null);
 			}
