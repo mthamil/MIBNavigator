@@ -65,10 +65,10 @@ public class SnmpSequence extends SnmpObject
      *  
      *  @throws SnmpBadValueException Indicates invalid SNMP sequence encoding supplied.
      */
-    protected SnmpSequence(byte[] enc)
+    protected SnmpSequence(byte[] encoding)
         throws SnmpBadValueException
     {
-        extractFromBEREncoding(enc);
+        decode(encoding);
     }
     
     
@@ -165,7 +165,7 @@ public class SnmpSequence extends SnmpObject
     /** 
      *  Returns the BER encoding for the sequence.
      */
-    protected byte[] getBEREncoding()
+    protected byte[] encode()
     {
         ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
           
@@ -192,26 +192,30 @@ public class SnmpSequence extends SnmpObject
         //for (int i = 0; i < numElements; ++i)
         for (Object item : sequence)
         {
-            byte[] nextBytes = ((SnmpObject)item).getBEREncoding();
+            byte[] nextBytes = ((SnmpObject)item).encode();
             outBytes.write(nextBytes, 0, nextBytes.length);
         }
         
         return outBytes.toByteArray();
     }
     
-
-    protected void extractFromBEREncoding(byte[] enc)
+	/**
+	 * Initializes an SNMP sequence with values extracted from a byte encoding.
+	 * @param encoding
+	 * @throws SnmpBadValueException
+	 */
+    protected void decode(byte[] encoding)
         throws SnmpBadValueException
     {
         List<SnmpObject> newVector = new Vector<SnmpObject>();
         
-        int totalLength = enc.length;
+        int totalLength = encoding.length;
         int position = 0;
         
         while (position < totalLength)
         {
-            SnmpTLV nextTLV = SnmpBERCodec.extractNextTLV(enc, position);
-            newVector.add(newVector.size(), SnmpBERCodec.extractEncoding(nextTLV));
+            SnmpTLV nextTLV = SnmpBERCodec.extractNextTLV(encoding, position);
+            newVector.add(newVector.size(), SnmpBERCodec.decode(nextTLV));
             position += nextTLV.length;
         }
         

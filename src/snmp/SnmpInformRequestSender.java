@@ -64,7 +64,7 @@ public class SnmpInformRequestSender
     {
         SnmpMessage message = new SnmpMessage(version, community, pdu);
         
-        byte[] messageEncoding = message.getBEREncoding();
+        byte[] messageEncoding = message.encode();
         
         /*
         System.out.println("Request Message bytes:");

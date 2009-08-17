@@ -159,7 +159,7 @@ public class SnmpV2BulkRequestPDU extends SnmpSequence
         throws SnmpBadValueException
     {
         tag = pduType;
-        extractFromBEREncoding(enc);
+        decode(enc);
         
         // validate the message: make sure we have the appropriate pieces
         List<SnmpObject> contents = sequence;

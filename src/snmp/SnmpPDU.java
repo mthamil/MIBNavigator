@@ -127,7 +127,7 @@ public class SnmpPDU extends SnmpSequence
     protected SnmpPDU(byte[] encoding, SnmpBERType pduType) throws SnmpBadValueException
     {
         tag = pduType;
-        extractFromBEREncoding(encoding);
+        decode(encoding);
         
         // validate the message: make sure we have the appropriate pieces
         List<SnmpObject> contents = sequence;

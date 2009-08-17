@@ -52,10 +52,10 @@ public class SnmpBitString extends SnmpOctetString
      *  user-supplied, or part of a retrieved BER encoding. Note that the BER encoding
      *  of the data of a bit string is just the raw bytes.
      */
-    public SnmpBitString(byte[] enc)
+    public SnmpBitString(byte[] encoding)
     {
     	tag = SnmpBERType.SnmpBitString;
-        extractFromBEREncoding(enc);
+        decode(encoding);
     }
     
 }

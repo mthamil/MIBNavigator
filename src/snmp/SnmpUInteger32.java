@@ -63,12 +63,12 @@ public class SnmpUInteger32 extends SnmpInteger
      *  @throws SnmpBadValueException Indicates an invalid BER encoding supplied. Shouldn't
      *  occur in normal operation, i.e., when valid responses are received from devices.
      */
-    protected SnmpUInteger32(byte[] enc)
+    protected SnmpUInteger32(byte[] encodedValue)
         throws SnmpBadValueException
     {
         tag = SnmpBERType.SnmpUInteger32;
         
-        extractValueFromBEREncoding(enc);
+        decodeValue(encodedValue);
         
         // wrap if value > maxValue
         value = value.mod(maxValue);

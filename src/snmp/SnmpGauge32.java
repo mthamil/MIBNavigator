@@ -63,12 +63,12 @@ public class SnmpGauge32 extends SnmpInteger
      *  @throws SnmpBadValueException Indicates an invalid BER encoding supplied. Shouldn't
      *  occur in normal operation, i.e., when valid responses are received from devices.
      */
-    protected SnmpGauge32(byte[] enc)
+    protected SnmpGauge32(byte[] encodedValue)
         throws SnmpBadValueException
     {
         tag = SnmpBERType.SnmpGauge32;
         
-        extractValueFromBEREncoding(enc);
+        decodeValue(encodedValue);
         
         // peg if value > maxValue
         value = value.min(maxValue);

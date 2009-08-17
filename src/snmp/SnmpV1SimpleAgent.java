@@ -227,7 +227,7 @@ public class SnmpV1SimpleAgent implements Runnable
                 // Construct and send response.
                 SnmpPDU pdu = new SnmpPDU(SnmpBERType.SnmpGetResponse, requestID, errorStatus, errorIndex, responseVarList);
                 SnmpMessage message = new SnmpMessage(version, communityName, pdu);
-                byte[] messageEncoding = message.getBEREncoding();
+                byte[] messageEncoding = message.encode();
                 
                 DatagramPacket outPacket = new DatagramPacket(messageEncoding, messageEncoding.length, requesterAddress, requesterPort);
                 dSocket.send(outPacket);

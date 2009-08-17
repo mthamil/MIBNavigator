@@ -274,7 +274,7 @@ public class SnmpV1Communicator
         SnmpVarBindList retrievedVars = new SnmpVarBindList();
         
         SnmpMessage message = this.createMessage(itemIds, getType);
-        byte[] messageEncoding = message.getBEREncoding();
+        byte[] messageEncoding = message.encode();
 
         DatagramPacket outPacket = new DatagramPacket(messageEncoding, messageEncoding.length, hostAddress, port);
         dSocket.send(outPacket);
@@ -370,7 +370,7 @@ public class SnmpV1Communicator
         SnmpVarBindList retrievedVars = new SnmpVarBindList();
 
         SnmpMessage message = this.createMessage(itemIds, SnmpBERType.SnmpSetRequest, newValues);
-        byte[] messageEncoding = message.getBEREncoding();
+        byte[] messageEncoding = message.encode();
 
         DatagramPacket outPacket = new DatagramPacket(messageEncoding, messageEncoding.length, hostAddress, port);
         dSocket.send(outPacket);
@@ -467,7 +467,7 @@ public class SnmpV1Communicator
         while (errorStatus == ErrorStatus.NoError)
         {
             SnmpMessage message = this.createMessage(requestedOid, SnmpBERType.SnmpGetNextRequest);
-            byte[] messageEncoding = message.getBEREncoding();
+            byte[] messageEncoding = message.encode();
 
             DatagramPacket outPacket = new DatagramPacket(messageEncoding, messageEncoding.length, hostAddress, port);
             dSocket.send(outPacket);
@@ -553,7 +553,7 @@ public class SnmpV1Communicator
             SnmpPDU pdu = new SnmpPDU(SnmpBERType.SnmpGetNextRequest, requestID, errorStatus, errorIndex, varList);
             SnmpMessage message = new SnmpMessage(version, community, pdu);
 
-            byte[] messageEncoding = message.getBEREncoding();
+            byte[] messageEncoding = message.encode();
 
             DatagramPacket outPacket = new DatagramPacket(messageEncoding, messageEncoding.length, hostAddress, port);
             dSocket.send(outPacket);
@@ -639,7 +639,7 @@ public class SnmpV1Communicator
 
         SnmpObjectIdentifier requestedOid = new SnmpObjectIdentifier(startID);
         SnmpMessage message = this.createMessage(requestedOid, SnmpBERType.SnmpGetNextRequest);
-        byte[] messageEncoding = message.getBEREncoding();
+        byte[] messageEncoding = message.encode();
 
         DatagramPacket outPacket = new DatagramPacket(messageEncoding, messageEncoding.length, hostAddress, port);
         dSocket.send(outPacket);
@@ -668,7 +668,7 @@ public class SnmpV1Communicator
 
             // Construct and send next packet.
             message = this.createMessage(requestedOid, SnmpBERType.SnmpGetNextRequest);
-            messageEncoding = message.getBEREncoding();
+            messageEncoding = message.encode();
             outPacket = new DatagramPacket(messageEncoding, messageEncoding.length, hostAddress, port);
             dSocket.send(outPacket);
         }

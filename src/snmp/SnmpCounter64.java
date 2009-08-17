@@ -62,12 +62,12 @@ public class SnmpCounter64 extends SnmpInteger
      *  @throws SnmpBadValueException Indicates an invalid BER encoding supplied. Shouldn't
      *  occur in normal operation, i.e., when valid responses are received from devices.
      */
-    protected SnmpCounter64(byte[] enc)
+    protected SnmpCounter64(byte[] encodedValue)
         throws SnmpBadValueException
     {
         tag = SnmpBERType.SnmpCounter64;
         
-        extractValueFromBEREncoding(enc);
+        decodeValue(encodedValue);
         
         // wrap if value > maxValue
         value = value.mod(maxValue);

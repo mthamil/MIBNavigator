@@ -172,7 +172,7 @@ public class SnmpObjectIdentifier extends SnmpObject
     /**
      *  Returns the BER encoding for this object identifier.
      */
-    protected byte[] getBEREncoding()
+    protected byte[] encode()
     {
         ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
 

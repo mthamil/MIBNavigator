@@ -50,9 +50,9 @@ public abstract class SnmpObject
     
     
     /** 
-     *  Returns the BER byte encoding (type, length, value) of the SNMP object.
+     *  Returns the BER byte encoding (type, length, value) of an SNMP object.
      */  
-    protected abstract byte[] getBEREncoding();
+    protected abstract byte[] encode();
     
     
     /**

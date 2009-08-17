@@ -61,7 +61,7 @@ public class SnmpOctetString extends SnmpObject
     public SnmpOctetString(byte[] encoding)
     {
     	tag = SnmpBERType.SnmpOctetString;
-        extractFromBEREncoding(encoding);
+        decode(encoding);
     }
 
 
@@ -95,7 +95,7 @@ public class SnmpOctetString extends SnmpObject
      *  Returns the BER encoding for the octet string. Note the the "value" part of the
      *  BER type,length,value triple is just the sequence of raw bytes.
      */
-    protected byte[] getBEREncoding()
+    protected byte[] encode()
     {
         ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
 
@@ -110,14 +110,17 @@ public class SnmpOctetString extends SnmpObject
         return outBytes.toByteArray();
     }
 
-
-    protected void extractFromBEREncoding(byte[] enc)
+    /**
+     * Initializes an octet string with data extracted from a byte encoding.
+     * @param encoding
+     */
+    protected void decode(byte[] encoding)
     {
-        data = new byte[enc.length];
+        data = new byte[encoding.length];
 
         // copy data
-        for (int i = 0; i < enc.length; i++)
-            data[i] = enc[i];
+        for (int i = 0; i < encoding.length; i++)
+            data[i] = encoding[i];
     }
 
 

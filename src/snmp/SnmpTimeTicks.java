@@ -27,6 +27,17 @@ package snmp;
  */
 public class SnmpTimeTicks extends SnmpInteger
 {
+	/** (24 * 60 * 60 * 100) number of 100ths of seconds in a day */
+	private static final long HUNDREDTHS_PER_DAY = 8640000;
+	
+	/** (60 * 60 * 100) number of 100ths of seconds in an hour */
+	private static final long HUNDREDTHS_PER_HOUR = 360000;
+	
+	/** (60 * 100) number of 100ths of seconds in a minute */
+	private static final long HUNDREDTHS_PER_MINUTE = 6000;
+	
+	/** Obviously, there are 100 hundredths of a second in a second */
+	private static final long HUNDREDTHS_PER_SECOND = 100;
 
 	/**
 	 * Initializes with a zero value.
@@ -50,10 +61,10 @@ public class SnmpTimeTicks extends SnmpInteger
     }
 
 
-    protected SnmpTimeTicks(byte[] enc)
+    protected SnmpTimeTicks(byte[] encodedValue)
         throws SnmpBadValueException
     {
-        super(enc);
+        super(encodedValue);
 
         tag = SnmpBERType.SnmpTimeTicks;
     }
@@ -76,31 +87,31 @@ public class SnmpTimeTicks extends SnmpInteger
         long hundredths = value.longValue();
 
         // Get days
-        long lngTime = hundredths / 8640000;        // (24 * 60 * 60 * 100) number of 100ths of seconds in a day
-        long lngRemaining = hundredths % 8640000;
-        returnTime.append(lngTime);
+        long time = hundredths / SnmpTimeTicks.HUNDREDTHS_PER_DAY;
+        long remaining = hundredths % SnmpTimeTicks.HUNDREDTHS_PER_DAY;
+        returnTime.append(time);
         returnTime.append(":");
         
         // Get hours
-        lngTime = lngRemaining / 360000;            // (60 * 60 * 100) number of 100ths of seconds in an hour
-        lngRemaining = lngRemaining % 360000;
-        returnTime.append(lngTime);
+        time = remaining / SnmpTimeTicks.HUNDREDTHS_PER_HOUR;
+        remaining = remaining % SnmpTimeTicks.HUNDREDTHS_PER_HOUR;
+        returnTime.append(time);
         returnTime.append(":");
         
         // Get minutes
-        lngTime = lngRemaining / 6000;              // (60 * 100) number of 100ths of seconds in a minute
-        lngRemaining = lngRemaining % 6000;
-        returnTime.append(lngTime);
+        time = remaining / SnmpTimeTicks.HUNDREDTHS_PER_MINUTE;
+        remaining = remaining % SnmpTimeTicks.HUNDREDTHS_PER_MINUTE;
+        returnTime.append(time);
         returnTime.append(":");
         
         // Get seconds
-        lngTime = lngRemaining / 100;
-        lngRemaining = lngRemaining % 100;
-        returnTime.append(lngTime);
+        time = remaining / SnmpTimeTicks.HUNDREDTHS_PER_SECOND;
+        remaining = remaining % SnmpTimeTicks.HUNDREDTHS_PER_SECOND;
+        returnTime.append(time);
         returnTime.append(".");
         
         // Get hundredths of a second
-        returnTime.append(lngRemaining);
+        returnTime.append(remaining);
 
         return returnTime.toString();
     }

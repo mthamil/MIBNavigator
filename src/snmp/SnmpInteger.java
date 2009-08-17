@@ -67,10 +67,10 @@ public class SnmpInteger extends SnmpObject
      *  @throws SnmpBadValueException Indicates an invalid BER encoding supplied. Shouldn't
      *  occur in normal operation, i.e., when valid responses are received from devices.
      */
-    protected SnmpInteger(byte[] enc)
+    protected SnmpInteger(byte[] encodedValue)
         throws SnmpBadValueException
     {
-        extractValueFromBEREncoding(enc);
+        decodeValue(encodedValue);
     }    
     
 
@@ -107,7 +107,7 @@ public class SnmpInteger extends SnmpObject
     /** 
      *  Returns the full BER encoding (type, length, value) of the SNMPInteger subclass.
      */
-    protected byte[] getBEREncoding()
+    protected byte[] encode()
     {
         ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
         
@@ -134,12 +134,11 @@ public class SnmpInteger extends SnmpObject
      *  @throws SnmpBadValueException Indicates an invalid BER encoding supplied. Shouldn't
      *  occur in normal operation, i.e., when valid responses are received from devices.
      */
-    public void extractValueFromBEREncoding(byte[] enc)
-        throws SnmpBadValueException
+    public void decodeValue(byte[] encodedValue) throws SnmpBadValueException
     {
         try
         {
-            value = new BigInteger(enc);
+            value = new BigInteger(encodedValue);
         }
         catch (NumberFormatException e)
         {
@@ -151,14 +150,12 @@ public class SnmpInteger extends SnmpObject
     public String toString()
     {
         return value.toString();
-        // return new String(value.toString());
     }
     
 
     public String toString(int radix)
     {
         return value.toString(radix);
-        // return new String(value.toString());
     }
     
 }

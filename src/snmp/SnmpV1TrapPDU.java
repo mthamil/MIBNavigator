@@ -172,7 +172,7 @@ public class SnmpV1TrapPDU extends SnmpSequence
     protected SnmpV1TrapPDU(byte[] enc) throws SnmpBadValueException
     {
         tag = SnmpBERType.SnmpTrap;
-        extractFromBEREncoding(enc);
+        decode(enc);
         
         // validate the message: make sure we have the appropriate pieces
         List<SnmpObject> contents = sequence;

@@ -26,20 +26,21 @@ import java.io.*;
 
 
 /** 
- *  SNMPBERCodec defines methods for converting from ASN.1 BER encoding to SNMPObject subclasses. The extraction
- *  process usually produces a tree structure of objects with an SNMPSequence object at the root; this
- *  is the usual behavior when a received encoded message is received from an SNMP device.
+ *  SNMPBERCodec defines methods for converting from ASN.1 Basic Encoding Rules encoding to 
+ *  SNMPObject subclasses. The extraction process usually produces a tree structure of objects 
+ *  with an SNMPSequence object at the root; this is the usual behavior when a received encoded 
+ *  message is received from an SNMP device.
  */
 public class SnmpBERCodec
 {    
     /** 
-     *  Extracts an SNMP object given its type, length, and value triple as an SNMPTLV object.
-     *  Called by SNMPObject subclass constructors.
+     *  Extracts an SNMP object given its type, length, and value triple as an SNMP TLV object.
+     *  Called by SNMP Object subclass constructors.
      *  
      *  @throws SnmpBadValueException Indicates byte array in value field is not interpretable for
      *  the specified SNMP object type.
      */
-    public static SnmpObject extractEncoding(SnmpTLV tlv)
+    public static SnmpObject decode(SnmpTLV tlv)
         throws SnmpBadValueException
     {
         switch (tlv.tag)

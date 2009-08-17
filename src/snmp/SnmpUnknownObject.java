@@ -69,7 +69,7 @@ public class SnmpUnknownObject extends SnmpObject
     /**
      *  Returns the BER encoding of this object.
      */
-    protected byte[] getBEREncoding()
+    protected byte[] encode()
     {
         ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
         
