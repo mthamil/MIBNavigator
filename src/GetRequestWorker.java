@@ -67,7 +67,6 @@ public class GetRequestWorker extends SwingWorker
     private final MibTreeNode root;
     
     private static final int SNMP_VERSION = 0;
-    private static final int DEFAULT_TIMEOUT = 4000;
     private static final String STD_PREFIX = "iso.org.dod.internet.mgmt.mib-2.";
     private static final String ENT_PREFIX = "iso.org.dod.internet.private.enterprises.";
     
