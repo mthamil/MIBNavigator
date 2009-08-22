@@ -94,6 +94,8 @@ public class MIBNavigator
 
         browser = new MibBrowser(newBuilder, settings.getMibDirectory());
         browser.setAddresses(settings.getAddresses());
+        browser.setPort(settings.getPort());
+        browser.setTimeout(settings.getTimeout());
         
         this.configureFrame(browser.getBrowserPanel());
     }
@@ -115,6 +117,8 @@ public class MIBNavigator
     {
         appSettings.setMaxAddresses(maxAddresses);
         appSettings.setAddresses(browser.getAddresses());
+        appSettings.setPort(browser.getPort());
+        appSettings.setTimeout(browser.getTimeout());
         appSettings.saveSettings();
     }
     

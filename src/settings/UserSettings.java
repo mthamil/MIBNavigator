@@ -43,24 +43,29 @@ public class UserSettings
 {
 	private enum SettingsProperties
 	{
-		MibDirectory, IPAddresses, MaximumAddresses, MibFileFormat
+		MibDirectory, IPAddresses, MaximumAddresses, MibFileFormat, Port, Timeout
 	}
 
+	private File settingsFile;
+	private Properties settings;
+	private boolean settingsChanged;
+	
 	private static final String SETTINGS_FOLDERNAME = ".mibnavigator";
 	private static final File SETTINGS_PATH = 
 		new File(System.getProperty("user.home") + File.separator + SETTINGS_FOLDERNAME);
 	
+
 	private static final int DEFAULT_MAX_ADDRESSES = 15;
 	private static final String DEFAULT_MIB_DIRECTORY = "." + File.separator + "mibs";
-	private File settingsFile;
-
-	private Properties settings;
-	private boolean settingsChanged;
+	private static final int DEFAULT_PORT = 161;
+	private static final int DEFAULT_TIMEOUT = 4000;
 	
 	private File mibDirectory;
 	private int maxAddresses;
 	private List<String> addresses;
 	private MibFormat mibFormat;
+	private int port;
+	private int timeout;
 
 	/**
 	 * Initializes user settings.
@@ -169,6 +174,52 @@ public class UserSettings
 		}
 	}
 	
+	/**
+	 * Gets the port number.
+	 */
+	public int getPort()
+	{
+		return port;
+	}
+
+	/**
+	 * Sets the port number.
+	 */
+	public void setPort(int newPort)
+	{
+		if (newPort < 0)
+			newPort = 0;
+
+		if (newPort != port)
+		{
+			port = newPort;
+			settingsChanged = true;
+		}
+	}
+	
+	/**
+	 * Gets the timeout.
+	 */
+	public int getTimeout()
+	{
+		return timeout;
+	}
+
+	/**
+	 * Sets the timeout.
+	 */
+	public void setTimeout(int newTimeout)
+	{
+		if (newTimeout < 0)
+			newTimeout = 0;
+
+		if (newTimeout != timeout)
+		{
+			timeout = newTimeout;
+			settingsChanged = true;
+		}
+	}
+	
 	
 	/**
 	 * Loads saved settings from a properties file.
@@ -179,6 +230,8 @@ public class UserSettings
         String hostAddresses = "";
         String addressNum = "";
         String formatString = "";
+        String portString = "";
+        String timeoutString = "";
         FileInputStream settingsIn = null;
         try
         {
@@ -191,6 +244,8 @@ public class UserSettings
 	            addressNum    = settings.getProperty(SettingsProperties.MaximumAddresses.toString(), Integer.toString(DEFAULT_MAX_ADDRESSES));
 	            hostAddresses = settings.getProperty(SettingsProperties.IPAddresses.toString(), "");
 	            formatString  = settings.getProperty(SettingsProperties.MibFileFormat.toString(), MibFormat.SMI.toString());
+	            portString 	  = settings.getProperty(SettingsProperties.Port.toString(), Integer.toString(DEFAULT_PORT));
+	            timeoutString = settings.getProperty(SettingsProperties.Timeout.toString(), Integer.toString(DEFAULT_TIMEOUT));
         	}
         }
         catch (IOException e)
@@ -206,13 +261,19 @@ public class UserSettings
         mibDirectory = parseMibDirectory(mibPath);        
         
         // Parse the the max address property.
-        maxAddresses = parseMaxAddresses(addressNum);
+        maxAddresses = parseIntegerProperty(addressNum, DEFAULT_MAX_ADDRESSES);
         
         // Parse the address list property.
         addresses = parseAddresses(hostAddresses);
         
         // Parse the MIB file format property.
         mibFormat = parseMibFormat(formatString);
+        
+        // Parse the port number property.
+        port = parseIntegerProperty(portString, DEFAULT_PORT);
+        
+        // Parse the timeout property.
+        timeout = parseIntegerProperty(timeoutString, DEFAULT_TIMEOUT);
     }
 	
 	
@@ -225,9 +286,7 @@ public class UserSettings
 		if (settingsChanged || !settingsFile.exists())
 		{
 			if (mibDirectory != null && mibDirectory.isDirectory())
-			{
 				settings.setProperty(SettingsProperties.MibDirectory.toString(), mibDirectory.getPath());
-			}
 			
 			if (!addresses.isEmpty())
 			{
@@ -248,10 +307,10 @@ public class UserSettings
 				settings.setProperty(SettingsProperties.IPAddresses.toString(), addresses);
 			}
 
-			settings.setProperty(SettingsProperties.MaximumAddresses.toString(), 
-					String.valueOf(maxAddresses));
-			
+			settings.setProperty(SettingsProperties.MaximumAddresses.toString(), String.valueOf(maxAddresses));
 			settings.setProperty(SettingsProperties.MibFileFormat.toString(), mibFormat.toString());
+			settings.setProperty(SettingsProperties.Port.toString(), String.valueOf(port));
+			settings.setProperty(SettingsProperties.Timeout.toString(), String.valueOf(timeout));
 
 			// Save program state settings to file.
 			FileOutputStream settingsOut = null;
@@ -297,34 +356,6 @@ public class UserSettings
 
 		return mibDir;
 	}
-	
-
-	/**
-	 * Parses the max address property value from a string.
-	 */
-	private int parseMaxAddresses(String maxString)
-	{
-		int max;
-
-		if (!maxString.equals(""))
-		{
-			try
-			{
-				max = Integer.parseInt(maxString);
-
-				if (max < 0) // Why anyone would do this, I don't know.
-					max = 0;
-			}
-			catch (NumberFormatException e)
-			{
-				max = DEFAULT_MAX_ADDRESSES;
-			}
-		}
-		else
-			max = DEFAULT_MAX_ADDRESSES;
-
-		return max;
-	}
 
 	
 	/**
@@ -368,6 +399,34 @@ public class UserSettings
 		}
 		
 		return format;
+	}
+	
+	
+	/**
+	 * Parses a positive integer value property from a string.
+	 * @param valueString the string to parse
+	 * @param defaultValue the default value to use if parsing fails
+	 * @return
+	 */
+	private static int parseIntegerProperty(String valueString, int defaultValue)
+	{
+		if (valueString == null || valueString.equals(""))
+			return defaultValue;
+		
+		int value;
+		try
+		{
+			value = Integer.parseInt(valueString);
+
+			if (value < 0) // Why anyone would do this, I don't know.
+				value = 0;
+		}
+		catch (NumberFormatException e)
+		{
+			value = defaultValue;
+		}
+		
+		return value;
 	}
 	
 }

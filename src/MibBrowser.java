@@ -165,22 +165,12 @@ public class MibBrowser
         portLabel = new JLabel(StringResources.getString("portLabel"));
         portField = new JFormattedTextField(numberFormatter);
         portField.setColumns(4);
-        portField.setText("161");
         portField.addMouseListener(contextMenuListener);
         
         timeoutLabel = new JLabel(StringResources.getString("timeoutLabel"));
         timeoutField = new JFormattedTextField(numberFormatter);
         timeoutField.setColumns(4);
-        timeoutField.setText("4000");
         timeoutField.addMouseListener(contextMenuListener);
-        
-        // Commit the initial values.
-        try
-		{
-			portField.commitEdit();
-			timeoutField.commitEdit();
-		}
-		catch (ParseException parseEx) { }	// The default values are guaranteed to pass.
 
         oidInputLabel = new JLabel(StringResources.getString("oidInputLabel"));
         oidInputField = new JTextField(21);
@@ -510,7 +500,7 @@ public class MibBrowser
 	}
     
     
-    // *** Start of MibBrowser data access methods. ***
+    // *** Start of MibBrowser configurable property methods. ***
     
     /**
      * Gets the default directory where MIB files are contained.
@@ -577,7 +567,55 @@ public class MibBrowser
         addressBox.setModel(new DefaultComboBoxModel(newAddresses.toArray()));
     }
     
-    // *** End of MibBrowser data access methods. ***
+    /**
+     * Gets the browser's port number.
+     * @return
+     */
+    public int getPort()
+    {
+    	return (Integer)portField.getValue();
+    }
+    
+    /**
+     * Sets the browser's port number.
+     * @param port
+     */
+    public void setPort(int port)
+    {
+    	portField.setText(String.valueOf(port));
+    	
+    	try
+    	{
+    		portField.commitEdit();
+    	}
+    	catch (ParseException e) { }	// This should pass since the method takes an int
+    }
+    
+    /**
+     * Gets the browser's timeout.
+     * @return
+     */
+    public int getTimeout()
+    {
+    	return (Integer)timeoutField.getValue();
+    }
+    
+    /**
+     * Sets the browser's timeout.
+     * @param timeout
+     */
+    public void setTimeout(int timeout)
+    {
+    	timeoutField.setText(String.valueOf(timeout));
+    	
+    	try
+    	{
+    		timeoutField.commitEdit();
+    	}
+    	catch (ParseException e) { }	// This should pass since the method takes an int
+    }
+    
+    // *** End of MibBrowser configurable property methods. ***
     
     
     /**
@@ -621,7 +659,7 @@ public class MibBrowser
 	     */
 		public void actionPerformed(ActionEvent event)
 		{  
-		    // Spawn a new GetRequestWorker thread for retrieving data from a device running an SNMP agent.
+		    // Spawn a new GetRequestTask thread for retrieving data from a device running an SNMP agent.
             
             if (getValue(NAME).equals(StringResources.getString("getButton")))
             {

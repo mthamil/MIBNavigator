@@ -27,8 +27,6 @@ import snmp.SnmpV1Communicator;
  */
 public class SnmpHost
 {
-	private static final int DEFAULT_TIMEOUT = 4000;
-	
     private String communityString;
     private String addressString;
     private int hostPort;
@@ -36,16 +34,17 @@ public class SnmpHost
 
     /**
      * Creates new SnmpHost communication parameters using the default
-     * port number and timeout.
-     * @param communityString
-     * @param addressString
+     * port number.
+     * @param communityString the SNMP community string for a target host
+     * @param addressString the <code>String</code> representation of a target host's IP address
+     * @param timeout the request timeout
      */
-    public SnmpHost(final String communityString, final String addressString)
+    public SnmpHost(final String communityString, final String addressString, final int timeout)
     {
     	this.communityString = communityString;
     	this.addressString = addressString;
         this.hostPort = SnmpV1Communicator.DEFAULT_SNMP_PORT;
-        this.hostTimeout = DEFAULT_TIMEOUT;
+        this.hostTimeout = timeout;
     }
     
     /**
