@@ -32,12 +32,14 @@ import filefilters.*;
  */
 public enum MibFormat 
 { 
+	/** The ASN.1 Structure of Management Information MIB format. */
 	SMI
 	{
 		public FileFilter getDialogFileFilter() { return new SmiFileFilter(); }
 		public FilenameFilter getFilenameFilter() { return new SmiFilenameFilter(); }
 	},
 	
+	/** The custom XML MIB format. */
 	XML
 	{
 		public FileFilter getDialogFileFilter() { return new XmlFileFilter(); }

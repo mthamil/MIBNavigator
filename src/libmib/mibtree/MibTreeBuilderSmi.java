@@ -28,7 +28,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
 
-import utilities.Utilities;
+import utilities.IOUtilities;
 
 import libmib.MibObjectType;
 import libmib.MibSyntax;
@@ -217,7 +217,7 @@ public class MibTreeBuilderSmi extends AbstractMibTreeBuilder
         }
         finally
         {
-        	Utilities.closeQuietly(in);
+        	IOUtilities.closeQuietly(in);
         }
     }
     

@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import utilities.Utilities;
+import utilities.IOUtilities;
 
 import libmib.MibImport;
 import libmib.MibModuleIdRevision;
@@ -220,7 +220,7 @@ public class MibToXmlConverter
 		}
 		finally
 		{
-			Utilities.closeQuietly(in);
+			IOUtilities.closeQuietly(in);
 		}
         
     }

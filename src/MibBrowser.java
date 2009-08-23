@@ -35,7 +35,7 @@ import javax.swing.event.*;
 import javax.swing.text.NumberFormatter;
 import javax.swing.tree.*;
 
-import utilities.Utilities;
+import utilities.StringUtilities;
 
 import libmib.MibObjectIdentifier;
 import libmib.mibtree.MibTreeBuilder;
@@ -682,7 +682,7 @@ public class MibBrowser
                         SnmpHost host = new SnmpHost(communityString, addressString, port, timeout);
     
                         // Try to scroll to the correct OID.
-                        String oidInputString = Utilities.trim(oidInputField.getText().trim(), '.');
+                        String oidInputString = StringUtilities.trim(oidInputField.getText().trim(), '.');
                         String oidTreeNumeralPathString = oidNumeralField.getText();
                         
                         if (!oidInputString.equals(oidTreeNumeralPathString))

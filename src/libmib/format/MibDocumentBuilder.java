@@ -48,7 +48,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 import org.xml.sax.InputSource;
 
-import utilities.Utilities;
+import utilities.IOUtilities;
 
 import libmib.MibImport;
 import libmib.MibModuleIdRevision;
@@ -110,7 +110,7 @@ public class MibDocumentBuilder
         }
         finally
         {
-        	Utilities.closeQuietly(schemaStream);
+        	IOUtilities.closeQuietly(schemaStream);
         }
     }
     

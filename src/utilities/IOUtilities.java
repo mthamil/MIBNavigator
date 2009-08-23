@@ -31,34 +31,10 @@ import java.io.Reader;
 import java.io.Writer;
 
 /**
- * Class containing useful general purpose utility methods.
+ * Class containing useful IO utility methods.
  */
-public class Utilities
+public class IOUtilities
 {
-    /**
-     * Removes all leading and trailing instances of a character from a String.
-     * 
-     * @param untrimmed the String to trim the characters from
-     * @param trimChar the character to trim
-     * @return the trimmed String
-     */
-    public static String trim(String untrimmed, char trimChar)
-    {
-        String trimmed = untrimmed;
-        String stringToTrim = String.valueOf(trimChar);
-        
-        //Trim leading characters.
-        while (trimmed.startsWith(stringToTrim))
-            trimmed = trimmed.substring(trimmed.indexOf(stringToTrim) + 1);
-
-        //Trim trailing characters.
-        while (trimmed.endsWith(stringToTrim))
-            trimmed = trimmed.substring(0, trimmed.lastIndexOf(stringToTrim));
-
-        return trimmed;
-    }
-    
-    
     /**
      * Simply copies a file from one location to another.
      * 
@@ -89,8 +65,8 @@ public class Utilities
         }
         finally
         {
-        	Utilities.closeQuietly(in);
-        	Utilities.closeQuietly(out);
+        	IOUtilities.closeQuietly(in);
+        	IOUtilities.closeQuietly(out);
         }
         
         return succeeded;

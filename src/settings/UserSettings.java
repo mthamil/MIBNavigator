@@ -30,7 +30,8 @@ import java.util.List;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
-import utilities.Utilities;
+import utilities.IOUtilities;
+import utilities.StringUtilities;
 
 import libmib.format.MibFormat;
 
@@ -254,26 +255,26 @@ public class UserSettings
         }
         finally
 		{
-			Utilities.closeQuietly(settingsIn);
+			IOUtilities.closeQuietly(settingsIn);
 		}
-        
+
         // Parse the MIB directory property.
-        mibDirectory = parseMibDirectory(mibPath);        
+        mibDirectory = UserSettings.parseDirectoryProperty(mibPath, DEFAULT_MIB_DIRECTORY);        
         
         // Parse the the max address property.
-        maxAddresses = parseIntegerProperty(addressNum, DEFAULT_MAX_ADDRESSES);
+        maxAddresses = UserSettings.parseIntegerProperty(addressNum, DEFAULT_MAX_ADDRESSES);
         
         // Parse the address list property.
-        addresses = parseAddresses(hostAddresses);
+        addresses = UserSettings.parseDelimitedProperty(hostAddresses, ',', maxAddresses);
         
         // Parse the MIB file format property.
-        mibFormat = parseMibFormat(formatString);
+        mibFormat = UserSettings.parseEnumProperty(formatString, MibFormat.SMI);
         
         // Parse the port number property.
-        port = parseIntegerProperty(portString, DEFAULT_PORT);
+        port = UserSettings.parseIntegerProperty(portString, DEFAULT_PORT);
         
         // Parse the timeout property.
-        timeout = parseIntegerProperty(timeoutString, DEFAULT_TIMEOUT);
+        timeout = UserSettings.parseIntegerProperty(timeoutString, DEFAULT_TIMEOUT);
     }
 	
 	
@@ -290,21 +291,9 @@ public class UserSettings
 			
 			if (!addresses.isEmpty())
 			{
-				// Put IP addresses into a single, comma delimited string. The
-				// addresses that are saved are limited to the first N 
-				// addresses of the list, with N determined by maxAddresses.
-				StringBuilder ipAddresses = new StringBuilder();
-
-				int maxItems = Math.min(addresses.size(), maxAddresses);
-				for (int i = 0; i < maxItems; i++)
-					ipAddresses.append("," + addresses.get(i));
-
-				// Trim off the leading comma.
-				String addresses = ipAddresses.toString();
-				if (addresses.startsWith(","))
-					addresses = addresses.substring(addresses.indexOf(",") + 1);
-
-				settings.setProperty(SettingsProperties.IPAddresses.toString(), addresses);
+				int itemCount =  Math.min(addresses.size(), maxAddresses);
+				String joinedAddresses = StringUtilities.join(addresses.subList(0, itemCount), ",");
+				settings.setProperty(SettingsProperties.IPAddresses.toString(), joinedAddresses);
 			}
 
 			settings.setProperty(SettingsProperties.MaximumAddresses.toString(), String.valueOf(maxAddresses));
@@ -332,73 +321,81 @@ public class UserSettings
 			}
 			finally
 			{
-				Utilities.closeQuietly(settingsOut);
+				IOUtilities.closeQuietly(settingsOut);
 			}
 		}
 	}
-	
-	private File parseMibDirectory(String mibPath)
+
+	/**
+	 * Parses a file directory from a string.
+	 * @param path the string path to parse
+	 * @param defaultPath the path to use if the path doesn't exist or isn't a directory
+	 * @return
+	 */
+	private static File parseDirectoryProperty(String path, String defaultPath)
 	{
 		// If this is a local relative path, try to convert
 		// the file path separators to the current OS.
-		if (mibPath.startsWith("."))
+		if (path.startsWith("."))
 		{
-			mibPath = mibPath.replace("/", File.separator);
-			mibPath = mibPath.replace("\\", File.separator);
+			path = path.replace("/", File.separator);
+			path = path.replace("\\", File.separator);
 		}
 		
-		File mibDir = new File(mibPath);
-		if (!mibDir.isDirectory())
+		File directory = new File(path);
+		if (!directory.isDirectory())
 		{
 			// If the path isn't a directory or doesn't exist, use the default.
-			mibDir = new File(DEFAULT_MIB_DIRECTORY);
+			directory = new File(defaultPath);
 		}
 
-		return mibDir;
+		return directory;
 	}
-
 	
 	/**
-	 * Parses the address list property.  If the property 
-	 * retrieved was an empty string, an empty list will 
-	 * be created.
-	 * @param addresses
+	 * Parses a string delimited by a given character into a list.  The maxEntries
+	 * parameter can be used to limit how many delimited entries to return.
+	 * @param delimitedString the delimited string to parse
+	 * @param delimiter the delimiting character
+	 * @param maxEntries the maximum number of entries to parse
 	 * @return
 	 */
-	private List<String> parseAddresses(String addressString)
+	private static List<String> parseDelimitedProperty(String delimitedString, char delimiter, int maxEntries)
 	{
-		List<String> newAddresses = new ArrayList<String>(maxAddresses);
+		List<String> entries = new ArrayList<String>(maxEntries);
 		
-		StringTokenizer tokenizer = new StringTokenizer(addressString, ",");
+		StringTokenizer tokenizer = new StringTokenizer(delimitedString, String.valueOf(delimiter));
         int i = 0;
-        while (tokenizer.hasMoreTokens() && i < maxAddresses)
+        while (tokenizer.hasMoreTokens() && i < maxEntries)
         {
-        	newAddresses.add(tokenizer.nextToken());
+        	entries.add(tokenizer.nextToken());
             i++;
         }
 		
-		return newAddresses;
+		return entries;
 	}
+
 	
 	/**
-	 * Attempts to convert a string to a MibFormat enum value.
-	 * If this fails, the default will be used.
-	 * @param mibFormatString
+	 * Parses an Enum value from a string.
+	 * @param <T> the Enum type
+	 * @param enumString the string to parse
+	 * @param defaultValue the Enum value to use if parsing fails
 	 * @return
 	 */
-	private MibFormat parseMibFormat(String mibFormatString)
+	private static <T extends Enum<T>> T parseEnumProperty(String enumString, T defaultValue)
 	{
-		MibFormat format = null;
+		T enumValue = null;
 		try
 		{
-			format = MibFormat.valueOf(mibFormatString);
+			enumValue = T.valueOf(defaultValue.getDeclaringClass(), enumString);
 		}
 		catch (IllegalArgumentException exception)
 		{
-			format = MibFormat.SMI;
+			enumValue = defaultValue;
 		}
 		
-		return format;
+		return enumValue;
 	}
 	
 	

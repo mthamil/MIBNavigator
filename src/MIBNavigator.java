@@ -50,7 +50,7 @@ import libmib.mibtree.CannotCreateBuilderException;
 import libmib.mibtree.MibTreeBuilder;
 import libmib.mibtree.MibTreeBuilderFactory;
 import settings.UserSettings;
-import utilities.Utilities;
+import utilities.IOUtilities;
 
 /**
  * MIBNavigator is the main class for the application. It performs initial configuration and starts the user interface.
@@ -271,7 +271,7 @@ public class MIBNavigator
 	                    // If the destination file didn't already exist or the user approved an overwrite.
 	                    if (proceedWithCopy)
 	                    {
-	                       boolean copySucceeded = Utilities.copyFile(sourceMib, destinationMib);
+	                       boolean copySucceeded = IOUtilities.copyFile(sourceMib, destinationMib);
 	                       
 	                       if (!copySucceeded)
 	                       {
