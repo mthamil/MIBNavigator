@@ -21,22 +21,19 @@
 
 package tests;
 
+import static org.junit.Assert.*;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import utilities.StringUtilities;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.Test;
 
-public class StringUtilitiesTests extends TestCase
+import utilities.StringUtilities;
+
+public class StringUtilitiesTests
 {
-	public static Test suite()
-	{
-		return new TestSuite(StringUtilitiesTests.class);
-	}
-	
+	@Test
 	public void testEmptyJoin() 
 	{
 		List<String> list = new ArrayList<String>();
@@ -44,6 +41,7 @@ public class StringUtilitiesTests extends TestCase
 		assertEquals("", joinedList);
 	}
 	
+	@Test
 	public void testSingleElementJoin()
 	{
 		List<String> list = Arrays.asList("test1");
@@ -51,6 +49,7 @@ public class StringUtilitiesTests extends TestCase
 		assertEquals("test1", joinedList);
 	}
 
+	@Test
 	public void testMultiElementJoin()
 	{
 		List<String> list = Arrays.asList("test1", "test2");
@@ -58,6 +57,7 @@ public class StringUtilitiesTests extends TestCase
 		assertEquals("test1,test2", joinedList);
 	}
 		
+	@Test
 	public void testArrayJoin()
 	{
 		String[] array = new String[] { "test1", "test2", "test3" };
@@ -65,6 +65,7 @@ public class StringUtilitiesTests extends TestCase
 		assertEquals("test1+test2+test3", joinedList);
 	}
 	
+	@Test
 	public void testSublistJoin()
 	{
 		List<String> list = Arrays.asList("1", "2", "3", "4", "5");
