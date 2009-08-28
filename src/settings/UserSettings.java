@@ -292,7 +292,7 @@ public class UserSettings
 			if (!addresses.isEmpty())
 			{
 				int itemCount =  Math.min(addresses.size(), maxAddresses);
-				String joinedAddresses = StringUtilities.join(addresses.subList(0, itemCount), ",");
+				String joinedAddresses = StringUtilities.join(",", addresses.subList(0, itemCount));
 				settings.setProperty(SettingsProperties.IPAddresses.toString(), joinedAddresses);
 			}
 
