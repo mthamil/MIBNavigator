@@ -19,24 +19,26 @@
  *
  */
 
-package libmib.format.smi;
+package libmib.format.smi.parsers;
+
+import static libmib.format.smi.SMIToken.STATUS;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 
-/**
- * Parses a buffered reader and returns an object.
- *
- * @param <T> the type of object to create from parsing
- */
-public abstract class AbstractStructureParser<T>
+import libmib.MibObjectType.Status;
+
+public class StatusParser extends AbstractStructureParser<Status>
 {
-	/**
-	 * Parses a buffered reader and creates an obejct with the parsed result.
-	 * @param reader
-	 * @param currentLine
-	 * @return
-	 * @throws IOException 
-	 */
-	public abstract T parse(BufferedReader reader, String currentLine) throws IOException;
+	@Override
+	public Status parse(BufferedReader reader, String currentLine) throws IOException
+	{
+        int index = currentLine.indexOf(STATUS.token()) + STATUS.token().length();
+        String status = currentLine.substring(index).trim();
+        
+        if (!status.equals(""))
+            return Status.valueOf(status.toUpperCase());
+        
+        return null;
+	}
 }

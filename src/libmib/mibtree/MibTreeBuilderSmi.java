@@ -35,10 +35,10 @@ import libmib.MibSyntax;
 import libmib.MibObjectType.Access;
 import libmib.MibObjectType.Status;
 import libmib.format.smi.InvalidSmiMibFormatException;
-import libmib.format.smi.SMIParsers;
 import libmib.format.smi.SMIStructureHandler;
 import libmib.format.smi.SMIToken;
 import libmib.format.smi.SMIStructureHandler.HierarchyData;
+import libmib.format.smi.parsers.SMIParserFactory;
 
 /**
  * This class is a very crusty reader and parser for ASN.1 specification SMI MIB module
@@ -245,20 +245,20 @@ public class MibTreeBuilderSmi extends AbstractMibTreeBuilder
                     // SYNTAX
                     if (line.contains(SYNTAX.token()) && !objectType.equals(MODULE_COMP))
                     {
-                    	nodeSyntax = (MibSyntax)SMIParsers.getParser(SYNTAX).parse(reader, line);
+                    	nodeSyntax = (MibSyntax)SMIParserFactory.getParser(SYNTAX).parse(reader, line);
                     }
                     
                     // ACCESS
                     else if (line.contains(ACCESS.token()) && !objectType.equals(MODULE_COMP))
-                        nodeAccess = (Access)SMIParsers.getParser(ACCESS).parse(reader, line);
+                        nodeAccess = (Access)SMIParserFactory.getParser(ACCESS).parse(reader, line);
                     
                     // STATUS
                     else if (line.contains(STATUS.token()))
-                        nodeStatus = (Status)SMIParsers.getParser(STATUS).parse(reader, line);
+                        nodeStatus = (Status)SMIParserFactory.getParser(STATUS).parse(reader, line);
     
                     // DESCRIPTION
                     else if (line.contains(DESCRIPTION.token()))
-                        nodeDesc.append((String)SMIParsers.getParser(DESCRIPTION).parse(reader, line));
+                        nodeDesc.append((String)SMIParserFactory.getParser(DESCRIPTION).parse(reader, line));
 
                     line = reader.readLine();
                 }

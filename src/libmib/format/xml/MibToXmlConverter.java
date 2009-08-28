@@ -37,10 +37,10 @@ import libmib.MibSyntax;
 import libmib.MibObjectType.Access;
 import libmib.MibObjectType.Status;
 import libmib.format.smi.InvalidSmiMibFormatException;
-import libmib.format.smi.SMIParsers;
 import libmib.format.smi.SMIStructureHandler;
 import libmib.format.smi.SMIToken;
 import libmib.format.smi.SMIStructureHandler.HierarchyData;
+import libmib.format.smi.parsers.SMIParserFactory;
 
 /**
  * Class for converting ASN.1 MIB definition files to an XML file format.
@@ -111,7 +111,7 @@ public class MibToXmlConverter
                 // Read the 'IMPORTS' section.
                 if (line.contains(IMPORTS.token()))
                 {
-                    List<MibImport> imports = (List<MibImport>)SMIParsers.getParser(IMPORTS).parse(reader, line);
+                    List<MibImport> imports = (List<MibImport>)SMIParserFactory.getParser(IMPORTS).parse(reader, line);
                     for (MibImport importItem : imports)
                     	mibDocFactory.addImportElement(importItem);
                 }
@@ -253,19 +253,19 @@ public class MibToXmlConverter
                 // SYNTAX
                 if (line.contains(SYNTAX.token()) && !objectType.equals(MODULE_COMP))
                 {
-                	nodeSyntax = (MibSyntax)SMIParsers.getParser(SYNTAX).parse(reader, line);
+                	nodeSyntax = (MibSyntax)SMIParserFactory.getParser(SYNTAX).parse(reader, line);
                 }
                 
                 // ACCESS
                 else if (line.contains(ACCESS.token()) && !objectType.equals(MODULE_COMP))
                 {      
-                	access = (Access)SMIParsers.getParser(ACCESS).parse(reader, line);
+                	access = (Access)SMIParserFactory.getParser(ACCESS).parse(reader, line);
                 }
                 
                 // STATUS
                 else if (line.contains(STATUS.token()))
                 {
-                	status = (Status)SMIParsers.getParser(STATUS).parse(reader, line);
+                	status = (Status)SMIParserFactory.getParser(STATUS).parse(reader, line);
                 }
                 
                 // LAST-UPDATED
@@ -302,7 +302,7 @@ public class MibToXmlConverter
                 
                 // DESCRIPTION
                 else if (line.contains(DESCRIPTION.token()))
-                    description.append((String)SMIParsers.getParser(DESCRIPTION).parse(reader, line));
+                    description.append((String)SMIParserFactory.getParser(DESCRIPTION).parse(reader, line));
 
                 
                 // REFERENCE
@@ -321,7 +321,7 @@ public class MibToXmlConverter
                 // REVISION
                 else if (line.contains(MODULE_REVISION.token()))
                 {                                      
-                    MibModuleIdRevision revision = (MibModuleIdRevision)SMIParsers.getParser(MODULE_REVISION).parse(reader, line);
+                    MibModuleIdRevision revision = (MibModuleIdRevision)SMIParserFactory.getParser(MODULE_REVISION).parse(reader, line);
                     if (revision != null)
                     {
                         if (revisions == null)
