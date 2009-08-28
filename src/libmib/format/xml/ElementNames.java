@@ -19,7 +19,7 @@
  *
  */
 
-package libmib.format;
+package libmib.format.xml;
 
 /**
  * Contains constant string tokens for use in XML MIB elements.

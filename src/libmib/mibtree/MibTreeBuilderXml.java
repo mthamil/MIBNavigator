@@ -41,8 +41,8 @@ import libmib.MibObjectType;
 import libmib.MibSyntax;
 import libmib.MibObjectType.Access;
 import libmib.MibObjectType.Status;
-import libmib.format.ElementNames;
-import libmib.format.InvalidXmlMibFormatException;
+import libmib.format.xml.ElementNames;
+import libmib.format.xml.InvalidXmlMibFormatException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

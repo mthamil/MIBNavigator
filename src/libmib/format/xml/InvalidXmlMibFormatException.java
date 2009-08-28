@@ -19,9 +19,11 @@
  *
  */
 
-package libmib.format;
+package libmib.format.xml;
 
 import java.io.File;
+
+import libmib.format.InvalidMibFormatException;
 
 public class InvalidXmlMibFormatException extends InvalidMibFormatException 
 {

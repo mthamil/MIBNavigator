@@ -19,7 +19,7 @@
  *
  */
 
-package libmib.format;
+package libmib.format.xml;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -54,6 +54,7 @@ import libmib.MibImport;
 import libmib.MibModuleIdRevision;
 import libmib.MibObjectExtended;
 import libmib.MibSyntax;
+import libmib.format.smi.SMIToken;
 import libmib.mibtree.BasicXmlErrorHandler;
 
 /**
@@ -192,19 +193,19 @@ public class MibDocumentBuilder
         mibObjects.appendChild(objectElement);
         
         String objType = newObject.getObjectType();
-        if (objType.equals(SmiTokens.OBJECT_ID))
+        if (objType.equals(SMIToken.OBJECT_ID.token()))
             objType = ElementNames.OBJECT_ID;
-        else if (objType.equals(SmiTokens.OBJECT_TYPE))
+        else if (objType.equals(SMIToken.OBJECT_TYPE.token()))
             objType = ElementNames.OBJECT_TYPE;
-        else if (objType.equals(SmiTokens.OBJECT_GRP))
+        else if (objType.equals(SMIToken.OBJECT_GROUP.token()))
             objType = ElementNames.OBJECT_GROUP;
-        else if (objType.equals(SmiTokens.NOTIF))
+        else if (objType.equals(SMIToken.NOTIF.token()))
             objType = ElementNames.NOTIFICATION;
-        else if (objType.equals(SmiTokens.MODULE_ID))
+        else if (objType.equals(SMIToken.MODULE_ID.token()))
             objType = ElementNames.MODULE_ID;
-        else if (objType.equals(SmiTokens.MODULE_COMP))
+        else if (objType.equals(SMIToken.MODULE_COMP.token()))
             objType = ElementNames.MODULE_COMPLIANCE;
-        else if (objType.contains(SmiTokens.NOTIF_GRP))
+        else if (objType.contains(SMIToken.NOTIF_GROUP.token()))
             objType = ElementNames.NOTIFICATION_GROUP;
         
         Element typeElement = mibDocument.createElement(objType);

@@ -24,8 +24,8 @@ import java.io.File;
 
 import javax.swing.JFileChooser;
 
-import libmib.format.InvalidSmiMibFormatException;
-import libmib.format.MibToXmlConverter;
+import libmib.format.smi.InvalidSmiMibFormatException;
+import libmib.format.xml.MibToXmlConverter;
 
 /**
  * Basic wrapper app around MibToXmlConverter.

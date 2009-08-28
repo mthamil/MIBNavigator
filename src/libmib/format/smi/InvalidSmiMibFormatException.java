@@ -19,9 +19,11 @@
  *
  */
 
-package libmib.format;
+package libmib.format.smi;
 
 import java.io.File;
+
+import libmib.format.InvalidMibFormatException;
 
 public class InvalidSmiMibFormatException extends InvalidMibFormatException
 {

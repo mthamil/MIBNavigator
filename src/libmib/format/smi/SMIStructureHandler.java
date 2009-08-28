@@ -19,7 +19,7 @@
  *
  */
 
-package libmib.format;
+package libmib.format.smi;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -27,6 +27,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+
+import static libmib.format.smi.SMIToken.*;
 
 /**
  * Class that handles various block structure parsing when reading SMI format MIB files.
@@ -36,22 +39,9 @@ import java.util.Map;
  * <br><br>
  * It also handles specific common tasks such as finding the start of the MIB definition.
  */
-public class SmiStructureHandler 
+public class SMIStructureHandler 
 {
     public static final String NEWLINE_REGEX = "\n|\r\n|\r"; //search for all types of line separators
-    
-    private BufferedReader in;
-    
-    
-    /**
-     * Initializes the structure handler with a BufferedReader that has been given a MIB 
-     * file to be parsed.
-     */
-    public SmiStructureHandler(final BufferedReader newReader)
-    {
-        in = newReader;
-    }
-    
     
     /**
      * Reads the stream in an attempt to find the start of a MIB module definition and return 
@@ -63,21 +53,21 @@ public class SmiStructureHandler
      * 
      * @throws IOException if an error occurs when reading a line
      */
-    public String readMibName() throws IOException
+    public static String readMibName(BufferedReader reader) throws IOException
     {      
-        int lineCnt = 0;
+        int lineCount = 0;
         String line;
         String mibName = "";
         
-        while ( ((line = in.readLine()) != null) && (lineCnt < 100) )
+        while ( ((line = reader.readLine()) != null) && (lineCount < 100) )
         {
-            if (line.contains(SmiTokens.MIB_BEGIN))
+            if (line.contains(MIB_BEGIN.token()))
             {
-                mibName = line.substring(0, line.indexOf(SmiTokens.MIB_BEGIN) - 1).trim();
+                mibName = line.substring(0, line.indexOf(MIB_BEGIN.token()) - 1).trim();
                 break;  // don't read any more lines
             }
 
-            lineCnt = lineCnt + 1;
+            lineCount++;
         }
         
         return mibName;
@@ -87,7 +77,7 @@ public class SmiStructureHandler
     /**
      * Reads all text between quote marks.
      */
-    public String readQuotedSection(String line, String keyword) throws IOException
+    public static String readQuotedSection(BufferedReader reader, String line, SMIToken keyword) throws IOException
     {
         StringBuilder quote = new StringBuilder("");
         char c = 0;
@@ -96,14 +86,14 @@ public class SmiStructureHandler
         //If the quoted portion starts on the same line as the given keyword,
         //the line's contents following the quote mark must be collected.
         line = line.trim();
-        if (!line.equals(keyword) && line.contains("\""))
+        if (!line.equals(keyword.token()) && line.contains("\""))
         {
             quote.append(line);
             int firstQuoteMarkPos = quote.indexOf("\"");
             quote.delete(0, firstQuoteMarkPos + 1);
             
             //strip comments
-            int commentPos = quote.indexOf("--");
+            int commentPos = quote.indexOf(COMMENT.token());
             if (commentPos > -1)
                 quote.delete(commentPos, quote.length());
             
@@ -123,7 +113,7 @@ public class SmiStructureHandler
             //read the stream until the first quote mark is reached
             c = 0;        
             while ((c != -1) && (c != '\"'))
-                c = (char)in.read();
+                c = (char)reader.read();
         }
         
         //don't read any further if the quote was a single line on the same line as the keyword
@@ -133,7 +123,7 @@ public class SmiStructureHandler
             c = 0;        
             while ((c != -1) && (c != '\"'))
             {
-                c = (char)in.read();
+                c = (char)reader.read();
                 
                 if (c != '\"')
                     quote.append(c);
@@ -146,7 +136,7 @@ public class SmiStructureHandler
             {
                 String curLine = quoteLines[i].trim();
                 
-                if (!curLine.trim().startsWith("--"))    //ignore commented lines
+                if (!curLine.trim().startsWith(COMMENT.token()))    //ignore commented lines
                 {
                     if (i == (quoteLines.length - 1))
                         quote.append(curLine.trim());   //last line needs no break at the end
@@ -166,7 +156,7 @@ public class SmiStructureHandler
      * The process is very similar to reading text enclosed in quote marks, but there
      * are also enough differences to warrant different methods.
      */
-    public List<String> readList(String line, String keyword) throws IOException
+    public static List<String> readList(BufferedReader reader, String line, SMIToken keyword) throws IOException
     {
         StringBuilder listString = new StringBuilder("");
         char c = 0;
@@ -175,7 +165,7 @@ public class SmiStructureHandler
         //If the list starts on the same line as the given keyword,
         //the line's contents following the left curly bracket must be collected.
         line = line.trim();
-        if (!line.equals(keyword) && line.contains("{"))
+        if (!line.equals(keyword.token()) && line.contains("{"))
         {
             listString.append(line);
             
@@ -183,7 +173,7 @@ public class SmiStructureHandler
             listString.delete(0, leftBracketPos + 1);
             
             //strip comments
-            int commentPos = listString.indexOf("--");
+            int commentPos = listString.indexOf(COMMENT.token());
             if (commentPos > -1)
                 listString.delete(commentPos, listString.length());
             
@@ -203,7 +193,7 @@ public class SmiStructureHandler
             //read the stream until the left bracket is reached
             c = 0;        
             while ((c != -1) && (c != '{'))
-                c = (char)in.read();
+                c = (char)reader.read();
         }
         
         //don't read any further if the list was a single line on the same line as the keyword
@@ -213,7 +203,7 @@ public class SmiStructureHandler
             c = 0;        
             while ((c != -1) && (c != '}'))
             {
-                c = (char)in.read();
+                c = (char)reader.read();
 
                 if (c != '}')
                     listString.append(c);
@@ -229,15 +219,14 @@ public class SmiStructureHandler
         {
             String curLine = listLines[i].trim();
 
-            if (!curLine.trim().equals("") && !curLine.trim().startsWith("--"))
+            if (!curLine.trim().equals("") && !curLine.trim().startsWith(COMMENT.token()))
             {
-                int commentPos = curLine.indexOf("--");
+                int commentPos = curLine.indexOf(COMMENT.token());
                 if (commentPos > -1)
                     curLine = curLine.substring(0, commentPos).trim();
 
                 returnList.add(curLine);
             }
-
         }
         
         return returnList;
@@ -251,9 +240,9 @@ public class SmiStructureHandler
      * 
      * @return a mapping of integer values to string names
      */
-    public Map<Integer, String> readPairs(String line, String keyword) throws IOException
+    public static Map<Integer, String> readPairs(BufferedReader reader, String line, SMIToken keyword) throws IOException
     {
-        List<String> valueLines = readList(line, keyword);
+        List<String> valueLines = readList(reader, line, keyword);
         Map<Integer, String> pairs = new HashMap<Integer, String>();
         
         for (int i = 0; i < valueLines.size(); i++)
@@ -262,7 +251,7 @@ public class SmiStructureHandler
             
             if (curLine.contains("(") && curLine.contains(")"))
             {
-                int commentPos = curLine.indexOf("--");
+                int commentPos = curLine.indexOf(COMMENT.token());
                 if (commentPos > -1)
                     curLine = curLine.substring(0, commentPos).trim();
                 
@@ -276,6 +265,68 @@ public class SmiStructureHandler
         }
         
         return pairs;
+    }
+    
+    
+    /**
+     * Takes the given string, extracts a MIB object's parent node name and index in a 
+     * MIB tree hierarchy, and returns it.  If the index cannot be parsed, -1 will be
+     * returned.
+     * @param text the string to parse
+     */
+    public static HierarchyData parseHierarchyData(String text)
+    {
+    	String nodeInfo = text.substring(text.indexOf("{") + 1, text.indexOf("}")).trim();
+        String parentName = "";
+        
+        if (nodeInfo.contains("(") && nodeInfo.contains(")"))
+        {   // these have the form ':= {test(1) test2(6) test3(2) 1}'
+            
+            String parents = "";
+            parents = nodeInfo.substring(nodeInfo.indexOf(" "), nodeInfo.lastIndexOf(")"));
+            parents = parents.substring(parents.lastIndexOf(" "), parents.lastIndexOf("("));
+            parentName = parents.trim();
+        }
+        else
+        {   // these have the regular form ':= {test 1}'
+            int index = nodeInfo.indexOf(" ");
+            parentName = nodeInfo.substring(0, index);
+        }
+        
+        int index = nodeInfo.lastIndexOf(" ") + 1;
+        String nodeIndexString = nodeInfo.substring(index, nodeInfo.length());
+        
+        int nodeIndex = 0;
+        try
+        {
+        	nodeIndex = Integer.parseInt(nodeIndexString);
+        }
+        catch (NumberFormatException e)
+        {
+        	nodeIndex = -1;
+        }
+        
+        return new HierarchyData(parentName, nodeIndex);
+    }
+    
+    /**
+     * Small utility class containing a MIB object node's parent node name and
+     * its index in a MIB tree hierarchy.
+     */
+    public static final class HierarchyData
+    {
+    	private int nodeIndex;
+    	private String nodeParentName;
+    	
+    	public HierarchyData(String parentName, int index)
+    	{
+    		this.nodeIndex = index;
+    		this.nodeParentName = parentName;
+    	}
+    	
+    	public int getIndex() { return nodeIndex; }
+    	
+    	public String getParent() { return nodeParentName; }
     }
 
 }

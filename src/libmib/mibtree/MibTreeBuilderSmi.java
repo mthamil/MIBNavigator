@@ -26,17 +26,19 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Map;
 
 import utilities.IOUtilities;
 
+import static libmib.format.smi.SMIToken.*;
 import libmib.MibObjectType;
 import libmib.MibSyntax;
 import libmib.MibObjectType.Access;
 import libmib.MibObjectType.Status;
-import libmib.format.InvalidSmiMibFormatException;
-import libmib.format.SmiStructureHandler;
-import libmib.format.SmiTokens;
+import libmib.format.smi.InvalidSmiMibFormatException;
+import libmib.format.smi.SMIParsers;
+import libmib.format.smi.SMIStructureHandler;
+import libmib.format.smi.SMIToken;
+import libmib.format.smi.SMIStructureHandler.HierarchyData;
 
 /**
  * This class is a very crusty reader and parser for ASN.1 specification SMI MIB module
@@ -47,9 +49,7 @@ import libmib.format.SmiTokens;
  * a HashMap that maps MIB object names to MIBTreeNodes.
  */
 public class MibTreeBuilderSmi extends AbstractMibTreeBuilder
-{
-    private SmiStructureHandler handler;
-    
+{  
     
     /**
      * Parses an SMI MIB module text file and adds its elements to the MIB tree model.
@@ -60,27 +60,26 @@ public class MibTreeBuilderSmi extends AbstractMibTreeBuilder
      */
     protected void addMibToTree(File mibFile) throws InvalidSmiMibFormatException
     { 
-    	BufferedReader in = null;
+    	BufferedReader reader = null;
         try
         {
-            in = new BufferedReader(new FileReader(mibFile));
-            handler = new SmiStructureHandler(in);
+            reader = new BufferedReader(new FileReader(mibFile));
             String line;
 
             // If the file does not contain the correct MIB 'header', throw an exception.
             // it's game over, man
-            String mibName = handler.readMibName();
+            String mibName = SMIStructureHandler.readMibName(reader);
             if (mibName.equals(""))
                 throw new InvalidSmiMibFormatException(mibFile);
             
 
             //System.out.println(mibFile.getName() + ": valid");
-            while ( ((line = in.readLine()) != null) && !line.trim().equals(SmiTokens.MIB_END))
+            while ( ((line = reader.readLine()) != null) && !line.trim().equals(MIB_END.token()))
             {
                 // Strip comments.
-                if (line.contains("--"))
+                if (line.contains(COMMENT.token()))
                 {
-                    int commentIndex = line.indexOf("--");
+                    int commentIndex = line.indexOf(COMMENT.token());
                     line = line.substring(0, commentIndex).trim();
                 }
                 
@@ -89,30 +88,30 @@ public class MibTreeBuilderSmi extends AbstractMibTreeBuilder
                     continue;
                     
                 // Skip the 'IMPORTS' section.
-                if (line.contains(SmiTokens.IMPORTS))               
+                if (line.contains(IMPORTS.token()))               
                 {
                     char c = 0;
                     while ( (c != -1) && (c != ';'))
-                        c = (char)in.read();
+                        c = (char)reader.read();
                     
                     continue;
                 }
                 
                 
                 // Skip 'MACRO' definitions.
-                if (line.contains("MACRO ::="))
+                if (line.contains(MACRO.token()))
                 {
-                    while ( (line = in.readLine()) != null )
+                    while ( (line = reader.readLine()) != null )
                     {
-                        if (line.trim().equals(SmiTokens.MIB_END))
+                        if (line.trim().equals(MIB_END.token()))
                             break;
                     }
                     continue;
                 }
                 
                 // Special case for basic MIB objects consisting of only a name, parent, and OID index.
-                if ( line.contains(SmiTokens.OBJECT_ID) && !line.contains(SmiTokens.SYNTAX) && !line.contains(",") 
-                        && !line.contains(SmiTokens.SOURCE) && !line.trim().startsWith(SmiTokens.OBJECT_ID))
+                if ( line.contains(OBJECT_ID.token()) && !line.contains(SYNTAX.token()) && !line.contains(",") 
+                        && !line.contains(SOURCE.token()) && !line.trim().startsWith(OBJECT_ID.token()))
                 {
                     StringBuilder oidDef = new StringBuilder();
                     oidDef.append(line);
@@ -123,7 +122,7 @@ public class MibTreeBuilderSmi extends AbstractMibTreeBuilder
                         char c = ' ';  
                         do
                         {
-                            c = (char)in.read();
+                            c = (char)reader.read();
                             oidDef.append(c);
                         } while (c != '}');
                     }
@@ -134,46 +133,23 @@ public class MibTreeBuilderSmi extends AbstractMibTreeBuilder
                         String nodeName = "";    
                         
                         // Get the mib object name.
-                        int index = oidString.indexOf(SmiTokens.OBJECT_ID);
+                        int index = oidString.indexOf(OBJECT_ID.token());
                         nodeName = oidString.substring(0, index).trim();
                         //System.out.println(nodeName);
 
                         // Check the HashMap to see if this node already exists in the tree.
                         if (!nodeMap.containsKey(nodeName)) 
                         {
-                            // initializations
-                            String nodeInfo = "";
-                            String nodeParentName = "";
-                            String nodeIndex = "";
-                            
-                            nodeInfo = oidString.substring(index + SmiTokens.OBJECT_ID.length());
-                            nodeInfo = nodeInfo.substring(nodeInfo.indexOf("{") + 1, nodeInfo.indexOf("}")).trim();
-
-                            String parents = "";
-                            if (nodeInfo.contains("(") && nodeInfo.contains(")"))
-                            {   // these have the form ':= {test(1) test2(6) test3(2) 1}'
-                                
-                                parents = nodeInfo.substring(nodeInfo.indexOf(" "), nodeInfo.lastIndexOf(")"));
-                                parents = parents.substring(parents.lastIndexOf(" "), parents.lastIndexOf("("));
-                                nodeParentName = parents.trim();
-                            }
-                            else
-                            {   // these have the regular form ':= {test 1}'
-                                index = nodeInfo.indexOf(" ");
-                                nodeParentName = nodeInfo.substring(0, index);
-                            }
-                            
-                            int index2 = nodeInfo.lastIndexOf(" ") + 1;
-                            nodeIndex = nodeInfo.substring(index2, nodeInfo.length());
-                            
+                            String nodeInfo = oidString.substring(index + OBJECT_ID.token().length());
+                            HierarchyData nodeData = SMIStructureHandler.parseHierarchyData(nodeInfo);
 
                             // make sure parent and index are not empty since some data type definitions can look like OIDs
-                            if ( !nodeName.equals("") && !nodeParentName.equals("") && !nodeIndex.equals("") )
+                            if ( !nodeName.equals("") && !nodeData.getParent().equals("") && nodeData.getIndex() != -1 )
                             {
-                                MibObjectType mibObject = new MibObjectType(nodeName, Integer.parseInt(nodeIndex));
+                                MibObjectType mibObject = new MibObjectType(nodeName, nodeData.getIndex());
                                 mibObject.setMibName(mibName);
                                 
-                                this.addMibObject(mibObject, nodeParentName);
+                                this.addMibObject(mibObject, nodeData.getParent());
                                 
                             } 
                         }
@@ -183,28 +159,28 @@ public class MibTreeBuilderSmi extends AbstractMibTreeBuilder
                 else
                 {
                     // Test for object type.
-                    String objectType = "";
-                    if (line.contains(SmiTokens.OBJECT_TYPE))
-                        objectType = SmiTokens.OBJECT_TYPE;
-                    else if (line.contains(SmiTokens.OBJECT_GRP))
-                        objectType = SmiTokens.OBJECT_GRP;
-                    else if (line.contains(SmiTokens.NOTIF))
-                        objectType = SmiTokens.NOTIF;
-                    else if (line.contains(SmiTokens.MODULE_COMP))
-                        objectType = SmiTokens.MODULE_COMP;
-                    else if (line.contains(SmiTokens.MODULE_ID))
-                        objectType = SmiTokens.MODULE_ID;
-                    else if (line.contains(SmiTokens.NOTIF_GRP))
-                        objectType = SmiTokens.NOTIF_GRP;
+                    SMIToken objectType = null;
+                    if (line.contains(OBJECT_TYPE.token()))
+                        objectType = OBJECT_TYPE;
+                    else if (line.contains(OBJECT_GROUP.token()))
+                        objectType = OBJECT_GROUP;
+                    else if (line.contains(NOTIF.token()))
+                        objectType = NOTIF;
+                    else if (line.contains(MODULE_COMP.token()))
+                        objectType = MODULE_COMP;
+                    else if (line.contains(MODULE_ID.token()))
+                        objectType = MODULE_ID;
+                    else if (line.contains(NOTIF_GROUP.token()))
+                        objectType = NOTIF_GROUP;
                                             
                     // Read other object types.
-                    if ( !objectType.equals("") && !line.trim().equalsIgnoreCase(objectType) 
-                            && !line.contains(SmiTokens.SOURCE) && !line.contains(",") )
+                    if ( objectType != null && !line.trim().equalsIgnoreCase(objectType.token()) 
+                            && !line.contains(SOURCE.token()) && !line.contains(",") )
                     {
                         MibObjectType mibObject = new MibObjectType();
                         mibObject.setMibName(mibName);
                         
-                        line = readMIBObject(in, mibObject, line, objectType);
+                        line = readMIBObject(reader, line, mibObject, objectType);
                     }
                 }
                 
@@ -217,7 +193,7 @@ public class MibTreeBuilderSmi extends AbstractMibTreeBuilder
         }
         finally
         {
-        	IOUtilities.closeQuietly(in);
+        	IOUtilities.closeQuietly(reader);
         }
     }
     
@@ -227,155 +203,106 @@ public class MibTreeBuilderSmi extends AbstractMibTreeBuilder
      * MIB Object and MibTreeNode, and adds the node to the tree if the parent exists 
      * and the node does not already exist in the tree.
      * 
-     * @param in the BufferedReader for the current MIB file
-     * @param mibObject the current MIB Object
+     * @param reader the BufferedReader for the current MIB file
      * @param line the most recently read line in the file
+     * @param mibObject the current MIB Object
      * @param objectType the type of the MIB Object
-     * 
      * @return the line in the file that was last read before returning
      * 
      * @throws IOException if an error occurs reading a line from the BufferedReader
      */
-    private String readMIBObject(final BufferedReader in, MibObjectType mibObject, String line, String objectType) throws IOException
+    private String readMIBObject(final BufferedReader reader, String line, MibObjectType mibObject, SMIToken objectType) throws IOException
     { 
         // get the node name
         String nodeName = "";
-        int index = line.indexOf(objectType);
+        int index = line.indexOf(objectType.token());
         nodeName = line.substring(0, index).trim();
         
         // check the HashMap to see if this node already exists in the tree
         if (!nodeMap.containsKey(nodeName)) 
         {
-            // initialize properties
-            String nodeDataType = "";
-            String nodeAccess = "";
-            String nodeStatus = "";
-            
+            // Initialize properties
+            Access nodeAccess = null;
+            Status nodeStatus = null;
+            MibSyntax nodeSyntax = null;
             StringBuilder nodeDesc = new StringBuilder();
-            Map<Integer, String> nodePairs = null;
-    
+
             // read until the end of the object definition, retrieving relevant information
-            line = in.readLine();
+            line = reader.readLine();
             while (line != null && !line.trim().startsWith("::="))
             {
             	line = line.trim();
             	
                 // strip comments
-                if (line.contains("--"))
+                if (line.contains(COMMENT.token()))
                 {
-                    int commentIndex = line.indexOf("--");
+                    int commentIndex = line.indexOf(COMMENT.token());
                     line = line.substring(0, commentIndex).trim();
                 }
     
                 if (!line.equals(""))
                 {
                     // SYNTAX
-                    if (line.contains(SmiTokens.SYNTAX) && !objectType.equals(SmiTokens.MODULE_COMP))
+                    if (line.contains(SYNTAX.token()) && !objectType.equals(MODULE_COMP))
                     {
-                        if (line.equals(SmiTokens.SYNTAX))
-                            line = in.readLine();
-    
-                        // if the OID has a list of specific integer values
-                        if (line != null)
-                        {
-                        	line = line.trim();
-	                        if (line.contains("{"))
-	                        {
-	                            index = line.indexOf("{");
-	                            nodeDataType = line.substring(SmiTokens.SYNTAX.length(), index).trim();
-	                            
-	                            nodePairs = handler.readPairs(line, SmiTokens.SYNTAX);
-	                        }
-	                        else
-	                            nodeDataType = line.substring(SmiTokens.SYNTAX.length()).trim();
-                        }
+                    	nodeSyntax = (MibSyntax)SMIParsers.getParser(SYNTAX).parse(reader, line);
                     }
                     
                     // ACCESS
-                    else if (line.contains(SmiTokens.ACCESS) && !objectType.equals(SmiTokens.MODULE_COMP))
-                    {
-                        index = line.indexOf(SmiTokens.ACCESS) + SmiTokens.ACCESS.length();
-                        nodeAccess = line.substring(index).trim();
-                    }
+                    else if (line.contains(ACCESS.token()) && !objectType.equals(MODULE_COMP))
+                        nodeAccess = (Access)SMIParsers.getParser(ACCESS).parse(reader, line);
                     
                     // STATUS
-                    else if (line.contains(SmiTokens.STATUS))
-                    {
-                        index = line.indexOf(SmiTokens.STATUS) + SmiTokens.STATUS.length();
-                        nodeStatus = line.substring(index).trim();
-                    }
+                    else if (line.contains(STATUS.token()))
+                        nodeStatus = (Status)SMIParsers.getParser(STATUS).parse(reader, line);
     
                     // DESCRIPTION
-                    else if (line.contains(SmiTokens.DESCRIPTION))
-                    {
-                        nodeDesc.append(handler.readQuotedSection(line, SmiTokens.DESCRIPTION));
-                    }
+                    else if (line.contains(DESCRIPTION.token()))
+                        nodeDesc.append((String)SMIParsers.getParser(DESCRIPTION).parse(reader, line));
 
-                    line = in.readLine();
+                    line = reader.readLine();
                 }
                 else
                 {
-                    line = in.readLine();
+                    line = reader.readLine();
                 }
             }
     
             if (line != null)
             {
 	            // the line with ::= should be processed here
-	            String nodeInfo = line.substring(line.indexOf("{") + 1, line.indexOf("}")).trim();
-	            String nodeParentName = "";
-	            
-	            if (nodeInfo.contains("(") && nodeInfo.contains(")"))
-	            {   // these have the form ':= {test(1) test2(6) test3(2) 1}'
-	                
-	                String parents = "";
-	                parents = nodeInfo.substring(nodeInfo.indexOf(" "), nodeInfo.lastIndexOf(")"));
-	                parents = parents.substring(parents.lastIndexOf(" "), parents.lastIndexOf("("));
-	                nodeParentName = parents.trim();
-	            }
-	            else
-	            {   // these have the regular form ':= {test 1}'
-	                index = nodeInfo.indexOf(" ");
-	                nodeParentName = nodeInfo.substring(0, index);
-	            }
-	            
-	            int index2 = nodeInfo.lastIndexOf(" ") + 1;
-	            String nodeIndex = "";
-	            nodeIndex = nodeInfo.substring(index2, nodeInfo.length());
-	    
-	            //System.out.println(nodeParent + " " + nodeIndex);
+	            HierarchyData nodeInfo = SMIStructureHandler.parseHierarchyData(line);
+	            //System.out.println(nodeInfo.getParent() + " " + nodeInfo.getIndex());
 	
 	            // set basic properties
 	            mibObject.setName(nodeName);
-	            mibObject.setId(Integer.parseInt(nodeIndex));
+	            mibObject.setId(nodeInfo.getIndex());
 	            
 	            mibObject.setDescription(nodeDesc.toString());
 	            
-	            if (!nodeAccess.equals(""))
-	                mibObject.setAccess(Access.valueOf(nodeAccess.toUpperCase().replaceAll("-", "_")));
+	            if (nodeAccess != null)
+	                mibObject.setAccess(nodeAccess);
 	            
-	            if (!nodeStatus.equals(""))
-	                mibObject.setStatus(Status.valueOf(nodeStatus.toUpperCase()));
+	            if (nodeStatus != null)
+	                mibObject.setStatus(nodeStatus);
 	            
-	            // construct the Syntax object
-	            // -the object's type is the only thing required for the existence of a syntax element
-	            if (!nodeDataType.equals("")) 
+	            if (nodeSyntax != null) 
 	            {
-	                MibSyntax nodeSyntax = new MibSyntax(nodeDataType);
-	                if (nodePairs != null)
-	                    nodeSyntax.setValuePairs(Collections.synchronizedMap(nodePairs)); // synchronize because there MAY be 
-	                                                                                      // simultaneous access
+	            	// Synchronize because there MAY be  simultaneous access.
+	                if (nodeSyntax.hasValues())
+	                    nodeSyntax.setValuePairs(Collections.synchronizedMap(nodeSyntax.getValuePairs()));
+	                
 	                mibObject.setSyntax(nodeSyntax);
 	            }
 	            
-	            this.addMibObject(mibObject, nodeParentName);
+	            this.addMibObject(mibObject, nodeInfo.getParent());
             }
             
         }
         else // if it already exists, read past it's data
         { 
             while (line != null && !line.contains("::="))
-                line = in.readLine();
+                line = reader.readLine();
         }
 
         return line;
