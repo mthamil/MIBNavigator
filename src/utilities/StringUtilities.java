@@ -31,6 +31,8 @@ import java.util.Iterator;
 public class StringUtilities
 {
 
+	private StringUtilities() { }
+	
 	/**
 	 * Removes all leading and trailing instances of a character from a String.
 	 * 
@@ -57,15 +59,13 @@ public class StringUtilities
 	/**
 	 * Takes a collection of strings and appends them to each other using a delimiter
 	 * between the elements to create a single string.
-	 * @param strings a collection of strings to join together
 	 * @param delimiter the delimiter to insert between elements
+	 * @param strings a collection of strings to join together
 	 * @return
 	 */
-	public static String join(Iterable<String> strings, String delimiter)
+	public static String join(String delimiter, Iterable<String> strings)
 	{
 		Iterator<String> iterator = strings.iterator();
-		if (!iterator.hasNext())
-			return "";
 		
 		StringBuilder joinedString = new StringBuilder();
 		while (iterator.hasNext())
@@ -82,12 +82,12 @@ public class StringUtilities
 	/**
 	 * Takes a collection of strings and appends them to each other using a delimiter
 	 * between the elements to create a single string.
-	 * @param strings a collection of strings to join together
 	 * @param delimiter the delimiter to insert between elements
+	 * @param strings a collection of strings to join together
 	 * @return
 	 */
-	public static String join(String[] strings, String delimiter)
+	public static String join(String delimiter, String ... strings)
 	{
-		return StringUtilities.join(Arrays.asList(strings), delimiter);
+		return StringUtilities.join(delimiter, Arrays.asList(strings));
 	}
 }

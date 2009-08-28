@@ -35,6 +35,8 @@ import java.io.Writer;
  */
 public class IOUtilities
 {
+	private IOUtilities() { }
+	
     /**
      * Simply copies a file from one location to another.
      * 
