@@ -54,9 +54,9 @@ public class MibTreeBuilderFactory
 	 * the given MIB format type.
 	 * @param mibFormat
 	 * @return a tree builder for the MIB format
-	 * @throws CannotCreateBuilderException 
+	 * @throws TreeBuilderCreationException 
 	 */
-	public MibTreeBuilder createTreeBuilder(MibFormat mibFormat) throws CannotCreateBuilderException
+	public MibTreeBuilder createTreeBuilder(MibFormat mibFormat) throws TreeBuilderCreationException
 	{
 		switch(mibFormat)
 		{
@@ -77,7 +77,7 @@ public class MibTreeBuilderFactory
 		            {    
 		            	String message = "The schema file, " + schemaFile.getName() + ", was not found.";
 		            	FileNotFoundException cause = new FileNotFoundException(message);
-		            	throw new CannotCreateBuilderException(cause);
+		            	throw new TreeBuilderCreationException(cause);
 		            }
 		            
 		            MibTreeBuilder builder = new MibTreeBuilderXml(schemaFile);
@@ -87,11 +87,11 @@ public class MibTreeBuilderFactory
 	            }
 	            catch (SAXException e)
 	            {
-	            	throw new CannotCreateBuilderException("An error occurred while parsing the schema file.", e);
+	            	throw new TreeBuilderCreationException("An error occurred while parsing the schema file.", e);
 	            }
 	            catch (ParserConfigurationException e)
 	            {
-	            	throw new CannotCreateBuilderException("An error occurred configuring the XML parser.", e);
+	            	throw new TreeBuilderCreationException("An error occurred configuring the XML parser.", e);
 	            }
 			}
 		}

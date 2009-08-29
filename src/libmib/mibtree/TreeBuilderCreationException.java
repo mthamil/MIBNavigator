@@ -24,21 +24,21 @@ package libmib.mibtree;
 /**
  * Exception thrown when a MibTreeBuilder cannot be constructed.
  */
-public class CannotCreateBuilderException extends Exception
+public class TreeBuilderCreationException extends Exception
 {
 	/**
 	 * Constructs a new exception with null as its detail message.
 	 */
-	CannotCreateBuilderException(String message) { super(message); }
+	TreeBuilderCreationException(String message) { super(message); }
 	
 	/**
 	 * Constructs a new exception with the specified detail message and cause.
 	 */
-	CannotCreateBuilderException(Throwable cause) { super(cause); }
+	TreeBuilderCreationException(Throwable cause) { super(cause); }
 	
 	/**
 	 * Constructs a new exception with the specified detail message.
 	 */
-	CannotCreateBuilderException(String message, Throwable cause) { super(message, cause); }
+	TreeBuilderCreationException(String message, Throwable cause) { super(message, cause); }
      	
 }
