@@ -29,10 +29,10 @@ import java.io.IOException;
  *
  * @param <T> the type of object to create from parsing
  */
-public abstract class AbstractStructureParser<T>
+public abstract class AbstractParser<T>
 {
 	/**
-	 * Parses a buffered reader and creates an obejct with the parsed result.
+	 * Parses a buffered reader and creates an object with the parsed result.
 	 * @param reader
 	 * @param currentLine
 	 * @return

@@ -32,7 +32,7 @@ import java.util.List;
 import libmib.MibImport;
 import libmib.format.smi.SMIStructureHandler;
 
-public class ImportsParser extends AbstractStructureParser<List<MibImport>>
+public class ImportsParser extends AbstractParser<List<MibImport>>
 {
 	@Override
 	public List<MibImport> parse(BufferedReader reader, String currentLine) throws IOException

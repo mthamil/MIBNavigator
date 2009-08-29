@@ -215,7 +215,7 @@ public abstract class AbstractMibTreeBuilder implements MibTreeBuilder
     }
     
     
-    /** 
+    /* (non-Javadoc)
      * @see libmib.mibtree.MibTreeBuilder#getMibDirectory() 
      */
     abstract public String getMibDirectory();

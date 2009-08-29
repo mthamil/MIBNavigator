@@ -244,9 +244,7 @@ public class MibTreeBuilderSmi extends AbstractMibTreeBuilder
                 {
                     // SYNTAX
                     if (line.contains(SYNTAX.token()) && !objectType.equals(MODULE_COMP))
-                    {
                     	nodeSyntax = (MibSyntax)SMIParserFactory.getParser(SYNTAX).parse(reader, line);
-                    }
                     
                     // ACCESS
                     else if (line.contains(ACCESS.token()) && !objectType.equals(MODULE_COMP))
@@ -309,7 +307,7 @@ public class MibTreeBuilderSmi extends AbstractMibTreeBuilder
     }
     
     
-    /**
+    /* (non-Javadoc)
      * @see libmib.mibtree.MibTreeBuilder#getMibDirectory() 
      */
 	@Override

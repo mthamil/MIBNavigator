@@ -19,26 +19,19 @@
  *
  */
 
+
 package libmib.format.smi.parsers;
 
-import static libmib.format.smi.SMIToken.ACCESS;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-
-import libmib.MibObjectType.Access;
-
-public class AccessParser extends AbstractParser<Access>
+/**
+ * Abstract base class for creating SMI Parser Factories.
+ *
+ * @param <T>
+ */
+public abstract class AbstractParserFactory<T>
 {
-	@Override
-	public Access parse(BufferedReader reader, String currentLine) throws IOException
-	{
-		int index = currentLine.indexOf(ACCESS.token()) + ACCESS.token().length();
-        String access = currentLine.substring(index).trim();
-        
-        if (!access.equals(""))
-            return Access.valueOf(access.toUpperCase().replaceAll("-", "_"));
-        
-        return null;
-	}
+	/**
+	 * Creates a new parser.
+	 * @return
+	 */
+	public abstract AbstractParser<T> createParser();
 }

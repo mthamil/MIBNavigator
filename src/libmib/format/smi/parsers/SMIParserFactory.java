@@ -32,8 +32,8 @@ import libmib.format.smi.SMIToken;
  */
 public class SMIParserFactory
 {
-	private static final Map<SMIToken, AbstractStructureParser<?>> parsers = 
-		new HashMap<SMIToken, AbstractStructureParser<?>>();
+	private static final Map<SMIToken, AbstractParser<?>> parsers = 
+		new HashMap<SMIToken, AbstractParser<?>>();
 	
 	/**
 	 * Initializes the parser mapping.
@@ -46,6 +46,7 @@ public class SMIParserFactory
 		parsers.put(DESCRIPTION, new DescriptionParser());
 		parsers.put(MODULE_REVISION, new ModuleRevisionParser());
 		parsers.put(IMPORTS, new ImportsParser());
+		parsers.put(OBJECT_GROUP, new GeneralMibObjectParser());
 	}
 
 	/**
@@ -53,7 +54,7 @@ public class SMIParserFactory
 	 * @param token
 	 * @return
 	 */
-	public static AbstractStructureParser<?> getParser(SMIToken token)
+	public static AbstractParser<?> getParser(SMIToken token)
 	{
 		return parsers.get(token);
 	}

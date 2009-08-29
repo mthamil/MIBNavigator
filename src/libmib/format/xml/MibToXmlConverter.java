@@ -20,27 +20,20 @@
 
 package libmib.format.xml;
 
+import static libmib.format.smi.SMIToken.*;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
-import utilities.IOUtilities;
-
-import static libmib.format.smi.SMIToken.*;
 import libmib.MibImport;
-import libmib.MibModuleIdRevision;
 import libmib.MibObjectExtended;
-import libmib.MibSyntax;
-import libmib.MibObjectType.Access;
-import libmib.MibObjectType.Status;
 import libmib.format.smi.InvalidSmiMibFormatException;
 import libmib.format.smi.SMIStructureHandler;
-import libmib.format.smi.SMIToken;
 import libmib.format.smi.SMIStructureHandler.HierarchyData;
 import libmib.format.smi.parsers.SMIParserFactory;
+import utilities.IOUtilities;
 
 /**
  * Class for converting ASN.1 MIB definition files to an XML file format.
@@ -171,31 +164,10 @@ public class MibToXmlConverter
                         }
                     }
 				}
-                
-				// test for other object "types"
-			    SMIToken objectType = null;
-			    if (line.contains(OBJECT_TYPE.token()))
-			        objectType = OBJECT_TYPE;
-			    else if (line.contains(OBJECT_GROUP.token()))
-			        objectType = OBJECT_GROUP;
-			    else if (line.contains(NOTIF.token()))
-			        objectType = NOTIF;
-			    else if (line.contains(MODULE_COMP.token()))
-			        objectType = MODULE_COMP;
-			    else if (line.contains(MODULE_ID.token()))
-			        objectType = MODULE_ID;
-                else if (line.contains(NOTIF_GROUP.token()))
-                    objectType = NOTIF_GROUP;
-			    						
-				// read other object types
-				if ( objectType != null && !line.trim().equalsIgnoreCase(objectType.token()) 
-				        && !line.contains(SOURCE.token()) && !line.contains(",") )
-				{ 
-                    MibObjectExtended mibObject = readObject(reader, line, objectType);
-                    
-                    // add this object to the list of MIB objects
-                    mibDocFactory.addObjectElement(mibObject);
-				}
+                			
+				 MibObjectExtended mibObject = (MibObjectExtended)SMIParserFactory.getParser(OBJECT_GROUP).parse(reader, line);
+				 if (mibObject != null)
+					 mibDocFactory.addObjectElement(mibObject);
 			}
 
 		}
@@ -208,195 +180,8 @@ public class MibToXmlConverter
 		{
 			IOUtilities.closeQuietly(reader);
 		}
-        
     }
 
-    
-    private MibObjectExtended readObject(final BufferedReader reader, String line, SMIToken objectType) throws IOException
-    { 
-        // Get the node name.
-        String name = "";
-        int index = line.indexOf(objectType.token());
-        name = line.substring(0, index).trim();
-
-        // Initialize properties.
-        String defaultValue = "";
-        Access access = null;
-        Status status = null;
-        String ref = "";
-        StringBuilder description = new StringBuilder();
-        
-        String lastUpdated = "";
-        String organization = "";
-        StringBuilder contact = new StringBuilder();
-        
-        MibSyntax nodeSyntax = null;
-        List<String> indices = null;
-        List<String> group = null;  
-        List<MibModuleIdRevision> revisions = null;
-        
-        // read until the end of the object definition, retrieving relevant information
-        line = reader.readLine();
-        while (line != null && !line.trim().startsWith("::="))
-        {
-        	line = line.trim();
-        	
-            // strip comments
-            if (line.contains(COMMENT.token()))
-            {
-                int commentIndex = line.indexOf(COMMENT.token());
-                line = line.substring(0, commentIndex).trim();
-            }
-            
-            if (!line.equals(""))
-            {
-                // SYNTAX
-                if (line.contains(SYNTAX.token()) && !objectType.equals(MODULE_COMP))
-                {
-                	nodeSyntax = (MibSyntax)SMIParserFactory.getParser(SYNTAX).parse(reader, line);
-                }
-                
-                // ACCESS
-                else if (line.contains(ACCESS.token()) && !objectType.equals(MODULE_COMP))
-                {      
-                	access = (Access)SMIParserFactory.getParser(ACCESS).parse(reader, line);
-                }
-                
-                // STATUS
-                else if (line.contains(STATUS.token()))
-                {
-                	status = (Status)SMIParserFactory.getParser(STATUS).parse(reader, line);
-                }
-                
-                // LAST-UPDATED
-                else if (line.contains(MODULE_LAST_UPDATED.token()))
-                    lastUpdated = line.substring(line.indexOf("\"") + 1, line.lastIndexOf("\"")).trim();
-                
-                
-                // ORGANIZATION
-                else if (line.contains(MODULE_ORGANIZATION.token()))
-                    organization = line.substring(line.indexOf("\"") + 1, line.lastIndexOf("\"")).trim();
-                
-                
-                // DEFAULT VALUE (DEFVAL)
-                else if (line.contains(DEFAULT.token()))
-                {
-                    if (line.contains("{") && line.contains("}"))
-                        defaultValue = line.substring(line.indexOf("{") + 1, line.indexOf("}")).trim();
-                }
-                
-                
-                // OBJECT-GROUP members or NOTIFICATION-TYPE member
-                else if ( (line.contains(OBJECTS.token()) && objectType.equals(OBJECT_GROUP)) || 
-                         (line.contains(NOTIFS.token()) && objectType.equals(NOTIF_GROUP)) )
-                {
-                    if (line.contains("{"))
-                        group = SMIStructureHandler.readList(reader, line, OBJECTS);
-                }
-
-                                    
-                // CONTACT-INFO
-                else if (line.contains(MODULE_CONTACT.token()))
-                    contact.append(SMIStructureHandler.readQuotedSection(reader, line, MODULE_CONTACT));
-
-                
-                // DESCRIPTION
-                else if (line.contains(DESCRIPTION.token()))
-                    description.append((String)SMIParserFactory.getParser(DESCRIPTION).parse(reader, line));
-
-                
-                // REFERENCE
-                else if (line.contains(REFERENCE.token()))
-                    ref = SMIStructureHandler.readQuotedSection(reader, line, REFERENCE);
-
-                
-                // INDICES
-                else if (line.contains(INDICES.token()))
-                {
-                    if (line.contains("{"))
-                        indices = SMIStructureHandler.readList(reader, line, INDICES);
-                }
-
-                
-                // REVISION
-                else if (line.contains(MODULE_REVISION.token()))
-                {                                      
-                    MibModuleIdRevision revision = (MibModuleIdRevision)SMIParserFactory.getParser(MODULE_REVISION).parse(reader, line);
-                    if (revision != null)
-                    {
-                        if (revisions == null)
-                            revisions = new ArrayList<MibModuleIdRevision>();
-                        
-                    	revisions.add(revision);
-                    }
-                }
-                
-                line = reader.readLine();
-            }
-            else
-                line = reader.readLine();
-
-        }
-
-        if (line != null)
-        {
-	        // the line with ::= should be processed here
-        	HierarchyData objectInfo = SMIStructureHandler.parseHierarchyData(line);
-        	//System.out.println(objectInfo.getParent() + " " + objectInfo.getIndex());;
-	
-	        // set basic properties
-	        MibObjectExtended mibObject = new MibObjectExtended(name, objectInfo.getIndex());
-	        
-	        mibObject.setDescription(description.toString());
-	        
-	        if (access != null)
-	            mibObject.setAccess(access);
-	
-	        if (status != null)
-	            mibObject.setStatus(status);
-	        
-	        mibObject.setReference(ref);
-	        
-	        if (nodeSyntax != null) 
-            {
-	        	nodeSyntax.setDefaultValue(defaultValue);               
-                mibObject.setSyntax(nodeSyntax);
-            }
-	        
-	        if (indices != null)
-	            mibObject.setIndices(indices);
-	        
-	        // set extended properties
-	        mibObject.setObjectType(objectType.token());
-	        mibObject.setParent(objectInfo.getParent());
-	        mibObject.setLastUpdated(lastUpdated);
-	        mibObject.setOrganization(organization);
-	        mibObject.setContactInfo(contact.toString());
-	        
-	        if (group != null)
-	            mibObject.setGroupMembers(group);
-	        
-	        if (revisions != null)
-	            mibObject.setRevisions(revisions);
-	        
-	        return mibObject;
-        }
-
-    	return null;
-    }
-    
-    
-    /*private String escapeString(String unescaped)
-    {
-        String escaped = unescaped;
-        escaped = escaped.replaceAll("&", "&amp;");
-        escaped = escaped.replaceAll(">", "&gt;");
-        escaped = escaped.replaceAll("<", "&lt;");
-        
-        return escaped;
-    }*/
-    
-    
     
     /**
      * Writes the constructed document to an XML file.

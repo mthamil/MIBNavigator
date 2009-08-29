@@ -30,7 +30,7 @@ import java.util.Map;
 import libmib.MibSyntax;
 import libmib.format.smi.SMIStructureHandler;
 
-public class SyntaxParser extends AbstractStructureParser<MibSyntax>
+public class SyntaxParser extends AbstractParser<MibSyntax>
 {
 	@Override
 	public MibSyntax parse(BufferedReader reader, String currentLine) throws IOException

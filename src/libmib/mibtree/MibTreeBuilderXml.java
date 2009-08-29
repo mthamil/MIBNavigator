@@ -338,7 +338,7 @@ public class MibTreeBuilderXml extends AbstractMibTreeBuilder
     }
     
  
-    /**
+    /* (non-Javadoc)
      * @see libmib.mibtree.MibTreeBuilder#getMibDirectory() 
      */
 	@Override

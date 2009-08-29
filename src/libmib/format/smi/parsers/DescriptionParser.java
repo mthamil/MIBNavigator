@@ -28,7 +28,7 @@ import java.io.IOException;
 
 import libmib.format.smi.SMIStructureHandler;
 
-public class DescriptionParser extends AbstractStructureParser<String>
+public class DescriptionParser extends AbstractParser<String>
 {
 	@Override
 	public String parse(BufferedReader reader, String currentLine) throws IOException

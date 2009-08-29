@@ -21,24 +21,18 @@
 
 package libmib.format.smi.parsers;
 
-import static libmib.format.smi.SMIToken.ACCESS;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-
 import libmib.MibObjectType.Access;
 
-public class AccessParser extends AbstractParser<Access>
+public class AccessParserFactory extends AbstractParserFactory<Access>
 {
+	private AccessParser instance;
+	
 	@Override
-	public Access parse(BufferedReader reader, String currentLine) throws IOException
+	public AccessParser createParser()
 	{
-		int index = currentLine.indexOf(ACCESS.token()) + ACCESS.token().length();
-        String access = currentLine.substring(index).trim();
-        
-        if (!access.equals(""))
-            return Access.valueOf(access.toUpperCase().replaceAll("-", "_"));
-        
-        return null;
+		if (instance == null)
+			instance = new AccessParser();
+		
+		return instance;
 	}
 }

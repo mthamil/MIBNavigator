@@ -28,7 +28,7 @@ import java.io.IOException;
 
 import libmib.MibObjectType.Status;
 
-public class StatusParser extends AbstractStructureParser<Status>
+public class StatusParser extends AbstractParser<Status>
 {
 	@Override
 	public Status parse(BufferedReader reader, String currentLine) throws IOException
