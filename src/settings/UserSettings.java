@@ -22,13 +22,11 @@
 package settings;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
 import java.util.Properties;
-import java.util.StringTokenizer;
 
 import utilities.IOUtilities;
 import utilities.StringUtilities;
@@ -47,14 +45,9 @@ public class UserSettings
 		MibDirectory, IPAddresses, MaximumAddresses, MibFileFormat, Port, Timeout
 	}
 
-	private File settingsFile;
+	private SettingsLocation location;
 	private Properties settings;
 	private boolean settingsChanged;
-	
-	private static final String SETTINGS_FOLDERNAME = ".mibnavigator";
-	private static final File SETTINGS_PATH = 
-		new File(System.getProperty("user.home") + File.separator + SETTINGS_FOLDERNAME);
-	
 
 	private static final int DEFAULT_MAX_ADDRESSES = 15;
 	private static final String DEFAULT_MIB_DIRECTORY = "." + File.separator + "mibs";
@@ -71,11 +64,14 @@ public class UserSettings
 	/**
 	 * Initializes user settings.
 	 */
-	public UserSettings()
+	public UserSettings(SettingsLocation location)
 	{
-		settings = new Properties();
-		settingsChanged = false;
-		settingsFile = new File(SETTINGS_PATH  + File.separator + "properties.xml");
+		if (location == null)
+			throw new IllegalArgumentException("Settings storage location cannot be null.");
+		
+		this.settings = new Properties();
+		this.settingsChanged = false;
+		this.location = location;
 	}
 
 	/**
@@ -233,12 +229,13 @@ public class UserSettings
         String formatString = "";
         String portString = "";
         String timeoutString = "";
-        FileInputStream settingsIn = null;
+        
+        InputStream settingsIn = null;
         try
         {
-        	if (settingsFile.exists())
+        	if (location.isAccessible())
         	{
-	            settingsIn = new FileInputStream(settingsFile);
+        		settingsIn = location.getInput();
 	            settings.loadFromXML(settingsIn);
 	            
 	            mibPath		  = settings.getProperty(SettingsProperties.MibDirectory.toString(), DEFAULT_MIB_DIRECTORY);
@@ -259,22 +256,22 @@ public class UserSettings
 		}
 
         // Parse the MIB directory property.
-        mibDirectory = UserSettings.parseDirectoryProperty(mibPath, DEFAULT_MIB_DIRECTORY);        
+        mibDirectory = PropertyParser.parseDirectoryProperty(mibPath, DEFAULT_MIB_DIRECTORY);        
         
         // Parse the the max address property.
-        maxAddresses = UserSettings.parseIntegerProperty(addressNum, DEFAULT_MAX_ADDRESSES);
+        maxAddresses = PropertyParser.parseIntegerProperty(addressNum, DEFAULT_MAX_ADDRESSES);
         
         // Parse the address list property.
-        addresses = UserSettings.parseDelimitedProperty(hostAddresses, ',', maxAddresses);
+        addresses = PropertyParser.parseDelimitedProperty(hostAddresses, ',', maxAddresses);
         
         // Parse the MIB file format property.
-        mibFormat = UserSettings.parseEnumProperty(formatString, MibFormat.SMI);
+        mibFormat = PropertyParser.parseEnumProperty(formatString, MibFormat.SMI);
         
         // Parse the port number property.
-        port = UserSettings.parseIntegerProperty(portString, DEFAULT_PORT);
+        port = PropertyParser.parseIntegerProperty(portString, DEFAULT_PORT);
         
         // Parse the timeout property.
-        timeout = UserSettings.parseIntegerProperty(timeoutString, DEFAULT_TIMEOUT);
+        timeout = PropertyParser.parseIntegerProperty(timeoutString, DEFAULT_TIMEOUT);
     }
 	
 	
@@ -284,7 +281,7 @@ public class UserSettings
 	public void saveSettings()
 	{
 		// Write the file is either the settings changed or no settings file exists.
-		if (settingsChanged || !settingsFile.exists())
+		if (settingsChanged || !location.isAccessible())
 		{
 			if (mibDirectory != null && mibDirectory.isDirectory())
 				settings.setProperty(SettingsProperties.MibDirectory.toString(), mibDirectory.getPath());
@@ -302,17 +299,10 @@ public class UserSettings
 			settings.setProperty(SettingsProperties.Timeout.toString(), String.valueOf(timeout));
 
 			// Save program state settings to file.
-			FileOutputStream settingsOut = null;
+			OutputStream settingsOut = null;
 			try
 			{
-				// Create the settings directory if necessary.
-				if (!SETTINGS_PATH.exists())
-					SETTINGS_PATH.mkdir();
-				
-				// Create a new settings file if necessary.
-				settingsFile.createNewFile();
-					
-				settingsOut = new FileOutputStream(settingsFile);
+				settingsOut = location.getOutput();
 				settings.storeToXML(settingsOut, null);
 			}
 			catch (IOException e)
@@ -326,104 +316,4 @@ public class UserSettings
 		}
 	}
 
-	/**
-	 * Parses a file directory from a string.
-	 * @param path the string path to parse
-	 * @param defaultPath the path to use if the path doesn't exist or isn't a directory
-	 * @return
-	 */
-	private static File parseDirectoryProperty(String path, String defaultPath)
-	{
-		// If this is a local relative path, try to convert
-		// the file path separators to the current OS.
-		if (path.startsWith("."))
-		{
-			path = path.replace("/", File.separator);
-			path = path.replace("\\", File.separator);
-		}
-		
-		File directory = new File(path);
-		if (!directory.isDirectory())
-		{
-			// If the path isn't a directory or doesn't exist, use the default.
-			directory = new File(defaultPath);
-		}
-
-		return directory;
-	}
-	
-	/**
-	 * Parses a string delimited by a given character into a list.  The maxEntries
-	 * parameter can be used to limit how many delimited entries to return.
-	 * @param delimitedString the delimited string to parse
-	 * @param delimiter the delimiting character
-	 * @param maxEntries the maximum number of entries to parse
-	 * @return
-	 */
-	private static List<String> parseDelimitedProperty(String delimitedString, char delimiter, int maxEntries)
-	{
-		List<String> entries = new ArrayList<String>(maxEntries);
-		
-		StringTokenizer tokenizer = new StringTokenizer(delimitedString, String.valueOf(delimiter));
-        int i = 0;
-        while (tokenizer.hasMoreTokens() && i < maxEntries)
-        {
-        	entries.add(tokenizer.nextToken());
-            i++;
-        }
-		
-		return entries;
-	}
-
-	
-	/**
-	 * Parses an Enum value from a string.
-	 * @param <T> the Enum type
-	 * @param enumString the string to parse
-	 * @param defaultValue the Enum value to use if parsing fails
-	 * @return
-	 */
-	private static <T extends Enum<T>> T parseEnumProperty(String enumString, T defaultValue)
-	{
-		T enumValue = null;
-		try
-		{
-			enumValue = T.valueOf(defaultValue.getDeclaringClass(), enumString);
-		}
-		catch (IllegalArgumentException exception)
-		{
-			enumValue = defaultValue;
-		}
-		
-		return enumValue;
-	}
-	
-	
-	/**
-	 * Parses a positive integer value property from a string.
-	 * @param valueString the string to parse
-	 * @param defaultValue the default value to use if parsing fails
-	 * @return
-	 */
-	private static int parseIntegerProperty(String valueString, int defaultValue)
-	{
-		if (valueString == null || valueString.equals(""))
-			return defaultValue;
-		
-		int value;
-		try
-		{
-			value = Integer.parseInt(valueString);
-
-			if (value < 0) // Why anyone would do this, I don't know.
-				value = 0;
-		}
-		catch (NumberFormatException e)
-		{
-			value = defaultValue;
-		}
-		
-		return value;
-	}
-	
 }

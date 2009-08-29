@@ -49,6 +49,7 @@ import libmib.format.InvalidMibFormatException;
 import libmib.mibtree.CannotCreateBuilderException;
 import libmib.mibtree.MibTreeBuilder;
 import libmib.mibtree.MibTreeBuilderFactory;
+import settings.FileSettingsLocation;
 import settings.UserSettings;
 import utilities.IOUtilities;
 
@@ -72,18 +73,17 @@ import utilities.IOUtilities;
  */
 public class MIBNavigator 
 {
-    private UserSettings appSettings;  	// Saves and loads application state
+    private UserSettings appSettings;   // Saves and loads application state
     private MibBrowser browser;         // Main graphical component
    
     private int maxAddresses;           // Stores the maximum number of addresses to save (currently not modifiable 
-                                        // within the application, only through editing a file by hand)
+                                         // within the application, only through editing a file by hand)
 
     /**
      * Creates and configures the application.
      * 
-     *  @param newBuilder - MibTreeBuilder that is 
-     *  	   simply passed through to the MibBrowser
-     *  @param settings - Application user settings
+     *  @param newBuilder MibTreeBuilder that is simply passed through to the MibBrowser
+     *  @param settings Application user settings
      */
     public MIBNavigator(MibTreeBuilder newBuilder, UserSettings settings)
     {
@@ -201,9 +201,8 @@ public class MIBNavigator
 	            chooser.setFileFilter(dialogFilter);
 	            
 	            JRootPane menuParentFrame = navFrame.getRootPane();
-	            int returnValue = chooser.showOpenDialog(menuParentFrame);
-
-	            if (returnValue == JFileChooser.APPROVE_OPTION)
+	            int result = chooser.showOpenDialog(menuParentFrame);
+	            if (result == JFileChooser.APPROVE_OPTION)
 	            {
 	                File mib = chooser.getSelectedFile();
 	                MibTreeBuilder treeBuilder = browser.getMibBuilder();
@@ -237,9 +236,8 @@ public class MIBNavigator
 	            chooser.setFileFilter(dialogFilter);
 	            
 	            JRootPane menuParentFrame = navFrame.getRootPane();  // Use the root pane's parent frame to launch dialogs
-	            int returnValue = chooser.showOpenDialog(menuParentFrame);
-
-	            if (returnValue == JFileChooser.APPROVE_OPTION)
+	            int result = chooser.showOpenDialog(menuParentFrame);
+	            if (result == JFileChooser.APPROVE_OPTION)
 	            {
 	                File sourceMib = chooser.getSelectedFile();
 	                MibTreeBuilder treeBuilder = browser.getMibBuilder();
@@ -330,7 +328,7 @@ public class MIBNavigator
         }
 
         // Load preferences.
-        final UserSettings settings = new UserSettings();
+        final UserSettings settings = new UserSettings(new FileSettingsLocation());
         settings.loadSettings();
         
         // The initialization of the MibTreeBuilder occurs first because it is the most crucial 
