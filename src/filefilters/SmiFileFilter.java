@@ -35,9 +35,10 @@ public class SmiFileFilter extends FileFilter
         super();
     }
 
-    /**
+    /* (non-Javadoc)
      * @see javax.swing.filechooser.FileFilter#accept(java.io.File)
      */
+	@Override
     public boolean accept(File thisFile) 
     {
     	String fileName = thisFile.getName().toLowerCase();
@@ -47,9 +48,10 @@ public class SmiFileFilter extends FileFilter
         return false;
     }
 
-    /**
+    /* (non-Javadoc)
      * @see javax.swing.filechooser.FileFilter#getDescription()
      */
+	@Override
     public String getDescription() 
     {
         return "SMI MIB Files";
