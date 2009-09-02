@@ -90,7 +90,7 @@ public class MIBNavigator
     	this.appSettings = settings;
         maxAddresses = settings.getMaxAddresses();
         
-        this.shrinkFonts();
+        this.setDefaultFont(LookAndFeelResources.getFont("application"));
 
         browser = new MibBrowser(newBuilder, settings.getMibDirectory());
         browser.setAddresses(settings.getAddresses());
@@ -115,11 +115,11 @@ public class MIBNavigator
     
     
     /**
-     * Sets all fonts in the UI table to smaller than normal size.
+     * Sets all fonts in the UI to a given font.
+     * @param defaultFont
      */
-    private void shrinkFonts()
+    private void setDefaultFont(Font defaultFont)
     {
-    	Font defaultFont = LookAndFeelResources.getFont("application");
         FontUIResource appFont = new FontUIResource(defaultFont);
         UIDefaults defaults = UIManager.getDefaults();
         Enumeration<Object> keys = defaults.keys();
