@@ -46,7 +46,7 @@ import javax.swing.plaf.FontUIResource;
 import javax.swing.tree.DefaultTreeModel;
 
 import libmib.format.InvalidMibFormatException;
-import libmib.mibtree.CannotCreateBuilderException;
+import libmib.mibtree.TreeBuilderCreationException;
 import libmib.mibtree.MibTreeBuilder;
 import libmib.mibtree.MibTreeBuilderFactory;
 import settings.FileSettingsLocation;
@@ -102,15 +102,6 @@ public class MIBNavigator
     
     
     /**
-     * Gets the MibBrowser used by MIBNavigator.
-     */
-    public MibBrowser getBrowser()
-    {
-        return browser;
-    }
-    
-    
-    /**
      * Saves persistent attributes to the MIBNavigatorSettings object.
      */
     public void saveState()
@@ -128,7 +119,8 @@ public class MIBNavigator
      */
     private void shrinkFonts()
     {
-        FontUIResource appFont = new FontUIResource("SansSerif", Font.PLAIN, 10);
+    	Font defaultFont = LookAndFeelResources.getFont("application");
+        FontUIResource appFont = new FontUIResource(defaultFont);
         UIDefaults defaults = UIManager.getDefaults();
         Enumeration<Object> keys = defaults.keys();
 
@@ -166,6 +158,7 @@ public class MIBNavigator
         navFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         navFrame.addWindowListener(new WindowAdapter()
         {
+        	@Override
             public void windowClosing(WindowEvent we)
             {
                 saveState();
@@ -353,7 +346,7 @@ public class MIBNavigator
                 
             SwingUtilities.invokeLater(createInterface);
         }
-        catch(CannotCreateBuilderException e)
+        catch(TreeBuilderCreationException e)
         {
         	JOptionPane.showMessageDialog(null, e.getMessage(), StringResources.getString("appGeneralErrorTitle"), JOptionPane.ERROR_MESSAGE);
         }

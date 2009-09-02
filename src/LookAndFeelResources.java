@@ -20,6 +20,7 @@
  */
 
 import java.awt.Dimension;
+import java.awt.Font;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
@@ -125,5 +126,50 @@ public class LookAndFeelResources
 		int height = LookAndFeelResources.getInteger(heightKey);
 		
 		return new Dimension(width, height);
+	}
+	
+	
+	private static final String FONT_SUFFIX = ".font";
+	
+	/**
+	 * Gets a Font resource with the given prefix.
+	 * The resource keys should follow the following format:
+	 * keyPrefix.font
+	 * 
+	 * @param keyPrefix
+	 * @return
+	 */
+	public static Font getFont(String keyPrefix)
+	{
+		String fontKey = keyPrefix + FONT_SUFFIX;
+		String fontString = LookAndFeelResources.getString(fontKey);
+		
+		Font font = Font.decode(fontString);
+		return font;
+	}
+
+	
+	/**
+	 * Gets an enum resource with the given prefix.  The default value is
+	 * what should be used if the key cannot be found or parsed.
+	 * @param <T> the type of enum
+	 * @param key
+	 * @param defaultValue
+	 * @return
+	 */
+	public static <T extends Enum<T>> T getEnum(String key, T defaultValue)
+	{
+		String value = getString(key);
+		T enumValue = null;
+		try
+		{
+			enumValue = T.valueOf(defaultValue.getDeclaringClass(), value);
+		}
+		catch (IllegalArgumentException exception)
+		{
+			enumValue = defaultValue;
+		}
+		
+		return enumValue;
 	}
 }

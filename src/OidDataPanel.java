@@ -21,6 +21,7 @@
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -63,7 +64,7 @@ public class OidDataPanel implements TreeSelectionListener
     
     private Color uneditableBackColor;
     
-    private static final String DESC_FORMAT = "<font face='SansSerif' size='%d'>%s</font>";
+    private static final String DESC_FORMAT = "<font face='%s' size='%d'>%s</font>";
     
     public OidDataPanel() 
     {
@@ -243,7 +244,6 @@ public class OidDataPanel implements TreeSelectionListener
     }
     
     
-	@SuppressWarnings("boxing")
 	private void setMIBObject(MibObjectType mibObject)
     {
         // Display the OID's details in the panel.
@@ -269,7 +269,9 @@ public class OidDataPanel implements TreeSelectionListener
 
         // The oidDesc JEditorPane automatically converts escaped special characters
         // to the correct display characters, ie. "&amp" -> "&" and "&gt;" -> ">".
-        oidDescription.setText(String.format(DESC_FORMAT, LookAndFeelResources.getInteger("oidDescriptionFontSize"), mibObject.getDescription()));
+        Font descriptionFont = LookAndFeelResources.getFont("oidDescription");
+        String descriptionContent = String.format(DESC_FORMAT, descriptionFont.getName(), descriptionFont.getSize(), mibObject.getDescription());
+        oidDescription.setText(descriptionContent);
         oidDescription.setCaretPosition(0);
         
         oidMIBNameField.setText(mibObject.getMibName());
