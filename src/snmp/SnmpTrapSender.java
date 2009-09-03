@@ -2,6 +2,7 @@
  * SNMP Package
  *
  * Copyright (C) 2004, Jonathan Sevy <jsevy@mcs.drexel.edu>
+ * Copyright (C) 2009, Matt Hamilton <matthamilton@live.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -62,7 +63,7 @@ public class SnmpTrapSender
      *  and community name. Use version = 0 for SNMP version 1, or version = 1 for enhanced 
      *  capabilities provided through RFC 1157.
      */
-    public void sendTrap(int version, InetAddress hostAddress, String community, SnmpV1TrapPDU pdu)
+    public void sendTrap(SnmpVersion version, InetAddress hostAddress, String community, SnmpV1TrapPDU pdu)
         throws IOException
     {
         SnmpMessage message = new SnmpMessage(version, community, pdu);
@@ -101,9 +102,7 @@ public class SnmpTrapSender
     public void sendTrap(InetAddress hostAddress, String community, SnmpV1TrapPDU pdu)
         throws IOException
     {
-        int version = 0;
-    
-        sendTrap(version, hostAddress, community, pdu);
+        sendTrap(SnmpVersion.SNMPv1, hostAddress, community, pdu);
     }
     
     
@@ -111,7 +110,7 @@ public class SnmpTrapSender
      *  Sends the supplied SNMPv2 trap PDU to the specified host, using the supplied version number
      *  and community name. 
      */
-    public void sendTrap(int version, InetAddress hostAddress, String community, SnmpV2TrapPDU pdu)
+    public void sendTrap(SnmpVersion version, InetAddress hostAddress, String community, SnmpV2TrapPDU pdu)
         throws IOException
     {
         SnmpMessage message = new SnmpMessage(version, community, pdu);
@@ -149,8 +148,7 @@ public class SnmpTrapSender
     public void sendTrap(InetAddress hostAddress, String community, SnmpV2TrapPDU pdu)
         throws IOException
     {
-        int version = 1;
-        sendTrap(version, hostAddress, community, pdu);
+        sendTrap(SnmpVersion.SNMPv2, hostAddress, community, pdu);
     }
   
 }

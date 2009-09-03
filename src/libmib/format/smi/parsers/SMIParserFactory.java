@@ -21,7 +21,7 @@
 
 package libmib.format.smi.parsers;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 
 import static libmib.format.smi.SMIToken.*;
@@ -33,7 +33,7 @@ import libmib.format.smi.SMIToken;
 public class SMIParserFactory
 {
 	private static final Map<SMIToken, AbstractParser<?>> parsers = 
-		new HashMap<SMIToken, AbstractParser<?>>();
+		new EnumMap<SMIToken, AbstractParser<?>>(SMIToken.class);
 	
 	/**
 	 * Initializes the parser mapping.

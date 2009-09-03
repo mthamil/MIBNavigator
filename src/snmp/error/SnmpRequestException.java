@@ -19,8 +19,7 @@
  *
  */
 
-package snmp;
-
+package snmp.error;
 
 /**
  *  Exception thrown when request to get or set the value of an SNMP OID on a device fails. Reason could be
@@ -30,45 +29,6 @@ package snmp;
  */
 public class SnmpRequestException extends SnmpException
 {
-    // INTEGER { 
-    //    noError(0),
-    //    tooBig(1),
-    //    noSuchName(2), -- for proxy compatibility 
-    //    badValue(3),   -- for proxy compatibility 
-    //    readOnly(4),   -- for proxy compatibility 
-    //    genErr(5), 
-    //    noAccess(6),
-    //    wrongType(7), 
-    //    wrongLength(8), 
-    //    wrongEncoding(9), 
-    //    wrongValue(10),
-    //    noCreation(11), 
-    //    inconsistentValue(12), 
-    //    resourceUnavailable(13),
-    //    commitFailed(14), 
-    //    undoFailed(15), 
-    //    authorizationError(16), 
-    //    notWritable(17),
-    //    inconsistentName(18) 
-    // },
-    public enum ErrorStatus
-    {
-        NoError, ValueTooBig, ValueNotAvailable, BadValue, ValueReadOnly, Failed,  // basic errors
-        NoAccess, WrongType, WrongLength, WrongEncoding, WrongValue, CreationFailed, 
-        InconsistentValue, ResourceUnavailable, CommitFailed, UndoFailed, AuthorizationError,
-        NotWritable, InconsistentName;
-        
-        public static ErrorStatus getInstance(int value)
-        {
-            if (value > ErrorStatus.values().length)
-                throw new IllegalArgumentException("No corresponding instance.");
-            
-            ErrorStatus[] vals = ErrorStatus.values();
-            return vals[value];
-        }
-    }
-
-    
     public int errorIndex = 0;
     public ErrorStatus errorStatus = ErrorStatus.NoError;
     

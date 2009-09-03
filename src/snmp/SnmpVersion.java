@@ -1,7 +1,6 @@
 /*
  * SNMP Package
  *
- * Copyright (C) 2004, Jonathan Sevy <jsevy@mcs.drexel.edu>
  * Copyright (C) 2009, Matt Hamilton <matthamilton@live.com>
  *
  * This program is free software; you can redistribute it and/or
@@ -22,22 +21,25 @@
 
 package snmp;
 
-
 /**
- * Interface for recent version SNMP traps.
+ * SNMP versions
  */
-public interface SnmpTrapPDU
+public enum SnmpVersion
 {
-	/** 
-     *  Extracts the snmpTrapOID from the trap's variable bind 
-     *  list (it's the second of the variable pairs).
+	SNMPv1,
+	SNMPv2;
+	
+    /**
+     * Gets the SNMP Version corresponding to the given integer value.
+     * @param value
+     * @return
      */
-    public SnmpObjectIdentifier getSNMPTrapOID();
-    
-    
-    /** 
-     *  Extracts the sysUptime from the trap's variable bind
-     *  list (it's the first of the variable pairs).
-     */
-    public SnmpTimeTicks getSysUptime();
+    public static SnmpVersion getInstance(int value)
+    {
+        if (value > SnmpVersion.values().length)
+            throw new IllegalArgumentException("No corresponding instance.");
+        
+        SnmpVersion[] vals = SnmpVersion.values();
+        return vals[value];
+    }
 }

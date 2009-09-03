@@ -19,7 +19,7 @@
  *
  */
 
-package snmp;
+package snmp.error;
 
 
 /**

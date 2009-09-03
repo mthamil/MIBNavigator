@@ -2,6 +2,7 @@
  * SNMP Package
  *
  * Copyright (C) 2004, Jonathan Sevy <jsevy@mcs.drexel.edu>
+ * Copyright (C) 2009, Matt Hamilton <matthamilton@live.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -80,14 +81,13 @@ public class SnmpMessage extends SnmpSequence
     
     /**
      * Creates an SNMP message with specified version, community, and PDU. Use
-     * version = 0 for SNMP version 1, or version = 1 for enhanced capabilities
-     * provided through RFC 1157.
+     * SNMPv2 for enhanced capabilities provided through RFC 1157.
      */
-    public SnmpMessage(int version, String community, SnmpPDU pdu)
+    public SnmpMessage(SnmpVersion version, String community, SnmpPDU pdu)
     {
         super();
         List<SnmpObject> contents = new Vector<SnmpObject>();
-        contents.add(0, new SnmpInteger(version));
+        contents.add(0, new SnmpInteger(version.ordinal()));
         contents.add(1, new SnmpOctetString(community));
         contents.add(2, pdu);
         
@@ -104,14 +104,13 @@ public class SnmpMessage extends SnmpSequence
 
     /**
      *  Creates an SNMP message with specified version, community, and trap PDU.
-     *  Use version = 0 for SNMP version 1, or version = 1 for enhanced capabilities
-     *  provided through RFC 1157.
+     *  Use SNMPv2 for enhanced capabilities provided through RFC 1157.
      */
-    public SnmpMessage(int version, String community, SnmpV1TrapPDU pdu)
+    public SnmpMessage(SnmpVersion version, String community, SnmpV1TrapPDU pdu)
     {
         super();
         List<SnmpObject> contents = new Vector<SnmpObject>();
-        contents.add(0, new SnmpInteger(version));
+        contents.add(0, new SnmpInteger(version.ordinal()));
         contents.add(1, new SnmpOctetString(community));
         contents.add(2, pdu);
         
@@ -128,13 +127,13 @@ public class SnmpMessage extends SnmpSequence
     
     /**
      *  Creates an SNMP message with specified version, community, and v2 trap pdu.
-     *  Use version = 1.
+     *  Use SNMPv2.
      */
-    public SnmpMessage(int version, String community, SnmpV2TrapPDU pdu)
+    public SnmpMessage(SnmpVersion version, String community, SnmpV2TrapPDU pdu)
     {
         super();
         List<SnmpObject> contents = new Vector<SnmpObject>();
-        contents.add(0, new SnmpInteger(version));
+        contents.add(0, new SnmpInteger(version.ordinal()));
         contents.add(1, new SnmpOctetString(community));
         contents.add(2, pdu);
         

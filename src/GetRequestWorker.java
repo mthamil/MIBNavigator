@@ -32,13 +32,14 @@ import libmib.MibObjectType;
 import libmib.mibtree.MibTreeNode;
 import libmib.mibtree.MibTreeNode.NodeSearchOption;
 import snmp.SnmpBadValueException;
-import snmp.SnmpGetException;
 import snmp.SnmpInteger;
 import snmp.SnmpObject;
 import snmp.SnmpObjectIdentifier;
 import snmp.SnmpSequence;
 import snmp.SnmpVarBindList;
 import snmp.SnmpV1Communicator;
+import snmp.SnmpVersion;
+import snmp.error.SnmpGetException;
 
 /**
  *  This class retrieves OID values using SNMP GetNextRequests for a given host.  It executes in 
@@ -66,7 +67,6 @@ public class GetRequestWorker extends SwingWorker
     private final String oidInputString;
     private final MibTreeNode root;
     
-    private static final int SNMP_VERSION = 0;
     private static final String STD_PREFIX = "iso.org.dod.internet.mgmt.mib-2.";
     private static final String ENT_PREFIX = "iso.org.dod.internet.private.enterprises.";
     
@@ -143,7 +143,7 @@ public class GetRequestWorker extends SwingWorker
             this.fireAddressResolvedEvent(host.getAddress(), resolvedAddr);  //this will occur if the host address is valid
 
             //Establish a new SNMPv1 interface with the given data.
-            SnmpV1Communicator snmpInterface = new SnmpV1Communicator(SNMP_VERSION, address, host.getCommunityString());
+            SnmpV1Communicator snmpInterface = new SnmpV1Communicator(SnmpVersion.SNMPv1, address, host.getCommunityString());
             snmpInterface.setTimeout(timeout);
             snmpInterface.setPort(port);
 

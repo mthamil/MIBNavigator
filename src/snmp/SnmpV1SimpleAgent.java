@@ -2,6 +2,7 @@
  * SNMP Package
  *
  * Copyright (C) 2004, Jonathan Sevy <jsevy@mcs.drexel.edu>
+ * Copyright (C) 2009, Matt Hamilton <matthamilton@live.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,7 +32,10 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
-import snmp.SnmpRequestException.ErrorStatus;
+import snmp.error.SnmpGetException;
+import snmp.error.SnmpRequestException;
+import snmp.error.SnmpSetException;
+import snmp.error.ErrorStatus;
 
 
 /**
@@ -48,7 +52,7 @@ public class SnmpV1SimpleAgent implements Runnable
     // RFC 1157, need to handle messages of at least 484 bytes
     public int receiveBufferSize = 512;
     
-    private int version = 0;
+    private SnmpVersion version = SnmpVersion.SNMPv1;
     
     private DatagramSocket dSocket;
     private Thread receiveThread;
@@ -66,7 +70,7 @@ public class SnmpV1SimpleAgent implements Runnable
      *  Constructs a new agent object to listen for requests from remote SNMP managers. The agent listens
      *  on the standard SNMP UDP port 161.
      */
-    public SnmpV1SimpleAgent(int newVersion) throws SocketException
+    public SnmpV1SimpleAgent(SnmpVersion newVersion) throws SocketException
     {
         this(newVersion, SnmpV1Communicator.DEFAULT_SNMP_PORT, new PrintWriter(System.out));
     }
@@ -76,7 +80,7 @@ public class SnmpV1SimpleAgent implements Runnable
      *  Constructs a new agent object to listen for requests from remote SNMP managers. The agent listens
      *  on the supplied port.
      */
-    public SnmpV1SimpleAgent(int newVersion, int localPort) throws SocketException
+    public SnmpV1SimpleAgent(SnmpVersion newVersion, int localPort) throws SocketException
     {
         this(newVersion, localPort, new PrintWriter(System.out));
     }
@@ -86,7 +90,7 @@ public class SnmpV1SimpleAgent implements Runnable
      *  Constructs a new agent object to listen for requests from remote SNMP managers. The agent listens
      *  on the standard SNMP UDP port 161, and sends error messages to the specified PrintWriter.
      */
-    public SnmpV1SimpleAgent(int newVersion, PrintWriter errorReceiver)
+    public SnmpV1SimpleAgent(SnmpVersion newVersion, PrintWriter errorReceiver)
         throws SocketException
     {
         this(newVersion, SnmpV1Communicator.DEFAULT_SNMP_PORT, errorReceiver);
@@ -97,7 +101,7 @@ public class SnmpV1SimpleAgent implements Runnable
      *  Constructs a new agent object to listen for requests from remote SNMP managers. The agent listens
      *  on the supplied port, and sends error messages to the specified PrintWriter.
      */
-    public SnmpV1SimpleAgent(int newVersion, int localPort, PrintWriter errorReceiver)
+    public SnmpV1SimpleAgent(SnmpVersion newVersion, int localPort, PrintWriter errorReceiver)
         throws SocketException
     {
         version = newVersion;
@@ -214,7 +218,7 @@ public class SnmpV1SimpleAgent implements Runnable
                 {
                     // don't have a specific index and cause of error; return message as general error, index 0
                     errorIndex = 0;
-                    errorStatus = ErrorStatus.Failed;
+                    errorStatus = ErrorStatus.GeneralError;
                     
                     // just return request variable list as response variable list
                     responseVarList = requestedVarList;
@@ -297,7 +301,7 @@ public class SnmpV1SimpleAgent implements Runnable
             if (!variablePairs.containsKey(snmpOID))
             {
                 errorIndex = j + 1;
-                errorStatus = ErrorStatus.ValueNotAvailable;
+                errorStatus = ErrorStatus.NoSuchName;
 
                 if (requestPDUType == SnmpBERType.SnmpSetRequest)
                     throw new SnmpSetException("OID " + snmpOID + " not handled", errorIndex, errorStatus);

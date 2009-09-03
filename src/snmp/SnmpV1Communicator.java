@@ -2,6 +2,7 @@
  * SNMP Package
  *
  * Copyright (C) 2004, Jonathan Sevy <jsevy@mcs.drexel.edu>
+ * Copyright (C) 2009, Matt Hamilton <matthamilton@live.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,8 +25,9 @@ package snmp;
 import java.io.*;
 import java.net.*;
 
-import snmp.SnmpRequestException.ErrorStatus;
-
+import snmp.error.SnmpGetException;
+import snmp.error.SnmpSetException;
+import snmp.error.ErrorStatus;
 
 
 /**
@@ -41,7 +43,7 @@ public class SnmpV1Communicator
     // RFC 1157, need to handle messages of at least 484 bytes.
     private int receiveBufferSize = 512;
 
-    private int version;
+    private SnmpVersion version;
     private int port;
     private InetAddress hostAddress;
     private String community;
@@ -52,9 +54,9 @@ public class SnmpV1Communicator
     /**
      *  Constructs a new communication object to communicate with the specified host using the
      *  given community name. The version setting should be either 0 (version 1) or 1 (version 2,
-     *  a la RFC 1157).  The default SNMP port is used and it has a default timeout of 15 seconds.
+     *  a la RFC 1157). The default SNMP port is used and it has a default timeout of 15 seconds.
      */
-    public SnmpV1Communicator(int version, InetAddress hostAddress, String community)
+    public SnmpV1Communicator(SnmpVersion version, InetAddress hostAddress, String community)
         throws SocketException
     {
         this.version = version;
@@ -319,7 +321,7 @@ public class SnmpV1Communicator
                     {
                         // wrong OID; throw GetException
                         throw new SnmpGetException("OID " + itemIds[i] + " expected at index " + i + ", OID " + newObjectIdentifier 
-                                + " received", i + 1, ErrorStatus.Failed);
+                                + " received", i + 1, ErrorStatus.GeneralError);
                     }
 
                     retrievedVars.addSNMPObject(newPair);
@@ -363,7 +365,7 @@ public class SnmpV1Communicator
     {
         // check that OID and value arrays have same size
         if (itemIds.length != newValues.length)
-            throw new SnmpSetException("OID and value arrays must have same size", 0, ErrorStatus.Failed);
+            throw new SnmpSetException("OID and value arrays must have same size", 0, ErrorStatus.GeneralError);
 
         // Send SetRequest to specified host to set values of object identifiers.
 
@@ -394,11 +396,11 @@ public class SnmpV1Communicator
 
                     switch (receivedPDU.getErrorStatus())
                     {
-                        case ValueTooBig:
+                        case TooBig:
                             throw new SnmpSetException("Value supplied for OID " + itemIds[errorIndex - 1] + " too big.", 
                                     receivedPDU.getErrorIndex(), receivedPDU.getErrorStatus());
 
-                        case ValueNotAvailable:
+                        case NoSuchName:
                             throw new SnmpSetException("OID " + itemIds[errorIndex - 1] + " not available for setting.", 
                                     receivedPDU.getErrorIndex(), receivedPDU.getErrorStatus());
 
@@ -406,7 +408,7 @@ public class SnmpV1Communicator
                             throw new SnmpSetException("Bad value supplied for OID " + itemIds[errorIndex - 1] + ".", 
                                     receivedPDU.getErrorIndex(), receivedPDU.getErrorStatus());
 
-                        case ValueReadOnly:
+                        case ReadOnly:
                             throw new SnmpSetException("OID " + itemIds[errorIndex - 1] + " read-only.", 
                                     receivedPDU.getErrorIndex(), receivedPDU.getErrorStatus());
 
@@ -431,7 +433,7 @@ public class SnmpV1Communicator
                         retrievedVars.addSNMPObject(newPair);
                     else      // wrong OID; throw GetException
                         throw new SnmpSetException("OID " + itemIds[i] + " expected at index " + i + ", OID " + newObjectIdentifier 
-                                + " received", i + 1, ErrorStatus.Failed);
+                                + " received", i + 1, ErrorStatus.GeneralError);
                 }
 
                 break;
@@ -586,7 +588,7 @@ public class SnmpV1Communicator
 
                 // Check that the right number of variables were in reply; if not, throw GetException.
                 if (varList.size() != requestedObjectIdentifier.length)
-                    throw new SnmpGetException("Incomplete row of table received", 0, ErrorStatus.Failed);
+                    throw new SnmpGetException("Incomplete row of table received", 0, ErrorStatus.GeneralError);
 
                 // Copy the retrieved variable pairs into retrievedVars.
                 for (int i = 0; i < varList.size(); i++)
@@ -605,7 +607,7 @@ public class SnmpV1Communicator
                             break retrievalLoop;    
 
                         // It's a subsequent row element; throw exception.
-                        throw new SnmpGetException("Incomplete row of table received", i + 1, ErrorStatus.Failed);
+                        throw new SnmpGetException("Incomplete row of table received", i + 1, ErrorStatus.GeneralError);
                     }
 
                     retrievedVars.addSNMPObject(newPair);
@@ -680,32 +682,32 @@ public class SnmpV1Communicator
     
     
     
-    public static void main(String[] args)
-    {
-        try
-        {
-            //contact: Genco IT
-            SnmpV1Communicator comm = new SnmpV1Communicator(0, InetAddress.getByName("127.0.0.1"), "de2la6");
-            
-            //String[] oids = { "1.3.6.1.2.1.1.5", "1.3.6.1.2.1.1.6", "1.3.6.1.2.1.1.7" };
-            //String oid = "1.3.6.1.2.1.1.4.0";
-            //SNMPVarBindList results = comm.getNextMIBEntry(oids);
-            
-            //String[] oids = { "1.3.6.1.2.1.1.5.0", "1.3.6.1.2.1.1.6.0", "1.3.6.1.2.1.1.7.0" };
-            //String oid = "1.3.6.1.2.1.1.4.0";
-            //SNMPVarBindList results = comm.getMIBEntry(oid);
-            
-            //SNMPOctetString value = new SNMPOctetString("Genco IT");
-            //SNMPVarBindList results = comm.setMIBEntry(oid, value);
-            
-            String oid = "1.3.6.1.2.1.1";
-            SnmpVarBindList results = comm.retrieveMIBTable(oid);
-            
-            System.out.println(results.toString());
-        }
-        catch (Exception e)
-        {
-            e.getMessage();
-        }
-    }
+//    public static void main(String[] args)
+//    {
+//        try
+//        {
+//            //contact: Genco IT
+//            SnmpV1Communicator comm = new SnmpV1Communicator(SnmpVersion.SNMPv1, InetAddress.getByName("127.0.0.1"), "de2la6");
+//            
+//            //String[] oids = { "1.3.6.1.2.1.1.5", "1.3.6.1.2.1.1.6", "1.3.6.1.2.1.1.7" };
+//            //String oid = "1.3.6.1.2.1.1.4.0";
+//            //SNMPVarBindList results = comm.getNextMIBEntry(oids);
+//            
+//            //String[] oids = { "1.3.6.1.2.1.1.5.0", "1.3.6.1.2.1.1.6.0", "1.3.6.1.2.1.1.7.0" };
+//            //String oid = "1.3.6.1.2.1.1.4.0";
+//            //SNMPVarBindList results = comm.getMIBEntry(oid);
+//            
+//            //SNMPOctetString value = new SNMPOctetString("Genco IT");
+//            //SNMPVarBindList results = comm.setMIBEntry(oid, value);
+//            
+//            String oid = "1.3.6.1.2.1.1";
+//            SnmpVarBindList results = comm.retrieveMIBTable(oid);
+//            
+//            System.out.println(results.toString());
+//        }
+//        catch (Exception e)
+//        {
+//            e.getMessage();
+//        }
+//    }
 }

@@ -2,6 +2,7 @@
  * SNMP Package
  *
  * Copyright (C) 2004, Jonathan Sevy <jsevy@mcs.drexel.edu>
+ * Copyright (C) 2009, Matt Hamilton <matthamilton@live.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -56,10 +57,10 @@ public class SnmpInformRequestSender
     }
     
     /**
-     *  Sends the supplied SNMPv2 inform request pdu to the specified host, using the supplied version number
+     *  Sends the supplied SNMPv2 inform request pdu to the specified host, using the supplied version
      *  and community name. 
      */
-    public void sendInformRequest(int version, InetAddress hostAddress, String community, SnmpV2InformRequestPDU pdu)
+    public void sendInformRequest(SnmpVersion version, InetAddress hostAddress, String community, SnmpV2InformRequestPDU pdu)
         throws IOException
     {
         SnmpMessage message = new SnmpMessage(version, community, pdu);
@@ -93,14 +94,12 @@ public class SnmpInformRequestSender
     
     /**
      *  Sends the supplied inform request pdu to the specified host, using the supplied community name and
-     *  using 1 for the version field in the SNMP message.
+     *  using SNMPv2 for the version field in the SNMP message.
      */
     public void sendInformRequest(InetAddress hostAddress, String community, SnmpV2InformRequestPDU pdu)
         throws IOException
     {
-        int version = 1;
-    
-        sendInformRequest(version, hostAddress, community, pdu);
+        sendInformRequest(SnmpVersion.SNMPv2, hostAddress, community, pdu);
     }
     
     
