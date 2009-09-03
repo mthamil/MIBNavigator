@@ -311,7 +311,7 @@ public class SMIStructureHandler
     
     /**
      * Small utility class containing a MIB object node's parent node name and
-     * its index in a MIB tree hierarchy.
+     * its index as a child of that parent.
      */
     public static final class HierarchyData
     {

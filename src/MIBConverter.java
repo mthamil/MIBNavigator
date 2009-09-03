@@ -1,6 +1,6 @@
 /**
  * libmib - Java SNMP Management Information Base Library
- * MIB To XML Converter
+ * MIB Converter
  *
  * Copyright (C) 2009, Matt Hamilton <matthamilton@live.com>
  *
@@ -25,10 +25,10 @@ import java.io.File;
 import javax.swing.JFileChooser;
 
 import libmib.format.smi.InvalidSmiMibFormatException;
-import libmib.format.xml.MibToXmlConverter;
+import libmib.format.xml.SmiToXmlMibConverter;
 
 /**
- * Basic wrapper app around MibToXmlConverter.
+ * Basic wrapper app around SmiToXmlMibConverter.
  */
 public class MIBConverter
 {
@@ -86,9 +86,9 @@ public class MIBConverter
                 }
 
                 
-                MibToXmlConverter converter = new MibToXmlConverter();
+                SmiToXmlMibConverter converter = new SmiToXmlMibConverter();
                 converter.readMIB(inFile);
-                converter.writeXML(outFile);
+                converter.writeMIB(outFile);
             }
             catch (InvalidSmiMibFormatException e)
             {

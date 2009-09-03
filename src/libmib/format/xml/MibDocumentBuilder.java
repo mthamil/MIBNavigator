@@ -58,7 +58,7 @@ import libmib.format.smi.SMIToken;
 import libmib.mibtree.BasicXmlErrorHandler;
 
 /**
- * This class uses JAXP to construct a Document corresponding to a MIB module.  MIB objects and imports can be directly added
+ * This class uses JAXP to construct an XML Document corresponding to a MIB module.  MIB objects and imports can be directly added
  * and they will be converted into Elements of the MIB document.  A method is also provided for writing the Document to a file
  * as XML.  The DocumentBuilder that produces the Document is validating and uses the schema defined in "mib.xsd".
  */

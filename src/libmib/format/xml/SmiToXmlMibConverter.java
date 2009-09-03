@@ -1,6 +1,6 @@
 /**
- * MIB To XML Converter
- * 
+ * libmib - Java SNMP Management Information Base Library
+ *
  * Copyright (C) 2009, Matt Hamilton <matthamilton@live.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
  */
 
 package libmib.format.xml;
@@ -36,39 +37,40 @@ import libmib.format.smi.parsers.SMIParserFactory;
 import utilities.IOUtilities;
 
 /**
- * Class for converting ASN.1 MIB definition files to an XML file format.
+ * Class for converting ASN.1 SMI MIB definition files to an XML file format.
  * This format in no way tries to replace ASN.1 in its entirety, it simply 
- * provides an easier format to work with MIB files in applications since 
+ * provides a standardized format to work with MIB files in applications since 
  * XML libraries are in no short supply these days.
  * <br><br>
- * NOTE:  Apparently there are already projects for converting ASN.1 to
- * XML and vice versa.  ASN.1 is supposed to be easily parsable and can be 
- * verified against in a way similar to XML schemas.  There are also ASN.1 
- * parsers, but none that I have found in Java.  I admit that my experience 
- * in parsing is VERY limited, but I simply don't see how SMI, which uses 
- * no standard tokens to identify certain elements, can be more easily 
- * parseable than XML.
+ * NOTE:  There are already projects for converting ASN.1 to
+ * XML and vice versa.  ASN.1 is easily parsable for a real grammar parser
+ * but one has not been created or integrated into this project.
  * <br><br>
- * However, the format I am using is more specific to SNMP SMI module 
- * definitions, and I have checked out another similar project and have 
- * seen that their XML MIBS are quite similar in structure to my own, so I
- * conclude that I am on the right track in that regard.  Since Java has many
- * standard methods for parsing and using XML, I will stick with it.
+ * The format used here is more specific to SNMP SMI module definitions, and 
+ * I have checked out another similar project and have seen that their XML 
+ * MIBS are quite similar in structure to my own, so I conclude that I am on 
+ * the right track in that regard.
  * <br><br>
  * Currently, the converter implements all OID attributes except for Module-Compliance
- * compliance sections.  Imports are implemented, but data types are not.
+ * compliance sections. Imports are implemented, but data types are not.
  */
-public class MibToXmlConverter 
+public class SmiToXmlMibConverter 
 { 
     //private ArrayList<String> introComments = null;
     private MibDocumentBuilder mibDocFactory;
 
-    public MibToXmlConverter()
+    public SmiToXmlMibConverter()
     {
         //introComments = new ArrayList<String>();    
         mibDocFactory = new MibDocumentBuilder();
     }
     
+    /**
+     * Reads an SMI format MIB file and constructs an  intermediate representation
+     * (an OID tree).
+     * @param inputMIBFile
+     * @throws InvalidSmiMibFormatException
+     */
     @SuppressWarnings("unchecked")
 	public void readMIB(File inputMIBFile) throws InvalidSmiMibFormatException
     {   
@@ -184,9 +186,11 @@ public class MibToXmlConverter
 
     
     /**
-     * Writes the constructed document to an XML file.
+     * Writes the previously read MIB data from an intermediate representation
+     * to an XML file.
+     * @param outputXMLFile
      */
-    public void writeXML(File outputXMLFile)
+    public void writeMIB(File outputXMLFile)
     {    
         mibDocFactory.writeDocument(outputXMLFile);
     }
