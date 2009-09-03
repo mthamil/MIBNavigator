@@ -159,7 +159,7 @@ public class LookAndFeelResources
 	 */
 	public static <T extends Enum<T>> T getEnum(String key, T defaultValue)
 	{
-		String value = getString(key);
+		String value = LookAndFeelResources.getString(key);
 		T enumValue = null;
 		try
 		{
