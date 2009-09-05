@@ -9,7 +9,7 @@
 <body>
 The snmp package defines classes used to communicate with SNMP
 devices. Classes corresponding to each of the basic SNMP data types are
-defined, each extending the SNMPObject abstarct class. In addition, some
+defined, each extending the SNMPObject abstract class. In addition, some
 utility classes provide additional functionality.
 <p>Each of the SNMPObject subclasses defines methods to create an object,
 either from a "reasonable" representation (e.g., Java.lang.Integer for
@@ -27,15 +27,8 @@ automatically generates the encoding for the entire sequence, including
 the contained components. SNMPBERCodec contains a number of static utility
 methods for converting to and from BER encodings, as well as constants
 used by the various classes.</p>
-<p>Finally, SNMPv1CommunicationsInterface defines methods for sending SNMP
+<p>Finally, SNMPv1Communicator defines methods for sending SNMP
 Get and Set requests to devices; this class handles all of the communication
 tasks needed for developing simple SNMP applications.</p>
-<p><p>
-January 31, 2006 -
-<br>Updated the SNMP package to use Java 1.5's enhanced for-loop (for each)
-and changed method usage such as elementAt() to get() and insertElementAt() to 
-add() to conform to the List interface. </br>
-<br>- Matt Hamilton</br>
-</p></p>
 </body>
 </html>

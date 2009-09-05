@@ -22,8 +22,6 @@
 
 package snmp.datatypes;
 
-
-
 /**
  *  Class representing a general string of bits.
  */

@@ -97,7 +97,7 @@ public class SnmpSequence extends SnmpObject
     public void setValue(Object value)
         throws SnmpBadValueException
     {
-        if (value instanceof Vector)
+        if (value instanceof Vector<?>)
         {
         	Vector<?> newValue = (Vector<?>)value;
         	
