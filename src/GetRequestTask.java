@@ -31,14 +31,14 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.event.EventListenerList;
 
-import snmp.SnmpBadValueException;
-import snmp.SnmpInteger;
-import snmp.SnmpObject;
-import snmp.SnmpObjectIdentifier;
-import snmp.SnmpSequence;
 import snmp.SnmpV1Communicator;
-import snmp.SnmpVarBindList;
 import snmp.SnmpVersion;
+import snmp.datatypes.SnmpInteger;
+import snmp.datatypes.SnmpObject;
+import snmp.datatypes.SnmpObjectIdentifier;
+import snmp.datatypes.sequence.SnmpSequence;
+import snmp.datatypes.sequence.SnmpVarBindList;
+import snmp.error.SnmpBadValueException;
 import snmp.error.SnmpGetException;
 
 import libmib.MibObjectType;
