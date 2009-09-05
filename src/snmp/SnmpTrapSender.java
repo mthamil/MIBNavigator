@@ -25,6 +25,10 @@ package snmp;
 import java.io.*;
 import java.net.*;
 
+import snmp.datatypes.sequence.SnmpMessage;
+import snmp.datatypes.sequence.pdu.SnmpV1TrapPDU;
+import snmp.datatypes.sequence.pdu.SnmpV2TrapPDU;
+
 
 
 

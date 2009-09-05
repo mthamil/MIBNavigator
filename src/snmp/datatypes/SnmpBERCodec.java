@@ -20,9 +20,16 @@
  *
  */
 
-package snmp;
+package snmp.datatypes;
 
 import java.io.*;
+
+import snmp.datatypes.sequence.SnmpSequence;
+import snmp.datatypes.sequence.pdu.SnmpBasicPDU;
+import snmp.datatypes.sequence.pdu.SnmpV1TrapPDU;
+import snmp.datatypes.sequence.pdu.SnmpV2InformRequestPDU;
+import snmp.datatypes.sequence.pdu.SnmpV2TrapPDU;
+import snmp.error.SnmpBadValueException;
 
 
 
@@ -87,7 +94,7 @@ public class SnmpBERCodec
             case SnmpGetNextRequest:
             case SnmpGetResponse:
             case SnmpSetRequest:
-                return new SnmpPDU(tlv.value, tlv.tag);
+                return new SnmpBasicPDU(tlv.value, tlv.tag);
             
             case SnmpTrap:
                 return new SnmpV1TrapPDU(tlv.value);

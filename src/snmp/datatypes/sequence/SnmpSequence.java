@@ -20,10 +20,16 @@
  *
  */
 
-package snmp;
+package snmp.datatypes.sequence;
 
 import java.util.*;
 import java.io.*;
+
+import snmp.datatypes.SnmpBERCodec;
+import snmp.datatypes.SnmpBERType;
+import snmp.datatypes.SnmpObject;
+import snmp.datatypes.SnmpTLV;
+import snmp.error.SnmpBadValueException;
 
 /**
  *  One of the most important SNMP classes. Represents a sequence of other SNMP data types.
@@ -66,7 +72,7 @@ public class SnmpSequence extends SnmpObject
      *  
      *  @throws SnmpBadValueException Indicates invalid SNMP sequence encoding supplied.
      */
-    protected SnmpSequence(byte[] encoding)
+    public SnmpSequence(byte[] encoding)
         throws SnmpBadValueException
     {
         decode(encoding);
@@ -166,7 +172,7 @@ public class SnmpSequence extends SnmpObject
     /** 
      *  Returns the BER encoding for the sequence.
      */
-    protected byte[] encode()
+    public byte[] encode()
     {
         ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
           

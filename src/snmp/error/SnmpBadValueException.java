@@ -20,18 +20,31 @@
  *
  */
 
-package snmp;
+package snmp.error;
+
 
 /**
- * Interface identifying classes that represent a PDU.
+ *  Exception thrown whenever an attempt is made to create an 
+ *  SNMPObject subclass with inappropriate data, or to set 
+ *  its value with inappropriate data.
  */
-public interface SnmpPDUMarker 
+public class SnmpBadValueException extends Exception
 {
-    /** 
-     *  Extracts the variable binding list from the PDU. Useful for retrieving
-     *  the set of (object identifier, value) pairs returned in response to a request to an SNMP
-     *  device. The variable binding list is just an SNMP sequence containing the identifier, value pairs.
-     *  @see snmp.SnmpVarBindList
+    /**
+     * Creates a new exception.
      */
-    public SnmpSequence getVarBindList();
+    public SnmpBadValueException()
+    {
+        super();
+    }
+    
+    
+    /**
+     *  Creates a new exception with message string.
+     */
+    public SnmpBadValueException(String message)
+    {
+        super(message);
+    }
+    
 }

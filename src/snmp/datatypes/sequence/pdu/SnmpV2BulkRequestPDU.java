@@ -20,11 +20,18 @@
  *
  */
 
-package snmp;
+package snmp.datatypes.sequence.pdu;
 
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Vector;
+
+import snmp.datatypes.SnmpBERType;
+import snmp.datatypes.SnmpInteger;
+import snmp.datatypes.SnmpObject;
+import snmp.datatypes.SnmpObjectIdentifier;
+import snmp.datatypes.sequence.SnmpSequence;
+import snmp.error.SnmpBadValueException;
 
 
 
@@ -123,12 +130,12 @@ import java.util.Vector;
  *                   }
  * </code>
  * </pre>
- * @see snmp.SnmpVarBindList 
- * @see snmp.SnmpPDU
+ * @see snmp.datatypes.sequence.SnmpVarBindList 
+ * @see snmp.datatypes.sequence.pdu.SnmpBasicPDU
  * @see <a href="http://www.ietf.org/rfc/rfc1905.txt">RFC 1905</a>
  */
 public class SnmpV2BulkRequestPDU extends SnmpSequence
-                                  implements SnmpPDUMarker
+                                  implements SnmpPDU
 {
     
     /**
@@ -156,7 +163,7 @@ public class SnmpV2BulkRequestPDU extends SnmpSequence
      * @throws SnmpBadValueException
      *             Indicates invalid SNMP Bulk PDU encoding supplied in enc.
      */
-    protected SnmpV2BulkRequestPDU(byte[] enc, SnmpBERType pduType)
+    public SnmpV2BulkRequestPDU(byte[] enc, SnmpBERType pduType)
         throws SnmpBadValueException
     {
         tag = pduType;
@@ -201,7 +208,7 @@ public class SnmpV2BulkRequestPDU extends SnmpSequence
     
     
     /** 
-     *  @see snmp.SnmpPDUMarker#getVarBindList
+     *  @see snmp.datatypes.sequence.pdu.SnmpPDU#getVarBindList
      */
     public SnmpSequence getVarBindList()
     {

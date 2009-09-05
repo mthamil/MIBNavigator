@@ -20,7 +20,10 @@
  *
  */
 
-package snmp;
+package snmp.datatypes.sequence.pdu;
+
+import snmp.datatypes.SnmpObjectIdentifier;
+import snmp.datatypes.SnmpTimeTicks;
 
 
 /**

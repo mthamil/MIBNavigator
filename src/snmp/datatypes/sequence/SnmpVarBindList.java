@@ -20,7 +20,7 @@
  *
  */
 
-package snmp;
+package snmp.datatypes.sequence;
 
 
 /**
@@ -47,7 +47,7 @@ package snmp;
  * </code>
  * </pre>
  * 
- * @see snmp.SnmpVariablePair
+ * @see snmp.datatypes.sequence.SnmpVariablePair
  */
 public class SnmpVarBindList extends SnmpSequence
 {

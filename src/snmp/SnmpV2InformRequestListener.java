@@ -22,6 +22,8 @@
 
 package snmp;
 
+import snmp.datatypes.sequence.pdu.SnmpV2InformRequestPDU;
+
 
 
 /**

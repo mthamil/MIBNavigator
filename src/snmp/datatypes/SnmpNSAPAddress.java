@@ -20,9 +20,11 @@
  *
  */
 
-package snmp;
+package snmp.datatypes;
 
 import java.util.Arrays;
+
+import snmp.error.SnmpBadValueException;
 
 
 /**

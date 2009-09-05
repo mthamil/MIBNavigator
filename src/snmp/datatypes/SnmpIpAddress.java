@@ -20,10 +20,12 @@
  *
  */
 
-package snmp;
+package snmp.datatypes;
 
 import java.net.Inet4Address;
 import java.util.Arrays;
+
+import snmp.error.SnmpBadValueException;
 
 
 /** 

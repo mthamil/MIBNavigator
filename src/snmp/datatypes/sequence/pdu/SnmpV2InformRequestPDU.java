@@ -20,7 +20,13 @@
  *
  */
 
-package snmp;
+package snmp.datatypes.sequence.pdu;
+
+import snmp.datatypes.SnmpBERType;
+import snmp.datatypes.SnmpObjectIdentifier;
+import snmp.datatypes.SnmpTimeTicks;
+import snmp.datatypes.sequence.SnmpSequence;
+import snmp.error.SnmpBadValueException;
 
 
 /**
@@ -135,8 +141,8 @@ package snmp;
  *                   } 
  * </code>
  * </pre>
- * @see snmp.SnmpVarBindList 
- * @see snmp.SnmpPDU
+ * @see snmp.datatypes.sequence.SnmpVarBindList 
+ * @see snmp.datatypes.sequence.pdu.SnmpBasicPDU
  * @see <a href="http://www.ietf.org/rfc/rfc1905.txt">RFC 1905</a>
  * @see <a href="http://www.ietf.org/rfc/rfc1448.txt">RFC 1448</a>
  */
@@ -171,7 +177,7 @@ public class SnmpV2InformRequestPDU extends SnmpAbstractTrapPDU
      *  
      *  @throws SnmpBadValueException Indicates invalid SNMP PDU encoding.
      */
-    protected SnmpV2InformRequestPDU(byte[] encoding) throws SnmpBadValueException
+    public SnmpV2InformRequestPDU(byte[] encoding) throws SnmpBadValueException
     {
         super(encoding, SnmpBERType.SnmpV2InformRequest);
     }

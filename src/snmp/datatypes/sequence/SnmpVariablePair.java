@@ -20,9 +20,13 @@
  *
  */
 
-package snmp;
+package snmp.datatypes.sequence;
 
 import java.util.*;
+
+import snmp.datatypes.SnmpObject;
+import snmp.datatypes.SnmpObjectIdentifier;
+import snmp.error.SnmpBadValueException;
 
 
 /**

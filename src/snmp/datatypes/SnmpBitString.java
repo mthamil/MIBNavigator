@@ -20,7 +20,8 @@
  *
  */
 
-package snmp;
+package snmp.datatypes;
+
 
 
 /**

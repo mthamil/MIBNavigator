@@ -20,10 +20,12 @@
  *
  */
 
-package snmp;
+package snmp.datatypes;
 
 import java.io.*;
 import java.util.Arrays;
+
+import snmp.error.SnmpBadValueException;
 
 /**
  *  Class representing a general string of octets.
@@ -96,7 +98,7 @@ public class SnmpOctetString extends SnmpObject
      *  Returns the BER encoding for the octet string. Note the the "value" part of the
      *  BER type,length,value triple is just the sequence of raw bytes.
      */
-    protected byte[] encode()
+    public byte[] encode()
     {
         ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
 

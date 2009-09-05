@@ -20,15 +20,21 @@
  *
  */
 
-package snmp;
+package snmp.datatypes.sequence.pdu;
 
 import java.util.*;
 import java.math.*;
 
+import snmp.datatypes.SnmpBERType;
+import snmp.datatypes.SnmpInteger;
+import snmp.datatypes.SnmpObject;
+import snmp.datatypes.SnmpObjectIdentifier;
+import snmp.datatypes.sequence.SnmpSequence;
 import snmp.error.ErrorStatus;
+import snmp.error.SnmpBadValueException;
 
 /**
- * The SNMPPDU class represents an SNMP PDU from <a href="http://www.ietf.org/rfc/rfc1157.txt">RFC 1157</a>, as indicated below.
+ * The SNMP PDU class represents an SNMP PDU from <a href="http://www.ietf.org/rfc/rfc1157.txt">RFC 1157</a>, as indicated below.
  * This forms the payload of an SNMP message.
  * <pre>
  * <code>
@@ -94,11 +100,11 @@ import snmp.error.ErrorStatus;
  *               }
  * </code>
  * </pre>
- * @see snmp.SnmpVarBindList
+ * @see snmp.datatypes.sequence.SnmpVarBindList
  * @see <a href="http://www.ietf.org/rfc/rfc1157.txt">RFC 1157</a>
  */
-public class SnmpPDU extends SnmpSequence
-                     implements SnmpPDUMarker
+public class SnmpBasicPDU extends SnmpSequence
+                     	   implements SnmpPDU
 {
     
     /**
@@ -106,7 +112,7 @@ public class SnmpPDU extends SnmpSequence
      * status, and error index, and containing the supplied SNMP sequence as
      * data.
      */
-    public SnmpPDU(SnmpBERType pduType, int requestID, ErrorStatus errorStatus, int errorIndex, SnmpSequence varList)
+    public SnmpBasicPDU(SnmpBERType pduType, int requestID, ErrorStatus errorStatus, int errorIndex, SnmpSequence varList)
         throws SnmpBadValueException
     {
         super();
@@ -125,7 +131,7 @@ public class SnmpPDU extends SnmpSequence
      *  
      *  @throws SnmpBadValueException Indicates invalid SNMP PDU encoding.
      */
-    protected SnmpPDU(byte[] encoding, SnmpBERType pduType) throws SnmpBadValueException
+    public SnmpBasicPDU(byte[] encoding, SnmpBERType pduType) throws SnmpBadValueException
     {
         tag = pduType;
         decode(encoding);
@@ -169,7 +175,7 @@ public class SnmpPDU extends SnmpSequence
     
     
     /**
-     *  @see snmp.SnmpPDUMarker#getVarBindList
+     *  @see snmp.datatypes.sequence.pdu.SnmpPDU#getVarBindList
      */
     public SnmpSequence getVarBindList()
     {

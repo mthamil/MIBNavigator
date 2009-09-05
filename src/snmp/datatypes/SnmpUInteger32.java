@@ -20,14 +20,16 @@
  *
  */
 
-package snmp;
+package snmp.datatypes;
 
 import java.math.*;
+
+import snmp.error.SnmpBadValueException;
 
 
 /** 
  *  Defines a 32-bit unsigned integer value; wraps if initialized with a larger value.
- *  @see snmp.SnmpInteger
+ *  @see snmp.datatypes.SnmpInteger
  */
 public class SnmpUInteger32 extends SnmpInteger
 {
@@ -64,7 +66,7 @@ public class SnmpUInteger32 extends SnmpInteger
      *  @throws SnmpBadValueException Indicates an invalid BER encoding supplied. Shouldn't
      *  occur in normal operation, i.e., when valid responses are received from devices.
      */
-    protected SnmpUInteger32(byte[] encodedValue)
+    public SnmpUInteger32(byte[] encodedValue)
         throws SnmpBadValueException
     {
         tag = SnmpBERType.SnmpUInteger32;

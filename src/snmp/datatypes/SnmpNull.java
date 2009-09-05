@@ -20,7 +20,9 @@
  *
  */
 
-package snmp;
+package snmp.datatypes;
+
+import snmp.error.SnmpBadValueException;
 
 
 /**
@@ -52,7 +54,7 @@ public class SnmpNull extends SnmpObject
     /**
      *  Returns BER encoding for a null object: two bytes, tag and length of 0.
      */
-    protected byte[] encode()
+    public byte[] encode()
     {
         byte[] encoding = new byte[2];
         

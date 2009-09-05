@@ -20,10 +20,12 @@
  *
  */
 
-package snmp;
+package snmp.datatypes;
 
 import java.io.*;
 import java.util.Arrays;
+
+import snmp.error.SnmpBadValueException;
 
 
 /**
@@ -70,7 +72,7 @@ public class SnmpUnknownObject extends SnmpObject
     /**
      *  Returns the BER encoding of this object.
      */
-    protected byte[] encode()
+    public byte[] encode()
     {
         ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
         

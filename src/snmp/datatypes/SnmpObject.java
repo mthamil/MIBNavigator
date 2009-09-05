@@ -20,7 +20,9 @@
  *
  */
 
-package snmp;
+package snmp.datatypes;
+
+import snmp.error.SnmpBadValueException;
 
 
 /** 
@@ -53,7 +55,7 @@ public abstract class SnmpObject
     /** 
      *  Returns the BER byte encoding (type, length, value) of an SNMP object.
      */  
-    protected abstract byte[] encode();
+    public abstract byte[] encode();
     
     
     /**

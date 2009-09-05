@@ -32,6 +32,15 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
+import snmp.datatypes.SnmpBERCodec;
+import snmp.datatypes.SnmpBERType;
+import snmp.datatypes.SnmpObject;
+import snmp.datatypes.SnmpObjectIdentifier;
+import snmp.datatypes.sequence.SnmpMessage;
+import snmp.datatypes.sequence.SnmpSequence;
+import snmp.datatypes.sequence.SnmpVariablePair;
+import snmp.datatypes.sequence.pdu.SnmpBasicPDU;
+import snmp.error.SnmpBadValueException;
 import snmp.error.SnmpGetException;
 import snmp.error.SnmpRequestException;
 import snmp.error.SnmpSetException;
@@ -181,7 +190,7 @@ public class SnmpV1SimpleAgent implements Runnable
                 byte[] encodedMessage = inPacket.getData();
                 SnmpMessage receivedMessage = new SnmpMessage(SnmpBERCodec.extractNextTLV(encodedMessage,0).value);
                 String communityName = receivedMessage.getCommunityName();
-                SnmpPDU receivedPDU = receivedMessage.getPDU();
+                SnmpBasicPDU receivedPDU = receivedMessage.getPDU();
                 SnmpBERType requestPDUType = receivedPDU.getPDUType();
                 
                 requestedVarList = receivedPDU.getVarBindList();
@@ -229,7 +238,7 @@ public class SnmpV1SimpleAgent implements Runnable
                 }
                 
                 // Construct and send response.
-                SnmpPDU pdu = new SnmpPDU(SnmpBERType.SnmpGetResponse, requestID, errorStatus, errorIndex, responseVarList);
+                SnmpBasicPDU pdu = new SnmpBasicPDU(SnmpBERType.SnmpGetResponse, requestID, errorStatus, errorIndex, responseVarList);
                 SnmpMessage message = new SnmpMessage(version, communityName, pdu);
                 byte[] messageEncoding = message.encode();
                 
@@ -264,7 +273,7 @@ public class SnmpV1SimpleAgent implements Runnable
      * Passes the received PDU and community name to the processRequest method of any listeners;
      * handles slightly differently depending on whether the request is a get-next, or a get or set.
      */
-    private void handleRequest(SnmpPDU receivedPDU, String communityName, SnmpBERType requestPDUType)
+    private void handleRequest(SnmpBasicPDU receivedPDU, String communityName, SnmpBERType requestPDUType)
         throws SnmpBadValueException, SnmpGetException, SnmpSetException
     {
         // Pass the received PDU and community name to any registered listeners.

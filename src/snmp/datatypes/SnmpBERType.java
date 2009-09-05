@@ -20,7 +20,7 @@
  *
  */
 
-package snmp;
+package snmp.datatypes;
 
 /**
  * A constant that identifies an SNMP BER data type.

@@ -26,6 +26,13 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
+import snmp.datatypes.SnmpBERCodec;
+import snmp.datatypes.sequence.SnmpMessage;
+import snmp.datatypes.sequence.pdu.SnmpV1TrapPDU;
+import snmp.datatypes.sequence.pdu.SnmpV2InformRequestPDU;
+import snmp.datatypes.sequence.pdu.SnmpV2TrapPDU;
+import snmp.error.SnmpBadValueException;
+
 
 
 

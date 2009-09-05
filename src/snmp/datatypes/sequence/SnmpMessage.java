@@ -20,11 +20,18 @@
  *
  */
 
-package snmp;
+package snmp.datatypes.sequence;
 
 import java.util.*;
 
-
+import snmp.SnmpVersion;
+import snmp.datatypes.SnmpInteger;
+import snmp.datatypes.SnmpObject;
+import snmp.datatypes.SnmpOctetString;
+import snmp.datatypes.sequence.pdu.SnmpBasicPDU;
+import snmp.datatypes.sequence.pdu.SnmpV1TrapPDU;
+import snmp.datatypes.sequence.pdu.SnmpV2TrapPDU;
+import snmp.error.SnmpBadValueException;
 
 
 /**
@@ -83,7 +90,7 @@ public class SnmpMessage extends SnmpSequence
      * Creates an SNMP message with specified version, community, and PDU. Use
      * SNMPv2 for enhanced capabilities provided through RFC 1157.
      */
-    public SnmpMessage(SnmpVersion version, String community, SnmpPDU pdu)
+    public SnmpMessage(SnmpVersion version, String community, SnmpBasicPDU pdu)
     {
         super();
         List<SnmpObject> contents = new Vector<SnmpObject>();
@@ -153,7 +160,7 @@ public class SnmpMessage extends SnmpSequence
      *  
      *  @throws SnmpBadValueException Indicates invalid SNMP message encoding supplied.
      */
-    protected SnmpMessage(byte[] enc)
+    public SnmpMessage(byte[] enc)
         throws SnmpBadValueException
     {
         super(enc);
@@ -170,7 +177,7 @@ public class SnmpMessage extends SnmpSequence
         if (!(contents.get(1) instanceof SnmpOctetString))
             throw new SnmpBadValueException("Bad SNMP message: bad community name");
         
-        if (!(contents.get(2) instanceof SnmpPDU) && !(contents.get(2) instanceof SnmpV1TrapPDU) 
+        if (!(contents.get(2) instanceof SnmpBasicPDU) && !(contents.get(2) instanceof SnmpV1TrapPDU) 
                 && !(contents.get(2) instanceof SnmpV2TrapPDU))
             throw new SnmpBadValueException("Bad SNMP message: bad PDU");
         
@@ -192,14 +199,14 @@ public class SnmpMessage extends SnmpSequence
      *  Returns the PDU contained in the SNMP message. The PDU is the third component
      *  of the sequence, after the version and community name.
      */
-    public SnmpPDU getPDU() throws SnmpBadValueException
+    public SnmpBasicPDU getPDU() throws SnmpBadValueException
     {
         Object pdu = sequence.get(2);
         
-        if (!(pdu instanceof SnmpPDU))
+        if (!(pdu instanceof SnmpBasicPDU))
             throw new SnmpBadValueException("Wrong PDU type in message: expected SNMPPDU, have " + pdu.getClass().toString());
         
-        return (SnmpPDU)pdu;
+        return (SnmpBasicPDU)pdu;
     }
     
     

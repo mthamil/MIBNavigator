@@ -20,7 +20,9 @@
  *
  */
 
-package snmp;
+package snmp.datatypes;
+
+import snmp.error.SnmpBadValueException;
 
 
 /**
@@ -62,7 +64,7 @@ public class SnmpTimeTicks extends SnmpInteger
     }
 
 
-    protected SnmpTimeTicks(byte[] encodedValue)
+    public SnmpTimeTicks(byte[] encodedValue)
         throws SnmpBadValueException
     {
         super(encodedValue);

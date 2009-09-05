@@ -20,17 +20,19 @@
  *
  */
 
-package snmp;
+package snmp.datatypes;
 
 import java.math.*;
+
+import snmp.error.SnmpBadValueException;
 
 
 /** 
  *  Defines a 32-bit counter, whose value wraps if initialized with a larger
  *  value. For an indicator which "pegs" at its maximum value if initialized with
  *  a larger value, use SNMPGauge32; for a counter with a wider range, use SNMPCounter64.
- *  @see snmp.SnmpGauge32
- *  @see snmp.SnmpCounter64
+ *  @see snmp.datatypes.SnmpGauge32
+ *  @see snmp.datatypes.SnmpCounter64
  */
 public class SnmpCounter32 extends SnmpInteger
 {
@@ -64,7 +66,7 @@ public class SnmpCounter32 extends SnmpInteger
      *  @throws SnmpBadValueException Indicates an invalid BER encoding supplied. Shouldn't
      *  occur in normal operation, i.e., when valid responses are received from devices.
      */
-    protected SnmpCounter32(byte[] encodedValue)
+    public SnmpCounter32(byte[] encodedValue)
         throws SnmpBadValueException
     {
         tag = SnmpBERType.SnmpCounter32;

@@ -25,6 +25,17 @@ package snmp;
 import java.io.*;
 import java.net.*;
 
+import snmp.datatypes.SnmpBERCodec;
+import snmp.datatypes.SnmpBERType;
+import snmp.datatypes.SnmpNull;
+import snmp.datatypes.SnmpObject;
+import snmp.datatypes.SnmpObjectIdentifier;
+import snmp.datatypes.sequence.SnmpMessage;
+import snmp.datatypes.sequence.SnmpSequence;
+import snmp.datatypes.sequence.SnmpVarBindList;
+import snmp.datatypes.sequence.SnmpVariablePair;
+import snmp.datatypes.sequence.pdu.SnmpBasicPDU;
+import snmp.error.SnmpBadValueException;
 import snmp.error.SnmpGetException;
 import snmp.error.SnmpSetException;
 import snmp.error.ErrorStatus;
@@ -171,7 +182,7 @@ public class SnmpV1Communicator
             varList.addSNMPObject(nextPair);
         }
 
-        SnmpPDU pdu = new SnmpPDU(messageType, requestID, errorStatus, errorIndex, varList);
+        SnmpBasicPDU pdu = new SnmpBasicPDU(messageType, requestID, errorStatus, errorIndex, varList);
         SnmpMessage message = new SnmpMessage(version, community, pdu);
         return message;
     }
@@ -211,7 +222,7 @@ public class SnmpV1Communicator
 
         SnmpSequence varList = new SnmpSequence();
         varList.addSNMPObject(nextPair);
-        SnmpPDU pdu = new SnmpPDU(messageType, requestID, errorStatus, errorIndex, varList);
+        SnmpBasicPDU pdu = new SnmpBasicPDU(messageType, requestID, errorStatus, errorIndex, varList);
 
         SnmpMessage message = new SnmpMessage(version, community, pdu);
         return message;
@@ -288,7 +299,7 @@ public class SnmpV1Communicator
 
             byte[] encodedMessage = inPacket.getData();
             SnmpMessage receivedMessage = new SnmpMessage(SnmpBERCodec.extractNextTLV(encodedMessage,0).value);
-            SnmpPDU receivedPDU = receivedMessage.getPDU();
+            SnmpBasicPDU receivedPDU = receivedMessage.getPDU();
 
             // Check request identifier; if incorrect, just ignore packet and continue waiting.
             if (receivedPDU.getRequestID() == requestID)
@@ -384,7 +395,7 @@ public class SnmpV1Communicator
 
             byte[] encodedMessage = inPacket.getData();
             SnmpMessage receivedMessage = new SnmpMessage(SnmpBERCodec.extractNextTLV(encodedMessage,0).value);
-            SnmpPDU receivedPDU = receivedMessage.getPDU();
+            SnmpBasicPDU receivedPDU = receivedMessage.getPDU();
 
             // Check request identifier; if incorrect, just ignore packet and continue waiting.
             if (receivedPDU.getRequestID() == requestID)
@@ -480,7 +491,7 @@ public class SnmpV1Communicator
             byte[] encodedMessage = inPacket.getData();
 
             SnmpMessage receivedMessage = new SnmpMessage(SnmpBERCodec.extractNextTLV(encodedMessage,0).value);
-            SnmpPDU receivedPDU = receivedMessage.getPDU();
+            SnmpBasicPDU receivedPDU = receivedMessage.getPDU();
             errorStatus = receivedPDU.getErrorStatus();
 
             // Check request identifier; if incorrect, just ignore packet and continue waiting.
@@ -552,7 +563,7 @@ public class SnmpV1Communicator
                 varList.addSNMPObject(nextPair);
             }
 
-            SnmpPDU pdu = new SnmpPDU(SnmpBERType.SnmpGetNextRequest, requestID, errorStatus, errorIndex, varList);
+            SnmpBasicPDU pdu = new SnmpBasicPDU(SnmpBERType.SnmpGetNextRequest, requestID, errorStatus, errorIndex, varList);
             SnmpMessage message = new SnmpMessage(version, community, pdu);
 
             byte[] messageEncoding = message.encode();
@@ -565,7 +576,7 @@ public class SnmpV1Communicator
 
             byte[] encodedMessage = inPacket.getData();
             SnmpMessage receivedMessage = new SnmpMessage(SnmpBERCodec.extractNextTLV(encodedMessage,0).value);
-            SnmpPDU receivedPDU = receivedMessage.getPDU();
+            SnmpBasicPDU receivedPDU = receivedMessage.getPDU();
 
             // Check request identifier; if incorrect, just ignore packet and continue waiting.
             if (receivedPDU.getRequestID() == requestID)

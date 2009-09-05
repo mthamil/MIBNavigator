@@ -20,10 +20,20 @@
  *
  */
 
-package snmp;
+package snmp.datatypes.sequence.pdu;
 
 import java.util.*;
 import java.math.*;
+
+import snmp.datatypes.SnmpBERType;
+import snmp.datatypes.SnmpInteger;
+import snmp.datatypes.SnmpIpAddress;
+import snmp.datatypes.SnmpObject;
+import snmp.datatypes.SnmpObjectIdentifier;
+import snmp.datatypes.SnmpTimeTicks;
+import snmp.datatypes.sequence.SnmpSequence;
+import snmp.datatypes.sequence.SnmpVarBindList;
+import snmp.error.SnmpBadValueException;
 
 
 /**
@@ -103,12 +113,12 @@ import java.math.*;
  *                                }
  * </code>
  * </pre>
- * @see snmp.SnmpVarBindList 
- * @see snmp.SnmpPDU
+ * @see snmp.datatypes.sequence.SnmpVarBindList 
+ * @see snmp.datatypes.sequence.pdu.SnmpBasicPDU
  * @see <a href="http://www.ietf.org/rfc/rfc1157.txt">RFC 1157</a>
  */
 public class SnmpV1TrapPDU extends SnmpSequence
-                           implements SnmpPDUMarker
+                            implements SnmpPDU
 {
 	
 	/**
@@ -170,7 +180,7 @@ public class SnmpV1TrapPDU extends SnmpSequence
      *  
      *  @throws SnmpBadValueException Indicates invalid SNMP PDU encoding supplied in enc.
      */
-    protected SnmpV1TrapPDU(byte[] enc) throws SnmpBadValueException
+    public SnmpV1TrapPDU(byte[] enc) throws SnmpBadValueException
     {
         tag = SnmpBERType.SnmpTrap;
         decode(enc);
@@ -219,7 +229,7 @@ public class SnmpV1TrapPDU extends SnmpSequence
     
     
     /** 
-     *  @see snmp.SnmpPDUMarker#getVarBindList
+     *  @see snmp.datatypes.sequence.pdu.SnmpPDU#getVarBindList
      */
     public SnmpSequence getVarBindList()
     {

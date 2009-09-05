@@ -22,6 +22,8 @@
 
 package snmp;
 
+import snmp.datatypes.sequence.SnmpSequence;
+import snmp.datatypes.sequence.pdu.SnmpBasicPDU;
 import snmp.error.SnmpGetException;
 import snmp.error.SnmpSetException;
 
@@ -57,7 +59,7 @@ public interface SnmpRequestListener
      *   is valid for the supplied community name.
      *   
      */
-    public SnmpSequence processRequest(SnmpPDU requestPDU, String communityName)
+    public SnmpSequence processRequest(SnmpBasicPDU requestPDU, String communityName)
         throws SnmpGetException, SnmpSetException;
         
     
@@ -95,7 +97,7 @@ public interface SnmpRequestListener
      *   is valid for the supplied community name.
      *   
      */
-    public SnmpSequence processGetNextRequest(SnmpPDU requestPDU, String communityName)
+    public SnmpSequence processGetNextRequest(SnmpBasicPDU requestPDU, String communityName)
         throws SnmpGetException;
     
 }

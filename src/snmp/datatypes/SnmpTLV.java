@@ -20,14 +20,15 @@
  *
  */
 
-package snmp;
+package snmp.datatypes;
+
 
 /** 
  *  Utility class holding components of an ASN.1 (type, length, value) triple.
  */
-class SnmpTLV
+public class SnmpTLV
 {
-    SnmpBERType tag;
-    int length;
-    byte[] value;
+    public SnmpBERType tag;
+    public int length;
+    public byte[] value;
 }

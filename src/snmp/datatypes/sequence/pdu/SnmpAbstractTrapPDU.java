@@ -20,16 +20,23 @@
  *
  */
 
-package snmp;
+package snmp.datatypes.sequence.pdu;
 
+import snmp.datatypes.SnmpBERType;
+import snmp.datatypes.SnmpObject;
+import snmp.datatypes.SnmpObjectIdentifier;
+import snmp.datatypes.SnmpTimeTicks;
+import snmp.datatypes.sequence.SnmpSequence;
+import snmp.datatypes.sequence.SnmpVariablePair;
 import snmp.error.ErrorStatus;
+import snmp.error.SnmpBadValueException;
 
 
 /**
  * Abstract class that implements basic recent version trap PDU functions.
  */
-public class SnmpAbstractTrapPDU extends SnmpPDU
-								 implements SnmpTrapPDU
+public class SnmpAbstractTrapPDU extends SnmpBasicPDU
+								  implements SnmpTrapPDU
 {
 
 	/**
@@ -71,7 +78,7 @@ public class SnmpAbstractTrapPDU extends SnmpPDU
      *  @throws SnmpBadValueException Indicates invalid SNMP PDU encoding supplied 
      *  in encoding.
      */
-    protected SnmpAbstractTrapPDU(byte[] encoding, SnmpBERType type) throws SnmpBadValueException
+    public SnmpAbstractTrapPDU(byte[] encoding, SnmpBERType type) throws SnmpBadValueException
     {
         super(encoding, type);
         
@@ -103,7 +110,7 @@ public class SnmpAbstractTrapPDU extends SnmpPDU
     
 
 	/**
-	 * @see snmp.SnmpTrapPDU#getSNMPTrapOID()
+	 * @see snmp.datatypes.sequence.pdu.SnmpTrapPDU#getSNMPTrapOID()
 	 */
 	public SnmpObjectIdentifier getSNMPTrapOID()
 	{
@@ -113,7 +120,7 @@ public class SnmpAbstractTrapPDU extends SnmpPDU
 	}
 
 	/**
-	 * @see snmp.SnmpTrapPDU#getSysUptime()
+	 * @see snmp.datatypes.sequence.pdu.SnmpTrapPDU#getSysUptime()
 	 */
 	public SnmpTimeTicks getSysUptime()
 	{

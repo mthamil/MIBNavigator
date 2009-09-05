@@ -20,10 +20,12 @@
  *
  */
 
-package snmp;
+package snmp.datatypes;
 
 import java.io.*;
 import java.util.Arrays;
+
+import snmp.error.SnmpBadValueException;
 
 /**
  *  Class representing ASN.1 object identifiers. These are unbounded sequences (arrays) of
@@ -107,7 +109,7 @@ public class SnmpObjectIdentifier extends SnmpObject
      *  @throws SnmpBadValueException Indicates an invalid BER encoding supplied. Shouldn't
      *  occur in normal operation, i.e., when valid responses are received from devices.
      */
-    protected SnmpObjectIdentifier(byte[] encoding)
+    public SnmpObjectIdentifier(byte[] encoding)
         throws SnmpBadValueException
     {
         extractFromBEREncoding(encoding);
@@ -173,7 +175,7 @@ public class SnmpObjectIdentifier extends SnmpObject
     /**
      *  Returns the BER encoding for this object identifier.
      */
-    protected byte[] encode()
+    public byte[] encode()
     {
         ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
 
