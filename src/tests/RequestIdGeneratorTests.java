@@ -26,15 +26,23 @@ import static org.hamcrest.core.Is.*;
 
 import org.junit.Test;
 
-import snmp.SnmpVersion;
+import snmp.RequestIdGenerator;
 
-public class SnmpVersionTests
+
+public class RequestIdGeneratorTests
 {
 	@Test
-	public void testVerifySnmpVersionOrdinals()
+	public void testGenerator() 
 	{
-		assertThat(SnmpVersion.SNMPv1.ordinal(), is(0));
-		assertThat(SnmpVersion.SNMPv2.ordinal(), is(1));
+		RequestIdGenerator generator = new RequestIdGenerator();
+		Integer next = generator.next();
+		
+		assertThat(generator.current().intValue(), is(next.intValue()));
+		assertThat(next.intValue(), is(1));
+		
+		next = generator.next();
+		
+		assertThat(generator.current().intValue(), is(next.intValue()));
+		assertThat(next.intValue(), is(2));
 	}
-
 }

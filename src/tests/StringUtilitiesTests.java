@@ -22,6 +22,7 @@
 package tests;
 
 import static org.junit.Assert.*;
+import static org.hamcrest.core.Is.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,7 +39,7 @@ public class StringUtilitiesTests
 	{
 		List<String> list = new ArrayList<String>();
 		String joinedList = StringUtilities.join(",", list);
-		assertEquals("", joinedList);
+		assertThat(joinedList, is(""));
 	}
 	
 	@Test
@@ -46,7 +47,7 @@ public class StringUtilitiesTests
 	{
 		List<String> list = Arrays.asList("test1");
 		String joinedList = StringUtilities.join(",", list);
-		assertEquals("test1", joinedList);
+		assertThat(joinedList, is("test1"));
 	}
 
 	@Test
@@ -54,7 +55,7 @@ public class StringUtilitiesTests
 	{
 		List<String> list = Arrays.asList("test1", "test2");
 		String joinedList = StringUtilities.join(",", list);
-		assertEquals("test1,test2", joinedList);
+		assertThat(joinedList, is("test1,test2"));
 	}
 		
 	@Test
@@ -62,7 +63,7 @@ public class StringUtilitiesTests
 	{
 		String[] array = new String[] { "test1", "test2", "test3" };
 		String joinedList = StringUtilities.join("+", array);
-		assertEquals("test1+test2+test3", joinedList);
+		assertThat(joinedList, is("test1+test2+test3"));
 	}
 	
 	@Test
@@ -71,19 +72,19 @@ public class StringUtilitiesTests
 		List<String> list = Arrays.asList("1", "2", "3", "4", "5");
 		int maxItems = Math.min(list.size(), 3);
 		String joinedSublist = StringUtilities.join(",", list.subList(0, maxItems));
-		assertEquals("1,2,3", joinedSublist);
+		assertThat(joinedSublist, is("1,2,3"));
 		
 		maxItems = Math.min(list.size(), 8);
 		joinedSublist = StringUtilities.join(",", list.subList(0, maxItems));
-		assertEquals("1,2,3,4,5", joinedSublist);
+		assertThat(joinedSublist, is("1,2,3,4,5"));
 		
 		maxItems = Math.min(list.size(), 0);
 		joinedSublist = StringUtilities.join(",", list.subList(0, maxItems));
-		assertEquals("", joinedSublist);
+		assertThat(joinedSublist, is(""));
 		
 		list = new ArrayList<String>();
 		maxItems = Math.min(list.size(), 3);
 		joinedSublist = StringUtilities.join(",", list.subList(0, maxItems));
-		assertEquals("", joinedSublist);
+		assertThat(joinedSublist, is(""));
 	}
 }
