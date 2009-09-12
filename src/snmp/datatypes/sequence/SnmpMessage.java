@@ -255,5 +255,5 @@ public class SnmpMessage extends SnmpSequence
         
         return ((SnmpOctetString)communityName).toString();
     }
-    
+        
 }

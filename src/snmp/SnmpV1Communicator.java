@@ -25,15 +25,12 @@ package snmp;
 import java.io.*;
 import java.net.*;
 
-import snmp.datatypes.SnmpBERCodec;
 import snmp.datatypes.SnmpBERType;
-import snmp.datatypes.SnmpNull;
 import snmp.datatypes.SnmpObject;
 import snmp.datatypes.SnmpObjectIdentifier;
 import snmp.datatypes.sequence.SnmpMessage;
 import snmp.datatypes.sequence.SnmpSequence;
 import snmp.datatypes.sequence.SnmpVarBindList;
-import snmp.datatypes.sequence.SnmpVariablePair;
 import snmp.datatypes.sequence.pdu.SnmpBasicPDU;
 import snmp.error.SnmpBadValueException;
 import snmp.error.SnmpGetException;
@@ -59,8 +56,9 @@ public class SnmpV1Communicator
     private InetAddress hostAddress;
     private String community;
     private DatagramSocket dSocket;
-
-    public int requestID = 1;
+    
+    private SnmpPacketProcessor packetProcessor;
+    private SnmpMessageFactory messageFactory;
 
     /**
      *  Constructs a new communication object to communicate with the specified host using the
@@ -77,6 +75,12 @@ public class SnmpV1Communicator
 
         dSocket = new DatagramSocket();
         dSocket.setSoTimeout(15000);    //15 seconds
+        
+        packetProcessor = new SnmpPacketProcessor();
+        
+        messageFactory = new SnmpMessageFactory(new RequestIdGenerator());
+        messageFactory.setCommunity(community);
+        messageFactory.setVersion(version);
     }
 
     
@@ -138,97 +142,6 @@ public class SnmpV1Communicator
         dSocket.close();
     }
 
-    
-    /**
-     * Constructs an SNMPMessage with SNMPNulls for its values.
-     * 
-     * @param itemIds the OIDs to use in the message
-     * @param messageType the type of message
-     * @return an SNMPMessage
-     */
-    private SnmpMessage createMessage(String[] itemIds, SnmpBERType messageType)
-        throws SnmpBadValueException
-    {
-        // Initialize the null values array.
-        SnmpObject[] values = new SnmpObject[itemIds.length];
-        //Arrays.fill(values, new SNMPNull());
-        for (int i = 0; i < values.length; i++)
-            values[i] = new SnmpNull();
-
-        return this.createMessage(itemIds, messageType, values);
-    }
-    
-    
-    /**
-     * Constructs an SNMPMessage with the given SNMPObject array for its values.
-     * 
-     * @param itemIds the OIDs to use in the message
-     * @param messageType the type of message
-     * @param newValues the corresponding SNMPObjects to use in the message
-     * @return an SNMPMessage
-     */
-    private SnmpMessage createMessage(String[] itemIds, SnmpBERType messageType, SnmpObject[] newValues)
-        throws SnmpBadValueException
-    {
-        SnmpSequence varList = new SnmpSequence();
-
-        ErrorStatus errorStatus = ErrorStatus.NoError;
-        int errorIndex = 0;
-
-        for (int i = 0; i < itemIds.length; i++)
-        {
-            SnmpObjectIdentifier requestedObjectIdentifier = new SnmpObjectIdentifier(itemIds[i]);
-            SnmpVariablePair nextPair = new SnmpVariablePair(requestedObjectIdentifier, newValues[i]);
-            varList.addSNMPObject(nextPair);
-        }
-
-        SnmpBasicPDU pdu = new SnmpBasicPDU(messageType, requestID, errorStatus, errorIndex, varList);
-        SnmpMessage message = new SnmpMessage(version, community, pdu);
-        return message;
-    }
-    
-    
-    /**
-     * Constructs an SNMPMessage with an SNMPNull as its value.
-     * 
-     * @param requestedOid The OID to use in the message.
-     * @param messageType The byte tag indicating the type of PDU as found in SNMPBERCodec.
-     * @return An SNMPMessage.
-     * @throws SnmpBadValueException
-     */
-    private SnmpMessage createMessage(SnmpObjectIdentifier requestedOid, SnmpBERType messageType) 
-        throws SnmpBadValueException
-    {
-        return this.createMessage(requestedOid, messageType, new SnmpNull());
-    }
-    
-    
-    /**
-     * Constructs an SNMPMessage with a specified SNMPObject as its value.
-     * 
-     * @param requestedOid The OID to use in the message.
-     * @param messageType The byte tag indicating the type of PDU as found in SNMPBERCodec.
-     * @param newValue The SNMPObject to use in the message.
-     * @return An SNMPMessage.
-     * @throws SnmpBadValueException
-     */
-    private SnmpMessage createMessage(SnmpObjectIdentifier requestedOid, SnmpBERType messageType, SnmpObject newValue)
-        throws SnmpBadValueException
-    {
-    	ErrorStatus errorStatus = ErrorStatus.NoError;
-        int errorIndex = 0;
-
-        SnmpVariablePair nextPair = new SnmpVariablePair(requestedOid, newValue);
-
-        SnmpSequence varList = new SnmpSequence();
-        varList.addSNMPObject(nextPair);
-        SnmpBasicPDU pdu = new SnmpBasicPDU(messageType, requestID, errorStatus, errorIndex, varList);
-
-        SnmpMessage message = new SnmpMessage(version, community, pdu);
-        return message;
-    }
-    
-
 
     /**
      *  Retrieves the MIB variable values corresponding to the object identifiers
@@ -244,7 +157,7 @@ public class SnmpV1Communicator
     public SnmpVarBindList getMIBEntry(String ... itemIds)
         throws IOException, SnmpBadValueException, SnmpGetException
     {
-        return this.getMIBEntry(itemIds, SnmpBERType.SnmpGetRequest);
+        return this.getMIBEntry(SnmpBERType.SnmpGetRequest, itemIds);
     }
 
 
@@ -262,34 +175,32 @@ public class SnmpV1Communicator
     public SnmpVarBindList getNextMIBEntry(String ... itemIds)
         throws IOException, SnmpBadValueException, SnmpGetException
     {
-        return this.getMIBEntry(itemIds, SnmpBERType.SnmpGetNextRequest);
+        return this.getMIBEntry(SnmpBERType.SnmpGetNextRequest, itemIds);
     }
 
     
     /**
      *  Retrieves values for an array of String object identifiers. Processing varies slightly based on whether 
      *  the request type is a GetRequest or a GetNextRequest.
-     * 
+     *  @param getRequestType the BER type identifier of the request.  Must be either GET_REQUEST or GET_NEXT_REQUEST.
      *  @param itemIds one or more OIDs in dotted string form
-     *  @param getType the BER type identifier of the request.  Must be either GET_REQUEST or GET_NEXT_REQUEST.
+     * 
      *  @throws IOException when a timeout is experienced while waiting for response to request.
      *  @throws SnmpBadValueException
      *  @throws SnmpGetException Thrown if OID following one of supplied OIDs has value that can't be retrieved
      */
-    private SnmpVarBindList getMIBEntry(String[] itemIds, SnmpBERType getType)
+    private SnmpVarBindList getMIBEntry(SnmpBERType getRequestType, String ... itemIds)
         throws IOException, SnmpBadValueException, SnmpGetException
     {
-        if (getType != SnmpBERType.SnmpGetRequest && getType != SnmpBERType.SnmpGetNextRequest)
-            throw new SnmpBadValueException("Bad request type: " + getType);
+        if (getRequestType != SnmpBERType.SnmpGetRequest && getRequestType != SnmpBERType.SnmpGetNextRequest)
+            throw new SnmpBadValueException("Bad request type: " + getRequestType);
         
         // Send request to specified host to retrieve values of object identifiers.
 
         SnmpVarBindList retrievedVars = new SnmpVarBindList();
         
-        SnmpMessage message = this.createMessage(itemIds, getType);
-        byte[] messageEncoding = message.encode();
-
-        DatagramPacket outPacket = new DatagramPacket(messageEncoding, messageEncoding.length, hostAddress, port);
+        SnmpMessage message = messageFactory.createMessage(getRequestType, itemIds);
+        DatagramPacket outPacket = packetProcessor.createPacket(message, hostAddress, port);
         dSocket.send(outPacket);
 
         while (true)    // wait until receive reply for requestID & OID (or error)
@@ -297,12 +208,11 @@ public class SnmpV1Communicator
             DatagramPacket inPacket = new DatagramPacket(new byte[receiveBufferSize], receiveBufferSize);
             dSocket.receive(inPacket);
 
-            byte[] encodedMessage = inPacket.getData();
-            SnmpMessage receivedMessage = new SnmpMessage(SnmpBERCodec.extractNextTLV(encodedMessage,0).value);
+            SnmpMessage receivedMessage = packetProcessor.createMessage(inPacket);
             SnmpBasicPDU receivedPDU = receivedMessage.getPDU();
 
             // Check request identifier; if incorrect, just ignore packet and continue waiting.
-            if (receivedPDU.getRequestID() == requestID)
+            if (receivedPDU.getRequestID() == messageFactory.getCurrentRequestId())
             {
                 // Check error status; if retrieval problem, throw SNMPGetException.
                 if (receivedPDU.getErrorStatus() != ErrorStatus.NoError)
@@ -311,7 +221,7 @@ public class SnmpV1Communicator
                     int errorIndex = receivedPDU.getErrorIndex();
                     
                     String msgPrefix = "OID ";
-                    if (getType == SnmpBERType.SnmpGetNextRequest)
+                    if (getRequestType == SnmpBERType.SnmpGetNextRequest)
                         msgPrefix = msgPrefix + "following ";
   
                     throw new SnmpGetException(msgPrefix + itemIds[errorIndex - 1] + " not available for retrieval", 
@@ -324,11 +234,9 @@ public class SnmpV1Communicator
                 for (int i = 0; i < varList.size(); i++)
                 {
                     SnmpSequence newPair = (SnmpSequence)(varList.getSNMPObjectAt(i));
-
                     SnmpObjectIdentifier newObjectIdentifier = (SnmpObjectIdentifier)(newPair.getSNMPObjectAt(0));
-                    SnmpObject newValue = newPair.getSNMPObjectAt(1);
 
-                    if (getType == SnmpBERType.SnmpGetRequest && !(newObjectIdentifier.toString().equals(itemIds[i])))
+                    if (getRequestType == SnmpBERType.SnmpGetRequest && !(newObjectIdentifier.toString().equals(itemIds[i])))
                     {
                         // wrong OID; throw GetException
                         throw new SnmpGetException("OID " + itemIds[i] + " expected at index " + i + ", OID " + newObjectIdentifier 
@@ -342,7 +250,6 @@ public class SnmpV1Communicator
             }
         }
 
-        requestID++;
         return retrievedVars;
     }
     
@@ -382,10 +289,9 @@ public class SnmpV1Communicator
 
         SnmpVarBindList retrievedVars = new SnmpVarBindList();
 
-        SnmpMessage message = this.createMessage(itemIds, SnmpBERType.SnmpSetRequest, newValues);
-        byte[] messageEncoding = message.encode();
+        SnmpMessage message = messageFactory.createMessage(SnmpBERType.SnmpSetRequest, itemIds, newValues);
 
-        DatagramPacket outPacket = new DatagramPacket(messageEncoding, messageEncoding.length, hostAddress, port);
+        DatagramPacket outPacket = packetProcessor.createPacket(message, hostAddress, port);
         dSocket.send(outPacket);
 
         while (true)    // wait until receive reply for correct OID (or error)
@@ -393,12 +299,11 @@ public class SnmpV1Communicator
             DatagramPacket inPacket = new DatagramPacket(new byte[receiveBufferSize], receiveBufferSize);
             dSocket.receive(inPacket);
 
-            byte[] encodedMessage = inPacket.getData();
-            SnmpMessage receivedMessage = new SnmpMessage(SnmpBERCodec.extractNextTLV(encodedMessage,0).value);
+            SnmpMessage receivedMessage = packetProcessor.createMessage(inPacket);
             SnmpBasicPDU receivedPDU = receivedMessage.getPDU();
 
             // Check request identifier; if incorrect, just ignore packet and continue waiting.
-            if (receivedPDU.getRequestID() == requestID)
+            if (receivedPDU.getRequestID() == messageFactory.getCurrentRequestId())
             {
                 // Check error status; if retrieval problem, throw SNMPSetException.
                 if (receivedPDU.getErrorStatus() != ErrorStatus.NoError)
@@ -451,7 +356,6 @@ public class SnmpV1Communicator
             }
         }
 
-        requestID++;
         return retrievedVars;
     }
 
@@ -479,23 +383,20 @@ public class SnmpV1Communicator
         ErrorStatus errorStatus = ErrorStatus.NoError;
         while (errorStatus == ErrorStatus.NoError)
         {
-            SnmpMessage message = this.createMessage(requestedOid, SnmpBERType.SnmpGetNextRequest);
-            byte[] messageEncoding = message.encode();
+            SnmpMessage message = messageFactory.createMessage(SnmpBERType.SnmpGetNextRequest, requestedOid);
 
-            DatagramPacket outPacket = new DatagramPacket(messageEncoding, messageEncoding.length, hostAddress, port);
+            DatagramPacket outPacket = packetProcessor.createPacket(message, hostAddress, port);
             dSocket.send(outPacket);
 
             DatagramPacket inPacket = new DatagramPacket(new byte[receiveBufferSize], receiveBufferSize);
             dSocket.receive(inPacket);
 
-            byte[] encodedMessage = inPacket.getData();
-
-            SnmpMessage receivedMessage = new SnmpMessage(SnmpBERCodec.extractNextTLV(encodedMessage,0).value);
+            SnmpMessage receivedMessage = packetProcessor.createMessage(inPacket);
             SnmpBasicPDU receivedPDU = receivedMessage.getPDU();
             errorStatus = receivedPDU.getErrorStatus();
 
             // Check request identifier; if incorrect, just ignore packet and continue waiting.
-            if (receivedPDU.getRequestID() == requestID && errorStatus == ErrorStatus.NoError)
+            if (receivedPDU.getRequestID() == messageFactory.getCurrentRequestId() && errorStatus == ErrorStatus.NoError)
             {
                 // Check error status; if retrieval problem, just break - could be there are no additional OIDs.
                 //if (receivedPDU.getErrorStatus() != 0)
@@ -503,9 +404,7 @@ public class SnmpV1Communicator
 
                 SnmpSequence varList = receivedPDU.getVarBindList();
                 SnmpSequence newPair = (SnmpSequence)(varList.getSNMPObjectAt(0));
-
                 SnmpObjectIdentifier nextOid = (SnmpObjectIdentifier)(newPair.getSNMPObjectAt(0));
-                SnmpObject newValue = newPair.getSNMPObjectAt(1);
 
                 // Now see if retrieved ID starts with table base; if not, done with table - break.
                 String newOIDString = nextOid.toString();
@@ -515,7 +414,6 @@ public class SnmpV1Communicator
                 retrievedVars.addSNMPObject(newPair);
 
                 requestedOid = nextOid;
-                requestID++;
             }
         }
 
@@ -548,38 +446,26 @@ public class SnmpV1Communicator
         ErrorStatus errorStatus = ErrorStatus.NoError;
         int errorIndex = 0;
 
-        SnmpObjectIdentifier[] requestedObjectIdentifier = new SnmpObjectIdentifier[baseIds.length];
+        SnmpObjectIdentifier[] requestedObjectIdentifiers = new SnmpObjectIdentifier[baseIds.length];
         for (int i = 0; i < baseIds.length; i++)
-            requestedObjectIdentifier[i] = new SnmpObjectIdentifier(baseIds[i]);
+        	requestedObjectIdentifiers[i] = new SnmpObjectIdentifier(baseIds[i]);
 
         retrievalLoop:
         while (errorStatus == ErrorStatus.NoError)
-        {
-            SnmpSequence varList = new SnmpSequence();
+        {           
+            SnmpMessage message = messageFactory.createMessage(SnmpBERType.SnmpGetNextRequest, errorStatus, errorIndex, requestedObjectIdentifiers);
 
-            for (int i = 0; i < requestedObjectIdentifier.length; i++)
-            {
-                SnmpVariablePair nextPair = new SnmpVariablePair(requestedObjectIdentifier[i], new SnmpNull());
-                varList.addSNMPObject(nextPair);
-            }
-
-            SnmpBasicPDU pdu = new SnmpBasicPDU(SnmpBERType.SnmpGetNextRequest, requestID, errorStatus, errorIndex, varList);
-            SnmpMessage message = new SnmpMessage(version, community, pdu);
-
-            byte[] messageEncoding = message.encode();
-
-            DatagramPacket outPacket = new DatagramPacket(messageEncoding, messageEncoding.length, hostAddress, port);
+            DatagramPacket outPacket = packetProcessor.createPacket(message, hostAddress, port);
             dSocket.send(outPacket);
 
             DatagramPacket inPacket = new DatagramPacket(new byte[receiveBufferSize], receiveBufferSize);
             dSocket.receive(inPacket);
 
-            byte[] encodedMessage = inPacket.getData();
-            SnmpMessage receivedMessage = new SnmpMessage(SnmpBERCodec.extractNextTLV(encodedMessage,0).value);
+            SnmpMessage receivedMessage = packetProcessor.createMessage(inPacket);
             SnmpBasicPDU receivedPDU = receivedMessage.getPDU();
 
             // Check request identifier; if incorrect, just ignore packet and continue waiting.
-            if (receivedPDU.getRequestID() == requestID)
+            if (receivedPDU.getRequestID() == messageFactory.getCurrentRequestId())
             {
                 // Check error status; if retrieval problem for error index 1, just break - assume there are no additional OIDs.
                 // to retrieve. If index is other than 1, throw an exception.
@@ -590,24 +476,22 @@ public class SnmpV1Communicator
                     if (retrievedErrorIndex == 1)
                         break retrievalLoop;
                     
-                    throw new SnmpGetException("OID following " + requestedObjectIdentifier[retrievedErrorIndex - 1] + 
+                    throw new SnmpGetException("OID following " + requestedObjectIdentifiers[retrievedErrorIndex - 1] + 
                             " not available for retrieval", retrievedErrorIndex, receivedPDU.getErrorStatus());
                 }
 
                 // Copy data from retrieved sequence to variable-bind list.
-                varList = receivedPDU.getVarBindList();
+                SnmpSequence varList = receivedPDU.getVarBindList();
 
                 // Check that the right number of variables were in reply; if not, throw GetException.
-                if (varList.size() != requestedObjectIdentifier.length)
+                if (varList.size() != requestedObjectIdentifiers.length)
                     throw new SnmpGetException("Incomplete row of table received", 0, ErrorStatus.GeneralError);
 
                 // Copy the retrieved variable pairs into retrievedVars.
                 for (int i = 0; i < varList.size(); i++)
                 {
                     SnmpSequence newPair = (SnmpSequence)(varList.getSNMPObjectAt(i));
-
                     SnmpObjectIdentifier newObjectIdentifier = (SnmpObjectIdentifier)(newPair.getSNMPObjectAt(0));
-                    SnmpObject newValue = newPair.getSNMPObjectAt(1);
 
                     // Now see if retrieved OID starts with table base; if not, done with table - break.
                     String newOIDString = newObjectIdentifier.toString();
@@ -624,10 +508,9 @@ public class SnmpV1Communicator
                     retrievedVars.addSNMPObject(newPair);
 
                     // Set requested identifiers array to current identifiers to do get-next for next row.
-                    requestedObjectIdentifier[i] = newObjectIdentifier;
+                    requestedObjectIdentifiers[i] = newObjectIdentifier;
                 }
 
-                requestID++;
             }
         }
 
@@ -651,10 +534,9 @@ public class SnmpV1Communicator
         SnmpVarBindList retrievedVars = new SnmpVarBindList();
 
         SnmpObjectIdentifier requestedOid = new SnmpObjectIdentifier(startID);
-        SnmpMessage message = this.createMessage(requestedOid, SnmpBERType.SnmpGetNextRequest);
-        byte[] messageEncoding = message.encode();
-
-        DatagramPacket outPacket = new DatagramPacket(messageEncoding, messageEncoding.length, hostAddress, port);
+        SnmpMessage message = messageFactory.createMessage(SnmpBERType.SnmpGetNextRequest, requestedOid);
+        
+        DatagramPacket outPacket = packetProcessor.createPacket(message, hostAddress, port);
         dSocket.send(outPacket);
 
         ErrorStatus errorStatus = ErrorStatus.NoError;
@@ -663,8 +545,7 @@ public class SnmpV1Communicator
             DatagramPacket inPacket = new DatagramPacket(new byte[receiveBufferSize], receiveBufferSize);
             dSocket.receive(inPacket);
 
-            byte[] encodedMessage = inPacket.getData();
-            SnmpMessage receivedMessage = new SnmpMessage(SnmpBERCodec.extractNextTLV(encodedMessage,0).value);
+            SnmpMessage receivedMessage = packetProcessor.createMessage(inPacket);
             errorStatus = receivedMessage.getPDU().getErrorStatus();
 
             SnmpSequence varList = receivedMessage.getPDU().getVarBindList();
@@ -677,48 +558,14 @@ public class SnmpV1Communicator
                 break;
 
             requestedOid = nextOid;
-            requestID++;
 
             // Construct and send next packet.
-            message = this.createMessage(requestedOid, SnmpBERType.SnmpGetNextRequest);
-            messageEncoding = message.encode();
-            outPacket = new DatagramPacket(messageEncoding, messageEncoding.length, hostAddress, port);
+            message = messageFactory.createMessage(SnmpBERType.SnmpGetNextRequest, requestedOid);
+            outPacket = packetProcessor.createPacket(message, hostAddress, port);
             dSocket.send(outPacket);
         }
 
         return retrievedVars;
     }
 
-    
-    
-    
-    
-//    public static void main(String[] args)
-//    {
-//        try
-//        {
-//            //contact: Genco IT
-//            SnmpV1Communicator comm = new SnmpV1Communicator(SnmpVersion.SNMPv1, InetAddress.getByName("127.0.0.1"), "de2la6");
-//            
-//            //String[] oids = { "1.3.6.1.2.1.1.5", "1.3.6.1.2.1.1.6", "1.3.6.1.2.1.1.7" };
-//            //String oid = "1.3.6.1.2.1.1.4.0";
-//            //SNMPVarBindList results = comm.getNextMIBEntry(oids);
-//            
-//            //String[] oids = { "1.3.6.1.2.1.1.5.0", "1.3.6.1.2.1.1.6.0", "1.3.6.1.2.1.1.7.0" };
-//            //String oid = "1.3.6.1.2.1.1.4.0";
-//            //SNMPVarBindList results = comm.getMIBEntry(oid);
-//            
-//            //SNMPOctetString value = new SNMPOctetString("Genco IT");
-//            //SNMPVarBindList results = comm.setMIBEntry(oid, value);
-//            
-//            String oid = "1.3.6.1.2.1.1";
-//            SnmpVarBindList results = comm.retrieveMIBTable(oid);
-//            
-//            System.out.println(results.toString());
-//        }
-//        catch (Exception e)
-//        {
-//            e.getMessage();
-//        }
-//    }
 }
