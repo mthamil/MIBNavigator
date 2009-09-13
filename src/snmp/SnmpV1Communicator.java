@@ -45,12 +45,16 @@ import snmp.error.ErrorStatus;
  */
 public class SnmpV1Communicator
 {
+	/** The default SNMP port. */
     public static final int DEFAULT_SNMP_PORT = 161;
 
-    // Largest size for datagram packet payload; based on
-    // RFC 1157, need to handle messages of at least 484 bytes.
-    private int receiveBufferSize = 512;
+    /**  
+     * The minimum receive buffer size. Based on RFC 1157, 
+     * need to handle messages of at least 484 bytes.
+     */
+    public static final int MINIMUM_BUFFER_SIZE= 484;
 
+    private int receiveBufferSize = 512;
     private SnmpVersion version;
     private int port;
     private InetAddress hostAddress;
@@ -121,7 +125,7 @@ public class SnmpV1Communicator
      */
     public void setReceiveBufferSize(int receiveBufferSize)
     {
-    	this.receiveBufferSize = (receiveBufferSize >= 484) ? receiveBufferSize : 484;
+    	this.receiveBufferSize = Math.max(SnmpV1Communicator.MINIMUM_BUFFER_SIZE, receiveBufferSize);
     }
 
 

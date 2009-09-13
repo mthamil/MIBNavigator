@@ -159,6 +159,27 @@ public class SnmpRequestTests
 		}
 	}
 	
+	@Test
+	public void testBufferSize()
+	{
+		// Test default buffer size.
+		assertThat(communicator.getReceiveBufferSize(), is(512));
+		
+		int minSize = SnmpV1Communicator.MINIMUM_BUFFER_SIZE;
+		
+		// Test greater than minimum.
+		communicator.setReceiveBufferSize(minSize + 1);
+		assertThat(communicator.getReceiveBufferSize(), is(minSize + 1));
+		
+		// Test equal to minimum.
+		communicator.setReceiveBufferSize(minSize);
+		assertThat(communicator.getReceiveBufferSize(), is(minSize));
+		
+		// Test less than minimum.
+		communicator.setReceiveBufferSize(minSize - 1);
+		assertThat(communicator.getReceiveBufferSize(), is(minSize));
+	}
+	
 //	@Test
 //	public void testSetValue() 
 //	{
