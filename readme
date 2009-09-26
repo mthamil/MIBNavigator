@@ -9,18 +9,21 @@ These were converted from the MIBs available for download here: http://www.wtcs.
 A converter between standard SMI MIB files and XML format is now available for download.
 
 APPLICATION SETTINGS
-Certain aspects of the application can be changed using the configuration settings stored in 'proprties.xml', which is saved on a per-user
-basis (ie. on Linux, in /home/<username>/.mibnavigator). 
+Certain aspects of the application can be changed using the configuration settings stored in 'proprties.xml', which is saved on a 
+per-user basis (ie. on Linux, in /home/<username>/.mibnavigator). 
 
 The following list describes each setting:
 -MibDirectory: The default directory that MIB Navigator uses to load MIB files on startup.
 -MibFileFormat: The type of MIB files MIB Navigator should use.  By default, traditional ASN.1 SMI files are used, but the experimental
- XML format can be used by changing this setting.
+                XML format can be used by changing this setting.
 -MaximumAddresses: The maximum number of IP addresses MIB Navigator remembers. The default number of addresses is 15.
 -IPAddresses: When an IP address is successfully contacted by the application, it is added to this list of addresses and displayed
- in the address drop-down. 
- NOTE: If the number of addresses to save is changed to be less than the number of addresses saved in the list, a loss of addresses may occur 
- due to address list truncation.  Remember to back up the properties file after modifying the number of addresses.
+              in the address drop-down. 
+              NOTE: If the maximum number of addresses to save is changed to be less than the number of addresses saved in the list, 
+              a loss of addresses may occur  due to address list truncation.  Remember to back up the properties file after modifying 
+              the number of addresses.
+-Port: The last port number used to query an SNMP host
+-Timeout: The amount of time in milliseconds to wait for a response from an SNMP host
 
 
 INSTALLATION:
@@ -32,7 +35,7 @@ INSTRUCTIONS:
 -To start MIB Navigator, run the self-executing JAR file, "MIBNavigator.jar" by either double clicking it (if supported) or
  using the console command "java -jar MIBNavigator.jar".
 
--In order to query an SNMP-enabled host, enter an IP address, community string, and an OID.  Then, press the "Get Data" button.
+-In order to query an SNMP-enabled host, enter an IP address, community string, and an OID.  Then, click the "Get Data" button.
  This will walk the tree below this OID and display the results in the "Results" area.  The timeout amount and port used by the 
  request can be entered as well, but most users should leave the default values.
 
@@ -58,7 +61,8 @@ v. 1.5
 -Added external resources for strings.
 -Added external resources for platform-specific UI settings such as text field and button sizes, font sizes, etc.
 -Added support for GTK look and feel.
--Added configuration settings for the MIB file format to use and the default MIB directory location. SMI is now the default format.
+-Added configuration settings for the MIB file format to use, the default MIB directory location, port, and timeout. 
+-SMI is now the default MIB format.
 -Switched to Java 6's SwingWorker.
 -Added validation to port and timeout text fields.
 -Continued refactoring of application internals.

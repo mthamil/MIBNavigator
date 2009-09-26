@@ -1,10 +1,10 @@
 
-<project name="MIB Navigator" default="MIBNavigator" basedir=".">
+<project name="MIB Navigator" default="MIBNavigator:Jar" basedir=".">
     <description>
         Ant build file for the MIB Navigator application.
     </description>
   
-  <target name="MIBNavigator" description="Build the MIB Navigator application distribution.  Only required .class files are included.">
+  <target name="MIBNavigator:Jar" description="Builds the MIB Navigator application.  Only required .class files are included.">
     <!-- Set the main class. -->
     <property name="mainClass" value="MIBNavigator"/>
     <property name="buildDir" value="build-navigator"/>
@@ -36,7 +36,7 @@
     <delete dir="${buildDir}"/> 
   </target>
 	
-  <target name="MIBNavigatorSource" description="Build the complete source distribution.">
+  <target name="MIBNavigator:Source" description="Build the complete source distribution.">
 	<!-- Zip up the source, manifest, and build file -->
     <zip destfile="mibnav-source.zip">
 	  <fileset dir="." includes="src/**"/>
@@ -44,11 +44,13 @@
     </zip>
   </target>
 	
-  <target name="MIBNavigatorRelease" description="Build the complete release package.">
+  <target name="MIBNavigator:Release" description="Build the complete release package.">
+  	<!-- Build the application jar first -->
+    <antcall target="MIBNavigator:Jar"/>
 	<property name="packageDir" value="mib-navigator"/>
 	<mkdir dir="${packageDir}"/>
 	<copy todir="${packageDir}">
-      <fileset dir="." includes="MIBNavigator.jar license readme authors schema/mib.xsd extra-xml-mibs/** mibs/smi/* mibs/xml/*xml"/>
+      <fileset dir="." includes="MIBNavigator.jar license readme authors schema/* extra-xml-mibs/** mibs/smi/* mibs/xml/*xml" />
     </copy>
 	<!-- Zip up everything -->
     <zip destfile="mib-navigator.zip">
