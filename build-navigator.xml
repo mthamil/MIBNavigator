@@ -3,12 +3,12 @@
     <description>
         Ant build file for the MIB Navigator application.
     </description>
+	<property name="appName" value="MIBNavigator"/>
   
   <target name="MIBNavigator:Jar" description="Builds the MIB Navigator application.  Only required .class files are included.">
     <!-- Set the main class. -->
     <property name="mainClass" value="MIBNavigator"/>
     <property name="buildDir" value="build-navigator"/>
-	<property name="appName" value="MIBNavigator"/>
     <!-- Create the build directory -->
     <mkdir dir="${buildDir}"/>
   	<!-- Compile the java code from src into build -->
@@ -56,6 +56,7 @@
     <zip destfile="mib-navigator.zip">
 	  <fileset dir="." includes="${packageDir}/**"/>
     </zip>
+  	<delete file="${appName}.jar"/>
 	<delete dir="${packageDir}"/>
   </target>
 	

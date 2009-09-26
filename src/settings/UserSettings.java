@@ -50,7 +50,7 @@ public class UserSettings
 	private boolean settingsChanged;
 
 	private static final int DEFAULT_MAX_ADDRESSES = 15;
-	private static final String DEFAULT_MIB_DIRECTORY = "." + File.separator + "mibs";
+	private static final String DEFAULT_MIB_DIRECTORY = "." + File.separator + "mibs" + File.separator + MibFormat.SMI.toString().toLowerCase();
 	private static final int DEFAULT_PORT = 161;
 	private static final int DEFAULT_TIMEOUT = 4000;
 	
@@ -257,7 +257,7 @@ public class UserSettings
 
         // Parse the MIB directory property.
         mibDirectory = PropertyParser.parseDirectoryProperty(mibPath, DEFAULT_MIB_DIRECTORY);        
-        
+
         // Parse the the max address property.
         maxAddresses = PropertyParser.parseIntegerProperty(addressNum, DEFAULT_MAX_ADDRESSES);
         
