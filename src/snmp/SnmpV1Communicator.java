@@ -55,10 +55,8 @@ public class SnmpV1Communicator
     public static final int MINIMUM_BUFFER_SIZE= 484;
 
     private int receiveBufferSize = 512;
-    private SnmpVersion version;
     private int port;
     private InetAddress hostAddress;
-    private String community;
     private DatagramSocket dSocket;
     
     private SnmpPacketProcessor packetProcessor;
@@ -72,9 +70,7 @@ public class SnmpV1Communicator
     public SnmpV1Communicator(SnmpVersion version, InetAddress hostAddress, String community)
         throws SocketException
     {
-        this.version = version;
         this.hostAddress = hostAddress;
-        this.community = community;
         this.port = SnmpV1Communicator.DEFAULT_SNMP_PORT;
 
         dSocket = new DatagramSocket();
@@ -197,7 +193,10 @@ public class SnmpV1Communicator
         throws IOException, SnmpBadValueException, SnmpGetException
     {
         if (getRequestType != SnmpBERType.SnmpGetRequest && getRequestType != SnmpBERType.SnmpGetNextRequest)
-            throw new SnmpBadValueException("Bad request type: " + getRequestType);
+        {
+        	String errorMessage = String.format("Bad request type: %s", getRequestType);
+            throw new SnmpBadValueException(errorMessage);
+        }
         
         // Send request to specified host to retrieve values of object identifiers.
 
@@ -224,12 +223,14 @@ public class SnmpV1Communicator
                     // Determine error index.
                     int errorIndex = receivedPDU.getErrorIndex();
                     
-                    String msgPrefix = "OID ";
+                    String errorFormat;
                     if (getRequestType == SnmpBERType.SnmpGetNextRequest)
-                        msgPrefix = msgPrefix + "following ";
+                    	errorFormat = SnmpResources.getString("getNextRetrievalErrorMessage");
+                    else
+                    	errorFormat = SnmpResources.getString("getRetrievalErrorMessage");
   
-                    throw new SnmpGetException(msgPrefix + itemIds[errorIndex - 1] + " not available for retrieval", 
-                            errorIndex, receivedPDU.getErrorStatus());
+                    String errorMessage = String.format(errorFormat, itemIds[errorIndex - 1]);
+                    throw new SnmpGetException(errorMessage, errorIndex, receivedPDU.getErrorStatus());
                 }
 
                 // Copy data from retrieved sequence to variable-bind list.
@@ -243,8 +244,8 @@ public class SnmpV1Communicator
                     if (getRequestType == SnmpBERType.SnmpGetRequest && !(newObjectIdentifier.toString().equals(itemIds[i])))
                     {
                         // wrong OID; throw GetException
-                        throw new SnmpGetException("OID " + itemIds[i] + " expected at index " + i + ", OID " + newObjectIdentifier 
-                                + " received", i + 1, ErrorStatus.GeneralError);
+                    	String errorMessage = String.format(SnmpResources.getString("wrongOIDReceivedErrorMessage"), itemIds[i], i, newObjectIdentifier);
+                        throw new SnmpGetException(errorMessage, i + 1, ErrorStatus.GeneralError);
                     }
 
                     retrievedVars.addSNMPObject(newPair);
@@ -310,34 +311,12 @@ public class SnmpV1Communicator
             if (receivedPDU.getRequestID() == messageFactory.getCurrentRequestId())
             {
                 // Check error status; if retrieval problem, throw SNMPSetException.
-                if (receivedPDU.getErrorStatus() != ErrorStatus.NoError)
+            	ErrorStatus error = receivedPDU.getErrorStatus();
+                if (error != ErrorStatus.NoError)
                 {
                     int errorIndex = receivedPDU.getErrorIndex();
-
-                    switch (receivedPDU.getErrorStatus())
-                    {
-                        case TooBig:
-                            throw new SnmpSetException("Value supplied for OID " + itemIds[errorIndex - 1] + " too big.", 
-                                    receivedPDU.getErrorIndex(), receivedPDU.getErrorStatus());
-
-                        case NoSuchName:
-                            throw new SnmpSetException("OID " + itemIds[errorIndex - 1] + " not available for setting.", 
-                                    receivedPDU.getErrorIndex(), receivedPDU.getErrorStatus());
-
-                        case BadValue:
-                            throw new SnmpSetException("Bad value supplied for OID " + itemIds[errorIndex - 1] + ".", 
-                                    receivedPDU.getErrorIndex(), receivedPDU.getErrorStatus());
-
-                        case ReadOnly:
-                            throw new SnmpSetException("OID " + itemIds[errorIndex - 1] + " read-only.", 
-                                    receivedPDU.getErrorIndex(), receivedPDU.getErrorStatus());
-
-                        default:
-                            throw new SnmpSetException("Error setting OID " + itemIds[errorIndex - 1] + ".", 
-                                    receivedPDU.getErrorIndex(), receivedPDU.getErrorStatus());
-                    }
+                    handleSetError(error, errorIndex, itemIds[errorIndex - 1]);
                 }
-
 
                 // Copy data from retrieved sequence to var bind list.
                 SnmpSequence varList = receivedPDU.getVarBindList();
@@ -350,10 +329,14 @@ public class SnmpV1Communicator
                     //SNMPObject receivedValue = newPair.getSNMPObjectAt(1);
 
                     if (newObjectIdentifier.toString().equals(itemIds[i]))
+                    {
                         retrievedVars.addSNMPObject(newPair);
-                    else      // wrong OID; throw GetException
-                        throw new SnmpSetException("OID " + itemIds[i] + " expected at index " + i + ", OID " + newObjectIdentifier 
-                                + " received", i + 1, ErrorStatus.GeneralError);
+                    }
+                    else      // wrong OID; throw exception
+                    {
+                    	String errorMessage = String.format(SnmpResources.getString("wrongOIDReceivedErrorMessage"), itemIds[i], i, newObjectIdentifier);
+                        throw new SnmpSetException(errorMessage, i + 1, ErrorStatus.GeneralError);
+                    }
                 }
 
                 break;
@@ -363,6 +346,41 @@ public class SnmpV1Communicator
         return retrievedVars;
     }
 
+    /**
+     * Handles errors received while performing an SNMP Set operation.
+     * @param error
+     * @param errorIndex
+     * @param oid
+     */
+    private static void handleSetError(ErrorStatus error, int errorIndex, String oid)
+    	throws SnmpSetException
+    {
+    	String errorMessage = null;
+    	switch (error)
+        {
+            case TooBig:
+                errorMessage = String.format(SnmpResources.getString("setValueTooBigErrorMessage"), oid);
+                break;
+
+            case NoSuchName:
+            	errorMessage = String.format(SnmpResources.getString("setNotAvailableErrorMessage"), oid);
+            	break;
+
+            case BadValue:
+            	errorMessage = String.format(SnmpResources.getString("setBadValueErrorMessage"), oid);
+            	break;
+
+            case ReadOnly:
+            	errorMessage = String.format(SnmpResources.getString("setReadOnlyErrorMessage"), oid);
+            	break;
+
+            default:
+            	errorMessage = String.format(SnmpResources.getString("setGeneralErrorMessage"), oid);
+            	break;
+        }
+    	
+    	throw new SnmpSetException(errorMessage, errorIndex, error);
+    }
     
     
 
@@ -480,8 +498,9 @@ public class SnmpV1Communicator
                     if (retrievedErrorIndex == 1)
                         break retrievalLoop;
                     
-                    throw new SnmpGetException("OID following " + requestedObjectIdentifiers[retrievedErrorIndex - 1] + 
-                            " not available for retrieval", retrievedErrorIndex, receivedPDU.getErrorStatus());
+                    String errorMessage = String.format(SnmpResources.getString("getNextRetrievalErrorMessage"), 
+                		requestedObjectIdentifiers[retrievedErrorIndex - 1]);
+                    throw new SnmpGetException(errorMessage, retrievedErrorIndex, receivedPDU.getErrorStatus());
                 }
 
                 // Copy data from retrieved sequence to variable-bind list.
@@ -489,7 +508,7 @@ public class SnmpV1Communicator
 
                 // Check that the right number of variables were in reply; if not, throw GetException.
                 if (varList.size() != requestedObjectIdentifiers.length)
-                    throw new SnmpGetException("Incomplete row of table received", 0, ErrorStatus.GeneralError);
+                    throw new SnmpGetException(SnmpResources.getString("getIncompleteRowErrorMessage"), 0, ErrorStatus.GeneralError);
 
                 // Copy the retrieved variable pairs into retrievedVars.
                 for (int i = 0; i < varList.size(); i++)
@@ -506,7 +525,7 @@ public class SnmpV1Communicator
                             break retrievalLoop;    
 
                         // It's a subsequent row element; throw exception.
-                        throw new SnmpGetException("Incomplete row of table received", i + 1, ErrorStatus.GeneralError);
+                        throw new SnmpGetException(SnmpResources.getString("getIncompleteRowErrorMessage"), i + 1, ErrorStatus.GeneralError);
                     }
 
                     retrievedVars.addSNMPObject(newPair);

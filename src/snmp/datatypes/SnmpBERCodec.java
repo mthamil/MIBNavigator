@@ -24,6 +24,7 @@ package snmp.datatypes;
 
 import java.io.*;
 
+import snmp.SnmpResources;
 import snmp.datatypes.sequence.SnmpSequence;
 import snmp.datatypes.sequence.pdu.SnmpBasicPDU;
 import snmp.datatypes.sequence.pdu.SnmpV1TrapPDU;
@@ -211,12 +212,12 @@ public class SnmpBERCodec
         catch (IndexOutOfBoundsException e)
         {
             // whatever the exception, throw an SNMPBadValueException
-            throw new SnmpBadValueException("Problem while decoding SNMP: packet truncated or corrupt");
+            throw new SnmpBadValueException(SnmpResources.getString("decodeCorruptPacketErrorMessage"));
         }
         catch (Exception e)
         {
             // whatever the exception, throw an SNMPBadValueException
-            throw new SnmpBadValueException("Problem while decoding SNMP");
+            throw new SnmpBadValueException(SnmpResources.getString("decodeGeneralErrorMessage"));
         }
             
     }

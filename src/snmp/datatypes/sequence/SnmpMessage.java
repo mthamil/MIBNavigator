@@ -160,10 +160,10 @@ public class SnmpMessage extends SnmpSequence
      *  
      *  @throws SnmpBadValueException Indicates invalid SNMP message encoding supplied.
      */
-    public SnmpMessage(byte[] enc)
+    public SnmpMessage(byte[] encoding)
         throws SnmpBadValueException
     {
-        super(enc);
+        super(encoding);
         
         // validate the message: make sure we have the appropriate pieces
         List<SnmpObject> contents = sequence;

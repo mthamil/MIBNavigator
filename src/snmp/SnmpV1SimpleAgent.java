@@ -346,7 +346,7 @@ public class SnmpV1SimpleAgent implements Runnable
      */
     public void setReceiveBufferSize(int receiveBufferSize)
     {
-    	this.receiveBufferSize = (receiveBufferSize >= 484) ? receiveBufferSize : 484;
+    	this.receiveBufferSize = Math.max(484, receiveBufferSize);
     }
     
     
