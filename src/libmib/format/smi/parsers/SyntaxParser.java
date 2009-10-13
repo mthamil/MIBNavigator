@@ -35,7 +35,7 @@ public class SyntaxParser extends AbstractParser<MibSyntax>
 	@Override
 	public MibSyntax parse(BufferedReader reader, String currentLine) throws IOException
 	{
-		if (currentLine.equals(SYNTAX))
+		if (currentLine.equals(SYNTAX.token()))
 			currentLine = reader.readLine();
 
         // If the OID has a list of specific integer values
