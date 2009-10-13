@@ -305,7 +305,7 @@ public abstract class AbstractMibTreeBuilder implements MibTreeBuilder
 	 * Utility class used to represent a node that was created before its
 	 * parent node.
 	 */
-	private final class LostChildNode
+	private static final class LostChildNode
 	{
 		private final MibTreeNode lostNode;
 		private final String nodeParentName;
