@@ -38,6 +38,7 @@ import javax.swing.tree.*;
 import utilities.StringUtilities;
 
 import libmib.MibObjectIdentifier;
+import libmib.MibObjectType;
 import libmib.mibtree.MibTreeBuilder;
 import libmib.mibtree.MibTreeNode;
 import libmib.mibtree.MibTreeNode.NodeSearchOption;
@@ -108,7 +109,7 @@ public class MibBrowser
     {
         browserPanel = new JPanel();
 
-        oidViewer = new OidDataPanel(); 
+        oidViewer = new OidDataPanel();
         
         TextContextMenu contextMenu = new TextContextMenu();
 		TextContextMenuListener contextMenuListener = new TextContextMenuListener(contextMenu);
@@ -215,7 +216,21 @@ public class MibBrowser
         mibTree.setModel(mibModel); 
         mibTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         mibTree.addTreeSelectionListener(new MibTreeListener());
-        mibTree.addTreeSelectionListener(oidViewer);
+        mibTree.addTreeSelectionListener(new TreeSelectionListener()
+        {
+			public void valueChanged(TreeSelectionEvent e)
+			{
+				TreePath treePath = e.getPath();
+				MibTreeNode node = (MibTreeNode)treePath.getLastPathComponent();
+				MibObjectIdentifier mibObject = (MibObjectIdentifier)node.getUserObject();
+				
+				// Display the selected OID's details.
+				if (mibObject instanceof MibObjectType)
+					oidViewer.setMIBObject((MibObjectType)mibObject);
+				else
+					oidViewer.setMIBObject(mibObject);
+			}
+        });
         mibTree.setRootVisible(false);
                 
         DefaultTreeCellRenderer cellRenderer = new DefaultTreeCellRenderer();
@@ -236,7 +251,6 @@ public class MibBrowser
 		mibTreeScroll.setPreferredSize(new Dimension(400, 180));
     }
 
-
     /**
      * Lays out and arranges the interface components.
      */
@@ -244,9 +258,9 @@ public class MibBrowser
     {
 		// set up the layout
 		GridBagLayout layout = new GridBagLayout();
-		GridBagConstraints cons = new GridBagConstraints();
-		Insets ins = new Insets(2, 2, 2, 0);
-		cons.insets = ins;
+		GridBagConstraints constraints = new GridBagConstraints();
+		Insets inset = new Insets(2, 2, 2, 0);
+		constraints.insets = inset;
 		//cons.gridwidth = 1;
 		//cons.gridheight = 1;
 
@@ -254,13 +268,13 @@ public class MibBrowser
 		JPanel treePanel = new JPanel();
 		treePanel.setLayout(layout);
 
-		cons.gridx = 0;
-		cons.gridy = 0;
-		cons.weightx = .5;
-		cons.weighty = .5;
-		cons.fill = GridBagConstraints.BOTH;
-		cons.anchor = GridBagConstraints.FIRST_LINE_START;
-		layout.setConstraints(mibTreeScroll, cons);
+		constraints.gridx = 0;
+		constraints.gridy = 0;
+		constraints.weightx = .5;
+		constraints.weighty = .5;
+		constraints.fill = GridBagConstraints.BOTH;
+		constraints.anchor = GridBagConstraints.FIRST_LINE_START;
+		layout.setConstraints(mibTreeScroll, constraints);
 		treePanel.add(mibTreeScroll);
 
 
@@ -268,19 +282,19 @@ public class MibBrowser
 		JPanel topPanel = new JPanel();
 		topPanel.setLayout(layout);
 
-		cons.gridx = 0;
-		cons.gridy = 0;
-        cons.weightx = .65;
-        cons.weighty = .65;
-		cons.fill = GridBagConstraints.BOTH;
-		layout.setConstraints(treePanel, cons);
+		constraints.gridx = 0;
+		constraints.gridy = 0;
+        constraints.weightx = .65;
+        constraints.weighty = .65;
+		constraints.fill = GridBagConstraints.BOTH;
+		layout.setConstraints(treePanel, constraints);
 		topPanel.add(treePanel);
 
-		cons.gridx = 1;
-		cons.gridy = 0;
-        cons.weightx = .35;
-        cons.weighty = .35;
-		layout.setConstraints(oidViewer.getPanel(), cons);
+		constraints.gridx = 1;
+		constraints.gridy = 0;
+        constraints.weightx = .35;
+        constraints.weighty = .35;
+		layout.setConstraints(oidViewer.getPanel(), constraints);
 		topPanel.add(oidViewer.getPanel());
 
 
@@ -288,33 +302,33 @@ public class MibBrowser
 		JPanel oidPanel = new JPanel();
 		oidPanel.setLayout(layout);
 
-		ins.set(2, 0, 2, 0);
-		cons.weightx = 0;
-		cons.weighty = 0;
-		cons.anchor = GridBagConstraints.LINE_START;
+		inset.set(2, 0, 2, 0);
+		constraints.weightx = 0;
+		constraints.weighty = 0;
+		constraints.anchor = GridBagConstraints.LINE_START;
 
-		cons.fill = GridBagConstraints.NONE;
-		cons.gridx = 0;
-		cons.gridy = 0;
-		layout.setConstraints(oidNameLabel, cons);
+		constraints.fill = GridBagConstraints.NONE;
+		constraints.gridx = 0;
+		constraints.gridy = 0;
+		layout.setConstraints(oidNameLabel, constraints);
 		oidPanel.add(oidNameLabel);
 
-		cons.fill = GridBagConstraints.HORIZONTAL;
-		cons.gridx = 1;
-		cons.gridy = 0;
-		layout.setConstraints(oidNameField, cons);
+		constraints.fill = GridBagConstraints.HORIZONTAL;
+		constraints.gridx = 1;
+		constraints.gridy = 0;
+		layout.setConstraints(oidNameField, constraints);
 		oidPanel.add(oidNameField);
 
-		cons.fill = GridBagConstraints.NONE;
-		cons.gridx = 0;
-		cons.gridy = 1;
-		layout.setConstraints(oidNumeralLabel, cons);
+		constraints.fill = GridBagConstraints.NONE;
+		constraints.gridx = 0;
+		constraints.gridy = 1;
+		layout.setConstraints(oidNumeralLabel, constraints);
 		oidPanel.add(oidNumeralLabel);
 
-		cons.fill = GridBagConstraints.HORIZONTAL;
-		cons.gridx = 1;
-		cons.gridy = 1;
-		layout.setConstraints(oidNumeralField, cons);
+		constraints.fill = GridBagConstraints.HORIZONTAL;
+		constraints.gridx = 1;
+		constraints.gridy = 1;
+		layout.setConstraints(oidNumeralField, constraints);
 		oidPanel.add(oidNumeralField);
         
         
@@ -322,25 +336,25 @@ public class MibBrowser
         JPanel hostSubPanel = new JPanel();
         hostSubPanel.setLayout(layout);
         
-        ins.set(2, 2, 2, 2);
-        cons.gridx = 0;
-        cons.gridy = 0;
-        layout.setConstraints(portLabel, cons);
+        inset.set(2, 2, 2, 2);
+        constraints.gridx = 0;
+        constraints.gridy = 0;
+        layout.setConstraints(portLabel, constraints);
         hostSubPanel.add(portLabel);
         
-        cons.gridx = 1;
-        cons.gridy = 0;
-        layout.setConstraints(portField, cons);
+        constraints.gridx = 1;
+        constraints.gridy = 0;
+        layout.setConstraints(portField, constraints);
         hostSubPanel.add(portField);
         
-        cons.gridx = 2;
-        cons.gridy = 0;
-        layout.setConstraints(timeoutLabel, cons);
+        constraints.gridx = 2;
+        constraints.gridy = 0;
+        layout.setConstraints(timeoutLabel, constraints);
         hostSubPanel.add(timeoutLabel);
         
-        cons.gridx = 3;
-        cons.gridy = 0;
-        layout.setConstraints(timeoutField, cons);
+        constraints.gridx = 3;
+        constraints.gridy = 0;
+        layout.setConstraints(timeoutField, constraints);
         hostSubPanel.add(timeoutField);
 
 
@@ -348,39 +362,39 @@ public class MibBrowser
 		JPanel hostPanel = new JPanel();
 		hostPanel.setLayout(layout);
 
-		cons.weightx = 0;
-		cons.weighty = 0;
-		cons.anchor = GridBagConstraints.LINE_START;
-		cons.fill = GridBagConstraints.NONE;
+		constraints.weightx = 0;
+		constraints.weighty = 0;
+		constraints.anchor = GridBagConstraints.LINE_START;
+		constraints.fill = GridBagConstraints.NONE;
 
-		cons.gridx = 0;
-		cons.gridy = 0;
-		layout.setConstraints(addressLabel, cons);
+		constraints.gridx = 0;
+		constraints.gridy = 0;
+		layout.setConstraints(addressLabel, constraints);
 		hostPanel.add(addressLabel);
 
-		cons.gridx = 1;
-		cons.gridy = 0;
-		layout.setConstraints(addressBox, cons);
+		constraints.gridx = 1;
+		constraints.gridy = 0;
+		layout.setConstraints(addressBox, constraints);
 		hostPanel.add(addressBox);
 
-        cons.gridx = 2;
-        cons.gridy = 0;
-        layout.setConstraints(resolvedAddressField, cons);
+        constraints.gridx = 2;
+        constraints.gridy = 0;
+        layout.setConstraints(resolvedAddressField, constraints);
         hostPanel.add(resolvedAddressField);
 
-		cons.gridx = 0;
-		cons.gridy = 1;
-		layout.setConstraints(communityLabel, cons);
+		constraints.gridx = 0;
+		constraints.gridy = 1;
+		layout.setConstraints(communityLabel, constraints);
 		hostPanel.add(communityLabel);
 
-		cons.gridx = 1;
-		cons.gridy = 1;
-		layout.setConstraints(communityField, cons);
+		constraints.gridx = 1;
+		constraints.gridy = 1;
+		layout.setConstraints(communityField, constraints);
 		hostPanel.add(communityField);
         
-        cons.gridx = 2;
-        cons.gridy = 1;
-        layout.setConstraints(hostSubPanel, cons);
+        constraints.gridx = 2;
+        constraints.gridy = 1;
+        layout.setConstraints(hostSubPanel, constraints);
         hostPanel.add(hostSubPanel);
         
 
@@ -388,70 +402,70 @@ public class MibBrowser
 		JPanel topMidPanel = new JPanel();
 		topMidPanel.setLayout(layout);
 
-		cons.gridx = 0;
-		cons.gridy = 0;
-		layout.setConstraints(oidPanel, cons);
+		constraints.gridx = 0;
+		constraints.gridy = 0;
+		layout.setConstraints(oidPanel, constraints);
 		topMidPanel.add(oidPanel);
 
-		cons.gridx = 1;
-		cons.gridy = 0;
-		layout.setConstraints(hostPanel, cons);
+		constraints.gridx = 1;
+		constraints.gridy = 0;
+		layout.setConstraints(hostPanel, constraints);
 		topMidPanel.add(hostPanel);
 
 		// BUTTONS PANEL
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(layout);
 
-		cons.gridx = 0;
-		cons.gridy = 0;
-		layout.setConstraints(getButton, cons);
+		constraints.gridx = 0;
+		constraints.gridy = 0;
+		layout.setConstraints(getButton, constraints);
 		buttonPanel.add(getButton);
 
 		// OID SEARCH/SELECTION PANEL
 		JPanel oidSearchPanel = new JPanel();
 		oidSearchPanel.setLayout(layout);
 
-		cons.gridx = 0;
-		cons.gridy = 0;
-		layout.setConstraints(oidInputLabel, cons);
+		constraints.gridx = 0;
+		constraints.gridy = 0;
+		layout.setConstraints(oidInputLabel, constraints);
 		oidSearchPanel.add(oidInputLabel);
 
-		cons.gridx = 1;
-		cons.gridy = 0;
-		layout.setConstraints(oidInputField, cons);
+		constraints.gridx = 1;
+		constraints.gridy = 0;
+		layout.setConstraints(oidInputField, constraints);
 		oidSearchPanel.add(oidInputField);
 
 		// BUTTON AND SEARCH/SELECTION CONTAINER PANEL
 		JPanel bottomMidPanel = new JPanel();
 		bottomMidPanel.setLayout(layout);
 
-		cons.gridx = 0;
-		cons.gridy = 0;
-		layout.setConstraints(buttonPanel, cons);
+		constraints.gridx = 0;
+		constraints.gridy = 0;
+		layout.setConstraints(buttonPanel, constraints);
 		bottomMidPanel.add(buttonPanel);
 
-		cons.gridx = 1;
-		cons.gridy = 0;
-		layout.setConstraints(oidSearchPanel, cons);
+		constraints.gridx = 1;
+		constraints.gridy = 0;
+		layout.setConstraints(oidSearchPanel, constraints);
 		bottomMidPanel.add(oidSearchPanel);
 
 		// RESULTS PANEL
 		JPanel bottomPanel = new JPanel();
 		bottomPanel.setLayout(layout);
 
-		cons.anchor = GridBagConstraints.LINE_START;
-		cons.gridx = 0;
-		cons.gridy = 0;
-		layout.setConstraints(resultsLabel, cons);
+		constraints.anchor = GridBagConstraints.LINE_START;
+		constraints.gridx = 0;
+		constraints.gridy = 0;
+		layout.setConstraints(resultsLabel, constraints);
 		bottomPanel.add(resultsLabel);
 
-		cons.weightx = .75;
-		cons.weighty = .75;
-		cons.fill = GridBagConstraints.BOTH;
-		cons.gridheight = GridBagConstraints.REMAINDER;
-		cons.gridx = 0;
-		cons.gridy = 1;
-		layout.setConstraints(resultsScroll, cons);
+		constraints.weightx = .75;
+		constraints.weighty = .75;
+		constraints.fill = GridBagConstraints.BOTH;
+		constraints.gridheight = GridBagConstraints.REMAINDER;
+		constraints.gridx = 0;
+		constraints.gridy = 1;
+		layout.setConstraints(resultsScroll, constraints);
 		bottomPanel.add(resultsScroll);
 
 
@@ -459,43 +473,43 @@ public class MibBrowser
         browserPanel.setLayout(layout);
         browserPanel.setBackground(backgroundColor);
 
-		ins.set(2, 0, 2, 0);
-		cons.gridheight = 1;
-		cons.anchor = GridBagConstraints.LINE_START;
-		cons.fill = GridBagConstraints.BOTH;
-		cons.gridx = 0;
-		cons.gridy = 0;
-        cons.weightx = .30;
-        cons.weighty = .30;
-		layout.setConstraints(topPanel, cons);
+		inset.set(2, 0, 2, 0);
+		constraints.gridheight = 1;
+		constraints.anchor = GridBagConstraints.LINE_START;
+		constraints.fill = GridBagConstraints.BOTH;
+		constraints.gridx = 0;
+		constraints.gridy = 0;
+        constraints.weightx = .30;
+        constraints.weighty = .30;
+		layout.setConstraints(topPanel, constraints);
         browserPanel.add(topPanel);
 
-		cons.anchor = GridBagConstraints.LINE_START;
-		cons.fill = GridBagConstraints.NONE;
-		cons.gridx = 0;
-		cons.gridy = 1;
-        cons.weightx = .0;
-        cons.weighty = .0;
-		layout.setConstraints(topMidPanel, cons);
+		constraints.anchor = GridBagConstraints.LINE_START;
+		constraints.fill = GridBagConstraints.NONE;
+		constraints.gridx = 0;
+		constraints.gridy = 1;
+        constraints.weightx = .0;
+        constraints.weighty = .0;
+		layout.setConstraints(topMidPanel, constraints);
         browserPanel.add(topMidPanel);
 
-		cons.anchor = GridBagConstraints.LINE_START;
-		cons.gridx = 0;
-		cons.gridy = 2;
-        cons.weightx = .0;
-        cons.weighty = .0;
-		layout.setConstraints(bottomMidPanel, cons);
+		constraints.anchor = GridBagConstraints.LINE_START;
+		constraints.gridx = 0;
+		constraints.gridy = 2;
+        constraints.weightx = .0;
+        constraints.weighty = .0;
+		layout.setConstraints(bottomMidPanel, constraints);
         browserPanel.add(bottomMidPanel);
 
-		cons.anchor = GridBagConstraints.LINE_START;
-		cons.fill = GridBagConstraints.BOTH;
-		ins.set(3, 0, 3, 0);
-		cons.insets = ins;
-		cons.weightx = .5;
-		cons.weighty = .5;
-		cons.gridx = 0;
-		cons.gridy = 3;
-		layout.setConstraints(bottomPanel, cons);
+		constraints.anchor = GridBagConstraints.LINE_START;
+		constraints.fill = GridBagConstraints.BOTH;
+		inset.set(3, 0, 3, 0);
+		constraints.insets = inset;
+		constraints.weightx = .5;
+		constraints.weighty = .5;
+		constraints.gridx = 0;
+		constraints.gridy = 3;
+		layout.setConstraints(bottomPanel, constraints);
         browserPanel.add(bottomPanel);
 	}
     

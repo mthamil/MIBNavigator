@@ -137,7 +137,7 @@ public class MIBNavigator
      * Creates and configures the application's JFrame.
      * @param content - the application content panel
      */
-    private void configureFrame(JPanel content)
+    private void configureFrame(final JPanel content)
     {
     	JFrame navFrame = new JFrame();
         navFrame.setTitle(StringResources.getString("appName"));
@@ -170,8 +170,8 @@ public class MIBNavigator
     private void addMenuBar(final JFrame navFrame)
     {
     	// Create menubar.
-    	JMenuBar menuBar = new JMenuBar();
-    	JMenu optionMenu = new JMenu(StringResources.getString("optionsMenuLabel"));
+    	final JMenuBar menuBar = new JMenuBar();
+    	final JMenu optionMenu = new JMenu(StringResources.getString("optionsMenuLabel"));
         optionMenu.setMnemonic(KeyEvent.VK_O);
         
         // Hopefully temporary hack for GTK borders.
@@ -180,127 +180,151 @@ public class MIBNavigator
         	optionMenu.getPopupMenu().setBorder(BorderFactory.createRaisedBevelBorder());
         }
 
-        final FileFilter dialogFilter = appSettings.getMibFormat().getDialogFileFilter();
-
         // Set the Add menu item.
-        Action addAction = new AbstractAction(StringResources.getString("addMibItemLabel"))
-        {
-			public void actionPerformed(ActionEvent e)
-			{
-				// Add a new MIB to the browser's tree if it is valid.
-
-	        	// Create a file chooser with the correct filter for MIB files.
-	            JFileChooser chooser = new JFileChooser(new File("."));
-	            chooser.setFileFilter(dialogFilter);
-	            
-	            JRootPane menuParentFrame = navFrame.getRootPane();
-	            int result = chooser.showOpenDialog(menuParentFrame);
-	            if (result == JFileChooser.APPROVE_OPTION)
-	            {
-	                File mib = chooser.getSelectedFile();
-	                MibTreeBuilder treeBuilder = browser.getMibBuilder();
-	                try
-	                {
-	                    treeBuilder.addMibFile(mib);
-	                    
-	                    // If the MIB isn't valid, it will not be added and there will be no reason to reload.
-	                    ((DefaultTreeModel)treeBuilder.getTreeModel()).reload();
-	                }
-	                catch (InvalidMibFormatException exception)
-	                {
-	                    JOptionPane.showMessageDialog(menuParentFrame, exception.getMessage(), StringResources.getString("mibGeneralErrorTitle"), JOptionPane.ERROR_MESSAGE);
-	                }
-	            }
-			}
-        };
-        addAction.putValue(Action.SHORT_DESCRIPTION, StringResources.getString("addMibItemTip"));
-        optionMenu.add(addAction);
-        
+        optionMenu.add(new AddMenuAction(navFrame));
         
         // Set the Import menu item.
-        Action importAction = new AbstractAction(StringResources.getString("importMibItemLabel"))
-        {
-			public void actionPerformed(ActionEvent e)
-			{
-				// Try to add a new MIB to the browser's tree, and if it is valid, copy it into the default MIBs directory.
-
-	            // Create a file chooser with the correct filter for MIB files.
-	            JFileChooser chooser = new JFileChooser(new File("."));
-	            chooser.setFileFilter(dialogFilter);
-	            
-	            JRootPane menuParentFrame = navFrame.getRootPane();  // Use the root pane's parent frame to launch dialogs
-	            int result = chooser.showOpenDialog(menuParentFrame);
-	            if (result == JFileChooser.APPROVE_OPTION)
-	            {
-	                File sourceMib = chooser.getSelectedFile();
-	                MibTreeBuilder treeBuilder = browser.getMibBuilder();
-	                File mibDirectory = browser.getMibDirectory();
-
-	                try
-	                {
-	                    treeBuilder.addMibFile(sourceMib);
-	                    
-	                    // If the MIB isn't valid, it will not be added and there will be no reason to reload.
-	                    ((DefaultTreeModel)treeBuilder.getTreeModel()).reload();  
-	                    
-	                    File destinationMib = new File(mibDirectory.getPath() + File.separator + sourceMib.getName());
-	                    
-	                    boolean proceedWithCopy = true;
-	                    if (destinationMib.exists())
-	                    {
-	                        // Ask the user if they want to overwrite the file if it already exists.
-	                        String popupMsg = 
-	                        	String.format(StringResources.getString("mibAlreadyExistsMessage"), destinationMib.getName(), mibDirectory.getName());
-	                        
-	                        int confirmValue = JOptionPane.showConfirmDialog(menuParentFrame, popupMsg, 
-	                        		StringResources.getString("mibAlreadyExistsTitle"), JOptionPane.YES_NO_OPTION);
-	                        
-	                        if (confirmValue == JOptionPane.NO_OPTION)
-	                            proceedWithCopy = false;
-	                    }
-
-	                    // If the destination file didn't already exist or the user approved an overwrite.
-	                    if (proceedWithCopy)
-	                    {
-	                       boolean copySucceeded = IOUtilities.copyFile(sourceMib, destinationMib);
-	                       
-	                       if (!copySucceeded)
-	                       {
-	                    	   JOptionPane.showMessageDialog(menuParentFrame, StringResources.getString("mibCopyErrorMessage"),
-                    			   StringResources.getString("mibCopyErrorTitle"), JOptionPane.ERROR_MESSAGE);
-	                       }
-	                    }
-	                    
-	                }
-	                catch (InvalidMibFormatException exception)
-	                {
-	                    JOptionPane.showMessageDialog(menuParentFrame, exception.getMessage(), 
-	                    		StringResources.getString("mibGeneralErrorTitle"), JOptionPane.ERROR_MESSAGE);
-	                }
-	            }
-			}
-		};
-		importAction.putValue(Action.SHORT_DESCRIPTION, StringResources.getString("importMibItemTip"));
-		optionMenu.add(importAction);
+		optionMenu.add(new ImportMenuAction(navFrame));
         
-		
         optionMenu.addSeparator();
 
         // Set the close menu item.
-        Action closeAction = new AbstractAction(StringResources.getString("closeItemLabel"))
-        {
-			public void actionPerformed(ActionEvent e)
-			{
-				// Save application settings and exit.
-	            saveState();
-	            System.exit(0);
-			}
-        };
-        closeAction.putValue(Action.SHORT_DESCRIPTION, StringResources.getString("closeItemTip"));
-        optionMenu.add(closeAction);
+        optionMenu.add(new CloseMenuAction());
         
         menuBar.add(optionMenu);
         navFrame.setJMenuBar(menuBar);
+    }
+    
+    private final class AddMenuAction extends AbstractAction
+    {
+    	private JFrame rootFrame;
+    	
+    	public AddMenuAction(final JFrame frame)
+    	{
+    		super(StringResources.getString("addMibItemLabel"));
+    		this.putValue(Action.SHORT_DESCRIPTION, StringResources.getString("addMibItemTip"));
+    		rootFrame = frame;
+    	}
+
+		public void actionPerformed(ActionEvent e)
+		{
+			final FileFilter dialogFilter = appSettings.getMibFormat().getDialogFileFilter();
+			
+			// Add a new MIB to the browser's tree if it is valid.
+
+        	// Create a file chooser with the correct filter for MIB files.
+            JFileChooser chooser = new JFileChooser(new File("."));
+            chooser.setFileFilter(dialogFilter);
+            
+            JRootPane menuParentFrame = rootFrame.getRootPane();
+            int result = chooser.showOpenDialog(menuParentFrame);
+            if (result == JFileChooser.APPROVE_OPTION)
+            {
+                File mib = chooser.getSelectedFile();
+                MibTreeBuilder treeBuilder = browser.getMibBuilder();
+                try
+                {
+                    treeBuilder.addMibFile(mib);
+                    
+                    // If the MIB isn't valid, it will not be added and there will be no reason to reload.
+                    ((DefaultTreeModel)treeBuilder.getTreeModel()).reload();
+                }
+                catch (InvalidMibFormatException exception)
+                {
+                    JOptionPane.showMessageDialog(menuParentFrame, exception.getMessage(), StringResources.getString("mibGeneralErrorTitle"), JOptionPane.ERROR_MESSAGE);
+                }
+            }
+		}
+    }
+    
+    private final class ImportMenuAction extends AbstractAction
+    {
+    	private JFrame rootFrame;
+    	
+    	public ImportMenuAction(final JFrame frame)
+    	{
+    		super(StringResources.getString("importMibItemLabel"));
+    		this.putValue(Action.SHORT_DESCRIPTION, StringResources.getString("importMibItemTip"));
+    		rootFrame = frame;
+    	}
+
+		public void actionPerformed(ActionEvent e)
+		{
+			final FileFilter dialogFilter = appSettings.getMibFormat().getDialogFileFilter();
+			
+			// Try to add a new MIB to the browser's tree, and if it is valid, copy it into the default MIBs directory.
+
+            // Create a file chooser with the correct filter for MIB files.
+            JFileChooser chooser = new JFileChooser(new File("."));
+            chooser.setFileFilter(dialogFilter);
+            
+            JRootPane menuParentFrame = rootFrame.getRootPane();  // Use the root pane's parent frame to launch dialogs
+            int result = chooser.showOpenDialog(menuParentFrame);
+            if (result == JFileChooser.APPROVE_OPTION)
+            {
+                File sourceMib = chooser.getSelectedFile();
+                MibTreeBuilder treeBuilder = browser.getMibBuilder();
+                File mibDirectory = browser.getMibDirectory();
+
+                try
+                {
+                    treeBuilder.addMibFile(sourceMib);
+                    
+                    // If the MIB isn't valid, it will not be added and there will be no reason to reload.
+                    ((DefaultTreeModel)treeBuilder.getTreeModel()).reload();  
+                    
+                    File destinationMib = new File(mibDirectory.getPath() + File.separator + sourceMib.getName());
+                    
+                    boolean proceedWithCopy = true;
+                    if (destinationMib.exists())
+                    {
+                        // Ask the user if they want to overwrite the file if it already exists.
+                        String popupMsg = 
+                        	String.format(StringResources.getString("mibAlreadyExistsMessage"), destinationMib.getName(), mibDirectory.getName());
+                        
+                        int confirmValue = JOptionPane.showConfirmDialog(menuParentFrame, popupMsg, 
+                        		StringResources.getString("mibAlreadyExistsTitle"), JOptionPane.YES_NO_OPTION);
+                        
+                        if (confirmValue == JOptionPane.NO_OPTION)
+                            proceedWithCopy = false;
+                    }
+
+                    // If the destination file didn't already exist or the user approved an overwrite.
+                    if (proceedWithCopy)
+                    {
+                       boolean copySucceeded = IOUtilities.copyFile(sourceMib, destinationMib);
+                       
+                       if (!copySucceeded)
+                       {
+                    	   JOptionPane.showMessageDialog(menuParentFrame, StringResources.getString("mibCopyErrorMessage"),
+                			   StringResources.getString("mibCopyErrorTitle"), JOptionPane.ERROR_MESSAGE);
+                       }
+                    }
+                    
+                }
+                catch (InvalidMibFormatException exception)
+                {
+                    JOptionPane.showMessageDialog(menuParentFrame, exception.getMessage(), 
+                    		StringResources.getString("mibGeneralErrorTitle"), JOptionPane.ERROR_MESSAGE);
+                }
+            }
+		}
+    }
+    
+    private final class CloseMenuAction extends AbstractAction
+    {
+    	public CloseMenuAction()
+    	{
+    		super(StringResources.getString("closeItemLabel"));
+    		this.putValue(Action.SHORT_DESCRIPTION, StringResources.getString("closeItemTip"));    		
+    	}
+    	
+		public void actionPerformed(ActionEvent e)
+		{
+			// Save application settings and exit.
+            saveState();
+            System.exit(0);
+		}
     }
 
     
