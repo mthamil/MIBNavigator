@@ -355,26 +355,6 @@ public class GetRequestTask extends SwingWorker<String, GetRequestResult>
         }
     }
     
-    private void fireResultReceivedEvent(final GetRequestResult result)
-    {
-        final Object[] listeners = requestListeners.getListenerList();
-        //boolean test = SwingUtilities.isEventDispatchThread();
-        for (int i = listeners.length - 2; i >= 0; i -= 2) 
-        {
-            if (listeners[i] == GetRequestListener.class) 
-            {
-                final GetRequestListener currentListener = (GetRequestListener)listeners[i + 1];
-                Runnable doFireResultReceived = new Runnable() 
-                {
-                    public void run() 
-                    {
-                        currentListener.requestResultReceived(result);
-                    }
-                };
-                SwingUtilities.invokeLater(doFireResultReceived);
-            }
-        }
-    }
     
     private void fireRequestTerminationEvent(final String statusMessage)
     {
@@ -395,7 +375,6 @@ public class GetRequestTask extends SwingWorker<String, GetRequestResult>
                 SwingUtilities.invokeLater(doRequestTerminated);
             }
         }
-    }
-    
+    }    
 
 }
