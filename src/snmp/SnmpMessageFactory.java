@@ -31,7 +31,7 @@ import snmp.datatypes.sequence.SnmpVariablePair;
 import snmp.datatypes.sequence.pdu.SnmpBasicPDU;
 import snmp.error.ErrorStatus;
 import snmp.error.SnmpBadValueException;
-import utilities.ExtendedIterator;
+import utilities.InspectableIterator;
 
 /**
  * Class that assists in the creation of SNMP messages.
@@ -41,14 +41,14 @@ public class SnmpMessageFactory
 	private String community;
 	private SnmpVersion version;
 	
-	private ExtendedIterator<Integer> requestIdIterator;
+	private InspectableIterator<Integer> requestIdIterator;
 	
 	/**
 	 * Creates a default message factory with an iterator
 	 * that generates Request IDs.
 	 * @param idIterator the object used to generate Request IDs
 	 */
-	public SnmpMessageFactory(ExtendedIterator<Integer> idIterator) 
+	public SnmpMessageFactory(InspectableIterator<Integer> idIterator) 
 	{
 		requestIdIterator = idIterator;
 	}
@@ -60,7 +60,7 @@ public class SnmpMessageFactory
 	 * @param version
 	 * @param community
 	 */
-	public SnmpMessageFactory(ExtendedIterator<Integer> idIterator, SnmpVersion version, String community)
+	public SnmpMessageFactory(InspectableIterator<Integer> idIterator, SnmpVersion version, String community)
 	{
 		this.requestIdIterator = idIterator;
 		this.community = community;

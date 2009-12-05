@@ -65,6 +65,33 @@ public class FileSettingsLocation implements SettingsLocation
 	}
 	
 	/* (non-Javadoc)
+	 * @see settings.SettingsLocation#connect()
+	 */
+	public boolean connect()
+	{
+		// Create a new settings file if necessary.
+		boolean successful = true;
+		try
+		{
+			// Create the settings directory if necessary.
+			if (!SETTINGS_PATH.exists())
+				SETTINGS_PATH.mkdir();
+
+			settingsFile.createNewFile();
+		}
+		catch (IOException e)
+		{
+			successful = false;
+		}
+		catch (SecurityException e)
+		{
+			successful = false;
+		}
+		
+		return successful;
+	}
+	
+	/* (non-Javadoc)
 	 * @see settings.SettingsLocation#getInputStream()
 	 * @throws IOException 
 	 */
@@ -79,13 +106,6 @@ public class FileSettingsLocation implements SettingsLocation
 	 */
 	public OutputStream getOutput() throws IOException
 	{
-		// Create the settings directory if necessary.
-		if (!SETTINGS_PATH.exists())
-			SETTINGS_PATH.mkdir();
-		
-		// Create a new settings file if necessary.
-		settingsFile.createNewFile();
-			
 		return new FileOutputStream(settingsFile);
 	}
 }

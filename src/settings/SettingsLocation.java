@@ -37,6 +37,12 @@ public interface SettingsLocation
 	 * @return
 	 */
 	public boolean isAccessible();
+	
+	/**
+	 * Attempts to establish a connection to a settings location.
+	 * @return whether the connection was successful or not.
+	 */
+	public boolean connect();
 
 	/**
 	 * Returns an input stream for the storage location.

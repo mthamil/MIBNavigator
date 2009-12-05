@@ -21,12 +21,12 @@
 
 package snmp;
 
-import utilities.ExtendedIterator;
+import utilities.InspectableIterator;
 
 /**
  * Class that creates sequential SNMP Request IDs.
  */
-public class RequestIdGenerator implements ExtendedIterator<Integer>
+public class RequestIdGenerator implements InspectableIterator<Integer>
 {
 	private int requestId;
 	

@@ -29,6 +29,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
+import java.nio.channels.Channel;
+import java.nio.channels.FileChannel;
 
 /**
  * Class containing useful IO utility methods.
@@ -47,19 +49,15 @@ public class IOUtilities
     public static boolean copyFile(File sourceFile, File destFile)
     {
     	boolean succeeded = true;
-    	InputStream in = null;
-        OutputStream out = null;
+    	FileChannel source = null;
+        FileChannel destination = null;
     	
         try
         {
-	        in = new FileInputStream(sourceFile);
-	        out = new FileOutputStream(destFile);
+        	source = new FileInputStream(sourceFile).getChannel();
+        	destination = new FileOutputStream(destFile).getChannel();
 	    
-	        // Transfer the file as raw bytes from in to out.
-	        byte[] buffer = new byte[1024];
-	        int len;
-	        while ((len = in.read(buffer)) > 0) 
-	            out.write(buffer, 0, len);
+	        destination.transferFrom(source, 0, source.size());
         }
         catch(IOException e)
         {
@@ -67,8 +65,8 @@ public class IOUtilities
         }
         finally
         {
-        	IOUtilities.closeQuietly(in);
-        	IOUtilities.closeQuietly(out);
+        	IOUtilities.closeQuietly(source);
+        	IOUtilities.closeQuietly(destination);
         }
         
         return succeeded;
@@ -150,6 +148,28 @@ public class IOUtilities
 	    {
 	    	// Do nothing, do not care.
 	    }
+    }
+    
+    
+    /**
+     * Unconditionally closes a channel.
+     * 
+     * @param channel
+     */
+    public static void closeQuietly(Channel channel)
+    {
+    	
+    	try
+    	{
+    		if (channel != null)
+    			channel.close();
+    	}
+    	catch (IOException e)
+    	{
+    		// Do nothing, do not care.
+    	}
+    	
+    	
     }
 
 }

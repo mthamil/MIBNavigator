@@ -283,35 +283,38 @@ public class UserSettings
 		// Write the file is either the settings changed or no settings file exists.
 		if (settingsChanged || !location.isAccessible())
 		{
-			if (mibDirectory != null && mibDirectory.isDirectory())
-				settings.setProperty(SettingsProperties.MibDirectory.toString(), mibDirectory.getPath());
-			
-			if (!addresses.isEmpty())
+			if (location.connect())
 			{
-				int itemCount =  Math.min(addresses.size(), maxAddresses);
-				String joinedAddresses = StringUtilities.join(",", addresses.subList(0, itemCount));
-				settings.setProperty(SettingsProperties.IPAddresses.toString(), joinedAddresses);
-			}
-
-			settings.setProperty(SettingsProperties.MaximumAddresses.toString(), String.valueOf(maxAddresses));
-			settings.setProperty(SettingsProperties.MibFileFormat.toString(), mibFormat.toString());
-			settings.setProperty(SettingsProperties.Port.toString(), String.valueOf(port));
-			settings.setProperty(SettingsProperties.Timeout.toString(), String.valueOf(timeout));
-
-			// Save program state settings to file.
-			OutputStream settingsOut = null;
-			try
-			{
-				settingsOut = location.getOutput();
-				settings.storeToXML(settingsOut, null);
-			}
-			catch (IOException e)
-			{
-				System.out.println("Error saving properties file.");
-			}
-			finally
-			{
-				IOUtilities.closeQuietly(settingsOut);
+				if (mibDirectory != null && mibDirectory.isDirectory())
+					settings.setProperty(SettingsProperties.MibDirectory.toString(), mibDirectory.getPath());
+				
+				if (!addresses.isEmpty())
+				{
+					int itemCount =  Math.min(addresses.size(), maxAddresses);
+					String joinedAddresses = StringUtilities.join(",", addresses.subList(0, itemCount));
+					settings.setProperty(SettingsProperties.IPAddresses.toString(), joinedAddresses);
+				}
+	
+				settings.setProperty(SettingsProperties.MaximumAddresses.toString(), String.valueOf(maxAddresses));
+				settings.setProperty(SettingsProperties.MibFileFormat.toString(), mibFormat.toString());
+				settings.setProperty(SettingsProperties.Port.toString(), String.valueOf(port));
+				settings.setProperty(SettingsProperties.Timeout.toString(), String.valueOf(timeout));
+	
+				// Save program state settings to file.
+				OutputStream settingsOut = null;
+				try
+				{
+					settingsOut = location.getOutput();
+					settings.storeToXML(settingsOut, null);
+				}
+				catch (IOException e)
+				{
+					System.out.println("Error saving properties file.");
+				}
+				finally
+				{
+					IOUtilities.closeQuietly(settingsOut);
+				}
 			}
 		}
 	}

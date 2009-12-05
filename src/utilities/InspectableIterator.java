@@ -29,7 +29,7 @@ import java.util.Iterator;
  *
  * @param <E> the type of object being iterated over
  */
-public interface ExtendedIterator<E> extends Iterator<E>
+public interface InspectableIterator<E> extends Iterator<E>
 {
 	/**
 	 * Gets the current element. That is, the last element returned by
