@@ -65,8 +65,8 @@ public class IOUtilities
         }
         finally
         {
-        	IOUtilities.closeQuietly(source);
-        	IOUtilities.closeQuietly(destination);
+        	closeQuietly(source);
+        	closeQuietly(destination);
         }
         
         return succeeded;

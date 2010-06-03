@@ -28,7 +28,7 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.Properties;
 
-import utilities.IOUtilities;
+import static utilities.IOUtilities.closeQuietly;
 import utilities.StringUtilities;
 
 import libmib.format.MibFormat;
@@ -252,7 +252,7 @@ public class UserSettings
         }
         finally
 		{
-			IOUtilities.closeQuietly(settingsIn);
+			closeQuietly(settingsIn);
 		}
 
         // Parse the MIB directory property.
@@ -313,7 +313,7 @@ public class UserSettings
 				}
 				finally
 				{
-					IOUtilities.closeQuietly(settingsOut);
+					closeQuietly(settingsOut);
 				}
 			}
 		}
