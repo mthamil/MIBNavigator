@@ -1,7 +1,7 @@
 /**
  * Utilities
  *
- * Copyright (C) 2009, Matt Hamilton <matthamilton@live.com>
+ * Copyright (C) 2010, Matt Hamilton <matthamilton@live.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

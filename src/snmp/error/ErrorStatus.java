@@ -1,7 +1,7 @@
 /*
  * SNMP Package
  *
- * Copyright (C) 2009, Matt Hamilton <matthamilton@live.com>
+ * Copyright (C) 2010, Matt Hamilton <matthamilton@live.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -143,11 +143,11 @@ public enum ErrorStatus
      */
     public static ErrorStatus getInstance(int value)
     {
-        if (value > ErrorStatus.values().length)
+    	ErrorStatus[] errorStatuses = ErrorStatus.values();
+        if (value > errorStatuses.length)
             throw new IllegalArgumentException("No corresponding instance.");
         
-        ErrorStatus[] vals = ErrorStatus.values();
-        return vals[value];
+        return errorStatuses[value];
     }
     
     /**

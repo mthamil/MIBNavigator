@@ -1,7 +1,7 @@
 /**
  * libmib - Java SNMP Management Information Base Library
  *
- * Copyright (C) 2009, Matt Hamilton <matthamilton@live.com>
+ * Copyright (C) 2010, Matt Hamilton <matthamilton@live.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,8 +54,9 @@ public class SMIParserFactory
 	 * @param token
 	 * @return
 	 */
-	public static AbstractParser<?> getParser(SMIToken token)
+	@SuppressWarnings("unchecked")
+	public static <T extends AbstractParser<?>> T getParser(SMIToken token)
 	{
-		return parsers.get(token);
+		return (T)parsers.get(token);
 	}
 }

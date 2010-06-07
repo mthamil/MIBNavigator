@@ -2,7 +2,7 @@
  * SNMP Package
  *
  * Copyright (C) 2004, Jonathan Sevy <jsevy@mcs.drexel.edu>
- * Copyright (C) 2009, Matt Hamilton <matthamilton@live.com>
+ * Copyright (C) 2010, Matt Hamilton <matthamilton@live.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -70,10 +70,21 @@ public class SnmpV1Communicator
     public SnmpV1Communicator(SnmpVersion version, InetAddress hostAddress, String community)
         throws SocketException
     {
+        this(new DatagramSocket(), version, hostAddress, community);
+    }
+    
+    /**
+     *  Constructs a new communication object to communicate with the specified host using the
+     *  given community name. The version setting should be either 0 (version 1) or 1 (version 2,
+     *  a la RFC 1157). The default SNMP port is used and it has a default timeout of 15 seconds.
+     */
+    public SnmpV1Communicator(DatagramSocket socket, SnmpVersion version, InetAddress hostAddress, String community)
+        throws SocketException
+    {
         this.hostAddress = hostAddress;
         this.port = SnmpV1Communicator.DEFAULT_SNMP_PORT;
 
-        dSocket = new DatagramSocket();
+        dSocket = socket;
         dSocket.setSoTimeout(15000);    //15 seconds
         
         packetProcessor = new SnmpPacketProcessor();

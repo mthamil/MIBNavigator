@@ -1,7 +1,7 @@
 /**
  * libmib - Java SNMP Management Information Base Library
  *
- * Copyright (C) 2009, Matt Hamilton <matthamilton@live.com>
+ * Copyright (C) 2010, Matt Hamilton <matthamilton@live.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +38,7 @@ import libmib.format.smi.InvalidSmiMibFormatException;
 import libmib.format.smi.SMIStructureHandler;
 import libmib.format.smi.SMIToken;
 import libmib.format.smi.SMIStructureHandler.HierarchyData;
+import libmib.format.smi.parsers.AbstractParser;
 import libmib.format.smi.parsers.SMIParserFactory;
 
 /**
@@ -244,19 +245,19 @@ public class MibTreeBuilderSmi extends AbstractMibTreeBuilder
                 {
                     // SYNTAX
                     if (line.contains(SYNTAX.token()) && !objectType.equals(MODULE_COMP))
-                    	nodeSyntax = (MibSyntax)SMIParserFactory.getParser(SYNTAX).parse(reader, line);
+                    	nodeSyntax = SMIParserFactory.<AbstractParser<MibSyntax>>getParser(SYNTAX).parse(reader, line);
                     
                     // ACCESS
                     else if (line.contains(ACCESS.token()) && !objectType.equals(MODULE_COMP))
-                        nodeAccess = (Access)SMIParserFactory.getParser(ACCESS).parse(reader, line);
+                        nodeAccess = SMIParserFactory.<AbstractParser<Access>>getParser(ACCESS).parse(reader, line);
                     
                     // STATUS
                     else if (line.contains(STATUS.token()))
-                        nodeStatus = (Status)SMIParserFactory.getParser(STATUS).parse(reader, line);
+                        nodeStatus = SMIParserFactory.<AbstractParser<Status>>getParser(STATUS).parse(reader, line);
     
                     // DESCRIPTION
                     else if (line.contains(DESCRIPTION.token()))
-                        nodeDesc.append((String)SMIParserFactory.getParser(DESCRIPTION).parse(reader, line));
+                        nodeDesc.append(SMIParserFactory.<AbstractParser<String>>getParser(DESCRIPTION).parse(reader, line));
 
                     line = reader.readLine();
                 }

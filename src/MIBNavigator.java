@@ -1,7 +1,7 @@
 /**
  * MIB Navigator
  *
- * Copyright (C) 2009, Matt Hamilton <matthamilton@live.com>
+ * Copyright (C) 2010, Matt Hamilton <matthamilton@live.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -88,14 +88,14 @@ public class MIBNavigator
     public MIBNavigator(MibTreeBuilder newBuilder, UserSettings settings)
     {
     	this.appSettings = settings;
-        maxAddresses = settings.getMaxAddresses();
+        maxAddresses = settings.MaximumAddresses.getValue();
         
         this.setDefaultFont(LookAndFeelResources.getFont("application"));
 
-        browser = new MibBrowser(newBuilder, settings.getMibDirectory());
-        browser.setAddresses(settings.getAddresses());
-        browser.setPort(settings.getPort());
-        browser.setTimeout(settings.getTimeout());
+        browser = new MibBrowser(newBuilder, settings.MibDirectory.getValue());
+        browser.setAddresses(settings.IPAddresses.getValue());
+        browser.setPort(settings.Port.getValue());
+        browser.setTimeout(settings.Timeout.getValue());
         
         this.configureFrame(browser.getBrowserPanel());
     }
@@ -106,10 +106,10 @@ public class MIBNavigator
      */
     public void saveState()
     {
-        appSettings.setMaxAddresses(maxAddresses);
-        appSettings.setAddresses(browser.getAddresses());
-        appSettings.setPort(browser.getPort());
-        appSettings.setTimeout(browser.getTimeout());
+        appSettings.MaximumAddresses.setValue(maxAddresses);
+        appSettings.IPAddresses.setValue(browser.getAddresses());
+        appSettings.Port.setValue(browser.getPort());
+        appSettings.Timeout.setValue(browser.getTimeout());
         appSettings.saveSettings();
     }
     
@@ -208,7 +208,7 @@ public class MIBNavigator
 
 		public void actionPerformed(ActionEvent e)
 		{
-			final FileFilter dialogFilter = appSettings.getMibFormat().getDialogFileFilter();
+			final FileFilter dialogFilter = appSettings.MibFileFormat.getValue().getDialogFileFilter();
 			
 			// Add a new MIB to the browser's tree if it is valid.
 
@@ -250,7 +250,7 @@ public class MIBNavigator
 
 		public void actionPerformed(ActionEvent e)
 		{
-			final FileFilter dialogFilter = appSettings.getMibFormat().getDialogFileFilter();
+			final FileFilter dialogFilter = appSettings.MibFileFormat.getValue().getDialogFileFilter();
 			
 			// Try to add a new MIB to the browser's tree, and if it is valid, copy it into the default MIBs directory.
 
@@ -356,7 +356,7 @@ public class MIBNavigator
         { 
             // ***Configure MIB Compiler***
         	MibTreeBuilderFactory mibTreeFactory = new MibTreeBuilderFactory();
-        	final MibTreeBuilder treeBuilder = mibTreeFactory.createTreeBuilder(settings.getMibFormat());
+        	final MibTreeBuilder treeBuilder = mibTreeFactory.createTreeBuilder(settings.MibFileFormat.getValue());
             
             // Create and configure the interface components in the EventDispatch 
             // thread according to best practices for using Swing.

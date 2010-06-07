@@ -1,7 +1,7 @@
 /**
  * MIB Navigator
  *
- * Copyright (C) 2009, Matt Hamilton <matthamilton@live.com>
+ * Copyright (C) 2010, Matt Hamilton <matthamilton@live.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,20 +19,16 @@
  *
  */
 
-package settings;
+package utilities.parsing;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringTokenizer;
 
 /**
- * Class containing static helper methods for parsing app 
- * settings properties.
+ * Class containing static helper methods for parsing objects.
  */
-public class PropertyParser
+public class Parsers
 {
-	private PropertyParser() { }
+	private Parsers() { }
 	
 	/**
 	 * Parses a file directory from a string.
@@ -40,7 +36,18 @@ public class PropertyParser
 	 * @param defaultPath the path to use if the path doesn't exist or isn't a directory
 	 * @return
 	 */
-	public static File parseDirectoryProperty(String path, String defaultPath)
+	public static File parseDirectory(String path, String defaultPath)
+	{
+		return Parsers.parseDirectory(path, new File(defaultPath));
+	}
+	
+	/**
+	 * Parses a file directory from a string.
+	 * @param path the string path to parse
+	 * @param defaultPath the path to use if the path doesn't exist or isn't a directory
+	 * @return
+	 */
+	public static File parseDirectory(String path, File defaultDirectory)
 	{
 		// If this is a local relative path, try to convert
 		// the file path separators to the current OS.
@@ -54,33 +61,10 @@ public class PropertyParser
 		if (!directory.isDirectory())
 		{
 			// If the path isn't a directory or doesn't exist, use the default.
-			directory = new File(defaultPath);
+			directory = defaultDirectory;
 		}
 
 		return directory;
-	}
-	
-	/**
-	 * Parses a string delimited by a given character into a list.  The maxEntries
-	 * parameter can be used to limit how many delimited entries to return.
-	 * @param delimitedString the delimited string to parse
-	 * @param delimiter the delimiting character
-	 * @param maxEntries the maximum number of entries to parse
-	 * @return
-	 */
-	public static List<String> parseDelimitedProperty(String delimitedString, char delimiter, int maxEntries)
-	{
-		List<String> entries = new ArrayList<String>(maxEntries);
-		
-		StringTokenizer tokenizer = new StringTokenizer(delimitedString, String.valueOf(delimiter));
-        int i = 0;
-        while (tokenizer.hasMoreTokens() && i < maxEntries)
-        {
-        	entries.add(tokenizer.nextToken());
-            i++;
-        }
-		
-		return entries;
 	}
 
 	
@@ -91,7 +75,7 @@ public class PropertyParser
 	 * @param defaultValue the Enum value to use if parsing fails
 	 * @return
 	 */
-	public static <T extends Enum<T>> T parseEnumProperty(String enumString, T defaultValue)
+	public static <T extends Enum<T>> T parseEnum(String enumString, T defaultValue)
 	{
 		T enumValue = null;
 		try
@@ -113,7 +97,7 @@ public class PropertyParser
 	 * @param defaultValue the default value to use if parsing fails
 	 * @return
 	 */
-	public static int parseIntegerProperty(String valueString, int defaultValue)
+	public static int parsePositiveInteger(String valueString, int defaultValue)
 	{
 		if (valueString == null || valueString.equals(""))
 			return defaultValue;

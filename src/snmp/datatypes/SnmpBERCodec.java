@@ -2,7 +2,7 @@
  * SNMP Package
  *
  * Copyright (C) 2004, Jonathan Sevy <jsevy@mcs.drexel.edu>
- * Copyright (C) 2009, Matt Hamilton <matthamilton@live.com>
+ * Copyright (C) 2010, Matt Hamilton <matthamilton@live.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -32,15 +32,13 @@ import snmp.datatypes.sequence.pdu.SnmpV2InformRequestPDU;
 import snmp.datatypes.sequence.pdu.SnmpV2TrapPDU;
 import snmp.error.SnmpBadValueException;
 
-
-
 /** 
  *  SNMPBERCodec defines methods for converting from ASN.1 Basic Encoding Rules encoding to 
  *  SNMPObject subclasses. The extraction process usually produces a tree structure of objects 
  *  with an SNMPSequence object at the root; this is the usual behavior when a received encoded 
  *  message is received from an SNMP device.
  */
-public class SnmpBERCodec
+public final class SnmpBERCodec
 {    
     /** 
      *  Extracts an SNMP object given its type, length, and value triple as an SNMP TLV object.

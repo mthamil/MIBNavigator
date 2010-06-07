@@ -1,7 +1,7 @@
 /*
  * SNMP Package
  *
- * Copyright (C) 2009, Matt Hamilton <matthamilton@live.com>
+ * Copyright (C) 2010, Matt Hamilton <matthamilton@live.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -36,10 +36,10 @@ public enum SnmpVersion
      */
     public static SnmpVersion getInstance(int value)
     {
-        if (value > SnmpVersion.values().length)
+    	SnmpVersion[] versions = SnmpVersion.values();
+        if (value > versions.length)
             throw new IllegalArgumentException("No corresponding instance.");
         
-        SnmpVersion[] vals = SnmpVersion.values();
-        return vals[value];
+        return versions[value];
     }
 }

@@ -1,7 +1,7 @@
 /**
  * libmib - Java SNMP Management Information Base Library
  *
- * Copyright (C) 2009, Matt Hamilton <matthamilton@live.com>
+ * Copyright (C) 2010, Matt Hamilton <matthamilton@live.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@ import libmib.MibObjectExtended;
 import libmib.format.smi.InvalidSmiMibFormatException;
 import libmib.format.smi.SMIStructureHandler;
 import libmib.format.smi.SMIStructureHandler.HierarchyData;
+import libmib.format.smi.parsers.AbstractParser;
 import libmib.format.smi.parsers.SMIParserFactory;
 import utilities.IOUtilities;
 
@@ -71,7 +72,6 @@ public class SmiToXmlMibConverter
      * @param inputMIBFile
      * @throws InvalidSmiMibFormatException
      */
-    @SuppressWarnings("unchecked")
 	public void readMIB(File inputMIBFile) throws InvalidSmiMibFormatException
     {   
     	BufferedReader reader = null;
@@ -106,7 +106,7 @@ public class SmiToXmlMibConverter
                 // Read the 'IMPORTS' section.
                 if (line.contains(IMPORTS.token()))
                 {
-                    List<MibImport> imports = (List<MibImport>)SMIParserFactory.getParser(IMPORTS).parse(reader, line);
+                    List<MibImport> imports = SMIParserFactory.<AbstractParser<List<MibImport>>>getParser(IMPORTS).parse(reader, line);
                     for (MibImport importItem : imports)
                     	mibDocFactory.addImportElement(importItem);
                 }
@@ -167,7 +167,7 @@ public class SmiToXmlMibConverter
                     }
 				}
                 			
-				 MibObjectExtended mibObject = (MibObjectExtended)SMIParserFactory.getParser(OBJECT_GROUP).parse(reader, line);
+				 MibObjectExtended mibObject = SMIParserFactory.<AbstractParser<MibObjectExtended>>getParser(OBJECT_GROUP).parse(reader, line);
 				 if (mibObject != null)
 					 mibDocFactory.addObjectElement(mibObject);
 			}

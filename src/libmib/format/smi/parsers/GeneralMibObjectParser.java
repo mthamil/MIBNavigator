@@ -1,7 +1,7 @@
 /**
  * libmib - Java SNMP Management Information Base Library
  *
- * Copyright (C) 2009, Matt Hamilton <matthamilton@live.com>
+ * Copyright (C) 2010, Matt Hamilton <matthamilton@live.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -122,15 +122,15 @@ public class GeneralMibObjectParser extends AbstractParser<MibObjectExtended>
 	            {
 	                // SYNTAX
 	                if (currentLine.contains(SYNTAX.token()) && !objectType.equals(MODULE_COMP))
-	                	nodeSyntax = (MibSyntax)SMIParserFactory.getParser(SYNTAX).parse(reader, currentLine);
+	                	nodeSyntax = SMIParserFactory.<AbstractParser<MibSyntax>>getParser(SYNTAX).parse(reader, currentLine);
 	                
 	                // ACCESS
 	                else if (currentLine.contains(ACCESS.token()) && !objectType.equals(MODULE_COMP))   
-	                	access = (Access)SMIParserFactory.getParser(ACCESS).parse(reader, currentLine);
+	                	access = SMIParserFactory.<AbstractParser<Access>>getParser(ACCESS).parse(reader, currentLine);
 	                
 	                // STATUS
 	                else if (currentLine.contains(STATUS.token()))
-	                	status = (Status)SMIParserFactory.getParser(STATUS).parse(reader, currentLine);
+	                	status = SMIParserFactory.<AbstractParser<Status>>getParser(STATUS).parse(reader, currentLine);
 	                
 	                // LAST-UPDATED
 	                else if (currentLine.contains(MODULE_LAST_UPDATED.token()))
@@ -166,7 +166,7 @@ public class GeneralMibObjectParser extends AbstractParser<MibObjectExtended>
 	                
 	                // DESCRIPTION
 	                else if (currentLine.contains(DESCRIPTION.token()))
-	                    description.append((String)SMIParserFactory.getParser(DESCRIPTION).parse(reader, currentLine));
+	                    description.append(SMIParserFactory.<AbstractParser<String>>getParser(DESCRIPTION).parse(reader, currentLine));
 
 	                
 	                // REFERENCE
@@ -185,7 +185,7 @@ public class GeneralMibObjectParser extends AbstractParser<MibObjectExtended>
 	                // REVISION
 	                else if (currentLine.contains(MODULE_REVISION.token()))
 	                {                                      
-	                    MibModuleIdRevision revision = (MibModuleIdRevision)SMIParserFactory.getParser(MODULE_REVISION).parse(reader, currentLine);
+	                    MibModuleIdRevision revision = SMIParserFactory.<AbstractParser<MibModuleIdRevision>>getParser(MODULE_REVISION).parse(reader, currentLine);
 	                    if (revision != null)
 	                    {
 	                        if (revisions == null)

@@ -1,7 +1,7 @@
 /**
  * MIB Navigator
  *
- * Copyright (C) 2009, Matt Hamilton <matthamilton@live.com>
+ * Copyright (C) 2010, Matt Hamilton <matthamilton@live.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +30,13 @@ import java.util.Properties;
 
 import static utilities.IOUtilities.closeQuietly;
 import utilities.StringUtilities;
+import utilities.events.GenericEventListener;
+import utilities.events.PropertyChangeEventInfo;
+import utilities.parsing.DirectoryParser;
+import utilities.parsing.EnumParser;
+import utilities.parsing.PositiveIntegerParser;
+import utilities.parsing.Parsers;
+import utilities.parsing.TokenizerParser;
 
 import libmib.format.MibFormat;
 
@@ -40,10 +47,45 @@ import libmib.format.MibFormat;
  */
 public class UserSettings
 {
-	private enum SettingsProperties
+	public final ApplicationSetting<File> MibDirectory = 
+		new ApplicationSetting<File>("MibDirectory", new DirectoryParser(new File(DEFAULT_MIB_DIRECTORY)))
 	{
-		MibDirectory, IPAddresses, MaximumAddresses, MibFileFormat, Port, Timeout
-	}
+		@Override
+		public void setValue(File newValue)
+		{
+			if (newValue == null)
+				return;
+			
+			super.setValue(newValue);
+		}
+	};
+	
+	public final ApplicationSetting<Integer> MaximumAddresses = 
+		new PositiveIntegerSetting("MaximumAddresses", new PositiveIntegerParser(DEFAULT_MAX_ADDRESSES));
+	
+	private TokenizerParser tokenParser = new TokenizerParser(',');
+	public final ApplicationSetting<List<String>> IPAddresses = 
+		new ApplicationSetting<List<String>>("IPAddresses", tokenParser)
+	{
+		@Override
+		public void setValue(List<String> newValue)
+		{
+			if (newValue == null)
+				return;	
+
+			super.setValue(newValue);
+		}
+	};
+	
+	public final ApplicationSetting<Integer> Port = 
+		new PositiveIntegerSetting("Port", new PositiveIntegerParser(DEFAULT_PORT));
+	
+	public final ApplicationSetting<Integer> Timeout = 
+		new PositiveIntegerSetting("Timeout", new PositiveIntegerParser(DEFAULT_TIMEOUT));
+	
+	public final ApplicationSetting<MibFormat> MibFileFormat = 
+		new ApplicationSetting<MibFormat>("MibFileFormat", new EnumParser<MibFormat>(MibFormat.SMI)) {};
+	
 
 	private SettingsLocation location;
 	private Properties settings;
@@ -53,13 +95,6 @@ public class UserSettings
 	private static final String DEFAULT_MIB_DIRECTORY = "." + File.separator + "mibs" + File.separator + MibFormat.SMI.toString().toLowerCase();
 	private static final int DEFAULT_PORT = 161;
 	private static final int DEFAULT_TIMEOUT = 4000;
-	
-	private File mibDirectory;
-	private int maxAddresses;
-	private List<String> addresses;
-	private MibFormat mibFormat;
-	private int port;
-	private int timeout;
 
 	/**
 	 * Initializes user settings.
@@ -72,149 +107,72 @@ public class UserSettings
 		this.settings = new Properties();
 		this.settingsChanged = false;
 		this.location = location;
+		
+		subscribeToEvents();
 	}
-
-	/**
-	 * Gets the maximum allowed number of stored IP addresses.
-	 */
-	public int getMaxAddresses()
+	
+	private void subscribeToEvents()
 	{
-		return maxAddresses;
-	}
-
-	/**
-	 * Sets the maximum allowed number of stored IP addresses. Negative values
-	 * will be treated as choosing to save no addresses.
-	 */
-	public void setMaxAddresses(int newMax)
-	{
-		if (newMax < 0)
-			newMax = 0;
-
-		if (newMax != maxAddresses)
+		MibDirectory.PropertyChangedEvent.addListener(new GenericEventListener<ApplicationSetting<File>, 
+				PropertyChangeEventInfo<File>>()
 		{
-			maxAddresses = newMax;
-			settingsChanged = true;
-		}
-	}
-
-	/**
-	 * Gets the list of saved IP addresses.
-	 */
-	public List<String> getAddresses()
-	{
-		return addresses;
-	}
-
-	/**
-	 * Sets the list of saved IP addresses.
-	 */
-	public void setAddresses(List<String> newAddresses)
-	{
-		if (newAddresses == null)
-			return;						// Ignore null
-
-		if (newAddresses != addresses)
-		{
-			// Check to to see if the Lists are equivalent.
-			if (!newAddresses.equals(addresses))
+			@Override
+			public void eventRaised(ApplicationSetting<File> source, PropertyChangeEventInfo<File> eventInfo)
 			{
-				addresses = newAddresses;
 				settingsChanged = true;
 			}
-		}
-	}
-
-	/**
-	 * Gets the MIB format used.
-	 */
-	public MibFormat getMibFormat()
-	{
-		return mibFormat;
-	}
-	
-	/**
-	 * Sets the MIB format used.
-	 * @param format
-	 */
-	public void setMibFormat(MibFormat format)
-	{
-		if (format != mibFormat)
-		{
-			mibFormat = format;
-			settingsChanged = true;
-		}
-	}
-	
-	/**
-	 * Gets the directory where application startup MIBs are located.
-	 * @return
-	 */
-	public File getMibDirectory()
-	{
-		return mibDirectory;
-	}
-	
-	/**
-	 * Sets the directory where application startup MIBs are located.
-	 * @param mibDirectory
-	 */
-	public void setMibDirectory(File newMibDirectory)
-	{
-		if (newMibDirectory == null)
-			return;
+		});
 		
-		if (!newMibDirectory.equals(mibDirectory))
+		MaximumAddresses.PropertyChangedEvent.addListener(new GenericEventListener<ApplicationSetting<Integer>, 
+				PropertyChangeEventInfo<Integer>>()
 		{
-			mibDirectory = newMibDirectory;
-			settingsChanged = true;
-		}
-	}
-	
-	/**
-	 * Gets the port number.
-	 */
-	public int getPort()
-	{
-		return port;
-	}
-
-	/**
-	 * Sets the port number.
-	 */
-	public void setPort(int newPort)
-	{
-		if (newPort < 0)
-			newPort = 0;
-
-		if (newPort != port)
+			@Override
+			public void eventRaised(ApplicationSetting<Integer> source, PropertyChangeEventInfo<Integer> eventInfo)
+			{
+				settingsChanged = true;
+			}
+		});
+		
+		IPAddresses.PropertyChangedEvent.addListener(new GenericEventListener<ApplicationSetting<List<String>>, 
+				PropertyChangeEventInfo<List<String>>>()
 		{
-			port = newPort;
-			settingsChanged = true;
-		}
-	}
-	
-	/**
-	 * Gets the timeout.
-	 */
-	public int getTimeout()
-	{
-		return timeout;
-	}
+			@Override
+			public void eventRaised(ApplicationSetting<List<String>> source, PropertyChangeEventInfo<List<String>> eventInfo)
+			{
+				settingsChanged = true;
+			}
+		});
 
-	/**
-	 * Sets the timeout.
-	 */
-	public void setTimeout(int newTimeout)
-	{
-		if (newTimeout < 0)
-			newTimeout = 0;
-
-		if (newTimeout != timeout)
+		Port.PropertyChangedEvent.addListener(new GenericEventListener<ApplicationSetting<Integer>, 
+				PropertyChangeEventInfo<Integer>>()
 		{
-			timeout = newTimeout;
-			settingsChanged = true;
-		}
+			@Override
+			public void eventRaised(ApplicationSetting<Integer> source, PropertyChangeEventInfo<Integer> eventInfo)
+			{
+				settingsChanged = true;
+				//Port.PropertyChangedEvent.removeListener(this);
+			}
+		});
+		
+		Timeout.PropertyChangedEvent.addListener(new GenericEventListener<ApplicationSetting<Integer>, 
+				PropertyChangeEventInfo<Integer>>()
+		{
+			@Override
+			public void eventRaised(ApplicationSetting<Integer> source, PropertyChangeEventInfo<Integer> eventInfo)
+			{
+				settingsChanged = true;
+			}
+		});
+		
+		MibFileFormat.PropertyChangedEvent.addListener(new GenericEventListener<ApplicationSetting<MibFormat>, 
+				PropertyChangeEventInfo<MibFormat>>()
+		{
+			@Override
+			public void eventRaised(ApplicationSetting<MibFormat> source, PropertyChangeEventInfo<MibFormat> eventInfo)
+			{
+				settingsChanged = true;
+			}
+		});
 	}
 	
 	
@@ -238,12 +196,12 @@ public class UserSettings
         		settingsIn = location.getInput();
 	            settings.loadFromXML(settingsIn);
 	            
-	            mibPath		  = settings.getProperty(SettingsProperties.MibDirectory.toString(), DEFAULT_MIB_DIRECTORY);
-	            addressNum    = settings.getProperty(SettingsProperties.MaximumAddresses.toString(), Integer.toString(DEFAULT_MAX_ADDRESSES));
-	            hostAddresses = settings.getProperty(SettingsProperties.IPAddresses.toString(), "");
-	            formatString  = settings.getProperty(SettingsProperties.MibFileFormat.toString(), MibFormat.SMI.toString());
-	            portString 	  = settings.getProperty(SettingsProperties.Port.toString(), Integer.toString(DEFAULT_PORT));
-	            timeoutString = settings.getProperty(SettingsProperties.Timeout.toString(), Integer.toString(DEFAULT_TIMEOUT));
+	            mibPath		  = settings.getProperty(MibDirectory.toString(), DEFAULT_MIB_DIRECTORY);
+	            addressNum    = settings.getProperty(MaximumAddresses.toString(), Integer.toString(DEFAULT_MAX_ADDRESSES));
+	            hostAddresses = settings.getProperty(IPAddresses.toString(), "");
+	            formatString  = settings.getProperty(MibFileFormat.toString(), MibFormat.SMI.toString());
+	            portString 	  = settings.getProperty(Port.toString(), Integer.toString(DEFAULT_PORT));
+	            timeoutString = settings.getProperty(Timeout.toString(), Integer.toString(DEFAULT_TIMEOUT));
         	}
         }
         catch (IOException e)
@@ -256,22 +214,26 @@ public class UserSettings
 		}
 
         // Parse the MIB directory property.
-        mibDirectory = PropertyParser.parseDirectoryProperty(mibPath, DEFAULT_MIB_DIRECTORY);        
+        MibDirectory.setValue(Parsers.parseDirectory(mibPath, DEFAULT_MIB_DIRECTORY));        
 
         // Parse the the max address property.
-        maxAddresses = PropertyParser.parseIntegerProperty(addressNum, DEFAULT_MAX_ADDRESSES);
+        MaximumAddresses.parse(addressNum);
         
         // Parse the address list property.
-        addresses = PropertyParser.parseDelimitedProperty(hostAddresses, ',', maxAddresses);
+        tokenParser.setTokenLimit(MaximumAddresses.getValue());
+        IPAddresses.parse(hostAddresses);
         
         // Parse the MIB file format property.
-        mibFormat = PropertyParser.parseEnumProperty(formatString, MibFormat.SMI);
+        MibFileFormat.parse(formatString);
         
         // Parse the port number property.
-        port = PropertyParser.parseIntegerProperty(portString, DEFAULT_PORT);
+        Port.parse(portString);
         
-        // Parse the timeout property.
-        timeout = PropertyParser.parseIntegerProperty(timeoutString, DEFAULT_TIMEOUT);
+        // Parse the timeout property.tracking stack overflow reputation
+        Timeout.parse(timeoutString);
+        
+        // This must be reset because the initial loading of the values will set it to true.
+        settingsChanged = false;
     }
 	
 	
@@ -285,20 +247,20 @@ public class UserSettings
 		{
 			if (location.connect())
 			{
-				if (mibDirectory != null && mibDirectory.isDirectory())
-					settings.setProperty(SettingsProperties.MibDirectory.toString(), mibDirectory.getPath());
+				if (MibDirectory.getValue() != null && MibDirectory.getValue().isDirectory())
+					settings.setProperty(MibDirectory.toString(), MibDirectory.getValue().getPath());
 				
-				if (!addresses.isEmpty())
+				if (!IPAddresses.getValue().isEmpty())
 				{
-					int itemCount =  Math.min(addresses.size(), maxAddresses);
-					String joinedAddresses = StringUtilities.join(",", addresses.subList(0, itemCount));
-					settings.setProperty(SettingsProperties.IPAddresses.toString(), joinedAddresses);
+					int itemCount =  Math.min(IPAddresses.getValue().size(), MaximumAddresses.getValue());
+					String joinedAddresses = StringUtilities.join(",", IPAddresses.getValue().subList(0, itemCount));
+					settings.setProperty(IPAddresses.toString(), joinedAddresses);
 				}
 	
-				settings.setProperty(SettingsProperties.MaximumAddresses.toString(), String.valueOf(maxAddresses));
-				settings.setProperty(SettingsProperties.MibFileFormat.toString(), mibFormat.toString());
-				settings.setProperty(SettingsProperties.Port.toString(), String.valueOf(port));
-				settings.setProperty(SettingsProperties.Timeout.toString(), String.valueOf(timeout));
+				settings.setProperty(MaximumAddresses.toString(), String.valueOf(MaximumAddresses.getValue()));
+				settings.setProperty(MibFileFormat.toString(), MibFileFormat.getValue().toString());
+				settings.setProperty(Port.toString(), String.valueOf(Port.getValue()));
+				settings.setProperty(Timeout.toString(), String.valueOf(Timeout.getValue()));
 	
 				// Save program state settings to file.
 				OutputStream settingsOut = null;
