@@ -33,11 +33,11 @@ public interface SubscribableEvent<S, E extends EventInfo>
 	 * Adds an event listener.
 	 * @param listener The event subsrciber
 	 */
-	void addListener(GenericEventListener<S, E> listener);
+	void addListener(EventListener<S, E> listener);
 	
 	/**
 	 * Removes an event listener if it exists.
 	 * @param listener The event subscriber
 	 */
-	void removeListener(GenericEventListener<S, E> listener);
+	void removeListener(EventListener<S, E> listener);
 }

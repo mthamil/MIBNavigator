@@ -30,7 +30,7 @@ import java.util.Properties;
 
 import static utilities.IOUtilities.closeQuietly;
 import utilities.StringUtilities;
-import utilities.events.GenericEventListener;
+import utilities.events.EventListener;
 import utilities.events.PropertyChangeEventInfo;
 import utilities.parsing.DirectoryParser;
 import utilities.parsing.EnumParser;
@@ -113,7 +113,7 @@ public class UserSettings
 	
 	private void subscribeToEvents()
 	{
-		MibDirectory.PropertyChangedEvent.addListener(new GenericEventListener<ApplicationSetting<File>, 
+		MibDirectory.PropertyChangedEvent.addListener(new EventListener<ApplicationSetting<File>, 
 				PropertyChangeEventInfo<File>>()
 		{
 			@Override
@@ -123,7 +123,7 @@ public class UserSettings
 			}
 		});
 		
-		MaximumAddresses.PropertyChangedEvent.addListener(new GenericEventListener<ApplicationSetting<Integer>, 
+		MaximumAddresses.PropertyChangedEvent.addListener(new EventListener<ApplicationSetting<Integer>, 
 				PropertyChangeEventInfo<Integer>>()
 		{
 			@Override
@@ -133,7 +133,7 @@ public class UserSettings
 			}
 		});
 		
-		IPAddresses.PropertyChangedEvent.addListener(new GenericEventListener<ApplicationSetting<List<String>>, 
+		IPAddresses.PropertyChangedEvent.addListener(new EventListener<ApplicationSetting<List<String>>, 
 				PropertyChangeEventInfo<List<String>>>()
 		{
 			@Override
@@ -143,7 +143,7 @@ public class UserSettings
 			}
 		});
 
-		Port.PropertyChangedEvent.addListener(new GenericEventListener<ApplicationSetting<Integer>, 
+		Port.PropertyChangedEvent.addListener(new EventListener<ApplicationSetting<Integer>, 
 				PropertyChangeEventInfo<Integer>>()
 		{
 			@Override
@@ -154,7 +154,7 @@ public class UserSettings
 			}
 		});
 		
-		Timeout.PropertyChangedEvent.addListener(new GenericEventListener<ApplicationSetting<Integer>, 
+		Timeout.PropertyChangedEvent.addListener(new EventListener<ApplicationSetting<Integer>, 
 				PropertyChangeEventInfo<Integer>>()
 		{
 			@Override
@@ -164,7 +164,7 @@ public class UserSettings
 			}
 		});
 		
-		MibFileFormat.PropertyChangedEvent.addListener(new GenericEventListener<ApplicationSetting<MibFormat>, 
+		MibFileFormat.PropertyChangedEvent.addListener(new EventListener<ApplicationSetting<MibFormat>, 
 				PropertyChangeEventInfo<MibFormat>>()
 		{
 			@Override

@@ -48,11 +48,11 @@ public class OptionTests
 	{
 		// Test self-equality.
 		Option<String> stringSome = Option.some("test");
-		assertTrue(stringSome.equals(stringSome));
+		assertThat(stringSome, is(stringSome));
 		
 		// Test that Some uses its value for equality.
 		Option<String> stringSome2 = Option.some("test");
-		assertTrue(stringSome.equals(stringSome2));
+		assertThat(stringSome, is(stringSome2));
 		
 		stringSome2 = Option.some("test2");
 		assertFalse(stringSome.equals(stringSome2));
@@ -67,10 +67,10 @@ public class OptionTests
 	{
 		// Test self-equality.
 		Option<String> stringNone = Option.none(String.class);
-		assertTrue(stringNone.equals(stringNone));
+		assertThat(stringNone, is(stringNone));
 		
 		Option<String> stringNone2 = Option.none(String.class);
-		assertTrue(stringNone.equals(stringNone2));
+		assertThat(stringNone, is(stringNone2));
 		
 		Option<Integer> intNone = Option.none(Integer.class);
 		assertFalse(stringNone.equals(intNone));

@@ -60,7 +60,7 @@ public class PropertyChangeEventInfo<T> extends EventInfo
 	 * @param newValue
 	 *            The new value of the property.
 	 */
-	public static <T> PropertyChangeEventInfo<T> createInfo(String propertyName, T oldValue, T newValue)
+	public static <T> PropertyChangeEventInfo<T> create(String propertyName, T oldValue, T newValue)
 	{
 		return new PropertyChangeEventInfo<T>(propertyName, oldValue, newValue);
 	}

@@ -45,7 +45,7 @@ public abstract class ApplicationSetting<T>
 	/** The current value of the setting. */
 	private T value;
 	
-	private final Event<ApplicationSetting<T>, PropertyChangeEventInfo<T>> propertyChangedEvent = Event.createEvent(this);
+	private final Event<ApplicationSetting<T>, PropertyChangeEventInfo<T>> propertyChangedEvent = Event.create(this);
 	
 	/**
 	 * Event raised when a setting's value changes.
@@ -93,7 +93,7 @@ public abstract class ApplicationSetting<T>
 		if (changingFromNull || changingToNull || !oldValue.equals(newValue))
 		{
 			value = newValue;
-			propertyChangedEvent.raise(PropertyChangeEventInfo.createInfo(PROPERTY_NAME, oldValue, newValue));
+			propertyChangedEvent.raise(PropertyChangeEventInfo.create(PROPERTY_NAME, oldValue, newValue));
 		}
 	}
 	

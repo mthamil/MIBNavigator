@@ -25,14 +25,16 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Class that provides the basis for a generic event framework.
+ * Event listeners are contained in a <code>CopyOnWriteArrayList</code> and so 
+ * <code>Event</code> should be thread safe as a result.
  *
  * @param <S> The type of object that owns an event
  * @param <E> The type of event info for the event
  */
 public class Event<S, E extends EventInfo> implements SubscribableEvent<S, E>, RaisableEvent<E>
 {
-	/** A list of all event subscribers */
-	private CopyOnWriteArrayList<GenericEventListener<S, E>> listeners;
+	/** The list of all event subscribers */
+	private CopyOnWriteArrayList<EventListener<S, E>> listeners;
 	
 	/** The object that is considered the owner of the event. */
 	private S source;
@@ -46,7 +48,7 @@ public class Event<S, E extends EventInfo> implements SubscribableEvent<S, E>, R
 	
 		// Use a CopyOnWriteArrayList instead of making a copy of the listener list before iteration
 		// since iteration will likely occur much more frequently than add or remove operations.
-		listeners = new CopyOnWriteArrayList<GenericEventListener<S, E>>();
+		listeners = new CopyOnWriteArrayList<EventListener<S, E>>();
 	}
 	
 	/**
@@ -56,7 +58,7 @@ public class Event<S, E extends EventInfo> implements SubscribableEvent<S, E>, R
 	 * @param source
 	 * @return
 	 */
-	public static <S, T extends EventInfo> Event<S, T> createEvent(S source)
+	public static <S, T extends EventInfo> Event<S, T> create(S source)
 	{
 		return new Event<S, T>(source);
 	}
@@ -65,7 +67,7 @@ public class Event<S, E extends EventInfo> implements SubscribableEvent<S, E>, R
 	 * Adds an event listener.
 	 * @param listener The event subsrciber
 	 */
-	public void addListener(GenericEventListener<S, E> listener)
+	public void addListener(EventListener<S, E> listener)
 	{
 		if (listener == null)
 			throw new IllegalArgumentException("listener cannot be null");
@@ -77,7 +79,7 @@ public class Event<S, E extends EventInfo> implements SubscribableEvent<S, E>, R
 	 * Removes an event listener if it exists.
 	 * @param listener The event subscriber
 	 */
-	public void removeListener(GenericEventListener<S, E> listener)
+	public void removeListener(EventListener<S, E> listener)
 	{
 		listeners.remove(listener);
 	}
@@ -91,7 +93,7 @@ public class Event<S, E extends EventInfo> implements SubscribableEvent<S, E>, R
 		if (listeners.isEmpty())
 			return;
 		
-		for (GenericEventListener<S, E> listener : listeners)
+		for (EventListener<S, E> listener : listeners)
 		{
 			listener.eventRaised(source, eventInfo);
 		}

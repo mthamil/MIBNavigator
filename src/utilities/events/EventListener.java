@@ -26,7 +26,7 @@ package utilities.events;
  * @param <S> The type of object that owns an event
  * @param <E> The type of event info for an event
  */
-public abstract class GenericEventListener<S, E extends EventInfo>
+public abstract class EventListener<S, E extends EventInfo>
 {
 	/**
 	 * Handles an event.
