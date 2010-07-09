@@ -42,7 +42,6 @@ public class EventTests
 		
 		event.addListener(new EventListener<Object, EventInfo>()
 		{
-			@Override
 			public void handleEvent(Object source, EventInfo eventInfo)
 			{
 				eventFired = true;
@@ -61,7 +60,6 @@ public class EventTests
 		
 		EventListener<Object, EventInfo> listener = new EventListener<Object, EventInfo>()
 		{
-			@Override
 			public void handleEvent(Object source, EventInfo eventInfo)
 			{
 				eventFired = true;
@@ -85,7 +83,6 @@ public class EventTests
 		
 		EventListener<Object, EventInfo> listener = new EventListener<Object, EventInfo>()
 		{
-			@Override
 			public void handleEvent(Object source, EventInfo eventInfo)
 			{
 				eventFired = true;
@@ -109,7 +106,6 @@ public class EventTests
 		
 		EventListener<Object, EventInfo> listener = new EventListener<Object, EventInfo>()
 		{
-			@Override
 			public void handleEvent(Object source, EventInfo eventInfo)
 			{
 				eventFiredCount++;
@@ -132,7 +128,6 @@ public class EventTests
 		// Add 2 different listeners.
 		event.addListener(new EventListener<Object, EventInfo>()
 		{
-			@Override
 			public void handleEvent(Object source, EventInfo eventInfo)
 			{
 				eventFired = true;
@@ -142,7 +137,6 @@ public class EventTests
 		
 		event.addListener(new EventListener<Object, EventInfo>()
 		{
-			@Override
 			public void handleEvent(Object source, EventInfo eventInfo)
 			{
 				eventFired2 = true;

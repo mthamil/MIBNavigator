@@ -214,7 +214,6 @@ public class MibBrowser
         
         treeBuilder.addMibAddedListener(new EventListener<AbstractMibTreeBuilder, MibAddedEventInfo>()
 		{
-			@Override
 			public void handleEvent(AbstractMibTreeBuilder source, MibAddedEventInfo eventInfo)
 			{
                 ((DefaultTreeModel)treeBuilder.getTreeModel()).reload();

@@ -26,12 +26,12 @@ package utilities.events;
  * @param <S> The type of object that owns an event
  * @param <E> The type of event info for an event
  */
-public abstract class EventListener<S, E extends EventInfo>
+public interface EventListener<S, E extends EventInfo>
 {
 	/**
 	 * Handles an event.
 	 * @param source The object that raised the event.
 	 * @param eventInfo The event information.
 	 */
-	public abstract void handleEvent(S source, E eventInfo);
+	public void handleEvent(S source, E eventInfo);
 }

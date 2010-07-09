@@ -117,7 +117,6 @@ public class UserSettings
 		MibDirectory.PropertyChangedEvent.addListener(new EventListener<Property<File>, 
 				PropertyChangeEventInfo<File>>()
 		{
-			@Override
 			public void handleEvent(Property<File> source, PropertyChangeEventInfo<File> eventInfo)
 			{
 				settingsChanged = true;
@@ -127,7 +126,6 @@ public class UserSettings
 		MaximumAddresses.PropertyChangedEvent.addListener(new EventListener<Property<Integer>, 
 				PropertyChangeEventInfo<Integer>>()
 		{
-			@Override
 			public void handleEvent(Property<Integer> source, PropertyChangeEventInfo<Integer> eventInfo)
 			{
 				settingsChanged = true;
@@ -137,7 +135,6 @@ public class UserSettings
 		IPAddresses.PropertyChangedEvent.addListener(new EventListener<Property<List<String>>, 
 				PropertyChangeEventInfo<List<String>>>()
 		{
-			@Override
 			public void handleEvent(Property<List<String>> source, PropertyChangeEventInfo<List<String>> eventInfo)
 			{
 				settingsChanged = true;
@@ -147,7 +144,6 @@ public class UserSettings
 		Port.PropertyChangedEvent.addListener(new EventListener<Property<Integer>, 
 				PropertyChangeEventInfo<Integer>>()
 		{
-			@Override
 			public void handleEvent(Property<Integer> source, PropertyChangeEventInfo<Integer> eventInfo)
 			{
 				settingsChanged = true;
@@ -158,7 +154,6 @@ public class UserSettings
 		Timeout.PropertyChangedEvent.addListener(new EventListener<Property<Integer>, 
 				PropertyChangeEventInfo<Integer>>()
 		{
-			@Override
 			public void handleEvent(Property<Integer> source, PropertyChangeEventInfo<Integer> eventInfo)
 			{
 				settingsChanged = true;
@@ -168,7 +163,6 @@ public class UserSettings
 		MibFileFormat.PropertyChangedEvent.addListener(new EventListener<Property<MibFormat>, 
 				PropertyChangeEventInfo<MibFormat>>()
 		{
-			@Override
 			public void handleEvent(Property<MibFormat> source, PropertyChangeEventInfo<MibFormat> eventInfo)
 			{
 				settingsChanged = true;
