@@ -26,6 +26,7 @@ import java.io.*;
 import java.util.Arrays;
 
 import snmp.error.SnmpBadValueException;
+import utilities.Strings;
 
 /**
  *  Class representing ASN.1 object identifiers. These are unbounded sequences (arrays) of
@@ -119,6 +120,7 @@ public class SnmpObjectIdentifier extends SnmpObject
     /**
      *  Returns array of integers corresponding to components of identifier.
      */
+    @Override
     public Object getValue()
     {
         return digits;
@@ -132,6 +134,7 @@ public class SnmpObjectIdentifier extends SnmpObject
      *  @throws SnmpBadValueException Indicates an incorrect object type supplied, or negative array
      *  elements, or an incorrectly formatted String.
      */
+    @Override
     public void setValue(Object newDigits)
         throws SnmpBadValueException
     {
@@ -175,6 +178,7 @@ public class SnmpObjectIdentifier extends SnmpObject
     /**
      *  Returns the BER encoding for this object identifier.
      */
+    @Override
     public byte[] encode()
     {
         ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
@@ -288,19 +292,14 @@ public class SnmpObjectIdentifier extends SnmpObject
     private void extractFromBEREncoding(byte[] encoding)
         throws SnmpBadValueException
     {
-        // note: masks must be ints; byte internal representation issue(?)
-        int bitTest = 0x80;    // test for leading 1
-        int highBitMask = 0x7F;    // mask out high bit for value
-
         // first, compute number of "digits";
         // will just be number of bytes with leading 0's
         int numInts = 0;
         for (int i = 0; i < encoding.length; i++)
         {
-            if ((encoding[i] & bitTest) == 0)        //high-order bit not set; count
+            if (!highOrderBitIsSet(encoding[i]))        //high-order bit not set; count
                 numInts++;
         }
-
 
         if (numInts > 0)
         {
@@ -318,7 +317,7 @@ public class SnmpObjectIdentifier extends SnmpObject
                 currentByte++;
                 value = value * 128 + (encoding[currentByte] & highBitMask);
             }
-            while ((encoding[currentByte] & bitTest) > 0);    // implies high bit set!
+            while (highOrderBitIsSet(encoding[currentByte]));    // implies high bit set!
 
             // now handle 40a + b
             digits[0] = (long)Math.floor(value / 40);
@@ -334,7 +333,7 @@ public class SnmpObjectIdentifier extends SnmpObject
                     currentByte++;
                     value = value*128 + (encoding[currentByte] & highBitMask);
                 }
-                while ((encoding[currentByte] & bitTest) > 0);
+                while (highOrderBitIsSet(encoding[currentByte]));
 
                 digits[i] = value;
             }
@@ -347,40 +346,21 @@ public class SnmpObjectIdentifier extends SnmpObject
         }
 
     }
-
-
-    /*
-    public boolean equals(SNMPObjectIdentifier other)
+    
+    private static boolean highOrderBitIsSet(byte b)
     {
-        long[] otherDigits = (long[])(other.getValue());
-
-        boolean areEqual = true;
-
-        if (digits.length != otherDigits.length)
-        {
-            areEqual = false;
-        }
-        else
-        {
-            for (int i = 0; i < digits.length; i++)
-            {
-                if (digits[i] != otherDigits[i])
-                {
-                    areEqual = false;
-                    break;
-                }
-            }
-        }
-
-        return areEqual;
-
+    	return (b & bitTest) > 0;
     }
-    */
+    
+    // note: masks must be ints; byte internal representation issue(?)
+    private static final int highBitMask = 0x7F;    // mask out high bit for value
+    private static final int bitTest = 0x80;    	// test for leading 1
 
 
     /**
      *  Checks the internal arrays for equality.
      */
+    @Override
     public boolean equals(Object other)
     {
         // false if other is null
@@ -404,6 +384,7 @@ public class SnmpObjectIdentifier extends SnmpObject
     /**
      *  Generates a hash value so SNMP Object Identifiers can be used in Hashtables.
      */
+    @Override
     public int hashCode()
     {
         int hash = 0;
@@ -427,22 +408,10 @@ public class SnmpObjectIdentifier extends SnmpObject
     /**
      *  Returns a dot-separated sequence of decimal values.
      */
+    @Override
     public String toString()
     {
-        StringBuffer valueStringBuffer = new StringBuffer();
-        if (digits.length > 0)
-        {
-            valueStringBuffer.append(digits[0]);
-
-            for (int i = 1; i < digits.length; ++i)
-            {
-                valueStringBuffer.append(".");
-                valueStringBuffer.append(digits[i]);
-            }
-        }
-
-
-        return valueStringBuffer.toString();
+        return Strings.join(".", digits);
     }
 
 }

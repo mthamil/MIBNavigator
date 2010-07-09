@@ -71,6 +71,7 @@ public class SnmpOctetString extends SnmpObject
     /**
      *  Returns the array of raw bytes.
      */
+    @Override
     public Object getValue()
     {
         return data;
@@ -82,6 +83,7 @@ public class SnmpOctetString extends SnmpObject
      *  
      *  @throws SnmpBadValueException Indicates an incorrect object type supplied.
      */
+    @Override
     public void setValue(Object data)
         throws SnmpBadValueException
     {
@@ -98,6 +100,7 @@ public class SnmpOctetString extends SnmpObject
      *  Returns the BER encoding for the octet string. Note the the "value" part of the
      *  BER type,length,value triple is just the sequence of raw bytes.
      */
+    @Override
     public byte[] encode()
     {
         ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
@@ -130,6 +133,7 @@ public class SnmpOctetString extends SnmpObject
     /**
      *  Checks the embedded arrays for equality.
      */
+    @Override
     public boolean equals(Object other)
     {
         // false if other is null
@@ -154,6 +158,7 @@ public class SnmpOctetString extends SnmpObject
     /**
      *  Generates a hash value so SNMP Octet String subclasses can be used in Hashtables.
      */
+    @Override
     public int hashCode()
     {
         int hash = 0;
@@ -218,7 +223,7 @@ public class SnmpOctetString extends SnmpObject
     }
 
 
-    private String hexByte(byte b)
+    private static String hexByte(byte b)
     {
         int pos = b;
         if (pos < 0)
@@ -230,28 +235,31 @@ public class SnmpOctetString extends SnmpObject
         return returnString.toString();
     }
 
-
     /**
      *  Returns a space-separated hex string corresponding to the raw bytes.
      */
     public String toHexString()
     {
-        StringBuffer hexString = new StringBuffer();
+        StringBuilder hexString = new StringBuilder();
 
         for (byte octet : data)
-            hexString.append(this.hexByte(octet) + " ");
+        {
+        	if (hexString.length() > 0)
+        		hexString.append(" ");
+        	
+            hexString.append(SnmpOctetString.hexByte(octet));
+        }
 
         return hexString.toString();
     }
 
-
-	
     
     /**
 	 *  Returns a String constructed from the raw bytes. If the bytes contain a printable String, 
 	 *  a printable String will be returned.  Otherwise, a hex String representation of the data
 	 *  will be returned.
 	 */
+    @Override
 	public String toString()
 	{
 	    // Added by Matt Hamilton on July 13, 2005

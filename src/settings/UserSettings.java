@@ -29,14 +29,15 @@ import java.util.List;
 import java.util.Properties;
 
 import static utilities.IOUtilities.closeQuietly;
-import utilities.StringUtilities;
+import utilities.Strings;
 import utilities.events.EventListener;
-import utilities.events.PropertyChangeEventInfo;
 import utilities.parsing.DirectoryParser;
 import utilities.parsing.EnumParser;
 import utilities.parsing.PositiveIntegerParser;
 import utilities.parsing.Parsers;
 import utilities.parsing.TokenizerParser;
+import utilities.property.Property;
+import utilities.property.PropertyChangeEventInfo;
 
 import libmib.format.MibFormat;
 
@@ -113,62 +114,62 @@ public class UserSettings
 	
 	private void subscribeToEvents()
 	{
-		MibDirectory.PropertyChangedEvent.addListener(new EventListener<ApplicationSetting<File>, 
+		MibDirectory.PropertyChangedEvent.addListener(new EventListener<Property<File>, 
 				PropertyChangeEventInfo<File>>()
 		{
 			@Override
-			public void eventRaised(ApplicationSetting<File> source, PropertyChangeEventInfo<File> eventInfo)
+			public void handleEvent(Property<File> source, PropertyChangeEventInfo<File> eventInfo)
 			{
 				settingsChanged = true;
 			}
 		});
 		
-		MaximumAddresses.PropertyChangedEvent.addListener(new EventListener<ApplicationSetting<Integer>, 
+		MaximumAddresses.PropertyChangedEvent.addListener(new EventListener<Property<Integer>, 
 				PropertyChangeEventInfo<Integer>>()
 		{
 			@Override
-			public void eventRaised(ApplicationSetting<Integer> source, PropertyChangeEventInfo<Integer> eventInfo)
+			public void handleEvent(Property<Integer> source, PropertyChangeEventInfo<Integer> eventInfo)
 			{
 				settingsChanged = true;
 			}
 		});
 		
-		IPAddresses.PropertyChangedEvent.addListener(new EventListener<ApplicationSetting<List<String>>, 
+		IPAddresses.PropertyChangedEvent.addListener(new EventListener<Property<List<String>>, 
 				PropertyChangeEventInfo<List<String>>>()
 		{
 			@Override
-			public void eventRaised(ApplicationSetting<List<String>> source, PropertyChangeEventInfo<List<String>> eventInfo)
+			public void handleEvent(Property<List<String>> source, PropertyChangeEventInfo<List<String>> eventInfo)
 			{
 				settingsChanged = true;
 			}
 		});
 
-		Port.PropertyChangedEvent.addListener(new EventListener<ApplicationSetting<Integer>, 
+		Port.PropertyChangedEvent.addListener(new EventListener<Property<Integer>, 
 				PropertyChangeEventInfo<Integer>>()
 		{
 			@Override
-			public void eventRaised(ApplicationSetting<Integer> source, PropertyChangeEventInfo<Integer> eventInfo)
+			public void handleEvent(Property<Integer> source, PropertyChangeEventInfo<Integer> eventInfo)
 			{
 				settingsChanged = true;
 				//Port.PropertyChangedEvent.removeListener(this);
 			}
 		});
 		
-		Timeout.PropertyChangedEvent.addListener(new EventListener<ApplicationSetting<Integer>, 
+		Timeout.PropertyChangedEvent.addListener(new EventListener<Property<Integer>, 
 				PropertyChangeEventInfo<Integer>>()
 		{
 			@Override
-			public void eventRaised(ApplicationSetting<Integer> source, PropertyChangeEventInfo<Integer> eventInfo)
+			public void handleEvent(Property<Integer> source, PropertyChangeEventInfo<Integer> eventInfo)
 			{
 				settingsChanged = true;
 			}
 		});
 		
-		MibFileFormat.PropertyChangedEvent.addListener(new EventListener<ApplicationSetting<MibFormat>, 
+		MibFileFormat.PropertyChangedEvent.addListener(new EventListener<Property<MibFormat>, 
 				PropertyChangeEventInfo<MibFormat>>()
 		{
 			@Override
-			public void eventRaised(ApplicationSetting<MibFormat> source, PropertyChangeEventInfo<MibFormat> eventInfo)
+			public void handleEvent(Property<MibFormat> source, PropertyChangeEventInfo<MibFormat> eventInfo)
 			{
 				settingsChanged = true;
 			}
@@ -253,7 +254,7 @@ public class UserSettings
 				if (!IPAddresses.getValue().isEmpty())
 				{
 					int itemCount =  Math.min(IPAddresses.getValue().size(), MaximumAddresses.getValue());
-					String joinedAddresses = StringUtilities.join(",", IPAddresses.getValue().subList(0, itemCount));
+					String joinedAddresses = Strings.join(",", IPAddresses.getValue().subList(0, itemCount));
 					settings.setProperty(IPAddresses.toString(), joinedAddresses);
 				}
 	

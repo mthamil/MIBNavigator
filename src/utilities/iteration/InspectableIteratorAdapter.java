@@ -19,7 +19,7 @@
  *
  */
 
-package utilities;
+package utilities.iteration;
 
 import java.util.Iterator;
 
@@ -27,7 +27,7 @@ import java.util.Iterator;
  * Class that wraps an Iterator in an InspectableIterator.
  * @param <E>
  */
-public class InspectableIteratorWrapper<E> implements InspectableIterator<E>
+public class InspectableIteratorAdapter<E> implements InspectableIterator<E>
 {
 	private Iterator<E> wrappedIterator;
 	private E currentElement;
@@ -36,13 +36,13 @@ public class InspectableIteratorWrapper<E> implements InspectableIterator<E>
 	 * Creates a new inspectable iterator wrapping an existing iterator.
 	 * @param iterator
 	 */
-	public InspectableIteratorWrapper(Iterator<E> iterator)
+	public InspectableIteratorAdapter(Iterator<E> iterator)
 	{
 		wrappedIterator = iterator;
 	}
 	
 	/**
-	 * @see utilities.InspectableIterator#current
+	 * @see utilities.iteration.InspectableIterator#current
 	 */
 	public E current()
 	{

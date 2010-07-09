@@ -30,7 +30,7 @@ import java.util.List;
 
 import org.junit.Test;
 
-import utilities.StringUtilities;
+import utilities.Strings;
 
 public class StringUtilitiesTests
 {
@@ -38,7 +38,7 @@ public class StringUtilitiesTests
 	public void testEmptyJoin() 
 	{
 		List<String> list = new ArrayList<String>();
-		String joinedList = StringUtilities.join(",", list);
+		String joinedList = Strings.join(",", list);
 		assertThat(joinedList, is(""));
 	}
 	
@@ -46,7 +46,7 @@ public class StringUtilitiesTests
 	public void testSingleElementJoin()
 	{
 		List<String> list = Arrays.asList("test1");
-		String joinedList = StringUtilities.join(",", list);
+		String joinedList = Strings.join(",", list);
 		assertThat(joinedList, is("test1"));
 	}
 
@@ -54,16 +54,24 @@ public class StringUtilitiesTests
 	public void testMultiElementJoin()
 	{
 		List<String> list = Arrays.asList("test1", "test2");
-		String joinedList = StringUtilities.join(",", list);
+		String joinedList = Strings.join(",", list);
 		assertThat(joinedList, is("test1,test2"));
+		
+		List<Integer> integers = Arrays.asList(1, 2, 3, 4);
+		joinedList = Strings.join("/", integers);
+		assertThat(joinedList, is("1/2/3/4"));
 	}
 		
 	@Test
 	public void testArrayJoin()
 	{
-		String[] array = new String[] { "test1", "test2", "test3" };
-		String joinedList = StringUtilities.join("+", array);
+		String[] stringArray = new String[] { "test1", "test2", "test3" };
+		String joinedList = Strings.join("+", stringArray);
 		assertThat(joinedList, is("test1+test2+test3"));
+		
+		int[] intArray = new int[] { 1, 2, 3, 4};
+		joinedList = Strings.join(", ", intArray);
+		assertThat(joinedList, is("1, 2, 3, 4"));
 	}
 	
 	@Test
@@ -71,20 +79,20 @@ public class StringUtilitiesTests
 	{
 		List<String> list = Arrays.asList("1", "2", "3", "4", "5");
 		int maxItems = Math.min(list.size(), 3);
-		String joinedSublist = StringUtilities.join(",", list.subList(0, maxItems));
+		String joinedSublist = Strings.join(",", list.subList(0, maxItems));
 		assertThat(joinedSublist, is("1,2,3"));
 		
 		maxItems = Math.min(list.size(), 8);
-		joinedSublist = StringUtilities.join(",", list.subList(0, maxItems));
+		joinedSublist = Strings.join(",", list.subList(0, maxItems));
 		assertThat(joinedSublist, is("1,2,3,4,5"));
 		
 		maxItems = Math.min(list.size(), 0);
-		joinedSublist = StringUtilities.join(",", list.subList(0, maxItems));
+		joinedSublist = Strings.join(",", list.subList(0, maxItems));
 		assertThat(joinedSublist, is(""));
 		
 		list = new ArrayList<String>();
 		maxItems = Math.min(list.size(), 3);
-		joinedSublist = StringUtilities.join(",", list.subList(0, maxItems));
+		joinedSublist = Strings.join(",", list.subList(0, maxItems));
 		assertThat(joinedSublist, is(""));
 	}
 }

@@ -84,6 +84,7 @@ public class SnmpCounter64 extends SnmpInteger
      *  
      *  @throws SnmpBadValueException Indicates an incorrect object type supplied.
     */
+    @Override
     public void setValue(Object newValue)
         throws SnmpBadValueException
     {
@@ -105,6 +106,4 @@ public class SnmpCounter64 extends SnmpInteger
         else
             throw new SnmpBadValueException(" Counter64: bad object supplied to set value ");
     }
-    
-  
 }

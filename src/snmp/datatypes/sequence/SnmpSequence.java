@@ -30,6 +30,7 @@ import snmp.datatypes.SnmpBERType;
 import snmp.datatypes.SnmpObject;
 import snmp.datatypes.SnmpTLV;
 import snmp.error.SnmpBadValueException;
+import utilities.Strings;
 
 /**
  *  One of the most important SNMP classes. Represents a sequence of other SNMP data types.
@@ -82,6 +83,7 @@ public class SnmpSequence extends SnmpObject
     /**
      *  Returns a Vector containing the SNMPObjects in the sequence.
      */
+    @Override
     public Object getValue()
     {
         return sequence;
@@ -94,6 +96,7 @@ public class SnmpSequence extends SnmpObject
      *  @throws SnmpBadValueException Indicates an incorrect object 
      *  type supplied, or that the supplied Vector contains non-SNMPObjects.
      */
+    @Override
     public void setValue(Object value)
         throws SnmpBadValueException
     {
@@ -172,6 +175,7 @@ public class SnmpSequence extends SnmpObject
     /** 
      *  Returns the BER encoding for the sequence.
      */
+    @Override
     public byte[] encode()
     {
         ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
@@ -234,20 +238,10 @@ public class SnmpSequence extends SnmpObject
      *  Returns a sequence of representations of the contained objects, separated by spaces
      *  and enclosed in parentheses.
      */
+    @Override
     public String toString()
     {
-        StringBuffer valueStringBuffer = new StringBuffer("(");
-        
-        //for (int i = 0; i < sequence.size(); ++i)
-        for (Object item : sequence)
-        {
-            valueStringBuffer.append(" ");
-            valueStringBuffer.append(item.toString());
-            valueStringBuffer.append(" ");
-        }
-        
-        valueStringBuffer.append(")");
-        return valueStringBuffer.toString();
+        return "( " + Strings.join("  ", sequence) + " )";
     }
     
 }

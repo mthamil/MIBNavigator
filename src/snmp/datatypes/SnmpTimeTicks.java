@@ -72,7 +72,6 @@ public class SnmpTimeTicks extends SnmpInteger
         tag = SnmpBERType.SnmpTimeTicks;
     }
 
-
 	/**
      *  Formats the time value into days:hours:minutes:seconds.hundredthsOfASecond
      *  format for readability and display purposes.
@@ -80,6 +79,7 @@ public class SnmpTimeTicks extends SnmpInteger
      *  
      *  @return a formatted String representing an amount of time
      */
+    @Override
     public String toString()
     {
         StringBuilder returnTime = new StringBuilder();

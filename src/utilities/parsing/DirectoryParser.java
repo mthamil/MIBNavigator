@@ -1,5 +1,5 @@
 /**
- * MIB Navigator
+ * Utilities
  *
  * Copyright (C) 2010, Matt Hamilton <matthamilton@live.com>
  *
@@ -23,7 +23,7 @@ package utilities.parsing;
 
 import java.io.File;
 
-public class DirectoryParser extends AbstractParser<File>
+public class DirectoryParser extends DefaultValueParser<File>
 {
 	public DirectoryParser(File defaultValue)
 	{

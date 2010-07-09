@@ -27,6 +27,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -73,6 +74,19 @@ public class MibDocumentBuilder
     private static final String SCHEMA_LANGUAGE = "http://www.w3.org/2001/XMLSchema";
     private static final String SCHEMA_SOURCE_ATTRIBUTE = "http://java.sun.com/xml/jaxp/properties/schemaSource";
     private final File MIB_SCHEMA = new File("schema" + File.separator + "mib.xsd");
+    
+    private static Map<String, String> smiToXmlTypeMap = new HashMap<String, String>();
+    
+    static
+    {
+    	smiToXmlTypeMap.put(SMIToken.OBJECT_ID.token(), ElementNames.OBJECT_ID);
+    	smiToXmlTypeMap.put(SMIToken.OBJECT_TYPE.token(), ElementNames.OBJECT_TYPE);
+    	smiToXmlTypeMap.put(SMIToken.OBJECT_GROUP.token(), ElementNames.OBJECT_GROUP);
+    	smiToXmlTypeMap.put(SMIToken.NOTIF.token(), ElementNames.NOTIFICATION);
+    	smiToXmlTypeMap.put(SMIToken.MODULE_ID.token(), ElementNames.MODULE_ID);
+    	smiToXmlTypeMap.put(SMIToken.MODULE_COMP.token(), ElementNames.MODULE_COMPLIANCE);
+    	smiToXmlTypeMap.put(SMIToken.NOTIF_GROUP.token(), ElementNames.NOTIFICATION_GROUP);
+    }
     
     /**
      * Creates a new <code>MibDocumentBuilder</code> that validates and uses the mib.xsd schema.
@@ -193,22 +207,9 @@ public class MibDocumentBuilder
         mibObjects.appendChild(objectElement);
         
         String objType = newObject.getObjectType();
-        if (objType.equals(SMIToken.OBJECT_ID.token()))
-            objType = ElementNames.OBJECT_ID;
-        else if (objType.equals(SMIToken.OBJECT_TYPE.token()))
-            objType = ElementNames.OBJECT_TYPE;
-        else if (objType.equals(SMIToken.OBJECT_GROUP.token()))
-            objType = ElementNames.OBJECT_GROUP;
-        else if (objType.equals(SMIToken.NOTIF.token()))
-            objType = ElementNames.NOTIFICATION;
-        else if (objType.equals(SMIToken.MODULE_ID.token()))
-            objType = ElementNames.MODULE_ID;
-        else if (objType.equals(SMIToken.MODULE_COMP.token()))
-            objType = ElementNames.MODULE_COMPLIANCE;
-        else if (objType.contains(SMIToken.NOTIF_GROUP.token()))
-            objType = ElementNames.NOTIFICATION_GROUP;
+        String nodeName = smiToXmlTypeMap.get(objType);
         
-        Element typeElement = mibDocument.createElement(objType);
+        Element typeElement = mibDocument.createElement(nodeName);
         objectElement.appendChild(typeElement);
         
         Element nameElement = mibDocument.createElement(ElementNames.NAME);

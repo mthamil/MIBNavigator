@@ -28,9 +28,8 @@ import java.io.IOException;
 
 import libmib.MibObjectType.Status;
 
-public class StatusParser extends AbstractParser<Status>
+public class StatusParser implements SMIParser<Status>
 {
-	@Override
 	public Status parse(BufferedReader reader, String currentLine) throws IOException
 	{
         int index = currentLine.indexOf(STATUS.token()) + STATUS.token().length();

@@ -1,5 +1,5 @@
 /**
- * MIB Navigator
+ * Utilities
  *
  * Copyright (C) 2010, Matt Hamilton <matthamilton@live.com>
  *

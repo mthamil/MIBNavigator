@@ -38,7 +38,7 @@ import libmib.format.smi.InvalidSmiMibFormatException;
 import libmib.format.smi.SMIStructureHandler;
 import libmib.format.smi.SMIToken;
 import libmib.format.smi.SMIStructureHandler.HierarchyData;
-import libmib.format.smi.parsers.AbstractParser;
+import libmib.format.smi.parsers.SMIParser;
 import libmib.format.smi.parsers.SMIParserFactory;
 
 /**
@@ -245,19 +245,19 @@ public class MibTreeBuilderSmi extends AbstractMibTreeBuilder
                 {
                     // SYNTAX
                     if (line.contains(SYNTAX.token()) && !objectType.equals(MODULE_COMP))
-                    	nodeSyntax = SMIParserFactory.<AbstractParser<MibSyntax>>getParser(SYNTAX).parse(reader, line);
+                    	nodeSyntax = SMIParserFactory.<SMIParser<MibSyntax>>getParser(SYNTAX).parse(reader, line);
                     
                     // ACCESS
                     else if (line.contains(ACCESS.token()) && !objectType.equals(MODULE_COMP))
-                        nodeAccess = SMIParserFactory.<AbstractParser<Access>>getParser(ACCESS).parse(reader, line);
+                        nodeAccess = SMIParserFactory.<SMIParser<Access>>getParser(ACCESS).parse(reader, line);
                     
                     // STATUS
                     else if (line.contains(STATUS.token()))
-                        nodeStatus = SMIParserFactory.<AbstractParser<Status>>getParser(STATUS).parse(reader, line);
+                        nodeStatus = SMIParserFactory.<SMIParser<Status>>getParser(STATUS).parse(reader, line);
     
                     // DESCRIPTION
                     else if (line.contains(DESCRIPTION.token()))
-                        nodeDesc.append(SMIParserFactory.<AbstractParser<String>>getParser(DESCRIPTION).parse(reader, line));
+                        nodeDesc.append(SMIParserFactory.<SMIParser<String>>getParser(DESCRIPTION).parse(reader, line));
 
                     line = reader.readLine();
                 }

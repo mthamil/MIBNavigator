@@ -64,6 +64,7 @@ public class SnmpVarBindList extends SnmpSequence
     /**
      *  Returns the variable pairs in the list, separated by spaces.
      */
+    @Override
     public String toString()
     {
         StringBuffer valueString = new StringBuffer();

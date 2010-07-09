@@ -30,9 +30,8 @@ import java.util.Map;
 import libmib.MibSyntax;
 import libmib.format.smi.SMIStructureHandler;
 
-public class SyntaxParser extends AbstractParser<MibSyntax>
+public class SyntaxParser implements SMIParser<MibSyntax>
 {
-	@Override
 	public MibSyntax parse(BufferedReader reader, String currentLine) throws IOException
 	{
 		if (currentLine.equals(SYNTAX.token()))

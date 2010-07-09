@@ -1,5 +1,5 @@
 /**
- * MIB Navigator
+ * Utilities
  *
  * Copyright (C) 2010, Matt Hamilton <matthamilton@live.com>
  *
@@ -34,7 +34,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class Event<S, E extends EventInfo> implements SubscribableEvent<S, E>, RaisableEvent<E>
 {
 	/** The list of all event subscribers */
-	private CopyOnWriteArrayList<EventListener<S, E>> listeners;
+	private CopyOnWriteArrayList<EventListener<? super S, E>> listeners;
 	
 	/** The object that is considered the owner of the event. */
 	private S source;
@@ -48,26 +48,26 @@ public class Event<S, E extends EventInfo> implements SubscribableEvent<S, E>, R
 	
 		// Use a CopyOnWriteArrayList instead of making a copy of the listener list before iteration
 		// since iteration will likely occur much more frequently than add or remove operations.
-		listeners = new CopyOnWriteArrayList<EventListener<S, E>>();
+		listeners = new CopyOnWriteArrayList<EventListener<? super S, E>>();
 	}
 	
 	/**
 	 * Convenient factory method for creating new events.
-	 * @param <S>
-	 * @param <T>
-	 * @param source
+	 * @param <S> The type of object that owns an event
+	 * @param <E> The type of event info for the event
+	 * @param source The object that the owns the event
 	 * @return
 	 */
-	public static <S, T extends EventInfo> Event<S, T> create(S source)
+	public static <S, E extends EventInfo> Event<S, E> create(S source)
 	{
-		return new Event<S, T>(source);
+		return new Event<S, E>(source);
 	}
 	
 	/**
-	 * Adds an event listener.
+	 * Adds an event listener. If the listener has already been added, it is not added again.
 	 * @param listener The event subsrciber
 	 */
-	public void addListener(EventListener<S, E> listener)
+	public void addListener(EventListener<? super S, E> listener)
 	{
 		if (listener == null)
 			throw new IllegalArgumentException("listener cannot be null");
@@ -79,7 +79,7 @@ public class Event<S, E extends EventInfo> implements SubscribableEvent<S, E>, R
 	 * Removes an event listener if it exists.
 	 * @param listener The event subscriber
 	 */
-	public void removeListener(EventListener<S, E> listener)
+	public void removeListener(EventListener<? super S, E> listener)
 	{
 		listeners.remove(listener);
 	}
@@ -93,9 +93,9 @@ public class Event<S, E extends EventInfo> implements SubscribableEvent<S, E>, R
 		if (listeners.isEmpty())
 			return;
 		
-		for (EventListener<S, E> listener : listeners)
+		for (EventListener<? super S, E> listener : listeners)
 		{
-			listener.eventRaised(source, eventInfo);
+			listener.handleEvent(source, eventInfo);
 		}
 	}
 }

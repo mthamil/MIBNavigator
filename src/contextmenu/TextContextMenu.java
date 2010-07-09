@@ -91,10 +91,7 @@ public class TextContextMenu extends JPopupMenu
         menuSource = source;
 
         // Only show the paste option for editable fields.
-        if (menuSource.isEditable())
-            pasteAction.setEnabled(true);
-        else
-            pasteAction.setEnabled(false);
+        pasteAction.setEnabled(menuSource.isEditable());
 
         // Disable select all if no visible text in the text component.
         // getText is not sufficient for styled text components, so the Document must be 
@@ -111,17 +108,10 @@ public class TextContextMenu extends JPopupMenu
             System.out.println(e.getMessage() + ":" + e.offsetRequested());
         }
 
-        if (plainText.equals(""))
-            selectAllAction.setEnabled(false);
-        else
-            selectAllAction.setEnabled(true);
-        
+        selectAllAction.setEnabled(!plainText.equals(""));
 
-        //disable copy if no text is selected
-        if (menuSource.getSelectedText() == null)
-            copyAction.setEnabled(false);
-        else
-            copyAction.setEnabled(true);
+        // Disable copy if no text is selected.
+        copyAction.setEnabled(menuSource.getSelectedText() != null);
 
         super.show(menuSource, x, y);
     }

@@ -21,12 +21,15 @@
 
 package libmib.mibtree;
 
-import java.util.Collections;
 import java.util.Enumeration;
-import java.util.List;
+import java.util.AbstractMap;
+import java.util.Map.Entry;
 
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeNode;
+
+import utilities.iteration.adapters.IterableAdapters;
 
 import libmib.MibObjectIdentifier;
 
@@ -58,6 +61,16 @@ public class MibTreeNode extends DefaultMutableTreeNode
         super(userMIBObject);
     }
     
+    public void add(MibTreeNode node)
+    {
+    	MibObjectIdentifier newChild = (MibObjectIdentifier)node.getUserObject();
+    	
+    	String prefix = oidNumeralPath == null ? "" : oidNumeralPath + ".";
+    	node.setOidNumeralPath(prefix + newChild.getId());
+    	
+    	this.add((MutableTreeNode)node);
+    }
+    
     
     /**
      * Searches for a node by it's name starting the search at this node.  A 
@@ -69,9 +82,7 @@ public class MibTreeNode extends DefaultMutableTreeNode
     @SuppressWarnings("unchecked")
 	public MibTreeNode getNodeByName(String nodeName)
     {
-        List<MibTreeNode> nodes = Collections.list(this.breadthFirstEnumeration());
-
-        for (MibTreeNode node : nodes)
+        for (MibTreeNode node : IterableAdapters.<MibTreeNode>asIterable(breadthFirstEnumeration()))
         {
         	if (nodeName.equalsIgnoreCase(String.valueOf(node)))
         		return node;
@@ -234,8 +245,6 @@ public class MibTreeNode extends DefaultMutableTreeNode
         return null;    
     }
     
-    
-    
     /**
      * Returns the full path name from the root of the tree to this node as a String. 
      * This basically simplifies what is returned from a node's getPath method.
@@ -256,51 +265,57 @@ public class MibTreeNode extends DefaultMutableTreeNode
     }
     
     
+    private String oidNumeralPath;
+    
     /**
      * Returns the full numeral path from the root of the tree to this node as a String.
      * 
      * @return a String such as "1.3.6.1.1" representing a node's path from the root.
      */
-    public String getOidNumeralPath()
-    {
-        StringBuilder fullNumeralPath = new StringBuilder();
-        TreeNode[] pathFromRoot = this.getPath();
-        
-        fullNumeralPath.append(((MibObjectIdentifier)((MibTreeNode)pathFromRoot[1]).getUserObject()).getId());   // ignore first node (generic root)
-        for (int i = 2; i < pathFromRoot.length; i++)
-            fullNumeralPath.append("." + ((MibObjectIdentifier)((MibTreeNode)pathFromRoot[i]).getUserObject()).getId());
+    public String getOidNumeralPath() 
+    { 
+    	return oidNumeralPath; 
+	}
+    
+    protected void setOidNumeralPath(String path) 
+    { 
+    	oidNumeralPath = path; 
+	}
 
-        return fullNumeralPath.toString();
-    }
+//    public String getOidNumeralPath()
+//    {
+//        StringBuilder fullNumeralPath = new StringBuilder();
+//        TreeNode[] pathFromRoot = this.getPath();
+//        
+//        fullNumeralPath.append(((MibObjectIdentifier)((MibTreeNode)pathFromRoot[1]).getUserObject()).getId());   // ignore first node (generic root)
+//        for (int i = 2; i < pathFromRoot.length; i++)
+//            fullNumeralPath.append("." + ((MibObjectIdentifier)((MibTreeNode)pathFromRoot[i]).getUserObject()).getId());
+//
+//        return fullNumeralPath.toString();
+//    }
     
     
     /**
-     * Returns both the OID name and numeral paths.  This returns what getOIDNamePath 
-     * and getOIDNumberPath do, but in a String array together.
+     * Returns both the OID name and numeral paths.  This returns what getOidNamePath 
+     * and getOidNumeralPath do, but in a String array together.
      * 
-     * @return a String array with both the full OID name and numeral paths of this node.
-     *         The first element is the number and the second element is the name.
+     * @return a pair with both the full OID name and numeral paths of this node.
+     *         The key is the numeral and the value is the name.
      */
-    public String[] getOidPaths()
+    public Entry<String, String> getOidPaths()
     {
-        StringBuilder fullNumeralPath = new StringBuilder();
         StringBuilder fullNamePath = new StringBuilder();
         
         TreeNode[] pathFromRoot = this.getPath();
         
-        fullNumeralPath.append(((MibObjectIdentifier)((MibTreeNode)pathFromRoot[1]).getUserObject()).getId()); //ignore first node (generic root)
         fullNamePath.append(pathFromRoot[1]); //ignore first node (generic root)
         
         for (int i = 2; i < pathFromRoot.length; i++)
         {
-        	fullNumeralPath.append("." + ((MibObjectIdentifier)((MibTreeNode)pathFromRoot[i]).getUserObject()).getId());
             fullNamePath.append("." + pathFromRoot[i].toString());
         }
-
-        String[] paths = new String[2];
-        paths[0] = fullNumeralPath.toString();
-        paths[1] = fullNamePath.toString();
         
+        Entry<String, String> paths = new AbstractMap.SimpleEntry<String, String>(getOidNumeralPath(), fullNamePath.toString());
         return paths;
     }
     

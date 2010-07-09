@@ -50,6 +50,7 @@ public class SnmpUnknownObject extends SnmpObject
     /**
      *  Returns a byte array containing the raw bytes supplied.
      */
+    @Override
     public Object getValue()
     {
         return data;
@@ -59,6 +60,7 @@ public class SnmpUnknownObject extends SnmpObject
     /**
      *  Takes a byte array containing the raw bytes stored as the value.
      */
+    @Override
     public void setValue(Object data)
         throws SnmpBadValueException
     {
@@ -72,6 +74,7 @@ public class SnmpUnknownObject extends SnmpObject
     /**
      *  Returns the BER encoding of this object.
      */
+    @Override
     public byte[] encode()
     {
         ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
@@ -91,6 +94,7 @@ public class SnmpUnknownObject extends SnmpObject
     /**
      *  Returns a String created from raw bytes of this object.
      */
+    @Override
     public String toString()
     {
         return new String(data);

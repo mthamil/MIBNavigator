@@ -32,9 +32,8 @@ import java.util.List;
 import libmib.MibImport;
 import libmib.format.smi.SMIStructureHandler;
 
-public class ImportsParser extends AbstractParser<List<MibImport>>
+public class ImportsParser implements SMIParser<List<MibImport>>
 {
-	@Override
 	public List<MibImport> parse(BufferedReader reader, String currentLine) throws IOException
 	{
 		// Read the entire IMPORTS section into a StringBuilder.

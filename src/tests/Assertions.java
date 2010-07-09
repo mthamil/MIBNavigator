@@ -36,7 +36,7 @@ public final class Assertions
 	 * @param code The code to test.
 	 * @param throwableClass The desired Throwable type.
 	 */
-	public static void assertThrows(Runnable code, Class<? extends Throwable> throwableClass)
+	public static <E extends Throwable> void assertThrows(Runnable code, Class<E> throwableClass)
 	{
 		Throwable e = null;
 		try

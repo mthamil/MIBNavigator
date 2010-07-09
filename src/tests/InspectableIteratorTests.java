@@ -30,8 +30,8 @@ import java.util.List;
 
 import org.junit.Test;
 
-import utilities.InspectableIterator;
-import utilities.InspectableIteratorWrapper;
+import utilities.iteration.InspectableIterator;
+import utilities.iteration.InspectableIteratorAdapter;
 
 public class InspectableIteratorTests
 {
@@ -41,7 +41,7 @@ public class InspectableIteratorTests
 		List<Integer> testValues = Arrays.asList(1, 2, 3, 4, 5, 6);
 		
 		Iterator<Integer> iterator = testValues.iterator();
-		InspectableIterator<Integer> wrapper = new InspectableIteratorWrapper<Integer>(iterator);
+		InspectableIterator<Integer> wrapper = new InspectableIteratorAdapter<Integer>(iterator);
 		
 		assertThat(wrapper.current(), is((Integer)null));
 		assertThat(wrapper.hasNext(), is(true));

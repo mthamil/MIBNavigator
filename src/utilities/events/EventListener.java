@@ -1,5 +1,5 @@
 /**
- * MIB Navigator
+ * Utilities
  *
  * Copyright (C) 2010, Matt Hamilton <matthamilton@live.com>
  *
@@ -33,5 +33,5 @@ public abstract class EventListener<S, E extends EventInfo>
 	 * @param source The object that raised the event.
 	 * @param eventInfo The event information.
 	 */
-	public abstract void eventRaised(S source, E eventInfo);
+	public abstract void handleEvent(S source, E eventInfo);
 }

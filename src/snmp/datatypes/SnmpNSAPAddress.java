@@ -81,6 +81,7 @@ public class SnmpNSAPAddress extends SnmpOctetString
      *  @throws SnmpBadValueException Indicates an incorrect object type supplied, or array of
      *  incorrect size.
      */
+    @Override
     public void setValue(Object newAddress) throws SnmpBadValueException
     {
         if (newAddress instanceof byte[])
@@ -103,6 +104,7 @@ public class SnmpNSAPAddress extends SnmpOctetString
     /** 
      *  Returns pretty-printed (dash-separated) address.
      */
+    @Override
     public String toString()
     {
         StringBuffer returnStringBuffer = new StringBuffer();
@@ -111,14 +113,16 @@ public class SnmpNSAPAddress extends SnmpOctetString
         {
             int convert = data[0];
             if (convert < 0)
-                    convert += 256;
-                returnStringBuffer.append(Integer.toHexString(convert));
+            	convert += 256;
+            
+            returnStringBuffer.append(Integer.toHexString(convert));
                     
             for (int i = 1; i < data.length; i++)
             {
                 convert = data[i];
                 if (convert < 0)
                     convert += 256;
+                
                 returnStringBuffer.append("-");
                 returnStringBuffer.append(Integer.toHexString(convert));
             }

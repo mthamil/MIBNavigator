@@ -21,28 +21,45 @@
 
 package tests;
 
-import static org.junit.Assert.*;
-import static org.hamcrest.core.Is.*;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
-import snmp.RequestIdGenerator;
+import utilities.Option;
+import utilities.parsing.OptionParser;
+import utilities.parsing.Parser;
 
-
-public class RequestIdGeneratorTests
+/**
+ * @author matt
+ *
+ */
+public class OptionParserTests
 {
 	@Test
-	public void testGenerator() 
+	public void testIntegerParser()
 	{
-		RequestIdGenerator generator = new RequestIdGenerator();
-		Integer next = generator.next();
+		Parser<Option<Integer>> parser = new OptionParser<Integer>()
+		{
+			@Override
+			public Option<Integer> parse(String stringValue)
+			{
+				try
+				{
+					int value = Integer.valueOf(stringValue);
+					return Option.some(value);
+				}
+				catch (NumberFormatException e)
+				{
+					return Option.none(Integer.class);
+				}
+			}
+		};
 		
-		assertThat(generator.current().intValue(), is(next.intValue()));
-		assertThat(next.intValue(), is(1));
+		Option<Integer> value = parser.parse("test");
+		assertThat(value.hasValue(), is (false));
 		
-		next = generator.next();
-		
-		assertThat(generator.current().intValue(), is(next.intValue()));
-		assertThat(next.intValue(), is(2));
+		value = parser.parse("1");
+		assertThat(value.hasValue(), is(true));	
 	}
 }

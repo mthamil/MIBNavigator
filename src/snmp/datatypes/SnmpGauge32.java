@@ -85,6 +85,7 @@ public class SnmpGauge32 extends SnmpInteger
      * 
      *  @throws SnmpBadValueException Indicates an incorrect object type supplied.
      */
+    @Override
     public void setValue(Object newValue)
         throws SnmpBadValueException
     {
@@ -107,6 +108,4 @@ public class SnmpGauge32 extends SnmpInteger
         else
             throw new SnmpBadValueException(" Gauge32: bad object supplied to set value ");
     }
-    
-    
 }

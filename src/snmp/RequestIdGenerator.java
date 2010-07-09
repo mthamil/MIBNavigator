@@ -21,7 +21,7 @@
 
 package snmp;
 
-import utilities.InspectableIterator;
+import utilities.iteration.InspectableIterator;
 
 /**
  * Class that creates sequential SNMP Request IDs.

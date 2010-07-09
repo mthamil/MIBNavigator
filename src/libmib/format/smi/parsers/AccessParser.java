@@ -28,9 +28,8 @@ import java.io.IOException;
 
 import libmib.MibObjectType.Access;
 
-public class AccessParser extends AbstractParser<Access>
+public class AccessParser implements SMIParser<Access>
 {
-	@Override
 	public Access parse(BufferedReader reader, String currentLine) throws IOException
 	{
 		int index = currentLine.indexOf(ACCESS.token()) + ACCESS.token().length();

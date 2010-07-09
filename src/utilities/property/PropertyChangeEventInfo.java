@@ -19,7 +19,9 @@
  *
  */
 
-package utilities.events;
+package utilities.property;
+
+import utilities.events.EventInfo;
 
 /**
  * An event object that uses a generic type for a property value.

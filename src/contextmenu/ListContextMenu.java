@@ -93,17 +93,11 @@ public class ListContextMenu extends JPopupMenu
         menuSource = source;
         
         // Disable select all if there are no items in the list
-        if (menuSource.getModel().getSize() > 0)
-            selectAllAction.setEnabled(true);
-        else
-        	selectAllAction.setEnabled(false);
+        boolean listHasItems = menuSource.getModel().getSize() > 0;
+        selectAllAction.setEnabled(listHasItems);
         
-        
-        // Disable copy if no items are selected
-        if (!menuSource.isSelectionEmpty())    
-            copyAction.setEnabled(true);
-        else
-            copyAction.setEnabled(false);
+        // Disable copy if no items are selected   
+        copyAction.setEnabled(!menuSource.isSelectionEmpty());
         
         super.show(menuSource, x, y);
     }

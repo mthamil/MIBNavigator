@@ -31,7 +31,7 @@ import snmp.datatypes.sequence.SnmpVariablePair;
 import snmp.datatypes.sequence.pdu.SnmpBasicPDU;
 import snmp.error.ErrorStatus;
 import snmp.error.SnmpBadValueException;
-import utilities.InspectableIterator;
+import utilities.iteration.InspectableIterator;
 
 /**
  * Class that assists in the creation of SNMP messages.

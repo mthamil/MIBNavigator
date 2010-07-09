@@ -1,5 +1,5 @@
 /**
- * MIB Navigator
+ * Utilities
  *
  * Copyright (C) 2010, Matt Hamilton <matthamilton@live.com>
  *
@@ -21,7 +21,7 @@
 
 package utilities.parsing;
 
-public class EnumParser<T extends Enum<T>> extends AbstractParser<T>
+public class EnumParser<T extends Enum<T>> extends DefaultValueParser<T>
 {
 	public EnumParser(T defaultValue)
 	{

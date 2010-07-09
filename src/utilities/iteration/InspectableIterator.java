@@ -1,5 +1,5 @@
 /**
- * libmib - Java SNMP Management Information Base Library
+ * Utilities
  *
  * Copyright (C) 2010, Matt Hamilton <matthamilton@live.com>
  *
@@ -19,24 +19,22 @@
  *
  */
 
-package libmib.format.smi.parsers;
+package utilities.iteration;
 
-import java.io.BufferedReader;
-import java.io.IOException;
+import java.util.Iterator;
 
 /**
- * Parses a buffered reader and returns an object.
+ * A simple extension of <code>Iterator&lt;E&gt;</code> that allows access to
+ * the current element without advancing to the next.
  *
- * @param <T> the type of object to create from parsing
+ * @param <E> the type of object being iterated over
  */
-public abstract class AbstractParser<T>
+public interface InspectableIterator<E> extends Iterator<E>
 {
 	/**
-	 * Parses a buffered reader and creates an object with the parsed result.
-	 * @param reader
-	 * @param currentLine
-	 * @return
-	 * @throws IOException 
+	 * Gets the current element. That is, the last element returned by
+	 * a call to <code>next()</code>.
+	 * @return the current element
 	 */
-	public abstract T parse(BufferedReader reader, String currentLine) throws IOException;
+	E current();
 }

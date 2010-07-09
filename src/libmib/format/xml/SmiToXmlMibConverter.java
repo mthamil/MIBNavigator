@@ -33,7 +33,7 @@ import libmib.MibObjectExtended;
 import libmib.format.smi.InvalidSmiMibFormatException;
 import libmib.format.smi.SMIStructureHandler;
 import libmib.format.smi.SMIStructureHandler.HierarchyData;
-import libmib.format.smi.parsers.AbstractParser;
+import libmib.format.smi.parsers.SMIParser;
 import libmib.format.smi.parsers.SMIParserFactory;
 import utilities.IOUtilities;
 
@@ -106,7 +106,7 @@ public class SmiToXmlMibConverter
                 // Read the 'IMPORTS' section.
                 if (line.contains(IMPORTS.token()))
                 {
-                    List<MibImport> imports = SMIParserFactory.<AbstractParser<List<MibImport>>>getParser(IMPORTS).parse(reader, line);
+                    List<MibImport> imports = SMIParserFactory.<SMIParser<List<MibImport>>>getParser(IMPORTS).parse(reader, line);
                     for (MibImport importItem : imports)
                     	mibDocFactory.addImportElement(importItem);
                 }
@@ -167,7 +167,7 @@ public class SmiToXmlMibConverter
                     }
 				}
                 			
-				 MibObjectExtended mibObject = SMIParserFactory.<AbstractParser<MibObjectExtended>>getParser(OBJECT_GROUP).parse(reader, line);
+				 MibObjectExtended mibObject = SMIParserFactory.<SMIParser<MibObjectExtended>>getParser(OBJECT_GROUP).parse(reader, line);
 				 if (mibObject != null)
 					 mibDocFactory.addObjectElement(mibObject);
 			}

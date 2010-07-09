@@ -41,7 +41,6 @@ package libmib;
  */
 public class MibNotificationGroup extends MibGenericGroup 
 {
-
     /**
      * Constructs a new, default empty MibNotificationGroup.
      */
@@ -61,5 +60,4 @@ public class MibNotificationGroup extends MibGenericGroup
     {
         super(newName, newId);
     }
-
 }

@@ -36,6 +36,7 @@ public class SnmpNull extends SnmpObject
     /**
      *  Returns Java null reference.
      */
+    @Override
     public Object getValue()
     {
         return null;
@@ -45,6 +46,7 @@ public class SnmpNull extends SnmpObject
     /**
      *  Always throws SNMPBadValueException (which null value did you want, anyway?)
      */
+    @Override
     public void setValue(Object o) throws SnmpBadValueException
     {
         throw new SnmpBadValueException(" Null: attempt to set value ");
@@ -54,6 +56,7 @@ public class SnmpNull extends SnmpObject
     /**
      *  Returns BER encoding for a null object: two bytes, tag and length of 0.
      */
+    @Override
     public byte[] encode()
     {
         byte[] encoding = new byte[2];
@@ -73,6 +76,7 @@ public class SnmpNull extends SnmpObject
     /**
      *  Checks just that both are instances of SNMPNull (no embedded value to check).
      */
+    @Override
     public boolean equals(Object other)
     {
         // false if other is null
@@ -89,6 +93,7 @@ public class SnmpNull extends SnmpObject
     /**
      * Returns the hash code for a null SNMP object.
      */
+    @Override
     public int hashCode()
     {
     	int hash = 7;
@@ -101,9 +106,11 @@ public class SnmpNull extends SnmpObject
     /**
      *  Returns String "Null".
      */
+    @Override
     public String toString()
     {
-        return "Null";
+        return NULL_STRING;
     }
+    private static final String NULL_STRING = "Null";
     
 }

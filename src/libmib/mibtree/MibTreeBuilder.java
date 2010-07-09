@@ -26,6 +26,8 @@ import java.io.FilenameFilter;
 
 import javax.swing.tree.TreeModel;
 
+import utilities.events.EventListener;
+
 import libmib.format.InvalidMibFormatException;
 
 
@@ -79,5 +81,17 @@ public interface MibTreeBuilder
      * @return
      */
     public FilenameFilter getFileFilter();
+    
+    /**
+     * Adds a subscriber to the event fired when a MIB is added to the tree.
+     * @param listener
+     */
+    public void addMibAddedListener(EventListener<AbstractMibTreeBuilder, MibAddedEventInfo> listener);
+    
+    /**
+     * Removes a subscriber from the event fired when a MIB is added to the tree.
+     * @param listener
+     */
+    public void removeMibAddedListener(EventListener<AbstractMibTreeBuilder, MibAddedEventInfo> listener);
 
 }

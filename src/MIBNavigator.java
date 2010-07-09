@@ -225,9 +225,6 @@ public class MIBNavigator
                 try
                 {
                     treeBuilder.addMibFile(mib);
-                    
-                    // If the MIB isn't valid, it will not be added and there will be no reason to reload.
-                    ((DefaultTreeModel)treeBuilder.getTreeModel()).reload();
                 }
                 catch (InvalidMibFormatException exception)
                 {
@@ -269,9 +266,6 @@ public class MIBNavigator
                 try
                 {
                     treeBuilder.addMibFile(sourceMib);
-                    
-                    // If the MIB isn't valid, it will not be added and there will be no reason to reload.
-                    ((DefaultTreeModel)treeBuilder.getTreeModel()).reload();  
                     
                     File destinationMib = new File(mibDirectory.getPath() + File.separator + sourceMib.getName());
                     

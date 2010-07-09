@@ -1,5 +1,5 @@
 /**
- * MIB Navigator
+ * Utilities
  *
  * Copyright (C) 2010, Matt Hamilton <matthamilton@live.com>
  *
@@ -21,7 +21,7 @@
 
 package utilities.parsing;
 
-public class PositiveIntegerParser extends AbstractParser<Integer>
+public class PositiveIntegerParser extends DefaultValueParser<Integer>
 {
 	public PositiveIntegerParser(Integer defaultValue)
 	{

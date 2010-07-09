@@ -54,13 +54,14 @@ public abstract class SnmpObject
     
     /** 
      *  Returns the BER byte encoding (type, length, value) of an SNMP object.
-     */  
+     */
     public abstract byte[] encode();
     
     
     /**
      *  Compares two SNMPObject subclass objects by checking their values for equality.
      */
+    @Override
     public boolean equals(Object other)
     {
         if (other == this)
@@ -87,6 +88,7 @@ public abstract class SnmpObject
     /**
      *  Generates a hash value so SNMP objects can be used in Hashtables.
      */
+    @Override
     public int hashCode()
     {
         if (this.getValue() == null)

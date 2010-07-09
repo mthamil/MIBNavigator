@@ -1,5 +1,5 @@
 /**
- * MIB Navigator
+ * Utilities
  *
  * Copyright (C) 2010, Matt Hamilton <matthamilton@live.com>
  *
@@ -31,13 +31,13 @@ public interface SubscribableEvent<S, E extends EventInfo>
 {
 	/**
 	 * Adds an event listener.
-	 * @param listener The event subsrciber
+	 * @param listener The event subscriber
 	 */
-	void addListener(EventListener<S, E> listener);
+	void addListener(EventListener<? super S, E> listener);
 	
 	/**
 	 * Removes an event listener if it exists.
 	 * @param listener The event subscriber
 	 */
-	void removeListener(EventListener<S, E> listener);
+	void removeListener(EventListener<? super S, E> listener);
 }

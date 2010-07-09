@@ -38,12 +38,12 @@ public class EventTests
 	@Test
 	public void testEventSubscription()
 	{
-		Event<Object, EventInfo> event = Event.<Object, EventInfo>create(this);
+		Event<Object, EventInfo> event = new Event<Object, EventInfo>(this);
 		
 		event.addListener(new EventListener<Object, EventInfo>()
 		{
 			@Override
-			public void eventRaised(Object source, EventInfo eventInfo)
+			public void handleEvent(Object source, EventInfo eventInfo)
 			{
 				eventFired = true;
 			}
@@ -57,12 +57,12 @@ public class EventTests
 	@Test
 	public void testEventUnsubscription()
 	{
-		Event<Object, EventInfo> event = Event.<Object, EventInfo>create(this);
+		Event<Object, EventInfo> event = new Event<Object, EventInfo>(this);
 		
 		EventListener<Object, EventInfo> listener = new EventListener<Object, EventInfo>()
 		{
 			@Override
-			public void eventRaised(Object source, EventInfo eventInfo)
+			public void handleEvent(Object source, EventInfo eventInfo)
 			{
 				eventFired = true;
 			}
@@ -81,12 +81,12 @@ public class EventTests
 	@Test
 	public void testEventSelfUnsubscription()
 	{
-		final Event<Object, EventInfo> event = Event.<Object, EventInfo>create(this);
+		final Event<Object, EventInfo> event = new Event<Object, EventInfo>(this);
 		
 		EventListener<Object, EventInfo> listener = new EventListener<Object, EventInfo>()
 		{
 			@Override
-			public void eventRaised(Object source, EventInfo eventInfo)
+			public void handleEvent(Object source, EventInfo eventInfo)
 			{
 				eventFired = true;
 				event.removeListener(this);	// Unsubscribe from within the listener.
@@ -105,12 +105,12 @@ public class EventTests
 	@Test
 	public void testEventSameSubscription()
 	{
-		Event<Object, EventInfo> event = Event.<Object, EventInfo>create(this);
+		Event<Object, EventInfo> event = new Event<Object, EventInfo>(this);
 		
 		EventListener<Object, EventInfo> listener = new EventListener<Object, EventInfo>()
 		{
 			@Override
-			public void eventRaised(Object source, EventInfo eventInfo)
+			public void handleEvent(Object source, EventInfo eventInfo)
 			{
 				eventFiredCount++;
 			}
@@ -127,13 +127,13 @@ public class EventTests
 	@Test
 	public void testEventMultipleListeners()
 	{
-		Event<Object, EventInfo> event = Event.<Object, EventInfo>create(this);
+		Event<Object, EventInfo> event = new Event<Object, EventInfo>(this);
 		
 		// Add 2 different listeners.
 		event.addListener(new EventListener<Object, EventInfo>()
 		{
 			@Override
-			public void eventRaised(Object source, EventInfo eventInfo)
+			public void handleEvent(Object source, EventInfo eventInfo)
 			{
 				eventFired = true;
 			}
@@ -143,7 +143,7 @@ public class EventTests
 		event.addListener(new EventListener<Object, EventInfo>()
 		{
 			@Override
-			public void eventRaised(Object source, EventInfo eventInfo)
+			public void handleEvent(Object source, EventInfo eventInfo)
 			{
 				eventFired2 = true;
 			}

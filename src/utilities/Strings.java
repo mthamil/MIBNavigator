@@ -28,10 +28,10 @@ import java.util.Iterator;
 /**
  *  Class containing useful String utility methods.
  */
-public class StringUtilities
+public class Strings
 {
 
-	private StringUtilities() { }
+	private Strings() { }
 	
 	/**
 	 * Removes all leading and trailing instances of a character from a String.
@@ -57,15 +57,16 @@ public class StringUtilities
 	}
 	
 	/**
-	 * Takes a collection of strings and appends them to each other using a delimiter
-	 * between the elements to create a single string.
+	 * Takes a collection of items and appends their string representations to each other
+	 * using a delimiter between the elements to create a single string.
+	 * 
 	 * @param delimiter the delimiter to insert between elements
-	 * @param strings a collection of strings to join together
+	 * @param items a collection of objects to join together
 	 * @return
 	 */
-	public static String join(String delimiter, Iterable<String> strings)
+	public static <T> String join(String delimiter, Iterable<T> items)
 	{
-		Iterator<String> iterator = strings.iterator();
+		Iterator<T> iterator = items.iterator();
 		
 		StringBuilder joinedString = new StringBuilder();
 		while (iterator.hasNext())
@@ -80,14 +81,59 @@ public class StringUtilities
 	}
 
 	/**
-	 * Takes a collection of strings and appends them to each other using a delimiter
-	 * between the elements to create a single string.
+	 * Takes a collection of items and appends their string representations to each other
+	 * using a delimiter between the elements to create a single string.
+	 * 
 	 * @param delimiter the delimiter to insert between elements
-	 * @param strings a collection of strings to join together
+	 * @param items a collection of objects to join together
 	 * @return
 	 */
-	public static String join(String delimiter, String ... strings)
+	public static <T> String join(String delimiter, T ... items)
 	{
-		return StringUtilities.join(delimiter, Arrays.asList(strings));
+		return Strings.join(delimiter, Arrays.asList(items));
+	}
+	
+	/**
+	 * Takes an array of integers and appends their string representations to each other
+	 * using a delimiter between the elements to create a single string.
+	 * 
+	 * @param delimiter the delimiter to insert between elements
+	 * @param items an array of ints to join together
+	 * @return
+	 */
+	public static String join(String delimiter, int[] items)
+	{
+		StringBuilder joinedString = new StringBuilder();
+		for (int item : items)
+		{
+			if (joinedString.length() > 0)
+				joinedString.append(delimiter);
+			
+			joinedString.append(item);
+		}
+		
+		return joinedString.toString();
+	}
+	
+	/**
+	 * Takes an array of longs and appends their string representations to each other
+	 * using a delimiter between the elements to create a single string.
+	 * 
+	 * @param delimiter the delimiter to insert between elements
+	 * @param items an array of longs to join together
+	 * @return
+	 */
+	public static String join(String delimiter, long[] items)
+	{
+		StringBuilder joinedString = new StringBuilder();
+		for (long item : items)
+		{
+			if (joinedString.length() > 0)
+				joinedString.append(delimiter);
+			
+			joinedString.append(item);
+		}
+		
+		return joinedString.toString();
 	}
 }

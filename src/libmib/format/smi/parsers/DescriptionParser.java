@@ -28,9 +28,8 @@ import java.io.IOException;
 
 import libmib.format.smi.SMIStructureHandler;
 
-public class DescriptionParser extends AbstractParser<String>
+public class DescriptionParser implements SMIParser<String>
 {
-	@Override
 	public String parse(BufferedReader reader, String currentLine) throws IOException
 	{
 		return SMIStructureHandler.readQuotedSection(reader, currentLine, DESCRIPTION);

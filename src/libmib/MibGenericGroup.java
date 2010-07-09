@@ -21,6 +21,7 @@
 
 package libmib;
 
+import java.util.Iterator;
 import java.util.List;
 
 /** 
@@ -29,9 +30,10 @@ import java.util.List;
  * Specific MIB object structures that use this format should extend this class 
  * since it provides most if not all of the functionality they may need.
  */
-public class MibGenericGroup extends MibObjectIdentifier 
+public abstract class MibGenericGroup extends MibObjectIdentifier
+									  implements Iterable<String>
 {
-    private String status;
+	private String status;
     private String description;
     private List<String> members;
 
@@ -103,6 +105,13 @@ public class MibGenericGroup extends MibObjectIdentifier
         description = newDesc;
     }
     
+    /* (non-Javadoc)
+	 * @see java.lang.Iterable#iterator()
+	 */
+	public Iterator<String> iterator()
+	{
+		return members.iterator();
+	}
     
     /**
      * Gets the list of object names in the MIB group object.

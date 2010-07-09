@@ -35,10 +35,13 @@ import javax.swing.event.*;
 import javax.swing.text.NumberFormatter;
 import javax.swing.tree.*;
 
-import utilities.StringUtilities;
+import utilities.Strings;
+import utilities.events.EventListener;
 
 import libmib.MibObjectIdentifier;
 import libmib.MibObjectType;
+import libmib.mibtree.AbstractMibTreeBuilder;
+import libmib.mibtree.MibAddedEventInfo;
 import libmib.mibtree.MibTreeBuilder;
 import libmib.mibtree.MibTreeNode;
 import libmib.mibtree.MibTreeNode.NodeSearchOption;
@@ -208,6 +211,16 @@ public class MibBrowser
         {
             System.out.print(e.getMessage());
         }
+        
+        treeBuilder.addMibAddedListener(new EventListener<AbstractMibTreeBuilder, MibAddedEventInfo>()
+		{
+			@Override
+			public void handleEvent(AbstractMibTreeBuilder source, MibAddedEventInfo eventInfo)
+			{
+                ((DefaultTreeModel)treeBuilder.getTreeModel()).reload();
+				setVisibleNodeByOID(eventInfo.getMibRoot().getOidNumeralPath(), NodeSearchOption.MatchExactPath);
+			}
+		});
         
         // If the mibs directory wasn't found, this will return a tree model with only default nodes.
         mibModel = (DefaultTreeModel)treeBuilder.getTreeModel();
@@ -678,76 +691,77 @@ public class MibBrowser
             if (getValue(NAME).equals(StringResources.getString("getButton")))
             {
                 // This check is just to avoid even attempting to use an empty OID or IP address field.
-                if (!oidInputField.getText().trim().equals("")
-                    && addressBox.getSelectedItem() != null
-                    && !(((String)addressBox.getSelectedItem()).trim().equals("")) )
+                if (oidInputField.getText().trim().equals("") ||
+                    addressBox.getSelectedItem() == null ||
+                    (((String)addressBox.getSelectedItem()).trim().equals("")) )
                 {
-                    DefaultListModel resultsListModel = (DefaultListModel)resultsList.getModel();
+                	return;
+                }
+
+                DefaultListModel resultsListModel = (DefaultListModel)resultsList.getModel();
+                try
+                {
+                    // Get all necessary values from the user interface before starting the Get process.
+                    // This ensures that the user can't affect what values the thread uses once it has 
+                    // been launched.
+                    String communityString = communityField.getText().trim();
+                    String addressString = ((String)addressBox.getSelectedItem()).trim();
+                    int port = Integer.parseInt(portField.getText().trim());
+                    int timeout = Integer.parseInt(timeoutField.getText().trim());
+                    SnmpHost host = new SnmpHost(communityString, addressString, port, timeout);
+
+                    // Try to scroll to the correct OID.
+                    String oidInputString = Strings.trim(oidInputField.getText().trim(), '.');
+                    String oidTreeNumeralPathString = oidNumeralField.getText();
                     
-                    try
-                    {
-                        // Get all necessary values from the user interface before starting the Get process.
-                        // This ensures that the user can't affect what values the thread uses once it has 
-                        // been launched.
-                        String communityString = communityField.getText().trim();
-                        String addressString = ((String)addressBox.getSelectedItem()).trim();
-                        int port = Integer.parseInt(portField.getText().trim());
-                        int timeout = Integer.parseInt(timeoutField.getText().trim());
-                        SnmpHost host = new SnmpHost(communityString, addressString, port, timeout);
-    
-                        // Try to scroll to the correct OID.
-                        String oidInputString = StringUtilities.trim(oidInputField.getText().trim(), '.');
-                        String oidTreeNumeralPathString = oidNumeralField.getText();
-                        
-                        if (!oidInputString.equals(oidTreeNumeralPathString))
-                            setVisibleNodeByOID(oidInputString, NodeSearchOption.MatchExactPath);
-    
-                        resultsListModel.removeAllElements();
-                        putValue(NAME, StringResources.getString("stopButton"));
-                        
-                        // Initialize and start the GetRequest process in a different thread using a SwingWorker.
+                    if (!oidInputString.equals(oidTreeNumeralPathString))
+                        setVisibleNodeByOID(oidInputString, NodeSearchOption.MatchExactPath);
+
+                    resultsListModel.removeAllElements();
+                    putValue(NAME, StringResources.getString("stopButton"));
+                    
+                    // Initialize and start the GetRequest process in a different thread using a SwingWorker.
 //                        snmpGetTask = new GetRequestWorker(host, oidInputString, (MibTreeNode)mibModel.getRoot());
 //                        snmpGetTask.addGetRequestListener(new MibGetRequestListener());
-                        
-                        snmpGetTask = new GetRequestTask(host, oidInputString, (MibTreeNode)mibModel.getRoot());
-						snmpGetTask.addGetRequestListener(new MibGetRequestListener());
-						snmpGetTask.addPropertyChangeListener(new PropertyChangeListener()
+                    
+                    snmpGetTask = new GetRequestTask(host, oidInputString, (MibTreeNode)mibModel.getRoot());
+					snmpGetTask.addGetRequestListener(new MibGetRequestListener());
+					snmpGetTask.addPropertyChangeListener(new PropertyChangeListener()
+					{
+						public void propertyChange(PropertyChangeEvent propertyEvent)
 						{
-							public void propertyChange(PropertyChangeEvent propertyEvent)
+							if ("state".equals(propertyEvent.getPropertyName()) && 
+								javax.swing.SwingWorker.StateValue.DONE == propertyEvent.getNewValue()) 
 							{
-								if ("state".equals(propertyEvent.getPropertyName()) && 
-									javax.swing.SwingWorker.StateValue.DONE == propertyEvent.getNewValue()) 
-								{
-									getButton.getAction().putValue(GetRequestAction.NAME, StringResources.getString("getButton"));
-								}
+								getButton.getAction().putValue(GetRequestAction.NAME, StringResources.getString("getButton"));
 							}
-						});
-						
-						snmpGetTask.setResultProcessor(new GetRequestResultProcessor()
+						}
+					});
+					
+					snmpGetTask.setResultProcessor(new GetRequestResultProcessor()
+					{
+						@Override
+						public void processResult(GetRequestResult result)
 						{
-							@Override
-							public void processResult(GetRequestResult result)
-							{
-								Action getAction = getButton.getAction();
-						    	if (!getAction.isEnabled())
-						    		getAction.setEnabled(true);
-						    	
-						        ((DefaultListModel)resultsList.getModel()).addElement(result);
-							}
-						});
-                        
-                        // Disable the Get button because clicking Stop will not do anything
-                        // while waiting for the timeout.
-                        this.setEnabled(false);
-                        
-                        //snmpGetTask.start();
-                        snmpGetTask.execute();
-                    }
-                    catch (NumberFormatException e)
-                    {
-                        resultsListModel.removeAllElements();
-                        resultsListModel.addElement(StringResources.getString("badOidInputMessage") + e.getMessage() + "\n");
-                    } 
+							Action getAction = getButton.getAction();
+					    	if (!getAction.isEnabled())
+					    		getAction.setEnabled(true);
+					    	
+					        ((DefaultListModel)resultsList.getModel()).addElement(result);
+						}
+					});
+                    
+                    // Disable the Get button because clicking Stop will not do anything
+                    // while waiting for the timeout.
+                    this.setEnabled(false);
+                    
+                    //snmpGetTask.start();
+                    snmpGetTask.execute();
+                }
+                catch (NumberFormatException e)
+                {
+                    resultsListModel.removeAllElements();
+                    resultsListModel.addElement(StringResources.getString("badOidInputMessage") + e.getMessage() + "\n");
                 }
             }
             else

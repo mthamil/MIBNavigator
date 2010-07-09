@@ -75,5 +75,4 @@ public class MibNotificationType extends MibGenericGroup
         //if not null
         return true;
     }
-
 }

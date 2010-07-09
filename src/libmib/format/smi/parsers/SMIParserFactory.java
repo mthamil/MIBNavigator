@@ -32,8 +32,8 @@ import libmib.format.smi.SMIToken;
  */
 public class SMIParserFactory
 {
-	private static final Map<SMIToken, AbstractParser<?>> parsers = 
-		new EnumMap<SMIToken, AbstractParser<?>>(SMIToken.class);
+	private static final Map<SMIToken, SMIParser<?>> parsers = 
+		new EnumMap<SMIToken, SMIParser<?>>(SMIToken.class);
 	
 	/**
 	 * Initializes the parser mapping.
@@ -55,7 +55,7 @@ public class SMIParserFactory
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T extends AbstractParser<?>> T getParser(SMIToken token)
+	public static <T extends SMIParser<?>> T getParser(SMIToken token)
 	{
 		return (T)parsers.get(token);
 	}

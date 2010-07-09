@@ -31,6 +31,9 @@ import java.util.List;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
 
+import utilities.events.Event;
+import utilities.events.EventListener;
+
 import libmib.MibObjectIdentifier;
 import libmib.MibObjectType;
 import libmib.format.InvalidMibFormatException;
@@ -54,7 +57,6 @@ public abstract class AbstractMibTreeBuilder implements MibTreeBuilder
     // inefficient getNodeByName actually took up the most amount of CPU time. Now,
     // using the HashMap to search for existing nodes is an O(1) operation.
     protected HashMap<String, MibTreeNode> nodeMap;
-    
     
     public AbstractMibTreeBuilder()
     {
@@ -157,7 +159,8 @@ public abstract class AbstractMibTreeBuilder implements MibTreeBuilder
         {
             try
             {
-                this.addMibToTree(mibFile);  
+                this.addMibToTree(mibFile);
+                currentMibRoot = null;
             }
             catch (InvalidMibFormatException e)
             {
@@ -178,6 +181,8 @@ public abstract class AbstractMibTreeBuilder implements MibTreeBuilder
      */
     public void addMibFile(File mibFile) throws InvalidMibFormatException
     {
+    	currentMibRoot = null;
+    	
         // This method really is just a public wrapper for the internal implementation
         // of the MIB adding process.  It uses the lost children list on a single file
         // instead of across files.
@@ -186,7 +191,12 @@ public abstract class AbstractMibTreeBuilder implements MibTreeBuilder
          
         this.addMibToTree(mibFile);
         
-        this.addLostChildren(); 
+        this.addLostChildren();
+        
+        if (currentMibRoot != null)
+        	mibAddedEvent.raise(new MibAddedEventInfo(currentMibRoot));
+        
+        currentMibRoot = null;
     }
     
     
@@ -200,6 +210,43 @@ public abstract class AbstractMibTreeBuilder implements MibTreeBuilder
      * @throws InvalidMibFormatException if the MIB file is invalid
      */
     abstract protected void addMibToTree(File mibFile) throws InvalidMibFormatException;
+    
+    /**
+     * @see libmib.mibtree.MibTreeBuilder#addMibAddedListener()
+     */
+    public void addMibAddedListener(EventListener<AbstractMibTreeBuilder, MibAddedEventInfo> listener)
+    {
+    	mibAddedEvent.addListener(listener);
+    }
+    
+    /**
+     * @see libmib.mibtree.MibTreeBuilder#removeMibAddedListener()
+     */
+    public void removeMibAddedListener(EventListener<AbstractMibTreeBuilder, MibAddedEventInfo> listener)
+    {
+    	mibAddedEvent.removeListener(listener);
+    }
+    
+    /** Event that occurs when a MIB has been added to the tree. **/
+    private final Event<AbstractMibTreeBuilder, MibAddedEventInfo> mibAddedEvent = Event.create(this);
+    
+    /** The lowest level node encountered in a MIB so far. **/
+    private MibTreeNode currentMibRoot;
+    
+    private void updateCurrentRoot(MibTreeNode newNode)
+    {
+    	if (currentMibRoot == null)
+        {
+        	currentMibRoot = newNode;
+        }
+        else
+        {
+	        if (newNode.getLevel() < newNode.getLevel())
+	        {
+	        	currentMibRoot = newNode;
+	        }
+        }
+    }
 
 
     /**
@@ -220,47 +267,6 @@ public abstract class AbstractMibTreeBuilder implements MibTreeBuilder
      */
     abstract public String getMibDirectory();
     
-    
-    /**
-     * Tries to add any nodes that could not be added at the time they were created because 
-     * their parents did not yet exist.
-     */
-    protected void addLostChildren()
-    {
-        // try to add the nodes whose parents may not have been added yet at the time they were created
-        // note: may cause visual ordering anomalies, but it is acceptable functionally
-        if (lostChildren != null && lostChildren.size() > 1)
-        {
-            //System.out.println("\nLOST CHILDREN:");
-            for (LostChildNode lostChild : lostChildren)
-            {
-                MibTreeNode lostNode = lostChild.getNode();
-                MibObjectIdentifier lostMibObject = (MibObjectIdentifier)lostNode.getUserObject();
-                String parentName = lostChild.getParentName();
-
-                //System.out.print("\n" + lostMibObject.getName() + " --> " + nodeParent);
-
-                // test to see if this node already exists in the tree, lost children may have been added later due to duplication
-                if (!nodeMap.containsKey(lostMibObject.getName())) //check the HashMap
-                {
-                    // check the HashMap for specified parent node
-                    if (nodeMap.containsKey(parentName))
-                    {
-                        MibTreeNode parent = nodeMap.get(parentName); 
-                        parent.add(lostNode);
-                        nodeMap.put(lostMibObject.getName(), lostNode);
-                        //System.out.print(":    Added");
-                    }
-                }
-
-            }
-
-            lostChildren.clear();  // reset lostChildren
-        }
-    }
-    
-    
-    
     /**
      * Checks whether a parent node with the given name exists in the tree
      * and adds the new MIB object to the parent if it does exist or adds it
@@ -271,8 +277,10 @@ public abstract class AbstractMibTreeBuilder implements MibTreeBuilder
      */
     protected void addMibObject(MibObjectType newObject, String parentName)
     {
-        MibTreeNode newNode = new MibTreeNode(newObject);
+    	MibTreeNode newNode = new MibTreeNode(newObject);
         String name = newObject.getName();
+        
+        updateCurrentRoot(newNode);
         
         // check the HashMap for specified parent node
         if (nodeMap.containsKey(parentName))
@@ -300,6 +308,45 @@ public abstract class AbstractMibTreeBuilder implements MibTreeBuilder
 	 */
 	public void setFileFilter(FilenameFilter filter) { this.filter = filter; }
 	
+	/**
+     * Tries to add any nodes that could not be added at the time they were created because 
+     * their parents did not yet exist.
+     */
+    protected void addLostChildren()
+    {
+        // try to add the nodes whose parents may not have been added yet at the time they were created
+        // note: may cause visual ordering anomalies, but it is acceptable functionally
+        if (lostChildren == null || lostChildren.isEmpty())
+        	return;
+        
+        //System.out.println("\nLOST CHILDREN:");
+        for (LostChildNode lostChild : lostChildren)
+        {
+            MibTreeNode lostNode = lostChild.getNode();
+            MibObjectIdentifier lostMibObject = (MibObjectIdentifier)lostNode.getUserObject();
+            String parentName = lostChild.getParentName();
+            
+            updateCurrentRoot(lostNode);
+
+            //System.out.print("\n" + lostMibObject.getName() + " --> " + nodeParent);
+
+            // test to see if this node already exists in the tree, lost children may have been added later due to duplication
+            if (!nodeMap.containsKey(lostMibObject.getName())) //check the HashMap
+            {
+                // check the HashMap for specified parent node
+                if (nodeMap.containsKey(parentName))
+                {
+                    MibTreeNode parent = nodeMap.get(parentName); 
+                    parent.add(lostNode);
+                    nodeMap.put(lostMibObject.getName(), lostNode);
+                    //System.out.print(":    Added");
+                }
+            }
+
+        }
+
+        lostChildren.clear();  // reset lostChildren
+    }
 	
 	/**
 	 * Utility class used to represent a node that was created before its

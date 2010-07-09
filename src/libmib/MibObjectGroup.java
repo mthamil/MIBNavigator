@@ -60,8 +60,4 @@ public class MibObjectGroup extends MibGenericGroup
     {
         super(newName, newId);
     }
-    
-    
-    
-
 }

@@ -98,6 +98,7 @@ public class SnmpIpAddress extends SnmpOctetString
      *  @throws SnmpBadValueException Indicates an incorrect object type supplied, or array of
      *  incorrect size.
      */
+    @Override
     public void setValue(Object newAddress)
         throws SnmpBadValueException
     {
@@ -164,6 +165,7 @@ public class SnmpIpAddress extends SnmpOctetString
 	/** 
 	 *  Returns pretty-printed IP address.
 	 */
+    @Override
 	public String toString()
 	{
 	    StringBuffer returnStringBuffer = new StringBuffer();

@@ -1,5 +1,5 @@
 /**
- * MIB Navigator
+ * Utilities
  *
  * Copyright (C) 2010, Matt Hamilton <matthamilton@live.com>
  *
@@ -19,35 +19,35 @@
  *
  */
 
-package utilities.parsing;
+package utilities.iteration;
 
-public abstract class AbstractParser<T> implements Parser<T>
+import java.util.Iterator;
+
+import utilities.Mapper;
+
+/**
+ *  A lazy iterable that takes an existing iterable and maps its elements
+ *  using a given Mapper.
+ *  
+ *  @param <S> The type of objects in the source iterable
+ *  @param <D> The type of objects in the destination iterable
+ */
+public class MappingIterable<S, D> implements Iterable<D>
 {
-	/** The value that may be used as a fallback if parsing fails. */
-	private T defaultValue;
+	private Iterable<S> source;
+	private Mapper<S, D> mapper;
 	
-	public AbstractParser(T defaultValue)
+	public MappingIterable(Iterable<S> source, Mapper<S, D> mapper)
 	{
-		this.defaultValue = defaultValue;
+		this.source = source;
+		this.mapper = mapper;
 	}
 	
-	/**
-	 * Returns the value that may be used as a fallback if parsing fails.
-	 * @return
+	/* (non-Javadoc)
+	 * @see java.lang.Iterable#iterator()
 	 */
-	public T getDefault()
+	public Iterator<D> iterator()
 	{
-		return defaultValue;
+		return new MappingIterator<S, D>(source.iterator(), mapper);
 	}
-	
-	/**
-	 * Sets the value that may be used as a fallback if parsing fails.
-	 * @param defaultValue
-	 */
-	public void setDefault(T defaultValue)
-	{
-		this.defaultValue = defaultValue;
-	}
-	
-	public abstract T parse(String stringValue);
 }

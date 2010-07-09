@@ -19,22 +19,20 @@
  *
  */
 
-package utilities;
+package utilities.iteration;
 
-import java.util.Iterator;
+import utilities.Mapper;
 
 /**
- * A simple extension of <code>Iterator&lt;E&gt;</code> that allows access to
- * the current element without advancing to the next.
- *
- * @param <E> the type of object being iterated over
+ * A mapper that simply maps an item to itself.
  */
-public interface InspectableIterator<E> extends Iterator<E>
+public class NullMapper<T> implements Mapper<T, T>
 {
-	/**
-	 * Gets the current element. That is, the last element returned by
-	 * a call to <code>next()</code>.
-	 * @return the current element
+	/* (non-Javadoc)
+	 * @see utilities.Mapper#map(java.lang.Object)
 	 */
-	E current();
+	public T map(T item)
+	{
+		return item;
+	}
 }

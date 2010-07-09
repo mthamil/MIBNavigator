@@ -61,9 +61,8 @@ import libmib.format.smi.SMIStructureHandler.HierarchyData;
  * Parses MIB structures into a single object type containing a superset of all
  * known MIB Object properties.
  */
-public class GeneralMibObjectParser extends AbstractParser<MibObjectExtended>
+public class GeneralMibObjectParser implements SMIParser<MibObjectExtended>
 {
-	@Override
 	public MibObjectExtended parse(BufferedReader reader, String currentLine) throws IOException
 	{
 		// test for other object "types"
@@ -122,15 +121,15 @@ public class GeneralMibObjectParser extends AbstractParser<MibObjectExtended>
 	            {
 	                // SYNTAX
 	                if (currentLine.contains(SYNTAX.token()) && !objectType.equals(MODULE_COMP))
-	                	nodeSyntax = SMIParserFactory.<AbstractParser<MibSyntax>>getParser(SYNTAX).parse(reader, currentLine);
+	                	nodeSyntax = SMIParserFactory.<SMIParser<MibSyntax>>getParser(SYNTAX).parse(reader, currentLine);
 	                
 	                // ACCESS
 	                else if (currentLine.contains(ACCESS.token()) && !objectType.equals(MODULE_COMP))   
-	                	access = SMIParserFactory.<AbstractParser<Access>>getParser(ACCESS).parse(reader, currentLine);
+	                	access = SMIParserFactory.<SMIParser<Access>>getParser(ACCESS).parse(reader, currentLine);
 	                
 	                // STATUS
 	                else if (currentLine.contains(STATUS.token()))
-	                	status = SMIParserFactory.<AbstractParser<Status>>getParser(STATUS).parse(reader, currentLine);
+	                	status = SMIParserFactory.<SMIParser<Status>>getParser(STATUS).parse(reader, currentLine);
 	                
 	                // LAST-UPDATED
 	                else if (currentLine.contains(MODULE_LAST_UPDATED.token()))
@@ -166,7 +165,7 @@ public class GeneralMibObjectParser extends AbstractParser<MibObjectExtended>
 	                
 	                // DESCRIPTION
 	                else if (currentLine.contains(DESCRIPTION.token()))
-	                    description.append(SMIParserFactory.<AbstractParser<String>>getParser(DESCRIPTION).parse(reader, currentLine));
+	                    description.append(SMIParserFactory.<SMIParser<String>>getParser(DESCRIPTION).parse(reader, currentLine));
 
 	                
 	                // REFERENCE
@@ -185,7 +184,7 @@ public class GeneralMibObjectParser extends AbstractParser<MibObjectExtended>
 	                // REVISION
 	                else if (currentLine.contains(MODULE_REVISION.token()))
 	                {                                      
-	                    MibModuleIdRevision revision = SMIParserFactory.<AbstractParser<MibModuleIdRevision>>getParser(MODULE_REVISION).parse(reader, currentLine);
+	                    MibModuleIdRevision revision = SMIParserFactory.<SMIParser<MibModuleIdRevision>>getParser(MODULE_REVISION).parse(reader, currentLine);
 	                    if (revision != null)
 	                    {
 	                        if (revisions == null)

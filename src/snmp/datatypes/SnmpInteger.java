@@ -80,6 +80,7 @@ public class SnmpInteger extends SnmpObject
     /** 
      *  Returns a java.lang.BigInteger object with the current value.
      */
+    @Override
     public Object getValue()
     {
         return value;
@@ -92,6 +93,7 @@ public class SnmpInteger extends SnmpObject
      *  
      *  @throws SnmpBadValueException Indicates an incorrect object type supplied.
      */
+    @Override
     public void setValue(Object newValue)
         throws SnmpBadValueException
     {
@@ -110,6 +112,7 @@ public class SnmpInteger extends SnmpObject
     /** 
      *  Returns the full BER encoding (type, length, value) of the SNMPInteger subclass.
      */
+    @Override
     public byte[] encode()
     {
         ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
@@ -149,7 +152,7 @@ public class SnmpInteger extends SnmpObject
         }
     }
     
-
+    @Override
     public String toString()
     {
         return value.toString();

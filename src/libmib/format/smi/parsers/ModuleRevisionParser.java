@@ -29,9 +29,8 @@ import java.io.IOException;
 import libmib.MibModuleIdRevision;
 import libmib.format.smi.SMIStructureHandler;
 
-public class ModuleRevisionParser extends AbstractParser<MibModuleIdRevision>
+public class ModuleRevisionParser implements SMIParser<MibModuleIdRevision>
 {
-	@Override
 	public MibModuleIdRevision parse(BufferedReader reader, String currentLine) throws IOException
 	{
         // testing rev

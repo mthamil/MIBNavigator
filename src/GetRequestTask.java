@@ -25,6 +25,7 @@ import java.net.InetAddress;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.SwingUtilities;
@@ -310,9 +311,9 @@ public class GetRequestTask extends SwingWorker<String, GetRequestResult>
     private static String formatDisplayOid(MibTreeNode node, String oidString)
     {
         // Get the full name and numeral paths of the node.
-        String[] paths = node.getOidPaths(); 
-        String oidNumeralPath = paths[0];
-        String oidNamePath = paths[1];
+        Entry<String, String> paths = node.getOidPaths(); 
+        String oidNumeralPath = paths.getKey();
+        String oidNamePath = paths.getValue();
 
         if (oidString.startsWith(oidNumeralPath)) // make sure the OID numeral pattern isn't matched elsewhere in a really long OID
         {
