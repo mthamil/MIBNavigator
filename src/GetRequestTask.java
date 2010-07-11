@@ -41,6 +41,7 @@ import snmp.datatypes.sequence.SnmpSequence;
 import snmp.datatypes.sequence.SnmpVarBindList;
 import snmp.error.SnmpBadValueException;
 import snmp.error.SnmpGetException;
+import utilities.NullArgumentException;
 
 import libmib.MibObjectType;
 import libmib.mibtree.MibTreeNode;
@@ -85,10 +86,10 @@ public class GetRequestTask extends SwingWorker<String, GetRequestResult>
     public GetRequestTask(final SnmpHost host, final String oidString, final MibTreeNode rootNode)
     {
         if (host == null)
-        	throw new IllegalArgumentException("Host cannot be null");
+        	throw new NullArgumentException("host");
     	
         if (rootNode == null)
-            throw new IllegalArgumentException("Root node cannot be null.");
+            throw new NullArgumentException("rootNode");
         
         this.host = host;
         this.oidInputString = oidString;

@@ -21,6 +21,7 @@
 
 package utilities.iteration;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -50,6 +51,19 @@ public class Iterables
 	public static <T> Iterable<T> asIterable(T value)
 	{
 		return new SingleValueIterable<T>(value);
+	}
+	
+	/**
+	 * Converts an Iterable into a List. If the Iterable does not terminate, 
+	 * this method will not return.
+	 */
+	public static <T> List<T> asList(Iterable<T> iterable)
+	{
+		List<T> list = new ArrayList<T>();
+		for (T item : iterable)
+			list.add(item);
+		
+		return list;
 	}
 	
 	/**
@@ -100,6 +114,15 @@ public class Iterables
 	}
 	
 	/**
+	 * Creates a grouping of the given items according to the keys created using the given
+	 * Mapper.
+	 */
+	public static <K, V> Iterable<Grouping<K, V>> groupBy(Iterable<V> source, Mapper<V, K> keyMapper)
+	{
+		return new GroupingIterable<K, V>(source, keyMapper);
+	}
+	
+	/**
 	 * Returns an Iterable over the elements from <code>source</code> where <code>condition</code> is true.
 	 * @param source The items to filter
 	 * @param condition The filter criteria
@@ -132,26 +155,6 @@ public class Iterables
 			return iterator.next();
 		
 		return null;
-	}
-	
-	/**
-	 * Returns the number of elements in an Iterable.
-	 * Contains optimizations for collections with O(1)
-	 * size access.
-	 */
-	public static <T> int size(Iterable<T> items)
-	{
-		if (items instanceof Collection<?>)
-		{
-			Collection<?> collection = (Collection<?>)items;
-			return collection.size();
-		}
-		
-		int i = 0;
-		for (Iterator<T> iterator = items.iterator(); iterator.hasNext();)
-			i++;
-		
-		return i;
 	}
 	
 	/**
@@ -257,6 +260,40 @@ public class Iterables
 	}
 	
 	/**
+	 * Returns true if any element of an iterable meets a condition.
+	 */
+	public static <T> boolean any(Iterable<T> items, Predicate<T> condition)
+	{
+		for (T item : items)
+		{
+			if (condition.matches(item))
+				return true;
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * Returns the number of elements in an Iterable.
+	 * Contains optimizations for collections with O(1)
+	 * size access.
+	 */
+	public static <T> int size(Iterable<T> items)
+	{
+		if (items instanceof Collection<?>)
+		{
+			Collection<?> collection = (Collection<?>)items;
+			return collection.size();
+		}
+		
+		int i = 0;
+		for (Iterator<T> iterator = items.iterator(); iterator.hasNext();)
+			i++;
+		
+		return i;
+	}
+	
+	/**
 	 * Returns the number of elements in an Iterable that satisfy a condition.
 	 */
 	public static <T> int count(Iterable<T> items, Predicate<T> condition)
@@ -272,11 +309,32 @@ public class Iterables
 	}
 
 	/**
-	 * Creates a grouping of the given items according to the keys created using the given
-	 * Mapper.
+	 * Splits an Iterable into Iterables of the given slice size.  If there are remaining
+	 * items numbering less than the slice size, the final Iterable will have whatever items are left.
 	 */
-	public static <K, V> Iterable<Grouping<K, V>> groupBy(Iterable<V> source, Mapper<V, K> keyMapper)
+	public static <T> Iterable<Iterable<T>> slices(Iterable<T> items, int sliceSize)
 	{
-		return new GroupingIterable<K, V>(source, keyMapper);
+		if (sliceSize < 1)
+			throw new IllegalArgumentException("sliceSize must be greater than zero.");
+		
+		return new SlicesIterable<T>(items, sliceSize);
 	}
+	
+	/**
+	 * Joins multiple iterables together.
+	 */
+	public static <T> Iterable<T> concat(Iterable<T> ... iterables)
+	{
+		return new ConcatenatingIterable<T>(iterables);
+	}
+	
+	/**
+	 * Joins two iterables together.
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> Iterable<T> concat(Iterable<T> first, Iterable<T> second)
+	{
+		return new ConcatenatingIterable<T>(first, second);
+	}
+	
 }

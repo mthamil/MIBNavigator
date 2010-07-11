@@ -82,9 +82,7 @@ public class GroupingIterable<K, V> implements Iterable<Grouping<K, V>>
 			K key = keyMapper.map(next);
 			if (!internalMap.containsKey(key))
 			{
-				Grouping<K, V> group = new GroupingImpl<K, V>(key, source, keyMapper);
-				internalMap.put(key, group);
-				nextGroup = group;
+				newGroup(key);
 				return true;
 			}
 			
@@ -106,13 +104,18 @@ public class GroupingIterable<K, V> implements Iterable<Grouping<K, V>>
 
 			if (next != null && key != null)
 			{
-				Grouping<K, V> group = new GroupingImpl<K, V>(key, source, keyMapper);
-				nextGroup = group;
-				internalMap.put(key, group);
+				newGroup(key);
 				return true;
 			}
 		
 			return false;
+		}
+		
+		private void newGroup(K key)
+		{
+			Grouping<K, V> group = new GroupingImpl<K, V>(key, source, keyMapper);
+			nextGroup = group;
+			internalMap.put(key, group);
 		}
 
 		/* (non-Javadoc)

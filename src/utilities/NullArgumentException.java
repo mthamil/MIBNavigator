@@ -1,5 +1,5 @@
 /**
- * MIB Navigator
+ * Utilities
  *
  * Copyright (C) 2010, Matt Hamilton <matthamilton@live.com>
  *
@@ -19,15 +19,21 @@
  *
  */
 
+package utilities;
+
 /**
- * Interface used to define how the intermediary retrieved results from a 
- * GetRequestTask's execution are handled.
+ * An exception indicating an argument was null that should not be.
  */
-public interface GetRequestResultProcessor
+public class NullArgumentException extends IllegalArgumentException
 {
 	/**
-	 * Handles the intermediary results of a GetRequestTask's execution.
-	 * @param result the GetRequestResult to handle
+	 * Creates a new exception with the name of the argument that was null.
+	 * @param argumentName The name of the argument that was null
 	 */
-	public void processResult(GetRequestResult result);
+	public NullArgumentException(String argumentName)
+	{
+		super(String.format(messageFormat, argumentName));
+	}
+	
+	private static final String messageFormat = "%s cannot be null.";
 }

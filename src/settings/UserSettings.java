@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Properties;
 
 import static utilities.IOUtilities.closeQuietly;
+import utilities.NullArgumentException;
 import utilities.Strings;
 import utilities.events.EventListener;
 import utilities.parsing.DirectoryParser;
@@ -103,7 +104,7 @@ public class UserSettings
 	public UserSettings(SettingsLocation location)
 	{
 		if (location == null)
-			throw new IllegalArgumentException("Settings storage location cannot be null.");
+			throw new NullArgumentException("location");
 		
 		this.settings = new Properties();
 		this.settingsChanged = false;

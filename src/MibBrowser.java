@@ -35,6 +35,7 @@ import javax.swing.event.*;
 import javax.swing.text.NumberFormatter;
 import javax.swing.tree.*;
 
+import utilities.NullArgumentException;
 import utilities.Strings;
 import utilities.events.EventListener;
 
@@ -91,7 +92,7 @@ public class MibBrowser
     public MibBrowser(MibTreeBuilder newBuilder, File newMibDirectory)
     {
         if (newBuilder == null)
-            throw new IllegalArgumentException("MIB tree builder cannot be null.");
+            throw new NullArgumentException("newBuilder");
         
         treeBuilder = newBuilder;
         
@@ -703,11 +704,7 @@ public class MibBrowser
                     // Get all necessary values from the user interface before starting the Get process.
                     // This ensures that the user can't affect what values the thread uses once it has 
                     // been launched.
-                    String communityString = communityField.getText().trim();
-                    String addressString = ((String)addressBox.getSelectedItem()).trim();
-                    int port = Integer.parseInt(portField.getText().trim());
-                    int timeout = Integer.parseInt(timeoutField.getText().trim());
-                    SnmpHost host = new SnmpHost(communityString, addressString, port, timeout);
+                    SnmpHost host = createSnmpHost();
 
                     // Try to scroll to the correct OID.
                     String oidInputString = Strings.trim(oidInputField.getText().trim(), '.');
@@ -720,35 +717,7 @@ public class MibBrowser
                     putValue(NAME, StringResources.getString("stopButton"));
                     
                     // Initialize and start the GetRequest process in a different thread using a SwingWorker.
-//                        snmpGetTask = new GetRequestWorker(host, oidInputString, (MibTreeNode)mibModel.getRoot());
-//                        snmpGetTask.addGetRequestListener(new MibGetRequestListener());
-                    
-                    snmpGetTask = new GetRequestTask(host, oidInputString, (MibTreeNode)mibModel.getRoot());
-					snmpGetTask.addGetRequestListener(new MibGetRequestListener());
-					snmpGetTask.addPropertyChangeListener(new PropertyChangeListener()
-					{
-						public void propertyChange(PropertyChangeEvent propertyEvent)
-						{
-							if ("state".equals(propertyEvent.getPropertyName()) && 
-								javax.swing.SwingWorker.StateValue.DONE == propertyEvent.getNewValue()) 
-							{
-								getButton.getAction().putValue(GetRequestAction.NAME, StringResources.getString("getButton"));
-							}
-						}
-					});
-					
-					snmpGetTask.setResultProcessor(new GetRequestResultProcessor()
-					{
-						@Override
-						public void processResult(GetRequestResult result)
-						{
-							Action getAction = getButton.getAction();
-					    	if (!getAction.isEnabled())
-					    		getAction.setEnabled(true);
-					    	
-					        ((DefaultListModel)resultsList.getModel()).addElement(result);
-						}
-					});
+                	snmpGetTask = createNewTask(host, oidInputString);
                     
                     // Disable the Get button because clicking Stop will not do anything
                     // while waiting for the timeout.
@@ -768,6 +737,49 @@ public class MibBrowser
                 if (snmpGetTask != null)
                     snmpGetTask.cancel(true);  // stop the Get process
             }
+		}
+		
+		private GetRequestTask createNewTask(SnmpHost host, String oidInputString)
+		{
+			// snmpGetTask = new GetRequestWorker(host, oidInputString, (MibTreeNode)mibModel.getRoot());
+			// snmpGetTask.addGetRequestListener(new MibGetRequestListener());
+			      
+			GetRequestTask newGetTask = new GetRequestTask(host, oidInputString, (MibTreeNode)mibModel.getRoot());
+			newGetTask.addGetRequestListener(new MibGetRequestListener());
+			newGetTask.addPropertyChangeListener(new PropertyChangeListener()
+			{
+				public void propertyChange(PropertyChangeEvent propertyEvent)
+				{
+					if ("state".equals(propertyEvent.getPropertyName()) && javax.swing.SwingWorker.StateValue.DONE == propertyEvent.getNewValue())
+					{
+						getButton.getAction().putValue(GetRequestAction.NAME, StringResources.getString("getButton"));
+					}
+				}
+			});
+
+			newGetTask.setResultProcessor(new GetRequestResultProcessor()
+			{
+				public void processResult(GetRequestResult result)
+				{
+					Action getAction = getButton.getAction();
+					if (!getAction.isEnabled())
+						getAction.setEnabled(true);
+
+					((DefaultListModel)resultsList.getModel()).addElement(result);
+				}
+			});
+			
+			return newGetTask;
+		}
+
+		private SnmpHost createSnmpHost()
+		{
+            String communityString = communityField.getText().trim();
+            String addressString = ((String)addressBox.getSelectedItem()).trim();
+            int port = Integer.parseInt(portField.getText().trim());
+            int timeout = Integer.parseInt(timeoutField.getText().trim());
+            SnmpHost host = new SnmpHost(communityString, addressString, port, timeout);
+            return host;
 		}
     }
 

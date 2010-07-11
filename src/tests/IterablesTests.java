@@ -29,6 +29,7 @@ import static org.junit.Assert.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.junit.Before;
@@ -36,8 +37,10 @@ import org.junit.Test;
 
 import utilities.Mapper;
 import utilities.Predicate;
+import utilities.iteration.ConcatenatingIterable;
 import utilities.iteration.Grouping;
 import utilities.iteration.Iterables;
+import utilities.iteration.SlicesIterable;
 
 import static utilities.iteration.Iterables.*;
 import static tests.Assertions.*;
@@ -212,6 +215,18 @@ public class IterablesTests
 	}
 	
 	@Test
+	public void testAny()
+	{
+		Iterable<Integer> items = Arrays.asList(1, 2, 3, 1, 2, 3, 4, 5, 2);
+		
+		boolean any = any(items, new Predicate<Integer>() { public boolean matches(Integer value) { return value == 1; } });
+		assertThat(any, is(true));
+
+		any = any(items, new Predicate<Integer>() { public boolean matches(Integer value) { return value == 6; } });
+		assertThat(any, is(false));
+	}
+	
+	@Test
 	public void testCount()
 	{
 		int count = count(evens, new Predicate<Integer>() {
@@ -303,5 +318,113 @@ public class IterablesTests
 		}
 		
 		assertThat(groupCount, is(4));
+	}
+	
+	@Test
+	public void testAsList()
+	{
+		List<Integer> evensList = asList(evens);
+		
+		assertThat(evensList, hasItems(2, 4, 6, 8, 10));
+		assertThat(evensList.size(), is(size(evens)));
+	}
+	
+	@Test
+	public void testExactSlices()
+	{
+		Iterable<Integer> items = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9);
+		
+		int sliceSize = 3;
+		SlicesIterable<Integer> slices = new SlicesIterable<Integer>(items, sliceSize);
+		
+		int i = 0;
+		for (Iterable<Integer> slice : slices)
+		{
+			int offset = 3 * i;
+			assertThat(slice, hasItems(1 + offset, 2 + offset, 3 + offset));
+			assertThat(size(slice), is(sliceSize));
+			i++;
+		}
+		
+		assertThat(i, is(3));
+	}
+	
+	@Test
+	public void testRemainderSlices()
+	{
+		Iterable<Integer> items = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+		
+		int sliceSize = 3;
+		SlicesIterable<Integer> slices = new SlicesIterable<Integer>(items, sliceSize);
+		
+		int i = 0;
+		for (Iterable<Integer> slice : slices)
+		{
+			int offset = 3 * i;
+			if (i < 3)
+			{
+				assertThat(slice, hasItems(1 + offset, 2 + offset, 3 + offset));
+				assertThat(size(slice), is(sliceSize));
+			}
+			else
+			{
+				assertThat(slice, hasItem(10));
+				assertThat(size(slice), is(1));
+			}
+			
+			i++;
+		}
+		
+		assertThat(i, is(4));
+	}
+	
+	@Test
+	public void testEmptySlices()
+	{
+		Iterable<Integer> items = new ArrayList<Integer>();
+		
+		int sliceSize = 3;
+		SlicesIterable<Integer> slices = new SlicesIterable<Integer>(items, sliceSize);
+		
+		assertThat(isEmpty(slices), is(true));
+	}
+	
+	@Test
+	public void testConcat()
+	{
+		Iterable<Integer> first = Arrays.asList(1, 2, 3);
+		Iterable<Integer> second = Arrays.asList(4, 5, 6, 7);
+		
+		@SuppressWarnings("unchecked")
+		Iterable<Integer> concatenated = new ConcatenatingIterable<Integer>(first, second);
+		
+		int i = 1;
+		for (Integer item : concatenated)
+		{
+			assertThat(item, is(i));
+			i++;
+		}
+		
+		assertThat(i, is(8));
+	}
+	
+	@Test
+	public void testConcatWithEmptyIterable()
+	{
+		Iterable<Integer> first = Arrays.asList(1, 2, 3);
+		Iterable<Integer> second = new ArrayList<Integer>();
+		Iterable<Integer> third = Arrays.asList(4, 5, 6);
+		
+		@SuppressWarnings("unchecked")
+		Iterable<Integer> concatenated = new ConcatenatingIterable<Integer>(first, second, third);
+		
+		int i = 1;
+		for (Integer item : concatenated)
+		{
+			assertThat(item, is(i));
+			i++;
+		}
+		
+		assertThat(i, is(7));
 	}
 }

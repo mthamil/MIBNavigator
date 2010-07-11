@@ -23,6 +23,8 @@ package utilities.events;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import utilities.NullArgumentException;
+
 /**
  * Class that provides the basis for a generic event framework.
  * Event listeners are contained in a <code>CopyOnWriteArrayList</code> and so 
@@ -70,7 +72,7 @@ public class Event<S, E extends EventInfo> implements SubscribableEvent<S, E>, R
 	public void addListener(EventListener<? super S, E> listener)
 	{
 		if (listener == null)
-			throw new IllegalArgumentException("listener cannot be null");
+			throw new NullArgumentException("listener");
 		
 		listeners.addIfAbsent(listener);
 	}
