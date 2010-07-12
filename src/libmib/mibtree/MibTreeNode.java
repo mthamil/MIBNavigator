@@ -254,14 +254,14 @@ public class MibTreeNode extends DefaultMutableTreeNode
      */
     public String getOidNamePath()
     {
-        StringBuilder fullPathname = new StringBuilder();
+        StringBuilder fullNamePath = new StringBuilder();
         TreeNode[] pathFromRoot = this.getPath();
         
-        fullPathname.append(pathFromRoot[1]);   // ignore first node (generic root)
+        fullNamePath.append(pathFromRoot[1]);   // ignore first node (generic root)
         for (int i = 2; i < pathFromRoot.length; i++)
-            fullPathname.append("." + pathFromRoot[i].toString());
+        	fullNamePath.append("." + pathFromRoot[i].toString());
 
-        return fullPathname.toString();
+        return fullNamePath.toString();
     }
     
     
@@ -281,19 +281,6 @@ public class MibTreeNode extends DefaultMutableTreeNode
     { 
     	oidNumeralPath = path; 
 	}
-
-//    public String getOidNumeralPath()
-//    {
-//        StringBuilder fullNumeralPath = new StringBuilder();
-//        TreeNode[] pathFromRoot = this.getPath();
-//        
-//        fullNumeralPath.append(((MibObjectIdentifier)((MibTreeNode)pathFromRoot[1]).getUserObject()).getId());   // ignore first node (generic root)
-//        for (int i = 2; i < pathFromRoot.length; i++)
-//            fullNumeralPath.append("." + ((MibObjectIdentifier)((MibTreeNode)pathFromRoot[i]).getUserObject()).getId());
-//
-//        return fullNumeralPath.toString();
-//    }
-    
     
     /**
      * Returns both the OID name and numeral paths.  This returns what getOidNamePath 
@@ -304,18 +291,9 @@ public class MibTreeNode extends DefaultMutableTreeNode
      */
     public Entry<String, String> getOidPaths()
     {
-        StringBuilder fullNamePath = new StringBuilder();
+        String oidNamePath = getOidNamePath();
         
-        TreeNode[] pathFromRoot = this.getPath();
-        
-        fullNamePath.append(pathFromRoot[1]); //ignore first node (generic root)
-        
-        for (int i = 2; i < pathFromRoot.length; i++)
-        {
-            fullNamePath.append("." + pathFromRoot[i].toString());
-        }
-        
-        Entry<String, String> paths = new AbstractMap.SimpleEntry<String, String>(getOidNumeralPath(), fullNamePath.toString());
+        Entry<String, String> paths = new AbstractMap.SimpleEntry<String, String>(getOidNumeralPath(), oidNamePath);
         return paths;
     }
     

@@ -30,6 +30,7 @@ import java.util.NoSuchElementException;
 
 import utilities.Mapper;
 import utilities.Predicate;
+import utilities.ZipMapper;
 import utilities.iteration.adapters.SingleValueIterable;
 
 /**
@@ -309,14 +310,11 @@ public class Iterables
 	}
 
 	/**
-	 * Splits an Iterable into Iterables of the given slice size.  If there are remaining
+	 * Splits an Iterable into multiple Iterables of the given slice size.  If there are remaining
 	 * items numbering less than the slice size, the final Iterable will have whatever items are left.
 	 */
 	public static <T> Iterable<Iterable<T>> slices(Iterable<T> items, int sliceSize)
 	{
-		if (sliceSize < 1)
-			throw new IllegalArgumentException("sliceSize must be greater than zero.");
-		
 		return new SlicesIterable<T>(items, sliceSize);
 	}
 	
@@ -337,4 +335,13 @@ public class Iterables
 		return new ConcatenatingIterable<T>(first, second);
 	}
 	
+	/**
+	 * Joins two iterables into a single iterable using the given mapping function.
+	 * If the iterables are of different lengths, the desination iterable will be as 
+	 * long as the shortest of the two, and the remaining items will be lost.
+	 */
+	public static <S1, S2, D> Iterable<D> zip(Iterable<S1> first, Iterable<S2> second, ZipMapper<S1, S2, D> mapper)
+	{
+		return new ZipIterable<S1, S2, D>(first, second, mapper);
+	}
 }

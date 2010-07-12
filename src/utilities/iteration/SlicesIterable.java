@@ -26,7 +26,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 /**
- * An Iterable that divides a source iterable into chunks of a given size.
+ * An Iterable that divides a source iterable into sequential chunks of a given size.
  *
  */
 public class SlicesIterable<T> implements Iterable<Iterable<T>>
@@ -36,6 +36,9 @@ public class SlicesIterable<T> implements Iterable<Iterable<T>>
 	
 	public SlicesIterable(Iterable<T> source, int sliceSize)
 	{
+		if (sliceSize < 1)
+			throw new IllegalArgumentException("sliceSize must be greater than zero.");
+		
 		this.source = source;
 		this.sliceSize = sliceSize;
 	}

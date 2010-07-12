@@ -37,10 +37,12 @@ import org.junit.Test;
 
 import utilities.Mapper;
 import utilities.Predicate;
+import utilities.ZipMapper;
 import utilities.iteration.ConcatenatingIterable;
 import utilities.iteration.Grouping;
 import utilities.iteration.Iterables;
 import utilities.iteration.SlicesIterable;
+import utilities.iteration.ZipIterable;
 
 import static utilities.iteration.Iterables.*;
 import static tests.Assertions.*;
@@ -426,5 +428,27 @@ public class IterablesTests
 		}
 		
 		assertThat(i, is(7));
+	}
+	
+	@Test
+	public void testZip()
+	{
+		Iterable<Integer> first = Arrays.asList(1, 2, 3, 4, 5);
+		Iterable<String> second = Arrays.asList("1", "2", "3", "4", "5");
+		
+		Iterable<Integer> destination = new ZipIterable<Integer, String, Integer>(first, second, 
+				new ZipMapper<Integer, String, Integer>()
+				{
+					public Integer map(Integer first, String second) { return first * Integer.valueOf(second); }
+				});
+		
+		int i = 1;
+		for (Integer d : destination)
+		{
+			assertThat(d, is(i * i));
+			i++;
+		}
+		
+		assertThat(i, is(6));
 	}
 }

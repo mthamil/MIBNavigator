@@ -52,6 +52,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
+import utilities.iteration.ImmutableIterator;
+
 
 /**
  * This class reads XML files that conform to the mib XML schema definition. The schema 
@@ -374,7 +376,7 @@ public class MibTreeBuilderXml extends AbstractMibTreeBuilder
 			return new NodeIterator(nodes);
 		}
 		
-		private static final class NodeIterator implements Iterator<Node>
+		private static final class NodeIterator extends ImmutableIterator<Node>
 		{
 			private final NodeList nodes;
 			private int currentIndex = 0;
@@ -400,14 +402,6 @@ public class MibTreeBuilderXml extends AbstractMibTreeBuilder
 				Node node = nodes.item(currentIndex);
 				currentIndex++;
 				return node;
-			}
-
-			/* (non-Javadoc)
-			 * @see java.util.Iterator#remove()
-			 */
-			public void remove()
-			{
-				throw new UnsupportedOperationException();
 			}
 		}
 	}
