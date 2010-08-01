@@ -24,14 +24,14 @@ package utilities.parsing;
 import utilities.Option;
 
 /**
- * A class that returns an Option when parsing.
+ * An interface for an object that returns an Option when parsing.
  */
-public abstract class OptionParser<T> implements Parser<Option<T>>
+public interface OptionParser<T> extends Parser<Option<T>>
 {
 	/**
 	 * Attempts to parse a string to a value of type T.
 	 * If parsing fails, <code>None&lt;T&gt;</code> will be returned. If it succeeds,
 	 * <code>Some&lt;T&gt;</code> will be returned.
 	 */
-	public abstract Option<T> parse(String stringValue);
+	public Option<T> parse(String stringValue);
 }
