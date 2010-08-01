@@ -5,9 +5,8 @@ import java.util.ResourceBundle;
 
 /**
  * Generated wrapper class around resource bundle.
- *
  */
-public class ContextMenuResources
+public final class ContextMenuResources
 {
 	private static final String BUNDLE_NAME = "contextmenu.ContextMenuResources";
 
