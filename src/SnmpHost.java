@@ -25,7 +25,7 @@ import snmp.SnmpV1Communicator;
  * Class containing information necessary for communication with a host device
  * providing SNMP services.
  */
-public class SnmpHost
+public final class SnmpHost
 {
     private String communityString;
     private String addressString;
