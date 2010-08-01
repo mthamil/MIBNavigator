@@ -29,7 +29,7 @@ import javax.swing.UIManager;
 /**
  * Wrapper class around platform look and feel specific property resource bundles.
  */
-public class LookAndFeelResources
+public final class LookAndFeelResources
 {
 	private static final String BUNDLE_NAME = UIManager.getLookAndFeel().getID() + "Resources";
 	private static ResourceBundle RESOURCE_BUNDLE;

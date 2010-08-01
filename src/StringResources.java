@@ -25,7 +25,7 @@ import java.util.ResourceBundle;
 /**
  * Wrapper class around externalized string resource bundle.
  */
-public class StringResources
+public final class StringResources
 {
 	private static final String BUNDLE_NAME = "StringResources";
 
