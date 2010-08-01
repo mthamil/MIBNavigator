@@ -27,7 +27,7 @@ import java.util.ResourceBundle;
 /**
  * Wrapper class around externalized string resource bundle.
  */
-public class SnmpResources
+public final class SnmpResources
 {
 	private static final String BUNDLE_NAME = "snmp.SnmpResources";
 
