@@ -1,5 +1,5 @@
 /**
- * MIB Navigator
+ * libmib - Java SNMP Management Information Base Library
  *
  * Copyright (C) 2010, Matt Hamilton <matthamilton@live.com>
  *

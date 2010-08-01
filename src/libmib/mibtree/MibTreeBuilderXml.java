@@ -24,7 +24,6 @@ package libmib.mibtree;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import javax.xml.XMLConstants;
@@ -52,7 +51,9 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-import utilities.iteration.ImmutableIterator;
+import static libmib.mibtree.DomNodes.asIterable;
+import static libmib.mibtree.DomNodes.first;
+import static libmib.mibtree.DomNodes.firstElement;
 
 
 /**
@@ -203,7 +204,7 @@ public class MibTreeBuilderXml extends AbstractMibTreeBuilder
         // Parse the syntax element.
         if (syntaxNodes.getLength() > 0)
         {
-            Element syntaxElement = (Element)first(syntaxNodes);
+            Element syntaxElement = firstElement(syntaxNodes);
             MibSyntax objSyntax = parseSyntaxElement(syntaxElement);
             if (objSyntax != null)
                 mibObject.setSyntax(objSyntax);
@@ -228,7 +229,7 @@ public class MibTreeBuilderXml extends AbstractMibTreeBuilder
 
         // Get the MIB object's parent and see if it exists.
         NodeList parentList = mibObjectElement.getElementsByTagName(ElementNames.PARENT);
-        Element parentElement = (Element)first(parentList);
+        Element parentElement = firstElement(parentList);
 
         NodeList parentText = parentElement.getChildNodes();
         String parentName = first(parentText).getNodeValue().trim();
@@ -246,7 +247,7 @@ public class MibTreeBuilderXml extends AbstractMibTreeBuilder
         if (typeNodes.getLength() > 0)
         {
             // Get data type element.
-            Element typeElement = (Element)first(typeNodes);
+            Element typeElement = firstElement(typeNodes);
 
             NodeList typeText = typeElement.getChildNodes();
             syntax = new MibSyntax( first(typeText).getNodeValue().trim() );
@@ -255,7 +256,7 @@ public class MibTreeBuilderXml extends AbstractMibTreeBuilder
         {
             // Get sequence element.
             NodeList sequenceNodes = syntaxElement.getElementsByTagName(ElementNames.SEQUENCE);
-            Element sequenceElement = (Element)first(sequenceNodes);
+            Element sequenceElement = firstElement(sequenceNodes);
 
             NodeList sequenceText = sequenceElement.getChildNodes();
             syntax = new MibSyntax("Sequence of " + first(sequenceText).getNodeValue().trim() );
@@ -267,7 +268,7 @@ public class MibTreeBuilderXml extends AbstractMibTreeBuilder
         {
             Map<Integer, String> pairs = new HashMap<Integer, String>(); 
             
-            Element pairsElement = (Element)first(pairsNodes);
+            Element pairsElement = firstElement(pairsNodes);
             Iterable<Node> pairNodes = asIterable(pairsElement.getElementsByTagName(ElementNames.PAIR));
 
             // Loop through all of the pairs in the list.
@@ -277,14 +278,14 @@ public class MibTreeBuilderXml extends AbstractMibTreeBuilder
 
                 // Get the pair's name.
                 NodeList nameNodes = pairElement.getElementsByTagName(ElementNames.PAIR_NAME);
-                Element nameElement = (Element)first(nameNodes);
+                Element nameElement = firstElement(nameNodes);
 
                 NodeList nameText = nameElement.getChildNodes();
                 String name = first(nameText).getNodeValue().trim();
 
                 // Get the pair's value.
                 NodeList valueNodes = pairElement.getElementsByTagName(ElementNames.PAIR_VALUE);
-                Element valueElement = (Element)first(valueNodes);
+                Element valueElement = firstElement(valueNodes);
 
                 NodeList valueText = valueElement.getChildNodes();
                 String valueString = first(valueText).getNodeValue().trim();
@@ -323,7 +324,7 @@ public class MibTreeBuilderXml extends AbstractMibTreeBuilder
         NodeList children = parentElement.getElementsByTagName(childName);
         if (children.getLength() > 0)
         {
-            Element child = (Element)first(children);
+            Element child = firstElement(children);
             NodeList textElements = child.getChildNodes();
 
             // Don't allow empty element nodes, even though the schema forbids it anyway.
@@ -347,62 +348,5 @@ public class MibTreeBuilderXml extends AbstractMibTreeBuilder
 	public String getMibDirectory()
 	{
 		return "xml";
-	}
-	
-	private static Node first(NodeList nodes)
-	{
-		return nodes.item(0);
-	}
-	
-	private static Iterable<Node> asIterable(NodeList nodes)
-	{
-		return new NodeIterable(nodes);
-	}
-	
-	private static final class NodeIterable implements Iterable<Node>
-	{
-		private final NodeList nodes;
-		
-		public NodeIterable(NodeList nodes)
-		{
-			this.nodes = nodes;
-		}
-
-		/* (non-Javadoc)
-		 * @see java.lang.Iterable#iterator()
-		 */
-		public Iterator<Node> iterator()
-		{
-			return new NodeIterator(nodes);
-		}
-		
-		private static final class NodeIterator extends ImmutableIterator<Node>
-		{
-			private final NodeList nodes;
-			private int currentIndex = 0;
-			
-			public NodeIterator(NodeList nodes)
-			{
-				this.nodes = nodes;
-			}
-
-			/* (non-Javadoc)
-			 * @see java.util.Iterator#hasNext()
-			 */
-			public boolean hasNext()
-			{
-				return currentIndex < nodes.getLength();
-			}
-
-			/* (non-Javadoc)
-			 * @see java.util.Iterator#next()
-			 */
-			public Node next()
-			{
-				Node node = nodes.item(currentIndex);
-				currentIndex++;
-				return node;
-			}
-		}
 	}
 }

@@ -50,8 +50,7 @@ public class MibTreeBuilderFactory
 	
 	
 	/**
-	 * Returns the MibTreeBuilder corresponding to
-	 * the given MIB format type.
+	 * Returns the MibTreeBuilder corresponding to the given MIB format type.
 	 * @param mibFormat
 	 * @return a tree builder for the MIB format
 	 * @throws TreeBuilderCreationException 

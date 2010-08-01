@@ -103,7 +103,7 @@ public class MibDocumentBuilder
             docBuilderFactory.setAttribute(SCHEMA_LANGUAGE_ATTRIBUTE, SCHEMA_LANGUAGE);
             
             schemaStream = new FileInputStream(MIB_SCHEMA);
-            docBuilderFactory.setAttribute( SCHEMA_SOURCE_ATTRIBUTE, new InputSource(schemaStream) );
+            docBuilderFactory.setAttribute(SCHEMA_SOURCE_ATTRIBUTE, new InputSource(schemaStream));
 
             DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
             docBuilder.setErrorHandler(new BasicXmlErrorHandler());
@@ -137,19 +137,8 @@ public class MibDocumentBuilder
      */
     public void addDefinitionAttribute(String mibName)
     {
-        Attr mibDefAttr = mibDocument.createAttribute(ElementNames.NAME_ATTR);
-        mibDefAttr.setValue(mibName);
-        mibRoot.setAttributeNode(mibDefAttr);
+    	addNewAttribute(mibRoot, ElementNames.NAME_ATTR, mibName);
     }
-    
-    
-    private void addSourceNameAttribute(Element importElement, String source)
-    {
-    	Attr sourceAttr = mibDocument.createAttribute(ElementNames.NAME_ATTR);
-    	sourceAttr.setValue(source);
-        importElement.setAttributeNode(sourceAttr);
-    }
-
     
     /**
      * Adds a <code>MibImport</code> item to the MIB document.  If the "imports" element has not
@@ -170,16 +159,11 @@ public class MibDocumentBuilder
         }
         
         Element importElement = mibDocument.createElement(ElementNames.SOURCE);
-        this.addSourceNameAttribute(importElement, newImport.getSource());
+        addNewAttribute(importElement, ElementNames.NAME_ATTR, newImport.getSource());
         
         List<String> imports = newImport.getImports();
         for (String importName : imports)
-        {
-            Element importItemElement = mibDocument.createElement(ElementNames.IMPORT);
-            Text importItemText = mibDocument.createTextNode(importName);
-            importItemElement.appendChild(importItemText);
-            importElement.appendChild(importItemElement);
-        }
+            addNewTextElement(importElement, ElementNames.IMPORT, importName);
         
         mibImports.appendChild(importElement);
     }
@@ -212,20 +196,11 @@ public class MibDocumentBuilder
         Element typeElement = mibDocument.createElement(nodeName);
         objectElement.appendChild(typeElement);
         
-        Element nameElement = mibDocument.createElement(ElementNames.NAME);
-        Text nameText = mibDocument.createTextNode(newObject.getName());
-        nameElement.appendChild(nameText);
-        typeElement.appendChild(nameElement);
+        addNewTextElement(typeElement, ElementNames.NAME, newObject.getName());
         
-        Element idElement = mibDocument.createElement(ElementNames.ID);
-        Text idText = mibDocument.createTextNode(String.valueOf(newObject.getId()));
-        idElement.appendChild(idText);
-        typeElement.appendChild(idElement);
+        addNewTextElement(typeElement, ElementNames.ID, String.valueOf(newObject.getId()));
         
-        Element parentElement = mibDocument.createElement(ElementNames.PARENT);
-        Text parentText = mibDocument.createTextNode(newObject.getParent());
-        parentElement.appendChild(parentText);
-        typeElement.appendChild(parentElement);
+        addNewTextElement(typeElement, ElementNames.PARENT, newObject.getParent());
         
 
         // SYNTAX
@@ -242,83 +217,43 @@ public class MibDocumentBuilder
             Element groupElement = mibDocument.createElement(ElementNames.MEMBERS);
             typeElement.appendChild(groupElement);
             
-            List<String> grpMembers = newObject.getGroupMembers();
-            for (String member : grpMembers)
-            {
-                Element memberElement = mibDocument.createElement(ElementNames.MEMBER);
-                Text memberText = mibDocument.createTextNode(member);
-                memberElement.appendChild(memberText);
-                groupElement.appendChild(memberElement);
-            } 
+            List<String> members = newObject.getGroupMembers();
+            for (String member : members)
+                addNewTextElement(groupElement, ElementNames.MEMBER, member);
         }
         
         // ACCESS
         if (newObject.getAccess() != null)
-        {
-            Element accessElement = mibDocument.createElement(ElementNames.ACCESS);
-            Text accessText = mibDocument.createTextNode(newObject.getAccess().toString());
-            accessElement.appendChild(accessText);
-            typeElement.appendChild(accessElement);
-        }
+            addNewTextElement(typeElement, ElementNames.ACCESS, newObject.getAccess().toString());
 
         // STATUS
         if (newObject.getStatus() != null)
-        {
-            Element statusElement = mibDocument.createElement(ElementNames.STATUS);
-            Text statusText = mibDocument.createTextNode(newObject.getStatus().toString());
-            statusElement.appendChild(statusText);
-            typeElement.appendChild(statusElement);
-        }
+            addNewTextElement(typeElement, ElementNames.STATUS, newObject.getStatus().toString());
         
         // LAST UPDATED
         String lastUpdated = newObject.getLastUpdated();
         if (!lastUpdated.equals(""))
-        {
-            Element updateElement = mibDocument.createElement(ElementNames.UPDATED);
-            Text updateText = mibDocument.createTextNode(lastUpdated);
-            updateElement.appendChild(updateText);
-            typeElement.appendChild(updateElement);
-        }
+            addNewTextElement(typeElement, ElementNames.UPDATED, lastUpdated);
         
         // ORGANIZATION
         String org = newObject.getOrganization();
         if (!org.equals(""))
-        {
-            Element orgElement = mibDocument.createElement(ElementNames.ORG);
-            Text orgText = mibDocument.createTextNode(org);
-            orgElement.appendChild(orgText);
-            typeElement.appendChild(orgElement);
-        }
+            addNewTextElement(typeElement, ElementNames.ORG, org);
         
         // CONTACT-INFO
         String contact = newObject.getContactInfo();
         if (!contact.equals(""))
-        {
-            Element contactElement = mibDocument.createElement(ElementNames.CONTACT);
-            Text contactText = mibDocument.createTextNode(contact);
-            contactElement.appendChild(contactText);
-            typeElement.appendChild(contactElement);
-        }
+            addNewTextElement(typeElement, ElementNames.CONTACT, contact);
         
         // DESCRIPTION
-        String desc = newObject.getDescription();
-        if (!desc.equals(""))
-        {
-            Element descElement = mibDocument.createElement(ElementNames.DESCRIPTION);
-            Text descText = mibDocument.createTextNode(desc);
-            descElement.appendChild(descText);
-            typeElement.appendChild(descElement);
-        }
+        String description = newObject.getDescription();
+        if (!description.equals(""))
+            addNewTextElement(typeElement, ElementNames.DESCRIPTION, description);
         
         // REFERENCE
-        String ref = newObject.getReference();
-        if (!ref.equals(""))
-        {
-            Element refElement = mibDocument.createElement(ElementNames.REF);
-            Text refText = mibDocument.createTextNode(ref);
-            refElement.appendChild(refText);
-            typeElement.appendChild(refElement);
-        }
+        String reference = newObject.getReference();
+        if (!reference.equals(""))
+            addNewTextElement(typeElement, ElementNames.REF, reference);
  
         // INDEX LIST
         if (newObject.hasIndices())
@@ -328,30 +263,20 @@ public class MibDocumentBuilder
             
             List<String> indices = newObject.getIndices();
             for (String index : indices)
-            {
-                Element indexElement = mibDocument.createElement(ElementNames.INDEX);
-                Text indexText = mibDocument.createTextNode(index);
-                indexElement.appendChild(indexText);
-                indicesElement.appendChild(indexElement);
-            } 
+                addNewTextElement(indicesElement, ElementNames.INDEX, index);
         }
         
         // REVISIONS
         if (newObject.hasRevisions())
         {
-            List<MibModuleIdRevision> revList = newObject.getRevisions();
-            for (MibModuleIdRevision rev : revList)
+            List<MibModuleIdRevision> revisions = newObject.getRevisions();
+            for (MibModuleIdRevision revision : revisions)
             {
                 Element revElement = mibDocument.createElement(ElementNames.REVISION);
-                Attr revIdAttr = mibDocument.createAttribute(ElementNames.REV_ID_ATTR);
-                revIdAttr.setValue(rev.getRevisionId());
-                revElement.setAttributeNode(revIdAttr);
+                addNewAttribute(revElement, ElementNames.REV_ID_ATTR, revision.getRevisionId());
                 typeElement.appendChild(revElement);
-                
-                Element revDescElement = mibDocument.createElement(ElementNames.DESCRIPTION);
-                Text revDescText = mibDocument.createTextNode(rev.getRevisionDescription());
-                revDescElement.appendChild(revDescText);
-                revElement.appendChild(revDescElement);
+
+                addNewTextElement(revElement, ElementNames.DESCRIPTION, revision.getRevisionDescription());
             }
         }
     }
@@ -371,21 +296,11 @@ public class MibDocumentBuilder
         String type = newSyntax.getDataType();
         if (!type.equals(""))
         {
-            String SEQ = "SEQUENCE OF";
+            final String SEQ = "SEQUENCE OF";
             if (type.contains(SEQ))
-            {
-                Element seqElement = mibDocument.createElement(ElementNames.SEQUENCE);
-                Text seqText = mibDocument.createTextNode(type.substring(SEQ.length() + 1));
-                seqElement.appendChild(seqText);
-                syntaxElement.appendChild(seqElement);
-            }
+                addNewTextElement(syntaxElement, ElementNames.SEQUENCE, type.substring(SEQ.length() + 1));
             else
-            {
-                Element dataTypeElement = mibDocument.createElement(ElementNames.TYPE);
-                Text dataTypeText = mibDocument.createTextNode(type);
-                dataTypeElement.appendChild(dataTypeText);
-                syntaxElement.appendChild(dataTypeElement);
-            }
+                addNewTextElement(syntaxElement, ElementNames.TYPE, type);
         }
         
         // NAME-VALUE PAIRS
@@ -400,30 +315,40 @@ public class MibDocumentBuilder
                 Element pairElement = mibDocument.createElement(ElementNames.PAIR);
                 pairsElement.appendChild(pairElement);
                 
-                Element nameElement = mibDocument.createElement(ElementNames.PAIR_NAME);
-                Text nameText = mibDocument.createTextNode(entry.getValue());
-                nameElement.appendChild(nameText);
-                pairElement.appendChild(nameElement);
-                
-                Element valueElement = mibDocument.createElement(ElementNames.PAIR_VALUE);
-                Text valueText = mibDocument.createTextNode(String.valueOf(entry.getKey()));
-                valueElement.appendChild(valueText);
-                pairElement.appendChild(valueElement);
+                addNewTextElement(pairElement, ElementNames.PAIR_NAME, entry.getValue());
+                addNewTextElement(pairElement, ElementNames.PAIR_VALUE, String.valueOf(entry.getKey()));
             }
         }
           
         // DEFAULT VALUE                  
         String defaultValue = newSyntax.getDefaultValue();
         if (!defaultValue.equals(""))
-        {
-            Element defaultElement = mibDocument.createElement(ElementNames.DEFAULT);
-            Text defaultText = mibDocument.createTextNode(defaultValue);
-            defaultElement.appendChild(defaultText);
-            syntaxElement.appendChild(defaultElement);
-        }
+            addNewTextElement(syntaxElement, ElementNames.DEFAULT, defaultValue);
         
         return syntaxElement;
     }
+    
+    private void addNewTextElement(Element parentElement, String elementName, String text)
+    {
+    	Element newElement = mibDocument.createElement(elementName);
+        Text newText = mibDocument.createTextNode(text);
+        newElement.appendChild(newText);
+        parentElement.appendChild(newElement);
+    }
+    
+    private void addNewAttribute(Element parentElement, String name, String value)
+    {
+    	Attr attribute = createAttributeWithValue(name, value);
+    	parentElement.setAttributeNode(attribute);
+    }
+    
+    private Attr createAttributeWithValue(String name, String value)
+    {
+    	Attr attribute = mibDocument.createAttribute(name);
+    	attribute.setValue(value);
+    	return attribute;
+    }
+
     
     /**
      * Transforms the MIB document and writes it to a file as XML.  UTF-8 encoding is used
