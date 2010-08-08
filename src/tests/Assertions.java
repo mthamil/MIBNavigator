@@ -38,15 +38,7 @@ public final class Assertions
 	 */
 	public static <E extends Throwable> void assertThrows(Runnable code, Class<E> throwableClass)
 	{
-		Throwable e = null;
-		try
-		{
-			code.run();
-		}
-		catch (Throwable ex)
-		{
-			e = ex;
-		}
+		Throwable e = recordThrowable(code);
 
 		assertThat(e, notNullValue());	// something must have been thrown
 		assertTrue(e.getClass().equals(throwableClass));	// the throwable must be the right type
@@ -58,6 +50,13 @@ public final class Assertions
 	 */
 	public static void assertDoesNotThrow(Runnable code)
 	{
+		Throwable e = recordThrowable(code);
+
+		assertThat(e, nullValue());	// nothing should have been thrown
+	}
+	
+	private static Throwable recordThrowable(Runnable code)
+	{
 		Throwable e = null;
 		try
 		{
@@ -67,7 +66,7 @@ public final class Assertions
 		{
 			e = ex;
 		}
-
-		assertThat(e, nullValue());	// nothing should have been thrown
+		
+		return e;
 	}
 }
