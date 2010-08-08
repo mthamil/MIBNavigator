@@ -32,6 +32,7 @@ import java.util.NoSuchElementException;
 
 import utilities.Predicate;
 import utilities.iteration.ExtremaFinder.ExtremaType;
+import utilities.iteration.InfiniteSequenceUnsafe.Likelihood;
 import utilities.iteration.adapters.SingleValueIterable;
 import utilities.mappers.Mapper;
 import utilities.mappers.NullMapper;
@@ -64,6 +65,7 @@ public final class Iterables
 	 * Converts an Iterable into a List. 
 	 * If the source Iterable is an infinite sequence, this method will not return.
 	 */
+	@InfiniteSequenceUnsafe(Likelihood.Always)
 	public static <T> List<T> asList(Iterable<T> iterable)
 	{
 		List<T> list = new ArrayList<T>();
@@ -84,6 +86,7 @@ public final class Iterables
 	 * @param keyMapper The key selector
 	 * @param valueMapper The value selector
 	 */
+	@InfiniteSequenceUnsafe(Likelihood.Always)
 	public static <K, V, S> Map<K, V> asMap(Iterable<S> source, Mapper<S, K> keyMapper, Mapper<S, V> valueMapper)
 	{
 		Map<K, V> map = new HashMap<K, V>();
@@ -199,6 +202,7 @@ public final class Iterables
 	 * an exception is thrown.
 	 * If the source Iterable is an infinite sequence, this method will not return.
 	 */
+	@InfiniteSequenceUnsafe(Likelihood.Always)
 	@SuppressWarnings("unchecked")
 	public static <T> T last(Iterable<T> items)
 	{
@@ -226,6 +230,7 @@ public final class Iterables
 	 * null is returned.
 	 * If the source Iterable is an infinite sequence, this method will not return.
 	 */
+	@InfiniteSequenceUnsafe(Likelihood.Always)
 	@SuppressWarnings("unchecked")
 	public static <T> T lastOrNull(Iterable<T> items)
 	{
@@ -247,6 +252,7 @@ public final class Iterables
 	 * If the source Iterable is an infinite sequence and the desired item is not contained in it, 
 	 * this method will not return.
 	 */
+	@InfiniteSequenceUnsafe(Likelihood.Sometimes)
 	public static <T> boolean contains(Iterable<T> items, T expected)
 	{
 		for (T item : items)
@@ -263,6 +269,7 @@ public final class Iterables
  	 * If the source Iterable is an infinite sequence and the desired item is not contained in it, 
 	 * this method will not return.
 	 */
+	@InfiniteSequenceUnsafe(Likelihood.Sometimes)
 	public static <T> boolean contains(Iterable<T> items, T expected, Comparator<T> comparator)
 	{
 		for (T item : items)
@@ -293,6 +300,7 @@ public final class Iterables
 	 * If the source Iterable is an infinite sequence and every element meets the criteria, 
 	 * this method will not return.
 	 */
+	@InfiniteSequenceUnsafe(Likelihood.Sometimes)
 	public static <T> boolean all(Iterable<T> items, Predicate<T> condition)
 	{
 		for (T item : items)
@@ -309,6 +317,7 @@ public final class Iterables
 	 * If the source Iterable is an infinite sequence and no elements meet the criteria, 
 	 * this method will not return.
 	 */
+	@InfiniteSequenceUnsafe(Likelihood.Sometimes)
 	public static <T> boolean any(Iterable<T> items, Predicate<T> condition)
 	{
 		for (T item : items)
@@ -326,6 +335,7 @@ public final class Iterables
 	 * size access.
 	 * If the source Iterable is an infinite sequence, this method will not return.
 	 */
+	@InfiniteSequenceUnsafe(Likelihood.Always)
 	public static <T> int size(Iterable<T> items)
 	{
 		if (items instanceof Collection<?>)
@@ -345,6 +355,7 @@ public final class Iterables
 	 * Returns the number of elements in an Iterable that satisfy a condition.
 	 * If the source Iterable is an infinite sequence, this method will not return.
 	 */
+	@InfiniteSequenceUnsafe(Likelihood.Always)
 	public static <T> int count(Iterable<T> items, Predicate<T> condition)
 	{
 		int i = 0;
@@ -412,6 +423,7 @@ public final class Iterables
 	 * Returns the minimum value in an Iterable.
 	 * If the source Iterable is an infinite sequence, this method will not return.
 	 */
+	@InfiniteSequenceUnsafe(Likelihood.Always)
 	public static <S, D extends Comparable<D>> D min(Iterable<S> source, Mapper<S, D> selector)
 	{
 		return extrema(source, selector, ExtremaType.Min);
@@ -421,6 +433,7 @@ public final class Iterables
 	 * Returns the minimum value in an Iterable.
 	 * If the source Iterable is an infinite sequence, this method will not return.
 	 */
+	@InfiniteSequenceUnsafe(Likelihood.Always)
 	public static <T extends Comparable<T>> T min(Iterable<T> source)
 	{
 		return min(source, new NullMapper<T>());
@@ -430,6 +443,7 @@ public final class Iterables
 	 * Returns the maximum value in an Iterable.
 	 * If the source Iterable is an infinite sequence, this method will not return.
 	 */
+	@InfiniteSequenceUnsafe(Likelihood.Always)
 	public static <S, D extends Comparable<D>> D max(Iterable<S> source, Mapper<S, D> selector)
 	{
 		return extrema(source, selector, ExtremaType.Max);
@@ -439,6 +453,7 @@ public final class Iterables
 	 * Returns the maximum value in an Iterable.
 	 * If the source Iterable is an infinite sequence, this method will not return.
 	 */
+	@InfiniteSequenceUnsafe(Likelihood.Always)
 	public static <T extends Comparable<T>> T max(Iterable<T> source)
 	{
 		return max(source, new NullMapper<T>());
