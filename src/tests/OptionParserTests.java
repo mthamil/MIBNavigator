@@ -41,7 +41,6 @@ public class OptionParserTests
 	{
 		Parser<Option<Integer>> parser = new OptionParser<Integer>()
 		{
-			@Override
 			public Option<Integer> parse(String stringValue)
 			{
 				try
