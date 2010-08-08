@@ -43,7 +43,6 @@ import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.plaf.FontUIResource;
-import javax.swing.tree.DefaultTreeModel;
 
 import libmib.format.InvalidMibFormatException;
 import libmib.mibtree.TreeBuilderCreationException;
@@ -139,7 +138,7 @@ public class MIBNavigator
      */
     private void configureFrame(final JPanel content)
     {
-    	JFrame navFrame = new JFrame();
+    	final JFrame navFrame = new JFrame();
         navFrame.setTitle(StringResources.getString("appName"));
         
         addMenuBar(navFrame);
@@ -162,7 +161,7 @@ public class MIBNavigator
             public void windowClosing(WindowEvent we)
             {
                 saveState();
-                System.exit(0);
+                navFrame.dispose();
             }
         });
     }
@@ -189,7 +188,7 @@ public class MIBNavigator
         optionMenu.addSeparator();
 
         // Set the close menu item.
-        optionMenu.add(new CloseMenuAction());
+        optionMenu.add(new CloseMenuAction(navFrame));
         
         menuBar.add(optionMenu);
         navFrame.setJMenuBar(menuBar);
@@ -307,17 +306,20 @@ public class MIBNavigator
     
     private final class CloseMenuAction extends AbstractAction
     {
-    	public CloseMenuAction()
+    	private JFrame rootFrame;
+    	
+    	public CloseMenuAction(final JFrame frame)
     	{
     		super(StringResources.getString("closeItemLabel"));
-    		this.putValue(Action.SHORT_DESCRIPTION, StringResources.getString("closeItemTip"));    		
+    		this.putValue(Action.SHORT_DESCRIPTION, StringResources.getString("closeItemTip"));    	
+    		rootFrame = frame;
     	}
     	
 		public void actionPerformed(ActionEvent e)
 		{
 			// Save application settings and exit.
             saveState();
-            System.exit(0);
+        	rootFrame.dispose();
 		}
     }
 
