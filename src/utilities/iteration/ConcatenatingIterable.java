@@ -22,13 +22,13 @@
 package utilities.iteration;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 
 /**
  * Iterable that iterates over multiple Iterables one after another.
  */
+@LazilyEvaluated
 public class ConcatenatingIterable<T> implements Iterable<T>
 {
 	private Collection<Iterable<T>> iterables;
@@ -54,62 +54,4 @@ public class ConcatenatingIterable<T> implements Iterable<T>
 	{
 		return new ConcatenatingIterator<T>(iterables.iterator());
 	}
-	
-	private static class ConcatenatingIterator<T> extends ImmutableIterator<T>
-	{
-		private Iterator<Iterable<T>> iterables;
-		
-		private Iterator<T> currentIterator;
-		
-		public ConcatenatingIterator(Iterator<Iterable<T>> iterables)
-		{
-			this.iterables = iterables;
-		}
-		
-		public ConcatenatingIterator(Iterable<T> ... iterables)
-		{
-			this.iterables = Arrays.asList(iterables).iterator();
-		}
-
-		/* (non-Javadoc)
-		 * @see java.util.Iterator#hasNext()
-		 */
-		public boolean hasNext()
-		{
-			if (currentIterator == null)
-			{
-				// Find an iterable that has elements.
-				while (iterables.hasNext())
-				{
-					currentIterator = iterables.next().iterator();
-					if (currentIterator.hasNext())
-						return true;
-				}
-			}
-			else
-			{
-				if (currentIterator.hasNext())
-					return true;
-				
-				// Find an iterable that has elements.
-				while (iterables.hasNext())
-				{
-					currentIterator = iterables.next().iterator();
-					if (currentIterator.hasNext())
-						return true;
-				}
-			}
-			
-			return false;
-		}
-
-		/* (non-Javadoc)
-		 * @see java.util.Iterator#next()
-		 */
-		public T next()
-		{
-			return currentIterator.next();
-		}
-	}
-
 }

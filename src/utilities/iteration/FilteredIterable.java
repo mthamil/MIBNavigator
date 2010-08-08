@@ -29,6 +29,7 @@ import utilities.Predicate;
  * A lazy Iterable that only returns elements from a source Iterable that
  * meet a given criteria.
  */
+@LazilyEvaluated
 public class FilteredIterable<T> implements Iterable<T>
 {
 	private Iterable<T> source;

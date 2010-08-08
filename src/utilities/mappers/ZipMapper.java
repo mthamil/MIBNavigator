@@ -19,36 +19,23 @@
  *
  */
 
-package utilities.iteration;
-
-import java.util.Iterator;
-
-import utilities.mappers.Mapper;
+package utilities.mappers;
 
 /**
- *  A lazy iterable that takes an existing iterable and maps its elements
- *  using a given Mapper.
- *  
- *  @param <S> The type of objects in the source iterable
- *  @param <D> The type of objects in the destination iterable
+ *	Interface for a class that maps two objects to a single object.
+ *
+ *  @param <S1> The type of the first source object
+ *  @param <S2> The type of the second source object
+ *  @param <D> The type of the destination object
  */
-@LazilyEvaluated
-public class MappingIterable<S, D> implements Iterable<D>
+public interface ZipMapper<S1, S2, D>
 {
-	private Iterable<S> source;
-	private Mapper<S, D> mapper;
-	
-	public MappingIterable(Iterable<S> source, Mapper<S, D> mapper)
-	{
-		this.source = source;
-		this.mapper = mapper;
-	}
-	
-	/* (non-Javadoc)
-	 * @see java.lang.Iterable#iterator()
+	/**
+	 * Maps an object of type <code>S1</code> and an object of type 
+	 * <code>S2</code> onto an object of type <code>D</code>.
+	 * @param first The first object to map
+	 * @param second The second object to map
+	 * @return An object of type <code>D</code>
 	 */
-	public Iterator<D> iterator()
-	{
-		return new MappingIterator<S, D>(source.iterator(), mapper);
-	}
+	D map(S1 first, S2 second);
 }

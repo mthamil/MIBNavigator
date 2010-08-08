@@ -21,39 +21,66 @@
 
 package utilities.iteration;
 
+import java.util.Arrays;
 import java.util.Iterator;
 
-import utilities.mappers.Mapper;
-
 /**
- *  An iterator that takes an existing iterator and maps its elements
- *  using a given Mapper.
+ * Iterator that iterates over multiple Iterables one after another.
  */
 @LazilyEvaluated
-public class MappingIterator<S, D> extends ImmutableIterator<D>
+public class ConcatenatingIterator<T> extends ImmutableIterator<T>
 {
-	private Iterator<S> source;
-	private Mapper<S, D> mapper;
+	private Iterator<Iterable<T>> iterables;
 	
-	public MappingIterator(Iterator<S> source, Mapper<S, D> mapper)
+	private Iterator<T> currentIterator;
+	
+	public ConcatenatingIterator(Iterator<Iterable<T>> iterables)
 	{
-		this.source = source;
-		this.mapper = mapper;
+		this.iterables = iterables;
 	}
 	
+	public ConcatenatingIterator(Iterable<T> ... iterables)
+	{
+		this.iterables = Arrays.asList(iterables).iterator();
+	}
+
 	/* (non-Javadoc)
 	 * @see java.util.Iterator#hasNext()
 	 */
 	public boolean hasNext()
 	{
-		return source.hasNext();
+		if (currentIterator == null)
+		{
+			// Find an iterable that has elements.
+			while (iterables.hasNext())
+			{
+				currentIterator = iterables.next().iterator();
+				if (currentIterator.hasNext())
+					return true;
+			}
+		}
+		else
+		{
+			if (currentIterator.hasNext())
+				return true;
+			
+			// Find an iterable that has elements.
+			while (iterables.hasNext())
+			{
+				currentIterator = iterables.next().iterator();
+				if (currentIterator.hasNext())
+					return true;
+			}
+		}
+		
+		return false;
 	}
 
 	/* (non-Javadoc)
 	 * @see java.util.Iterator#next()
 	 */
-	public D next()
+	public T next()
 	{
-		return mapper.map(source.next());
+		return currentIterator.next();
 	}
 }

@@ -26,71 +26,62 @@ import java.util.Collection;
 import java.util.Iterator;
 
 /**
- * An Iterable that divides a source iterable into sequential chunks of a given size.
+ * Combines iterables removing duplicates.
  */
 @LazilyEvaluated
-public class SlicesIterable<T> implements Iterable<Iterable<T>>
+public class UnionIterable<T> implements Iterable<T>
 {
-	private final int sliceSize;
-	private final Iterable<T> source;
+	private Collection<Iterable<T>> iterables;
 	
-	public SlicesIterable(Iterable<T> source, int sliceSize)
+	private UnionIterable()
 	{
-		if (sliceSize < 1)
-			throw new IllegalArgumentException("sliceSize must be greater than zero.");
-		
-		this.source = source;
-		this.sliceSize = sliceSize;
+		iterables = new ArrayList<Iterable<T>>();
 	}
 	
+	public UnionIterable(Iterable<T> ... iterables)
+	{
+		this();
+		
+		for (Iterable<T> iterable : iterables)
+			this.iterables.add(iterable);
+	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Iterable#iterator()
 	 */
-	public Iterator<Iterable<T>> iterator()
+	public Iterator<T> iterator()
 	{
-		return new SlicesIterator<T>(source.iterator(), sliceSize);
+		return new UnionIterator<T>(iterables.iterator());
 	}
-	
-	private static class SlicesIterator<T> extends ImmutableIterator<Iterable<T>>
+
+	private static class UnionIterator<T> extends ImmutableIterator<T>
 	{
-		private final int sliceSize;
-		private final Iterator<T> source;
+		private Iterator<T> iterator;
 		
-		private Collection<T> currentSlice;
-		
-		public SlicesIterator(Iterator<T> source, int sliceSize)
+		public UnionIterator(Iterator<Iterable<T>> iterables)
 		{
-			this.source = source;
-			this.sliceSize = sliceSize;
+			this.iterator = new DistinctIterator<T>(new ConcatenatingIterator<T>(iterables));
 		}
 		
+		public UnionIterator(Iterable<T> ... iterables)
+		{
+			this.iterator = new DistinctIterator<T>(new ConcatenatingIterator<T>(iterables));
+		}
+
 		/* (non-Javadoc)
 		 * @see java.util.Iterator#hasNext()
 		 */
 		public boolean hasNext()
 		{
-			return source.hasNext();
+			return iterator.hasNext();
 		}
 
 		/* (non-Javadoc)
 		 * @see java.util.Iterator#next()
 		 */
-		public Iterable<T> next()
+		public T next()
 		{
-			currentSlice = new ArrayList<T>(sliceSize);
-			
-			int i = 1;
-			while (source.hasNext())
-			{
-				currentSlice.add(source.next());
-				
-				if (i % sliceSize == 0)
-					break;
-				
-				i++;
-			}
-			
-			return currentSlice;
+			return iterator.next(); 
 		}
 	}
 }

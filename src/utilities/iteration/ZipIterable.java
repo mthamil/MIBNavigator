@@ -23,7 +23,7 @@ package utilities.iteration;
 
 import java.util.Iterator;
 
-import utilities.ZipMapper;
+import utilities.mappers.ZipMapper;
 
 /**
  * An Iterable that combines two iterables into a single iterable
@@ -31,6 +31,7 @@ import utilities.ZipMapper;
  * the desination iterable will be as long as the shortest of the two, and
  * the remaining items will be lost.
  */
+@LazilyEvaluated
 public class ZipIterable<S1, S2, D> implements Iterable<D>
 {
 	private Iterable<S1> first;

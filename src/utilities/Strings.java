@@ -28,7 +28,7 @@ import java.util.Iterator;
 /**
  *  Class containing useful String utility methods.
  */
-public class Strings
+public final class Strings
 {
 
 	private Strings() { }

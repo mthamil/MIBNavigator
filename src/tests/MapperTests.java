@@ -29,11 +29,11 @@ import java.util.Arrays;
 import org.junit.Before;
 import org.junit.Test;
 
-import utilities.Mapper;
 import utilities.iteration.MultiMappingIterable;
 import utilities.iteration.Iterables;
 import utilities.iteration.MappingIterable;
-import utilities.iteration.NullMapper;
+import utilities.mappers.Mapper;
+import utilities.mappers.NullMapper;
 
 
 public class MapperTests

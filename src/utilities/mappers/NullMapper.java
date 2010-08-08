@@ -19,21 +19,19 @@
  *
  */
 
-package utilities;
+package utilities.mappers;
+
 
 /**
- *	Interface for a class that maps an object of one type to another.
- *
- *  @param <S> The type of the source object
- *  @param <D> The type of the destination object
+ * A mapper that simply maps an item to itself.
  */
-public interface Mapper<S, D>
+public class NullMapper<T> implements Mapper<T, T>
 {
-	/**
-	 * Maps an object of type <code>S</code> onto an
-	 * object of type <code>D</code>.
-	 * @param item The object to map
-	 * @return An object of type <code>D</code>
+	/* (non-Javadoc)
+	 * @see utilities.Mapper#map(java.lang.Object)
 	 */
-	D map(S item);
+	public T map(T item)
+	{
+		return item;
+	}
 }

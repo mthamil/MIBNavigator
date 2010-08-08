@@ -19,23 +19,15 @@
  *
  */
 
-package utilities;
+package utilities.iteration;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Target;
 
 /**
- *	Interface for a class that maps two objects to a single object.
- *
- *  @param <S1> The type of the first source object
- *  @param <S2> The type of the second source object
- *  @param <D> The type of the destination object
+ * An annotation indicating that an Iterable or Iterator uses deferred execution and only processes 
+ * a few elements of a sequence at a time (usually a single element).  No action is taken until 
+ * iteration actually begins.
  */
-public interface ZipMapper<S1, S2, D>
-{
-	/**
-	 * Maps an object of type <code>S1</code> and an object of type 
-	 * <code>S2</code> onto an object of type <code>D</code>.
-	 * @param first The first object to map
-	 * @param second The second object to map
-	 * @return An object of type <code>D</code>
-	 */
-	D map(S1 first, S2 second);
-}
+@Target({ ElementType.METHOD, ElementType.TYPE })
+public @interface LazilyEvaluated {}

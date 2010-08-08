@@ -23,32 +23,24 @@ package utilities.iteration;
 
 import java.util.Iterator;
 
-import utilities.mappers.Mapper;
-
 /**
- *  A lazy iterable that takes an existing iterable and maps its elements
- *  using a given Mapper.
- *  
- *  @param <S> The type of objects in the source iterable
- *  @param <D> The type of objects in the destination iterable
+ * An Iterable that only returns the unique elements from a source sequence.
  */
 @LazilyEvaluated
-public class MappingIterable<S, D> implements Iterable<D>
+public class DistinctIterable<T> implements Iterable<T>
 {
-	private Iterable<S> source;
-	private Mapper<S, D> mapper;
+	private Iterable<T> source;
 	
-	public MappingIterable(Iterable<S> source, Mapper<S, D> mapper)
+	public DistinctIterable(Iterable<T> source)
 	{
 		this.source = source;
-		this.mapper = mapper;
 	}
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Iterable#iterator()
 	 */
-	public Iterator<D> iterator()
+	public Iterator<T> iterator()
 	{
-		return new MappingIterator<S, D>(source.iterator(), mapper);
+		return new DistinctIterator<T>(source.iterator());
 	}
 }

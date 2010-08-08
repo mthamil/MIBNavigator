@@ -23,7 +23,7 @@ package utilities.iteration;
 
 import java.util.Iterator;
 
-import utilities.Mapper;
+import utilities.mappers.Mapper;
 
 /**
  * Maps each element of an iterable of one type onto an iterable of another type,
@@ -34,6 +34,7 @@ import utilities.Mapper;
  * @param <I> The type of the intermediary result
  * @param <D> The type of objects in the destination iterable
  */
+@LazilyEvaluated
 public class MultiMappingIterable<S, I, D> implements Iterable<D>
 {
 	private Iterable<S> source;

@@ -25,14 +25,15 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import utilities.Mapper;
 import utilities.Predicate;
+import utilities.mappers.Mapper;
 
 /**
  * An iterable that groups items lazily by a common key.
  * @param <K> The type of the keys
  * @param <V> The type of the values
  */
+@LazilyEvaluated
 public class GroupingIterable<K, V> implements Iterable<Grouping<K, V>>
 {
 	private Iterable<V> source;

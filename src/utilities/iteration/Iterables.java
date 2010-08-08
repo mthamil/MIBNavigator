@@ -24,20 +24,26 @@ package utilities.iteration;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
-import utilities.Mapper;
 import utilities.Predicate;
-import utilities.ZipMapper;
+import utilities.iteration.ExtremaFinder.ExtremaType;
 import utilities.iteration.adapters.SingleValueIterable;
+import utilities.mappers.Mapper;
+import utilities.mappers.NullMapper;
+import utilities.mappers.ZipMapper;
 
 /**
  * Class containing useful Iterable utility methods.
  */
-public class Iterables
+public final class Iterables
 {
+	private Iterables() { }
+	
 	/**
 	 * Returns an empty iterable.
 	 */
@@ -55,8 +61,8 @@ public class Iterables
 	}
 	
 	/**
-	 * Converts an Iterable into a List. If the Iterable does not terminate, 
-	 * this method will not return.
+	 * Converts an Iterable into a List. 
+	 * If the source Iterable is an infinite sequence, this method will not return.
 	 */
 	public static <T> List<T> asList(Iterable<T> iterable)
 	{
@@ -68,6 +74,31 @@ public class Iterables
 	}
 	
 	/**
+	 * Converts an Iterable to a Map.
+	 * If the source Iterable is an infinite sequence, this method will not return.
+	 * 
+	 * @param <K> The type of key
+	 * @param <V> The type of value
+	 * @param <S> The source object type
+	 * @param source The iterable to convert to a map
+	 * @param keyMapper The key selector
+	 * @param valueMapper The value selector
+	 */
+	public static <K, V, S> Map<K, V> asMap(Iterable<S> source, Mapper<S, K> keyMapper, Mapper<S, V> valueMapper)
+	{
+		Map<K, V> map = new HashMap<K, V>();
+		for (S item : source)
+		{
+			K key = keyMapper.map(item);
+			V value = valueMapper.map(item);
+			
+			map.put(key, value);
+		}
+		
+		return map;
+	}
+	
+	/**
 	 * Maps an iterable of one type onto an iterable of another type.
 	 * 
 	 * @param <S> The type of objects in the source iterable
@@ -76,6 +107,7 @@ public class Iterables
 	 * @param mapper The mapping function
 	 * @return An iterable of the destination type
 	 */
+	@LazilyEvaluated
 	public static <S, D> Iterable<D> map(Iterable<S> source, Mapper<S, D> mapper)
 	{
 		return new MappingIterable<S, D>(source, mapper);
@@ -91,6 +123,7 @@ public class Iterables
 	 * @param mapper The mapping function
 	 * @return An iterable of the destination type
 	 */
+	@LazilyEvaluated
 	public static <S, D> Iterable<D> multiMap(Iterable<S> source, Mapper<S, Iterable<D>> mapper)
 	{
 		return new MultiMappingIterable<S, D, D>(source, mapper, new NullMapper<D>());
@@ -109,6 +142,7 @@ public class Iterables
 	 * @param resultMapper maps the intermediary results to the final destination type
 	 * @return An iterable of the destination type
 	 */
+	@LazilyEvaluated
 	public static <S, I, D> Iterable<D> multiMap(Iterable<S> source, Mapper<S, Iterable<I>> mapper, Mapper<I, D> resultMapper)
 	{
 		return new MultiMappingIterable<S, I, D>(source, mapper, resultMapper);
@@ -118,6 +152,7 @@ public class Iterables
 	 * Creates a grouping of the given items according to the keys created using the given
 	 * Mapper.
 	 */
+	@LazilyEvaluated
 	public static <K, V> Iterable<Grouping<K, V>> groupBy(Iterable<V> source, Mapper<V, K> keyMapper)
 	{
 		return new GroupingIterable<K, V>(source, keyMapper);
@@ -129,6 +164,7 @@ public class Iterables
 	 * @param condition The filter criteria
 	 * @return
 	 */
+	@LazilyEvaluated
 	public static <T> Iterable<T> filter(Iterable<T> source, Predicate<T> condition)
 	{
 		return new FilteredIterable<T>(source, condition);
@@ -161,6 +197,7 @@ public class Iterables
 	/**
 	 * Returns the last item in a sequence. If no elements exist,
 	 * an exception is thrown.
+	 * If the source Iterable is an infinite sequence, this method will not return.
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T> T last(Iterable<T> items)
@@ -187,6 +224,7 @@ public class Iterables
 	/**
 	 * Returns the last item in a sequence. If no elements exist,
 	 * null is returned.
+	 * If the source Iterable is an infinite sequence, this method will not return.
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T> T lastOrNull(Iterable<T> items)
@@ -206,6 +244,8 @@ public class Iterables
 	
 	/**
 	 * Determines whether an iterable contains an item.
+	 * If the source Iterable is an infinite sequence and the desired item is not contained in it, 
+	 * this method will not return.
 	 */
 	public static <T> boolean contains(Iterable<T> items, T expected)
 	{
@@ -220,6 +260,8 @@ public class Iterables
 	
 	/**
 	 * Determines whether an iterable contains an item.
+ 	 * If the source Iterable is an infinite sequence and the desired item is not contained in it, 
+	 * this method will not return.
 	 */
 	public static <T> boolean contains(Iterable<T> items, T expected, Comparator<T> comparator)
 	{
@@ -248,6 +290,8 @@ public class Iterables
 	
 	/**
 	 * Returns true if all elements of an iterable meet a condition.
+	 * If the source Iterable is an infinite sequence and every element meets the criteria, 
+	 * this method will not return.
 	 */
 	public static <T> boolean all(Iterable<T> items, Predicate<T> condition)
 	{
@@ -262,6 +306,8 @@ public class Iterables
 	
 	/**
 	 * Returns true if any element of an iterable meets a condition.
+	 * If the source Iterable is an infinite sequence and no elements meet the criteria, 
+	 * this method will not return.
 	 */
 	public static <T> boolean any(Iterable<T> items, Predicate<T> condition)
 	{
@@ -278,6 +324,7 @@ public class Iterables
 	 * Returns the number of elements in an Iterable.
 	 * Contains optimizations for collections with O(1)
 	 * size access.
+	 * If the source Iterable is an infinite sequence, this method will not return.
 	 */
 	public static <T> int size(Iterable<T> items)
 	{
@@ -296,6 +343,7 @@ public class Iterables
 	
 	/**
 	 * Returns the number of elements in an Iterable that satisfy a condition.
+	 * If the source Iterable is an infinite sequence, this method will not return.
 	 */
 	public static <T> int count(Iterable<T> items, Predicate<T> condition)
 	{
@@ -308,11 +356,21 @@ public class Iterables
 		
 		return i;
 	}
+	
+	/**
+	 * Returns the unique elements from the source sequence.
+	 */
+	@LazilyEvaluated
+	public static <T> Iterable<T> distinct(Iterable<T> source)
+	{
+		return new DistinctIterable<T>(source);
+	}
 
 	/**
 	 * Splits an Iterable into multiple Iterables of the given slice size.  If there are remaining
 	 * items numbering less than the slice size, the final Iterable will have whatever items are left.
 	 */
+	@LazilyEvaluated
 	public static <T> Iterable<Iterable<T>> slices(Iterable<T> items, int sliceSize)
 	{
 		return new SlicesIterable<T>(items, sliceSize);
@@ -321,18 +379,10 @@ public class Iterables
 	/**
 	 * Joins multiple iterables together.
 	 */
+	@LazilyEvaluated
 	public static <T> Iterable<T> concat(Iterable<T> ... iterables)
 	{
 		return new ConcatenatingIterable<T>(iterables);
-	}
-	
-	/**
-	 * Joins two iterables together.
-	 */
-	@SuppressWarnings("unchecked")
-	public static <T> Iterable<T> concat(Iterable<T> first, Iterable<T> second)
-	{
-		return new ConcatenatingIterable<T>(first, second);
 	}
 	
 	/**
@@ -340,8 +390,64 @@ public class Iterables
 	 * If the iterables are of different lengths, the desination iterable will be as 
 	 * long as the shortest of the two, and the remaining items will be lost.
 	 */
+	@LazilyEvaluated
 	public static <S1, S2, D> Iterable<D> zip(Iterable<S1> first, Iterable<S2> second, ZipMapper<S1, S2, D> mapper)
 	{
 		return new ZipIterable<S1, S2, D>(first, second, mapper);
 	}
+	
+	/**
+	 * Returns an iterable over a range of numbers. If <code>from</code> > <code>to</code>, the range
+	 * is increasing.  If <code>from</code> < <code>to</code>, the range is decreasing.
+	 * @param from The start of the range
+	 * @param to The end of the range (inclusive)
+	 */
+	@LazilyEvaluated
+	public static Iterable<Integer> range(int from, int to)
+	{
+		return new RangeIterable(from, to);
+	}
+	
+	/**
+	 * Returns the minimum value in an Iterable.
+	 * If the source Iterable is an infinite sequence, this method will not return.
+	 */
+	public static <S, D extends Comparable<D>> D min(Iterable<S> source, Mapper<S, D> selector)
+	{
+		return extrema(source, selector, ExtremaType.Min);
+	}
+	
+	/**
+	 * Returns the minimum value in an Iterable.
+	 * If the source Iterable is an infinite sequence, this method will not return.
+	 */
+	public static <T extends Comparable<T>> T min(Iterable<T> source)
+	{
+		return min(source, new NullMapper<T>());
+	}
+	
+	/**
+	 * Returns the maximum value in an Iterable.
+	 * If the source Iterable is an infinite sequence, this method will not return.
+	 */
+	public static <S, D extends Comparable<D>> D max(Iterable<S> source, Mapper<S, D> selector)
+	{
+		return extrema(source, selector, ExtremaType.Max);
+	}
+	
+	/**
+	 * Returns the maximum value in an Iterable.
+	 * If the source Iterable is an infinite sequence, this method will not return.
+	 */
+	public static <T extends Comparable<T>> T max(Iterable<T> source)
+	{
+		return max(source, new NullMapper<T>());
+	}
+	
+	private static <S, D extends Comparable<D>> D extrema(Iterable<S> source, Mapper<S, D> selector, ExtremaType extremaType)
+	{
+		ExtremaFinder<S, D> extremaFinder = new ExtremaFinder<S, D>(source, selector, extremaType);
+		return extremaFinder.find();
+	}
+
 }

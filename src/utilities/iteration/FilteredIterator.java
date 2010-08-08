@@ -27,9 +27,9 @@ import java.util.NoSuchElementException;
 import utilities.Predicate;
 
 /**
- * @author matt
- *
+ * Iterator that only returns elements matching a given criteria.
  */
+@LazilyEvaluated
 public class FilteredIterator<T> extends ImmutableIterator<T>
 {
 	private Iterator<T> source;

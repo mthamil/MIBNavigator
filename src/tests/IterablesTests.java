@@ -30,19 +30,24 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import utilities.Mapper;
 import utilities.Predicate;
-import utilities.ZipMapper;
 import utilities.iteration.ConcatenatingIterable;
+import utilities.iteration.DistinctIterable;
 import utilities.iteration.Grouping;
 import utilities.iteration.Iterables;
+import utilities.iteration.RangeIterable;
 import utilities.iteration.SlicesIterable;
+import utilities.iteration.UnionIterable;
 import utilities.iteration.ZipIterable;
+import utilities.mappers.Mapper;
+import utilities.mappers.NullMapper;
+import utilities.mappers.ZipMapper;
 
 import static utilities.iteration.Iterables.*;
 import static tests.Assertions.*;
@@ -450,5 +455,114 @@ public class IterablesTests
 		}
 		
 		assertThat(i, is(6));
+	}
+	
+	@Test
+	public void testIncreasingRange()
+	{
+		int counter = 5;
+		Iterable<Integer> range = new RangeIterable(5, 11);
+		int lastNum = 0;
+		for (Integer num : range)
+		{
+			assertThat(num, is(counter));
+			counter++;
+			lastNum = num.intValue();
+		}
+		
+		assertThat(lastNum, is(11));
+	}
+	
+	@Test
+	public void testDecreasingRange()
+	{
+		int counter = 11;
+		Iterable<Integer> range = new RangeIterable(11, 5);
+		int lastNum = 0;
+		for (Integer num : range)
+		{
+			assertThat(num, is(counter));
+			counter--;
+			lastNum = num.intValue();
+		}
+		
+		assertThat(lastNum, is(5));
+	}
+	
+	@Test
+	public void testMin()
+	{
+		int min = min(range(10, 1));
+		assertThat(min, is(1));
+		
+		min = min(Arrays.asList(5, 6, 3, 4, 10, 7, 8, 2, 9, 1));
+		assertThat(min, is(1));
+	}
+	
+	@Test
+	public void testMax()
+	{
+		int max = max(range(1, 10));
+		assertThat(max, is(10));
+		
+		max = max(Arrays.asList(5, 6, 3, 4, 10, 7, 8, 2, 9, 1));
+		assertThat(max, is(10));
+	}
+	
+	@Test
+	public void testAsMap()
+	{
+		Iterable<String> strings = Arrays.asList("abc", "def", "efg", "hij");
+		Map<Character, String> map = asMap(strings, 
+				new Mapper<String, Character>() { public Character map(String item) { return item.charAt(0); } }, 
+				new NullMapper<String>());
+		
+		for (Character c : map.keySet())
+		{
+			String value = map.get(c);
+			assertThat(c, is(value.charAt(0)));
+		}
+		
+		assertThat(map.keySet(), hasItems('a', 'd', 'e', 'h'));
+		
+		assertThat(map.size(), is(4));
+	}
+	
+	@Test
+	public void testUnion()
+	{
+		Iterable<Integer> first = Arrays.asList(1, 2, 3, 4, 5);
+		Iterable<Integer> second = Arrays.asList(4, 6, 8, 9, 1);
+		
+		@SuppressWarnings("unchecked")
+		Iterable<Integer> union = new UnionIterable<Integer>(first, second);
+		
+		int[] expected = new int[] {1, 2, 3, 4, 5, 6, 8, 9};
+		int i = 0;
+		for (Integer item : union)
+		{
+			assertThat(item.intValue(), is(expected[i]));
+			i++;
+		}
+
+		assertThat(size(union), is(expected.length));
+	}
+	
+	@Test
+	public void testDistinct()
+	{
+		Iterable<Integer> source = Arrays.asList(5, 6, 1, 2, 2, 3, 4, 5, 6, 7);
+		
+		Iterable<Integer> distinct = new DistinctIterable<Integer>(source);
+		
+		int[] expected = new int[] {5, 6, 1, 2, 3, 4, 7};
+		int i = 0;
+		for (Integer item : distinct)
+		{
+			assertThat(item.intValue(), is(expected[i]));
+			i++;
+		}
+
+		assertThat(size(distinct), is(expected.length));
 	}
 }

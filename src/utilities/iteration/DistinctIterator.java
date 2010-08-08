@@ -21,34 +21,55 @@
 
 package utilities.iteration;
 
+import java.util.HashSet;
 import java.util.Iterator;
-
-import utilities.mappers.Mapper;
+import java.util.NoSuchElementException;
+import java.util.Set;
 
 /**
- *  A lazy iterable that takes an existing iterable and maps its elements
- *  using a given Mapper.
- *  
- *  @param <S> The type of objects in the source iterable
- *  @param <D> The type of objects in the destination iterable
+ * An Iterator that only returns the unique elements from a source sequence.
  */
 @LazilyEvaluated
-public class MappingIterable<S, D> implements Iterable<D>
+public class DistinctIterator<T> extends ImmutableIterator<T>
 {
-	private Iterable<S> source;
-	private Mapper<S, D> mapper;
+	private Iterator<T> source;
 	
-	public MappingIterable(Iterable<S> source, Mapper<S, D> mapper)
+	private Set<T> alreadySeen = new HashSet<T>();
+	private T current;
+	
+	public DistinctIterator(Iterator<T> source)
 	{
 		this.source = source;
-		this.mapper = mapper;
 	}
 	
 	/* (non-Javadoc)
-	 * @see java.lang.Iterable#iterator()
+	 * @see java.util.Iterator#hasNext()
 	 */
-	public Iterator<D> iterator()
+	public boolean hasNext()
 	{
-		return new MappingIterator<S, D>(source.iterator(), mapper);
+		while (source.hasNext())
+		{
+			T next = source.next();
+			if (!alreadySeen.contains(next))
+			{
+				current = next;
+				alreadySeen.add(current);
+				return true;
+			}
+		}
+		
+		return false;
 	}
+
+	/* (non-Javadoc)
+	 * @see java.util.Iterator#next()
+	 */
+	public T next()
+	{
+		if (current != null)
+			return current;
+		
+		throw new NoSuchElementException(); 
+	}
+
 }
