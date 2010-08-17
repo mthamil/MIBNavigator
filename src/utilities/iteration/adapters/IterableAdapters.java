@@ -33,7 +33,7 @@ public class IterableAdapters
 	/**
 	 * Converts an Iterator to an Iterable.
 	 */
-	public static <T> Iterable<T> asIterable(final Iterator<T> iterator)
+	public static <T> Iterable<T> toIterable(final Iterator<T> iterator)
 	{
 		return new Iterable<T>()
 		{
@@ -47,7 +47,7 @@ public class IterableAdapters
 	/**
 	 * Converts an Enumeration to an Iterable.
 	 */
-	public static <T> Iterable<T> asIterable(Enumeration<T> enumeration)
+	public static <T> Iterable<T> toIterable(Enumeration<T> enumeration)
 	{
 		return new EnumerationIterable<T>(enumeration);
 	}
@@ -55,7 +55,7 @@ public class IterableAdapters
 	/**
 	 * Presents the characters in a CharSequence as an Iterable.
 	 */
-	public static Iterable<Character> asIterable(CharSequence characters)
+	public static Iterable<Character> toIterable(CharSequence characters)
 	{
 		return new CharacterIterable(characters);
 	}
@@ -63,7 +63,7 @@ public class IterableAdapters
 	/**
 	 * Presents the characters in a Reader as an Iterable.
 	 */
-	public static Iterable<Character> asIterable(Reader reader)
+	public static Iterable<Character> toIterable(Reader reader)
 	{
 		return new ReaderIterable(reader);
 	}
