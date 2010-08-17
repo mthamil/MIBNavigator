@@ -52,10 +52,6 @@ import utilities.mappers.ZipMapper;
 import static utilities.iteration.Iterables.*;
 import static tests.Assertions.*;
 
-/**
- * @author matt
- *
- */
 public class IterablesTests
 {
 	private Iterable<Integer> ints;
@@ -487,26 +483,6 @@ public class IterablesTests
 		}
 		
 		assertThat(lastNum, is(5));
-	}
-	
-	@Test
-	public void testMin()
-	{
-		int min = min(range(10, 1));
-		assertThat(min, is(1));
-		
-		min = min(Arrays.asList(5, 6, 3, 4, 10, 7, 8, 2, 9, 1));
-		assertThat(min, is(1));
-	}
-	
-	@Test
-	public void testMax()
-	{
-		int max = max(range(1, 10));
-		assertThat(max, is(10));
-		
-		max = max(Arrays.asList(5, 6, 3, 4, 10, 7, 8, 2, 9, 1));
-		assertThat(max, is(10));
 	}
 	
 	@Test
