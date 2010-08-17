@@ -56,7 +56,7 @@ public final class Iterables
 	/**
 	 * Converts a single value to an Iterable.
 	 */
-	public static <T> Iterable<T> asIterable(T value)
+	public static <T> Iterable<T> toIterable(T value)
 	{
 		return new SingleValueIterable<T>(value);
 	}
@@ -66,7 +66,7 @@ public final class Iterables
 	 * If the source Iterable is an infinite sequence, this method will not return.
 	 */
 	@InfiniteSequenceUnsafe(Likelihood.Always)
-	public static <T> List<T> asList(Iterable<T> iterable)
+	public static <T> List<T> toList(Iterable<T> iterable)
 	{
 		List<T> list = new ArrayList<T>();
 		for (T item : iterable)
@@ -87,7 +87,7 @@ public final class Iterables
 	 * @param valueMapper The value selector
 	 */
 	@InfiniteSequenceUnsafe(Likelihood.Always)
-	public static <K, V, S> Map<K, V> asMap(Iterable<S> source, Mapper<S, K> keyMapper, Mapper<S, V> valueMapper)
+	public static <K, V, S> Map<K, V> toMap(Iterable<S> source, Mapper<S, K> keyMapper, Mapper<S, V> valueMapper)
 	{
 		Map<K, V> map = new HashMap<K, V>();
 		for (S item : source)
@@ -377,6 +377,14 @@ public final class Iterables
 		return new DistinctIterable<T>(source);
 	}
 
+	/**
+	 * Returns the set union of the given sequences.
+	 */
+	public static <T> Iterable<T> union(Iterable<T> ... iterables)
+	{
+		return new UnionIterable<T>(iterables);
+	}
+	
 	/**
 	 * Splits an Iterable into multiple Iterables of the given slice size.  If there are remaining
 	 * items numbering less than the slice size, the final Iterable will have whatever items are left.

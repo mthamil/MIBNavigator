@@ -82,7 +82,7 @@ public class MibTreeNode extends DefaultMutableTreeNode
     @SuppressWarnings("unchecked")
 	public MibTreeNode getNodeByName(String nodeName)
     {
-        for (MibTreeNode node : IterableAdapters.<MibTreeNode>asIterable(breadthFirstEnumeration()))
+        for (MibTreeNode node : IterableAdapters.<MibTreeNode>toIterable(breadthFirstEnumeration()))
         {
         	if (nodeName.equalsIgnoreCase(String.valueOf(node)))
         		return node;

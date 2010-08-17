@@ -330,7 +330,7 @@ public class IterablesTests
 	@Test
 	public void testAsList()
 	{
-		List<Integer> evensList = asList(evens);
+		List<Integer> evensList = toList(evens);
 		
 		assertThat(evensList, hasItems(2, 4, 6, 8, 10));
 		assertThat(evensList.size(), is(size(evens)));
@@ -513,7 +513,7 @@ public class IterablesTests
 	public void testAsMap()
 	{
 		Iterable<String> strings = Arrays.asList("abc", "def", "efg", "hij");
-		Map<Character, String> map = asMap(strings, 
+		Map<Character, String> map = toMap(strings, 
 				new Mapper<String, Character>() { public Character map(String item) { return item.charAt(0); } }, 
 				new NullMapper<String>());
 		

@@ -33,7 +33,7 @@ public class SingleValueIterableTests
 	@Test
 	public void testSingleValueIterable()
 	{
-		Iterable<String> iter = Iterables.asIterable("test");
+		Iterable<String> iter = Iterables.toIterable("test");
 		
 		for (int i = 0; i < 2; i++)
 		{
