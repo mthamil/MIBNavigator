@@ -31,10 +31,11 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 import utilities.Predicate;
-import utilities.iteration.ExtremaFinder.ExtremaType;
+import utilities.iteration.ExtremaType;
 import utilities.iteration.InfiniteSequenceUnsafe.Likelihood;
 import utilities.iteration.adapters.SingleValueIterable;
 import utilities.mappers.Mapper;
+import utilities.mappers.Mapper2;
 import utilities.mappers.NullMapper;
 import utilities.mappers.ZipMapper;
 
@@ -428,6 +429,26 @@ public final class Iterables
 	}
 	
 	/**
+	 * Applies an accumulator function to a sequence. The first element acts as the seed.
+	 */
+	@InfiniteSequenceUnsafe(Likelihood.Always)
+	public static <S, R> R aggregate(Iterable<S> source, Mapper2<R, R, R> accumulator, Mapper<S, R> selector)
+	{
+		Accumulator<S, R> acc = new Accumulator<S, R>(source, accumulator, selector);
+		return acc.accumulate();
+	}
+	
+	/**
+	 * Applies an accumulator function to a sequence with the given seed.
+	 */
+	@InfiniteSequenceUnsafe(Likelihood.Always)
+	public static <S, R> R aggregate(Iterable<S> source, Mapper2<R, R, R> accumulator, Mapper<S, R> selector, S seed)
+	{
+		Accumulator<S, R> acc = new Accumulator<S, R>(source, accumulator, selector, seed);
+		return acc.accumulate();
+	}
+	
+	/**
 	 * Returns the minimum value in an Iterable.
 	 * If the source Iterable is an infinite sequence, this method will not return.
 	 */
@@ -467,10 +488,21 @@ public final class Iterables
 		return max(source, new NullMapper<T>());
 	}
 	
-	private static <S, D extends Comparable<D>> D extrema(Iterable<S> source, Mapper<S, D> selector, ExtremaType extremaType)
+	private static <S, D extends Comparable<D>> D extrema(Iterable<S> source, Mapper<S, D> selector, final ExtremaType extremaType)
 	{
-		ExtremaFinder<S, D> extremaFinder = new ExtremaFinder<S, D>(source, selector, extremaType);
-		return extremaFinder.find();
+		Accumulator<S, D> extremaFinder = new Accumulator<S, D>(source, new Mapper2<D, D, D>()
+				{
+					public D map(D first, D second)
+					{
+						if (second.compareTo(first) == extremaType.comparisonOutcome())
+							return first;
+						
+						return second;
+					}
+			
+				}, selector);
+		
+		return extremaFinder.accumulate();
 	}
 
 }

@@ -22,57 +22,51 @@
 package utilities.iteration;
 
 import utilities.mappers.Mapper;
+import utilities.mappers.Mapper2;
 
 /**
- * Finds the minimum or maximum value in an Iterable.
+ * An object that applies an accumulation function to an Iterable.
  */
-public class ExtremaFinder<S, D extends Comparable<D>>
+public class Accumulator<S, R>
 {
-	public static enum ExtremaType 
-	{ 
-		Min(1), Max(-1); 
-		
-		private int comparisonOutcome;
-		
-		private ExtremaType(int comparisonOutcome)
-		{
-			this.comparisonOutcome = comparisonOutcome;
-		}
-		
-		public int comparisonOutcome()
-		{
-			return comparisonOutcome;
-		}
-	}
+	private final Iterable<S> items;
+	private final Mapper<S, R> selector;
+	private final Mapper2<R, R, R> accumulator;
 	
-	private Iterable<S> source; 
-	private Mapper<S, D> selector; 
-	private ExtremaType extremaType;
+	private R accumulation;
 	
-	public ExtremaFinder(Iterable<S> source, Mapper<S, D> selector, ExtremaType extremaType)
+	public Accumulator(Iterable<S> items, Mapper2<R, R, R> accumulator, Mapper<S, R> selector)
 	{
-		this.source = source;
+		this.items = items;
+		this.accumulator = accumulator;
 		this.selector = selector;
-		this.extremaType = extremaType;
 	}
 	
-	public D find()
+	public Accumulator(Iterable<S> items, Mapper2<R, R, R> accumulator, Mapper<S, R> selector, S seed)
 	{
-		D extrema = null;
-		for (S item : source)
+		this(items, accumulator, selector);
+		accumulation = selector.map(seed);
+		seedChosen = true;
+	}
+	
+	private boolean seedChosen;
+	
+	public R accumulate()
+	{
+		for (S item : items)
 		{
-			D current = selector.map(item);
-			if (extrema == null)
+			R next = selector.map(item);
+			if (!seedChosen)
 			{
-				extrema = current;
+				accumulation = next;
+				seedChosen = true;
 			}
 			else
 			{
-				if (extrema.compareTo(current) == extremaType.comparisonOutcome())
-					extrema = current;
+				accumulation = accumulator.map(next, accumulation);
 			}
 		}
 		
-		return extrema;
+		return accumulation;
 	}
 }

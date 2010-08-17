@@ -19,21 +19,21 @@
  *
  */
 
-package utilities.mappers;
+package utilities.iteration;
 
-/**
- *	Interface for a function that maps an object of one type to another.
- *
- *  @param <S> The type of the parameter
- *  @param <R> The type of the result
- */
-public interface Mapper<S, R>
-{
-	/**
-	 * Maps an object of type <code>S</code> onto an
-	 * object of type <code>R</code>.
-	 * @param item The object to map
-	 * @return A result of type <code>R</code>
-	 */
-	R map(S item);
+public enum ExtremaType 
+{ 
+	Min(1), Max(-1); 
+	
+	private int comparisonOutcome;
+	
+	private ExtremaType(int comparisonOutcome)
+	{
+		this.comparisonOutcome = comparisonOutcome;
+	}
+	
+	public int comparisonOutcome()
+	{
+		return comparisonOutcome;
+	}
 }

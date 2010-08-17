@@ -22,18 +22,20 @@
 package utilities.mappers;
 
 /**
- *	Interface for a function that maps an object of one type to another.
+ *	Interface for a function that maps two objects onto a single result.
  *
- *  @param <S> The type of the parameter
+ *  @param <S1> The type of the first parameter
+ *  @param <S2> The type of the second parameter
  *  @param <R> The type of the result
  */
-public interface Mapper<S, R>
+public interface Mapper2<S1, S2, R>
 {
 	/**
-	 * Maps an object of type <code>S</code> onto an
-	 * object of type <code>R</code>.
-	 * @param item The object to map
+	 * Maps an object of type <code>S1</code> and an object of type <code>S2</code>
+	 * onto an object of type <code>R</code>.
+	 * @param first The first parameter
+	 * @param second The second parameter
 	 * @return A result of type <code>R</code>
 	 */
-	R map(S item);
+	R map(S1 first, S2 second);
 }
