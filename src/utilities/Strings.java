@@ -22,7 +22,10 @@
 package utilities;
 
 import java.util.Arrays;
-import java.util.Iterator;
+
+import utilities.iteration.SeededAccumulator;
+import utilities.mappers.Mapper2;
+import utilities.mappers.NullMapper;
 
 
 /**
@@ -64,20 +67,23 @@ public final class Strings
 	 * @param items a collection of objects to join together
 	 * @return
 	 */
-	public static <T> String join(String delimiter, Iterable<T> items)
+	public static <T> String join(final String delimiter, Iterable<T> items)
 	{
-		Iterator<T> iterator = items.iterator();
+		SeededAccumulator<T, T, StringBuilder> joiner = new SeededAccumulator<T, T, StringBuilder>(items, 
+				new Mapper2<T, StringBuilder, StringBuilder>() {
+					public StringBuilder map(T first, StringBuilder second)
+					{
+						if (second.length() > 0)
+							second.append(delimiter);
+						
+						second.append(first);
+						
+						return second;
+					}}, 
+				new NullMapper<T>(), 
+				new StringBuilder());
 		
-		StringBuilder joinedString = new StringBuilder();
-		while (iterator.hasNext())
-		{
-			joinedString.append(iterator.next());
-			
-			if (iterator.hasNext())
-				joinedString.append(delimiter);
-		}
-		
-		return joinedString.toString();
+		return joiner.accumulate().toString();
 	}
 
 	/**

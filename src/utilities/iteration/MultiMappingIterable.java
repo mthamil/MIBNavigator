@@ -53,10 +53,10 @@ public class MultiMappingIterable<S, I, D> implements Iterable<D>
 	 */
 	public Iterator<D> iterator()
 	{
-		return new IntermediaryMultiMappingIterator<S, I, D>(source.iterator(), mapper, resultMapper);
+		return new MultiMappingIterator<S, I, D>(source.iterator(), mapper, resultMapper);
 	}
 		
-	private static class IntermediaryMultiMappingIterator<S, I, D> extends ImmutableIterator<D>
+	private static class MultiMappingIterator<S, I, D> extends ImmutableIterator<D>
 	{
 		private Iterator<S> source;
 		private Mapper<S, Iterable<I>> mapper;
@@ -65,7 +65,7 @@ public class MultiMappingIterable<S, I, D> implements Iterable<D>
 		private Iterator<I> currentMappedIterator;
 		private boolean withinSubIterator;
 		
-		public IntermediaryMultiMappingIterator(Iterator<S> source, Mapper<S, Iterable<I>> mapper, Mapper<I, D> resultMapper)
+		public MultiMappingIterator(Iterator<S> source, Mapper<S, Iterable<I>> mapper, Mapper<I, D> resultMapper)
 		{
 			this.source = source;
 			this.mapper = mapper;

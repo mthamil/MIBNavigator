@@ -46,8 +46,8 @@ import utilities.iteration.SlicesIterable;
 import utilities.iteration.UnionIterable;
 import utilities.iteration.ZipIterable;
 import utilities.mappers.Mapper;
+import utilities.mappers.Mapper2;
 import utilities.mappers.NullMapper;
-import utilities.mappers.ZipMapper;
 
 import static utilities.iteration.Iterables.*;
 import static tests.Assertions.*;
@@ -438,7 +438,7 @@ public class IterablesTests
 		Iterable<String> second = Arrays.asList("1", "2", "3", "4", "5");
 		
 		Iterable<Integer> destination = new ZipIterable<Integer, String, Integer>(first, second, 
-				new ZipMapper<Integer, String, Integer>()
+				new Mapper2<Integer, String, Integer>()
 				{
 					public Integer map(Integer first, String second) { return first * Integer.valueOf(second); }
 				});

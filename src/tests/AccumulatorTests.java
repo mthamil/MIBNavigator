@@ -25,7 +25,8 @@ import java.util.Arrays;
 
 import org.junit.Test;
 
-import utilities.iteration.Accumulator;
+import utilities.iteration.SeededAccumulator;
+import utilities.iteration.SeedlessAccumulator;
 import utilities.mappers.Mapper;
 import utilities.mappers.Mapper2;
 import utilities.mappers.NullMapper;
@@ -43,14 +44,14 @@ public class AccumulatorTests
 	{
 		Iterable<String> strings = Arrays.asList("Hello", "this", "is", "a", "test.");
 		
-		Accumulator<String, String> acc = new Accumulator<String, String>(strings, new Mapper2<String, String, String>() {
+		SeedlessAccumulator<String, String> acc = new SeedlessAccumulator<String, String>(strings, new Mapper2<String, String, String>() {
 				public String map(String first, String second)
 				{
-					return second + first;
+					return second + (second.length() > 0 ? " " : "") + first;
 				} }, new NullMapper<String>());
 		
 		String result = acc.accumulate();
-		assertThat(result, is("Hellothisisatest."));
+		assertThat(result, is("Hello this is a test."));
 	}
 	
 	@Test
@@ -58,7 +59,7 @@ public class AccumulatorTests
 	{
 		Iterable<String> strings = Arrays.asList("Hello", "this", "is", "a", "test.");
 		
-		Accumulator<String, String> acc = new Accumulator<String, String>(strings, new Mapper2<String, String, String>() {
+		SeededAccumulator<String, String, String> acc = new SeededAccumulator<String, String, String>(strings, new Mapper2<String, String, String>() {
 				public String map(String first, String second)
 				{
 					return second + (second.length() > 0 ? " " : "") + first;

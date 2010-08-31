@@ -21,52 +21,13 @@
 
 package utilities.iteration;
 
-import utilities.mappers.Mapper;
-import utilities.mappers.Mapper2;
-
 /**
- * An object that applies an accumulation function to an Iterable.
+ * An interface for an accumulator.
  */
-public class Accumulator<S, R>
+public interface Accumulator<R>
 {
-	private final Iterable<S> items;
-	private final Mapper<S, R> selector;
-	private final Mapper2<R, R, R> accumulator;
-	
-	private R accumulation;
-	
-	public Accumulator(Iterable<S> items, Mapper2<R, R, R> accumulator, Mapper<S, R> selector)
-	{
-		this.items = items;
-		this.accumulator = accumulator;
-		this.selector = selector;
-	}
-	
-	public Accumulator(Iterable<S> items, Mapper2<R, R, R> accumulator, Mapper<S, R> selector, S seed)
-	{
-		this(items, accumulator, selector);
-		accumulation = selector.map(seed);
-		seedChosen = true;
-	}
-	
-	private boolean seedChosen;
-	
-	public R accumulate()
-	{
-		for (S item : items)
-		{
-			R next = selector.map(item);
-			if (!seedChosen)
-			{
-				accumulation = next;
-				seedChosen = true;
-			}
-			else
-			{
-				accumulation = accumulator.map(next, accumulation);
-			}
-		}
-		
-		return accumulation;
-	}
+	/**
+	 * Applies an accumulation function to a source sequence and returns the result.
+	 */
+	R accumulate();
 }

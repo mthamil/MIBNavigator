@@ -23,7 +23,7 @@ package utilities.iteration;
 
 import java.util.Iterator;
 
-import utilities.mappers.ZipMapper;
+import utilities.mappers.Mapper2;
 
 /**
  * An Iterable that combines two iterables into a single iterable
@@ -36,9 +36,9 @@ public class ZipIterable<S1, S2, D> implements Iterable<D>
 {
 	private Iterable<S1> first;
 	private Iterable<S2> second;
-	private ZipMapper<S1, S2, D> mapper;
+	private Mapper2<S1, S2, D> mapper;
 	
-	public ZipIterable(Iterable<S1> first, Iterable<S2> second, ZipMapper<S1, S2, D> mapper)
+	public ZipIterable(Iterable<S1> first, Iterable<S2> second, Mapper2<S1, S2, D> mapper)
 	{
 		this.first = first;
 		this.second = second;
@@ -57,9 +57,9 @@ public class ZipIterable<S1, S2, D> implements Iterable<D>
 	{
 		private Iterator<S1> first;
 		private Iterator<S2> second;
-		private ZipMapper<S1, S2, D> mapper;
+		private Mapper2<S1, S2, D> mapper;
 		
-		public ZipIterator(Iterator<S1> first, Iterator<S2> second, ZipMapper<S1, S2, D> mapper)
+		public ZipIterator(Iterator<S1> first, Iterator<S2> second, Mapper2<S1, S2, D> mapper)
 		{
 			this.first = first;
 			this.second = second;

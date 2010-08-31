@@ -37,7 +37,6 @@ import utilities.iteration.adapters.SingleValueIterable;
 import utilities.mappers.Mapper;
 import utilities.mappers.Mapper2;
 import utilities.mappers.NullMapper;
-import utilities.mappers.ZipMapper;
 
 /**
  * Class containing useful Iterable utility methods.
@@ -411,7 +410,7 @@ public final class Iterables
 	 * long as the shortest of the two, and the remaining items will be lost.
 	 */
 	@LazilyEvaluated
-	public static <S1, S2, D> Iterable<D> zip(Iterable<S1> first, Iterable<S2> second, ZipMapper<S1, S2, D> mapper)
+	public static <S1, S2, D> Iterable<D> zip(Iterable<S1> first, Iterable<S2> second, Mapper2<S1, S2, D> mapper)
 	{
 		return new ZipIterable<S1, S2, D>(first, second, mapper);
 	}
@@ -434,7 +433,7 @@ public final class Iterables
 	@InfiniteSequenceUnsafe(Likelihood.Always)
 	public static <S, R> R aggregate(Iterable<S> source, Mapper2<R, R, R> accumulator, Mapper<S, R> selector)
 	{
-		Accumulator<S, R> acc = new Accumulator<S, R>(source, accumulator, selector);
+		SeedlessAccumulator<S, R> acc = new SeedlessAccumulator<S, R>(source, accumulator, selector);
 		return acc.accumulate();
 	}
 	
@@ -442,9 +441,9 @@ public final class Iterables
 	 * Applies an accumulator function to a sequence with the given seed.
 	 */
 	@InfiniteSequenceUnsafe(Likelihood.Always)
-	public static <S, R> R aggregate(Iterable<S> source, Mapper2<R, R, R> accumulator, Mapper<S, R> selector, S seed)
+	public static <S, I, R> R aggregate(Iterable<S> source, Mapper2<I, R, R> accumulator, Mapper<S, I> selector, R seed)
 	{
-		Accumulator<S, R> acc = new Accumulator<S, R>(source, accumulator, selector, seed);
+		SeededAccumulator<S, I, R> acc = new SeededAccumulator<S, I, R>(source, accumulator, selector, seed);
 		return acc.accumulate();
 	}
 	
@@ -490,19 +489,15 @@ public final class Iterables
 	
 	private static <S, D extends Comparable<D>> D extrema(Iterable<S> source, Mapper<S, D> selector, final ExtremaType extremaType)
 	{
-		Accumulator<S, D> extremaFinder = new Accumulator<S, D>(source, new Mapper2<D, D, D>()
-				{
-					public D map(D first, D second)
-					{
-						if (second.compareTo(first) == extremaType.comparisonOutcome())
-							return first;
-						
-						return second;
-					}
-			
-				}, selector);
-		
-		return extremaFinder.accumulate();
+		return aggregate(source, new Mapper2<D, D, D>() {
+			public D map(D first, D second)
+			{
+				if (second.compareTo(first) == extremaType.comparisonOutcome())
+					return first;
+				
+				return second;
+			}
+		}, selector);
 	}
 
 }
