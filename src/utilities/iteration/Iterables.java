@@ -127,7 +127,7 @@ public final class Iterables
 	 * @return An iterable of the destination type
 	 */
 	@LazilyEvaluated
-	public static <S, D> Iterable<D> multiMap(Iterable<S> source, Mapper<S, Iterable<D>> mapper)
+	public static <S, D> Iterable<D> mapMany(Iterable<S> source, Mapper<S, Iterable<D>> mapper)
 	{
 		return new MultiMappingIterable<S, D, D>(source, mapper, new NullMapper<D>());
 	}

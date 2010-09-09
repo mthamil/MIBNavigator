@@ -24,6 +24,7 @@ package utilities.iteration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import utilities.Predicate;
 import utilities.mappers.Mapper;
@@ -124,7 +125,10 @@ public class GroupingIterable<K, V> implements Iterable<Grouping<K, V>>
 		 */
 		public Grouping<K, V> next()
 		{
-			return nextGroup;
+			if (nextGroup != null)
+				return nextGroup;
+			
+			throw new NoSuchElementException();
 		}
 	}
 	
