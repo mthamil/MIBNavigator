@@ -37,11 +37,11 @@ import utilities.mappers.Mapper;
 @LazilyEvaluated
 public class MultiMappingIterable<S, I, D> implements Iterable<D>
 {
-	private Iterable<S> source;
-	private Mapper<S, Iterable<I>> mapper;
+	private Iterable<? extends S> source;
+	private Mapper<? super S, Iterable<I>> mapper;
 	private Mapper<I, D> resultMapper;
 	
-	public MultiMappingIterable(Iterable<S> source, Mapper<S, Iterable<I>> mapper, Mapper<I, D> resultMapper)
+	public MultiMappingIterable(Iterable<? extends S> source, Mapper<? super S, Iterable<I>> mapper, Mapper<I, D> resultMapper)
 	{
 		this.source = source;
 		this.mapper = mapper;
@@ -58,14 +58,14 @@ public class MultiMappingIterable<S, I, D> implements Iterable<D>
 		
 	private static class MultiMappingIterator<S, I, D> extends ImmutableIterator<D>
 	{
-		private Iterator<S> source;
-		private Mapper<S, Iterable<I>> mapper;
+		private Iterator<? extends S> source;
+		private Mapper<? super S, Iterable<I>> mapper;
 		private Mapper<I, D> resultMapper;
 		
 		private Iterator<I> currentMappedIterator;
 		private boolean withinSubIterator;
 		
-		public MultiMappingIterator(Iterator<S> source, Mapper<S, Iterable<I>> mapper, Mapper<I, D> resultMapper)
+		public MultiMappingIterator(Iterator<? extends S> source, Mapper<? super S, Iterable<I>> mapper, Mapper<I, D> resultMapper)
 		{
 			this.source = source;
 			this.mapper = mapper;

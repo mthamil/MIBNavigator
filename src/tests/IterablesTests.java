@@ -541,4 +541,24 @@ public class IterablesTests
 
 		assertThat(size(distinct), is(expected.length));
 	}
+	
+	@Test
+	public void testCastSuccess()
+	{
+		Iterable<Integer> source = Arrays.asList(1, 2, 3, 4, 5);
+		final Iterable<Number> destination = Iterables.cast(source, Number.class);
+		
+		// Evaluate cast.
+		assertDoesNotThrow(new Runnable() { public void run() { toList(destination); }});
+	}
+	
+	@Test
+	public void testCastFailure()
+	{
+		Iterable<Object> source = Arrays.<Object>asList(1, "test", 3, 4, 5);
+		final Iterable<Integer> destination = Iterables.cast(source, Integer.class);
+		
+		// Evaluate cast.
+		assertThrows(new Runnable() { public void run() { toList(destination); }}, ClassCastException.class);
+	}
 }

@@ -32,12 +32,12 @@ import utilities.Predicate;
 @LazilyEvaluated
 public class FilteredIterator<T> extends ImmutableIterator<T>
 {
-	private Iterator<T> source;
-	private Predicate<T> condition;
+	private Iterator<? extends T> source;
+	private Predicate<? super T> condition;
 	
 	private T nextItem;
 	
-	public FilteredIterator(Iterator<T> source, Predicate<T> condition)
+	public FilteredIterator(Iterator<? extends T> source, Predicate<? super T> condition)
 	{
 		this.source = source;
 		this.condition = condition;

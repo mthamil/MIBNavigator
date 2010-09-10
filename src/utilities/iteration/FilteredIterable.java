@@ -32,10 +32,10 @@ import utilities.Predicate;
 @LazilyEvaluated
 public class FilteredIterable<T> implements Iterable<T>
 {
-	private Iterable<T> source;
-	private Predicate<T> condition;
+	private Iterable<? extends T> source;
+	private Predicate<? super T> condition;
 	
-	public FilteredIterable(Iterable<T> source, Predicate<T> condition)
+	public FilteredIterable(Iterable<? extends T> source, Predicate<? super T> condition)
 	{
 		this.source = source;
 		this.condition = condition;

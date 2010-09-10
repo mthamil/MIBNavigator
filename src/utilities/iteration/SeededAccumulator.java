@@ -33,8 +33,8 @@ import utilities.mappers.Mapper2;
  */
 public class SeededAccumulator<S, I, R> implements Accumulator<R>
 {
-	private final Iterable<S> items;
-	private final Mapper<S, I> selector;
+	private final Iterable<? extends S> items;
+	private final Mapper<? super S, I> selector;
 	private final Mapper2<I, R, R> accumulator;
 	
 	private R accumulation;
@@ -48,7 +48,7 @@ public class SeededAccumulator<S, I, R> implements Accumulator<R>
 	 * @param selector A function that maps source items into intermediate values
 	 * @param seed The initial seed value
 	 */
-	public SeededAccumulator(Iterable<S> items, Mapper2<I, R, R> accumulator, Mapper<S, I> selector, R seed)
+	public SeededAccumulator(Iterable<? extends S> items, Mapper2<I, R, R> accumulator, Mapper<? super S, I> selector, R seed)
 	{
 		this.items = items;
 		this.selector = selector;

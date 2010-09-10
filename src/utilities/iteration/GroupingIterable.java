@@ -37,10 +37,10 @@ import utilities.mappers.Mapper;
 @LazilyEvaluated
 public class GroupingIterable<K, V> implements Iterable<Grouping<K, V>>
 {
-	private Iterable<V> source;
-	private Mapper<V, K> keyMapper;
+	private Iterable<? extends V> source;
+	private Mapper<? super V, K> keyMapper;
 	
-	public GroupingIterable(Iterable<V> source, Mapper<V, K> keyMapper)
+	public GroupingIterable(Iterable<? extends V> source, Mapper<? super V, K> keyMapper)
 	{
 		this.source = source;
 		this.keyMapper = keyMapper;
@@ -58,13 +58,13 @@ public class GroupingIterable<K, V> implements Iterable<Grouping<K, V>>
 	{
 		private Map<K, Grouping<K, V>> internalMap = new HashMap<K, Grouping<K, V>>();
 		
-		private Iterable<V> source;
-		private Iterator<V> iterator;
-		private Mapper<V, K> keyMapper;
+		private Iterable<? extends V> source;
+		private Iterator<? extends V> iterator;
+		private Mapper<? super V, K> keyMapper;
 		
 		private Grouping<K, V> nextGroup;
 		
-		public GroupingIterator(Iterable<V> source, Mapper<V, K> keyMapper)
+		public GroupingIterator(Iterable<? extends V> source, Mapper<? super V, K> keyMapper)
 		{
 			this.source = source;
 			this.iterator = source.iterator();
@@ -135,10 +135,10 @@ public class GroupingIterable<K, V> implements Iterable<Grouping<K, V>>
 	private static class GroupingImpl<K, V> implements Grouping<K, V>
 	{
 		private K key;
-		private Iterable<V> source;
-		private Mapper<V, K> keyMapper;
+		private Iterable<? extends V> source;
+		private Mapper<? super V, K> keyMapper;
 		
-		public GroupingImpl(K key, Iterable<V> source, Mapper<V, K> keyMapper)
+		public GroupingImpl(K key, Iterable<? extends V> source, Mapper<? super V, K> keyMapper)
 		{
 			this.key = key;
 			this.source = source;
@@ -163,10 +163,10 @@ public class GroupingIterable<K, V> implements Iterable<Grouping<K, V>>
 		
 		private static class GroupingFilter<K, V> implements Predicate<V>
 		{
-			private Mapper<V, K> keyMapper;
+			private Mapper<? super V, K> keyMapper;
 			private K key;
 			
-			public GroupingFilter(K desiredKey, Mapper<V, K> keyMapper)
+			public GroupingFilter(K desiredKey, Mapper<? super V, K> keyMapper)
 			{
 				this.keyMapper = keyMapper;
 				key = desiredKey;

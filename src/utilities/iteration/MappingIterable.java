@@ -35,10 +35,10 @@ import utilities.mappers.Mapper;
 @LazilyEvaluated
 public class MappingIterable<S, D> implements Iterable<D>
 {
-	private Iterable<S> source;
-	private Mapper<S, D> mapper;
+	private Iterable<? extends S> source;
+	private Mapper<? super S, D> mapper;
 	
-	public MappingIterable(Iterable<S> source, Mapper<S, D> mapper)
+	public MappingIterable(Iterable<? extends S> source, Mapper<? super S, D> mapper)
 	{
 		this.source = source;
 		this.mapper = mapper;

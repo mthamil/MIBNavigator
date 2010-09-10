@@ -33,8 +33,8 @@ import utilities.mappers.Mapper2;
  */
 public class SeedlessAccumulator<S, R> implements Accumulator<R>
 {
-	private final Iterable<S> items;
-	private final Mapper<S, R> selector;
+	private final Iterable<? extends S> items;
+	private final Mapper<? super S, R> selector;
 	private final Mapper2<R, R, R> accumulator;
 	
 	private R accumulation;
@@ -47,7 +47,7 @@ public class SeedlessAccumulator<S, R> implements Accumulator<R>
 	 *                    value and returns a new accumulation
 	 * @param selector A function that maps source items into accumulation-type values
 	 */
-	public SeedlessAccumulator(Iterable<S> items, Mapper2<R, R, R> accumulator, Mapper<S, R> selector)
+	public SeedlessAccumulator(Iterable<? extends S> items, Mapper2<R, R, R> accumulator, Mapper<? super S, R> selector)
 	{
 		this.items = items;
 		this.selector = selector;

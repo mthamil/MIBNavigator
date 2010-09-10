@@ -66,7 +66,7 @@ public final class Iterables
 	 * If the source Iterable is an infinite sequence, this method will not return.
 	 */
 	@InfiniteSequenceUnsafe(Likelihood.Always)
-	public static <T> List<T> toList(Iterable<T> iterable)
+	public static <T> List<T> toList(Iterable<? extends T> iterable)
 	{
 		List<T> list = new ArrayList<T>();
 		for (T item : iterable)
@@ -111,7 +111,7 @@ public final class Iterables
 	 * @return An iterable of the destination type
 	 */
 	@LazilyEvaluated
-	public static <S, D> Iterable<D> map(Iterable<S> source, Mapper<S, D> mapper)
+	public static <S, D> Iterable<D> map(Iterable<? extends S> source, Mapper<? super S, D> mapper)
 	{
 		return new MappingIterable<S, D>(source, mapper);
 	}
@@ -127,7 +127,7 @@ public final class Iterables
 	 * @return An iterable of the destination type
 	 */
 	@LazilyEvaluated
-	public static <S, D> Iterable<D> mapMany(Iterable<S> source, Mapper<S, Iterable<D>> mapper)
+	public static <S, D> Iterable<D> mapMany(Iterable<? extends S> source, Mapper<? super S, Iterable<D>> mapper)
 	{
 		return new MultiMappingIterable<S, D, D>(source, mapper, new NullMapper<D>());
 	}
@@ -146,7 +146,7 @@ public final class Iterables
 	 * @return An iterable of the destination type
 	 */
 	@LazilyEvaluated
-	public static <S, I, D> Iterable<D> multiMap(Iterable<S> source, Mapper<S, Iterable<I>> mapper, Mapper<I, D> resultMapper)
+	public static <S, I, D> Iterable<D> multiMap(Iterable<? extends S> source, Mapper<? super S, Iterable<I>> mapper, Mapper<I, D> resultMapper)
 	{
 		return new MultiMappingIterable<S, I, D>(source, mapper, resultMapper);
 	}
@@ -156,7 +156,7 @@ public final class Iterables
 	 * Mapper.
 	 */
 	@LazilyEvaluated
-	public static <K, V> Iterable<Grouping<K, V>> groupBy(Iterable<V> source, Mapper<V, K> keyMapper)
+	public static <K, V> Iterable<Grouping<K, V>> groupBy(Iterable<? extends V> source, Mapper<? super V, K> keyMapper)
 	{
 		return new GroupingIterable<K, V>(source, keyMapper);
 	}
@@ -168,7 +168,7 @@ public final class Iterables
 	 * @return
 	 */
 	@LazilyEvaluated
-	public static <T> Iterable<T> filter(Iterable<T> source, Predicate<T> condition)
+	public static <T> Iterable<T> filter(Iterable<? extends T> source, Predicate<? super T> condition)
 	{
 		return new FilteredIterable<T>(source, condition);
 	}
@@ -270,7 +270,7 @@ public final class Iterables
 	 * this method will not return.
 	 */
 	@InfiniteSequenceUnsafe(Likelihood.Sometimes)
-	public static <T> boolean contains(Iterable<T> items, T expected, Comparator<T> comparator)
+	public static <T> boolean contains(Iterable<? extends T> items, T expected, Comparator<? super T> comparator)
 	{
 		for (T item : items)
 		{
@@ -301,7 +301,7 @@ public final class Iterables
 	 * this method will not return.
 	 */
 	@InfiniteSequenceUnsafe(Likelihood.Sometimes)
-	public static <T> boolean all(Iterable<T> items, Predicate<T> condition)
+	public static <T> boolean all(Iterable<? extends T> items, Predicate<? super T> condition)
 	{
 		for (T item : items)
 		{
@@ -318,7 +318,7 @@ public final class Iterables
 	 * this method will not return.
 	 */
 	@InfiniteSequenceUnsafe(Likelihood.Sometimes)
-	public static <T> boolean any(Iterable<T> items, Predicate<T> condition)
+	public static <T> boolean any(Iterable<? extends T> items, Predicate<? super T> condition)
 	{
 		for (T item : items)
 		{
@@ -356,7 +356,7 @@ public final class Iterables
 	 * If the source Iterable is an infinite sequence, this method will not return.
 	 */
 	@InfiniteSequenceUnsafe(Likelihood.Always)
-	public static <T> int count(Iterable<T> items, Predicate<T> condition)
+	public static <T> int count(Iterable<? extends T> items, Predicate<? super T> condition)
 	{
 		int i = 0;
 		for (T item : items)
@@ -380,9 +380,22 @@ public final class Iterables
 	/**
 	 * Returns the set union of the given sequences.
 	 */
+	@LazilyEvaluated
 	public static <T> Iterable<T> union(Iterable<T> ... iterables)
 	{
 		return new UnionIterable<T>(iterables);
+	}
+	
+	/**
+	 * Returns the elements of a sequence cast to the given type.
+	 */
+	@LazilyEvaluated
+	public static <T> Iterable<T> cast(Iterable<?> source, final Class<T> type)
+	{
+		return new MappingIterable<Object, T>(source, new Mapper<Object, T>()
+				{
+					public T map(Object item) { return type.cast(item); }
+				});
 	}
 	
 	/**
@@ -410,7 +423,7 @@ public final class Iterables
 	 * long as the shortest of the two, and the remaining items will be lost.
 	 */
 	@LazilyEvaluated
-	public static <S1, S2, D> Iterable<D> zip(Iterable<S1> first, Iterable<S2> second, Mapper2<S1, S2, D> mapper)
+	public static <S1, S2, D> Iterable<D> zip(Iterable<? extends S1> first, Iterable<? extends S2> second, Mapper2<? super S1, ? super S2, D> mapper)
 	{
 		return new ZipIterable<S1, S2, D>(first, second, mapper);
 	}
@@ -431,7 +444,7 @@ public final class Iterables
 	 * Applies an accumulator function to a sequence. The first element acts as the seed.
 	 */
 	@InfiniteSequenceUnsafe(Likelihood.Always)
-	public static <S, R> R aggregate(Iterable<S> source, Mapper2<R, R, R> accumulator, Mapper<S, R> selector)
+	public static <S, R> R aggregate(Iterable<? extends S> source, Mapper2<R, R, R> accumulator, Mapper<? super S, R> selector)
 	{
 		SeedlessAccumulator<S, R> acc = new SeedlessAccumulator<S, R>(source, accumulator, selector);
 		return acc.accumulate();
@@ -441,7 +454,7 @@ public final class Iterables
 	 * Applies an accumulator function to a sequence with the given seed.
 	 */
 	@InfiniteSequenceUnsafe(Likelihood.Always)
-	public static <S, I, R> R aggregate(Iterable<S> source, Mapper2<I, R, R> accumulator, Mapper<S, I> selector, R seed)
+	public static <S, I, R> R aggregate(Iterable<? extends S> source, Mapper2<I, R, R> accumulator, Mapper<? super S, I> selector, R seed)
 	{
 		SeededAccumulator<S, I, R> acc = new SeededAccumulator<S, I, R>(source, accumulator, selector, seed);
 		return acc.accumulate();
@@ -452,7 +465,7 @@ public final class Iterables
 	 * If the source Iterable is an infinite sequence, this method will not return.
 	 */
 	@InfiniteSequenceUnsafe(Likelihood.Always)
-	public static <S, D extends Comparable<D>> D min(Iterable<S> source, Mapper<S, D> selector)
+	public static <S, D extends Comparable<D>> D min(Iterable<? extends S> source, Mapper<? super S, D> selector)
 	{
 		return extrema(source, selector, ExtremaType.Min);
 	}
@@ -472,7 +485,7 @@ public final class Iterables
 	 * If the source Iterable is an infinite sequence, this method will not return.
 	 */
 	@InfiniteSequenceUnsafe(Likelihood.Always)
-	public static <S, D extends Comparable<D>> D max(Iterable<S> source, Mapper<S, D> selector)
+	public static <S, D extends Comparable<D>> D max(Iterable<? extends S> source, Mapper<? super S, D> selector)
 	{
 		return extrema(source, selector, ExtremaType.Max);
 	}
@@ -487,7 +500,7 @@ public final class Iterables
 		return max(source, new NullMapper<T>());
 	}
 	
-	private static <S, D extends Comparable<D>> D extrema(Iterable<S> source, Mapper<S, D> selector, final ExtremaType extremaType)
+	private static <S, D extends Comparable<D>> D extrema(Iterable<? extends S> source, Mapper<? super S, D> selector, final ExtremaType extremaType)
 	{
 		return aggregate(source, new Mapper2<D, D, D>() {
 			public D map(D first, D second)

@@ -34,11 +34,11 @@ import utilities.mappers.Mapper2;
 @LazilyEvaluated
 public class ZipIterable<S1, S2, D> implements Iterable<D>
 {
-	private Iterable<S1> first;
-	private Iterable<S2> second;
-	private Mapper2<S1, S2, D> mapper;
+	private Iterable<? extends S1> first;
+	private Iterable<? extends S2> second;
+	private Mapper2<? super S1, ? super S2, D> mapper;
 	
-	public ZipIterable(Iterable<S1> first, Iterable<S2> second, Mapper2<S1, S2, D> mapper)
+	public ZipIterable(Iterable<? extends S1> first, Iterable<? extends S2> second, Mapper2<? super S1, ? super S2, D> mapper)
 	{
 		this.first = first;
 		this.second = second;
@@ -55,11 +55,11 @@ public class ZipIterable<S1, S2, D> implements Iterable<D>
 
 	private static class ZipIterator<S1, S2, D> extends ImmutableIterator<D>
 	{
-		private Iterator<S1> first;
-		private Iterator<S2> second;
-		private Mapper2<S1, S2, D> mapper;
+		private Iterator<? extends S1> first;
+		private Iterator<? extends S2> second;
+		private Mapper2<? super S1, ? super S2, D> mapper;
 		
-		public ZipIterator(Iterator<S1> first, Iterator<S2> second, Mapper2<S1, S2, D> mapper)
+		public ZipIterator(Iterator<? extends S1> first, Iterator<? extends S2> second, Mapper2<? super S1, ? super S2, D> mapper)
 		{
 			this.first = first;
 			this.second = second;

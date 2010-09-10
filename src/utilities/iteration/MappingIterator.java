@@ -32,10 +32,10 @@ import utilities.mappers.Mapper;
 @LazilyEvaluated
 public class MappingIterator<S, D> extends ImmutableIterator<D>
 {
-	private Iterator<S> source;
-	private Mapper<S, D> mapper;
+	private Iterator<? extends S> source;
+	private Mapper<? super S, D> mapper;
 	
-	public MappingIterator(Iterator<S> source, Mapper<S, D> mapper)
+	public MappingIterator(Iterator<? extends S> source, Mapper<? super S, D> mapper)
 	{
 		this.source = source;
 		this.mapper = mapper;
