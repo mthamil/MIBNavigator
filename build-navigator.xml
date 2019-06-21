@@ -43,7 +43,7 @@
 	<!-- Zip up the source, manifest, and build file -->
     <zip destfile="mibnav-source.zip">
 	  <fileset dir="." includes="src/**"/>
-	  <fileset dir="." includes="build-navigator.xml MIBNavigator.mf AUTHORS LICENSE README mib.rng mib.xsd"/>
+	  <fileset dir="." includes="build-navigator.xml MIBNavigator.mf LICENSE README.md"/>
     </zip>
   </target>
 	
@@ -53,7 +53,7 @@
 	<property name="packageDir" value="mib-navigator"/>
 	<mkdir dir="${packageDir}"/>
 	<copy todir="${packageDir}">
-      <fileset dir="." includes="MIBNavigator.jar license readme authors schema/* extra-xml-mibs/** mibs/smi/* mibs/xml/*xml" />
+      <fileset dir="." includes="MIBNavigator.jar LICENSE README.md extra-mibs/** mibs/*" />
     </copy>
 	<!-- Zip up everything -->
     <zip destfile="mib-navigator.zip">
