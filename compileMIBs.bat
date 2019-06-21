@@ -1,1 +1,0 @@
-for %%f in (mibs\smi\*.mib) do java -classpath ".\bin" MIBConverter %%f
