@@ -1,5 +1,11 @@
 bin/
 
+# Visual Studio Code files
+.vscode/
+
+# Eclipse files
+.settings/
+
 # Compiled class file
 *.class
 
