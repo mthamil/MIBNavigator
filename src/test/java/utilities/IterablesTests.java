@@ -19,7 +19,9 @@
  *
  */
 
-package tests;
+package utilities;
+
+import assertions.*;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.*;
@@ -50,7 +52,7 @@ import utilities.mappers.Mapper2;
 import utilities.mappers.NullMapper;
 
 import static utilities.iteration.Iterables.*;
-import static tests.Assertions.*;
+import static assertions.Assertions.*;
 
 public class IterablesTests
 {

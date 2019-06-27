@@ -19,13 +19,11 @@
  *
  */
 
-package tests;
-
 import org.junit.Test;
 
 import static org.junit.Assert.*;
-import static tests.Assertions.assertThrows;
-import static tests.Assertions.assertDoesNotThrow;
+import static assertions.Assertions.assertThrows;
+import static assertions.Assertions.assertDoesNotThrow;
 
 public class CustomAssertionTests
 {

@@ -19,7 +19,7 @@
  *
  */
 
-package tests;
+package utilities;
 
 import java.util.Arrays;
 

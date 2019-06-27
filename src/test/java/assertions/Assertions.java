@@ -19,7 +19,7 @@
  *
  */
 
-package tests;
+package assertions;
 
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.IsNull.nullValue;

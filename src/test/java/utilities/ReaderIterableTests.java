@@ -19,7 +19,7 @@
  *
  */
 
-package tests;
+package utilities;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;

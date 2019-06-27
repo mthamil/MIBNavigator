@@ -20,7 +20,7 @@
  *
  */
 
-package tests.snmp;
+package snmp;
 
 import org.junit.Test;
 

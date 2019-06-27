@@ -19,7 +19,7 @@
  *
  */
 
-package tests;
+package utilities;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
@@ -27,7 +27,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 import utilities.Option;
-import static tests.Assertions.assertThrows;
+import static assertions.Assertions.assertThrows;
 
 public class OptionTests
 {

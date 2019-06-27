@@ -19,32 +19,46 @@
  *
  */
 
-package tests;
+package utilities;
+
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
-import utilities.iteration.Iterables;
+import utilities.Option;
+import utilities.parsing.OptionParser;
+import utilities.parsing.Parser;
 
-import static org.junit.Assert.*;
-import static org.hamcrest.core.Is.*;
-
-public class SingleValueIterableTests
+/**
+ * @author matt
+ *
+ */
+public class OptionParserTests
 {
 	@Test
-	public void testSingleValueIterable()
+	public void testIntegerParser()
 	{
-		Iterable<String> iter = Iterables.toIterable("test");
-		
-		for (int i = 0; i < 2; i++)
+		Parser<Option<Integer>> parser = new OptionParser<Integer>()
 		{
-			int count = 0;
-			for (String s : iter)
+			public Option<Integer> parse(String stringValue)
 			{
-				assertThat(s, is("test"));
-				count++;
+				try
+				{
+					int value = Integer.valueOf(stringValue);
+					return Option.some(value);
+				}
+				catch (NumberFormatException e)
+				{
+					return Option.none(Integer.class);
+				}
 			}
-			
-			assertThat(count, is(1));
-		}
+		};
+		
+		Option<Integer> value = parser.parse("test");
+		assertThat(value.hasValue(), is (false));
+		
+		value = parser.parse("1");
+		assertThat(value.hasValue(), is(true));	
 	}
 }

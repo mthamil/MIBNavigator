@@ -19,41 +19,47 @@
  *
  */
 
-package tests;
+package utilities;
 
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
-import static org.hamcrest.core.Is.*;
+import static utilities.iteration.Iterables.filter;
 
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 import org.junit.Test;
 
-import utilities.iteration.InspectableIterator;
-import utilities.iteration.InspectableIteratorAdapter;
+import utilities.Predicate;
 
-public class InspectableIteratorTests
+/**
+ * @author matt
+ *
+ */
+public class FilteredIterationTests
 {
 	@Test
-	public void testInspectableWrapper()
+	public void testFilteredIterable()
 	{
-		List<Integer> testValues = Arrays.asList(1, 2, 3, 4, 5, 6);
-		
-		Iterator<Integer> iterator = testValues.iterator();
-		InspectableIterator<Integer> wrapper = new InspectableIteratorAdapter<Integer>(iterator);
-		
-		assertThat(wrapper.current(), is((Integer)null));
-		assertThat(wrapper.hasNext(), is(true));
-		
-		while (wrapper.hasNext())
+		Predicate<String> pred = new Predicate<String>()
 		{
-			// The result of next() should be the current element.
-			Integer next = wrapper.next();
-			assertThat(wrapper.current(), is(next));
-		}
+			public boolean matches(String value) { return value.startsWith("a"); }
+		};
 		
-		assertThat(wrapper.current(), is(6));
+		List<String> strings = Arrays.asList("abc", "acb", "921", "ade", "bcd", "zyx");
+		
+		Iterable<String> filtered = filter(strings, pred);
+		
+		for (int i = 0; i < 2; i++)
+		{
+			int count = 0;
+			for (String s : filtered)
+			{
+				assertTrue(s.startsWith("a"));
+				count++;
+			}
+			
+			assertThat(count, is(3));
+		}
 	}
-
 }

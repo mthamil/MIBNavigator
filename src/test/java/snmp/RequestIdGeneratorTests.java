@@ -19,7 +19,7 @@
  *
  */
 
-package tests.snmp;
+package snmp;
 
 import static org.junit.Assert.*;
 import static org.hamcrest.core.Is.*;
