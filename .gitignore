@@ -1,5 +1,8 @@
 bin/
 
+# Maven files.
+target/
+
 # Visual Studio Code files
 .vscode/
 
