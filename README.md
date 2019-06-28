@@ -3,10 +3,10 @@ MIB Navigator is a Java-based GUI desktop application for browsing SNMP MIBs and
 Each "object" OID in an SNMP MIB is represented as a node in a tree, and when a node is selected, certain information about 
 that particular OID is displayed.  Functionality is provided for adding new MIB definition files to the tree.  
 
-Extra MIB files can be found in the `extra-mibs` directory. These are taken from the MIBs available for download here: http://www.wtcs.org/snmp4tpc/FILES/Tools/SNMP/getif/GETIF-MIBS.ZIP.
+Additional MIB files can be found in the `extra-mibs` directory. These are taken from the MIBs available for download here: http://www.wtcs.org/snmp4tpc/FILES/Tools/SNMP/getif/GETIF-MIBS.ZIP.
 
 ## Installation
-To install, simply unzip `mib-navigator.zip` to a location and the `mib-navigator` directory containing all needed files will be created.
+To install, unzip the downloaded archive file (ie. `mibnavigator-<version>-bin.zip`) to a location, and a directory containing all needed files will be created.
 
 
 ## Instructions
