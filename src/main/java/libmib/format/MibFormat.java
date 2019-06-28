@@ -37,15 +37,7 @@ public enum MibFormat
 	{
 		public FileFilter getDialogFileFilter() { return new SmiFileFilter(); }
 		public FilenameFilter getFilenameFilter() { return new SmiFilenameFilter(); }
-	},
-	
-	/** The custom XML MIB format. */
-	XML
-	{
-		public FileFilter getDialogFileFilter() { return new XmlFileFilter(); }
-		public FilenameFilter getFilenameFilter() { return new XmlFilenameFilter(); }
 	};
-
 	
 	/**
 	 * Gets a file filter for a given MIB format that is usable in a file picker dialog.

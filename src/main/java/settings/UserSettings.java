@@ -94,7 +94,7 @@ public class UserSettings
 	private boolean settingsChanged;
 
 	private static final int DEFAULT_MAX_ADDRESSES = 15;
-	private static final String DEFAULT_MIB_DIRECTORY = "." + File.separator + "mibs" + File.separator + MibFormat.SMI.toString().toLowerCase();
+	private static final String DEFAULT_MIB_DIRECTORY = "." + File.separator + "mibs";
 	private static final int DEFAULT_PORT = 161;
 	private static final int DEFAULT_TIMEOUT = 4000;
 

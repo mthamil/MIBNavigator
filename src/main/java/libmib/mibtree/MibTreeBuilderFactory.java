@@ -21,15 +21,7 @@
 
 package libmib.mibtree;
 
-import java.io.*;
-
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.xml.sax.SAXException;
-
 import filefilters.SmiFilenameFilter;
-import filefilters.XmlFilenameFilter;
-
 import libmib.format.MibFormat;
 
 /**
@@ -38,17 +30,6 @@ import libmib.format.MibFormat;
  */
 public class MibTreeBuilderFactory
 {
-	private File schemaFile;
-	
-	/**
-	 * Default constructor.
-	 */
-	public MibTreeBuilderFactory() 
-	{ 
-		schemaFile = new File("." + File.separator + "schema" + File.separator + "mib.xsd");
-	}
-	
-	
 	/**
 	 * Returns the MibTreeBuilder corresponding to the given MIB format type.
 	 * @param mibFormat
@@ -64,34 +45,6 @@ public class MibTreeBuilderFactory
 				MibTreeBuilder builder = new MibTreeBuilderSmi();
 				builder.setFileFilter(new SmiFilenameFilter());
 				return builder;
-			}
-			case XML:
-			{
-	            try
-	            {
-	            	// If the schema file used for parsing and validating MIB files
-	            	// can't be found then there is no point in continuing since 
-	            	// XML files can't be added later.
-		            if (!schemaFile.exists())
-		            {    
-		            	String message = "The schema file, " + schemaFile.getName() + ", was not found.";
-		            	FileNotFoundException cause = new FileNotFoundException(message);
-		            	throw new TreeBuilderCreationException(cause);
-		            }
-		            
-		            MibTreeBuilder builder = new MibTreeBuilderXml(schemaFile);
-					builder.setFileFilter(new XmlFilenameFilter());
-	            	return builder;
-
-	            }
-	            catch (SAXException e)
-	            {
-	            	throw new TreeBuilderCreationException("An error occurred while parsing the schema file.", e);
-	            }
-	            catch (ParserConfigurationException e)
-	            {
-	            	throw new TreeBuilderCreationException("An error occurred configuring the XML parser.", e);
-	            }
 			}
 		}
 		
