@@ -1,1 +1,4 @@
+sudo: false
 language: java
+
+script: mvn package
