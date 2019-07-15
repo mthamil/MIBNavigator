@@ -2,10 +2,15 @@ sudo: false
 language: java
 
 env:
-  - BASE_VERSION="1.0.0"
+  - VERSION="1.0.0"
+
+matrix:
+  include:
+    if: tag IS blank
+    env: VERSION_SUFFIX="-ci.${TRAVIS_BUILD_NUMBER}+${TRAVIS_BRANCH}"
 
 before_script:
-  - mvn versions:set -DnewVersion="${BASE_VERSION}-ci.${TRAVIS_BUILD_NUMBER}+${TRAVIS_BRANCH}"
+  - mvn versions:set -DnewVersion="${VERSION}${VERSION_SUFFIX}"
   - mvn versions:commit
 
 script:
