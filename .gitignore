@@ -2,6 +2,7 @@ bin/
 
 # Maven files.
 target/
+*.versionsBackup
 
 # Visual Studio Code files
 .vscode/

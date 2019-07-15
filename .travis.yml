@@ -1,4 +1,12 @@
 sudo: false
 language: java
 
-script: mvn package
+env:
+  - BASE_VERSION="1.0.0"
+
+before_script:
+  - mvn versions:set -DnewVersion="${BASE_VERSION}-${TRAVIS_BUILD_NUMBER}.${TRAVIS_BRANCH}"
+  - mvn versions:commit
+
+script:
+  - mvn package
