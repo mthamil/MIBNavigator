@@ -11,10 +11,10 @@ env:
 
 matrix:
   include:
-    if: tag IS blank AND branch = master
-    env: VERSION_SUFFIX="-ci.${TRAVIS_BUILD_NUMBER}"
-    if: tag IS blank AND NOT branch = master
-    env: VERSION_SUFFIX="-ci.${TRAVIS_BUILD_NUMBER}+${TRAVIS_BRANCH}"
+    - if: tag IS blank AND branch = master
+      env: VERSION_SUFFIX="-ci.${TRAVIS_BUILD_NUMBER}"
+    - if: tag IS blank AND NOT branch = master
+      env: VERSION_SUFFIX="-ci.${TRAVIS_BUILD_NUMBER}+${TRAVIS_BRANCH}"
 
 before_script:
   - mvn versions:set -DnewVersion="${VERSION}${VERSION_SUFFIX}"
