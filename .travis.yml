@@ -1,14 +1,20 @@
 sudo: false
 language: java
 
+cache:
+  directories:
+    - $HOME/.m2
+
 env:
   global:
     - VERSION="1.0.0"
 
 matrix:
   include:
+    if: NOT branch = master
+    env: VERSION_METADATA="+${TRAVIS_BRANCH}"
     if: tag IS blank
-    env: VERSION_SUFFIX="-ci.${TRAVIS_BUILD_NUMBER}+${TRAVIS_BRANCH}"
+    env: VERSION_SUFFIX="-ci.${TRAVIS_BUILD_NUMBER}${VERSION_METADATA}"
 
 before_script:
   - mvn versions:set -DnewVersion="${VERSION}${VERSION_SUFFIX}"
