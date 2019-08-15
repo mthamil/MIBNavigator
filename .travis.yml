@@ -22,3 +22,12 @@ before_script:
 
 script:
   - mvn package
+
+deploy:
+  provider: releases
+  api_key: ${GITHUB_TOKEN}
+  file_glob: true
+  file: "${TRAVIS_BUILD_DIR}/target/mibnavigator-*-bin.*"
+  skip_cleanup: true
+  on:
+    tags: true
